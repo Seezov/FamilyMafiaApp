@@ -1,35 +1,87 @@
 package com.example.familymafiaapp
 
 import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.ui.setupWithNavController
-import com.example.familymafiaapp.databinding.ActivityMainBinding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import com.example.familymafiaapp.ui.dashboard.DashboardScreen
+import com.example.familymafiaapp.ui.home.HomeScreen
+import com.example.familymafiaapp.ui.notifications.NotificationsScreen
 
-class MainActivity : AppCompatActivity() {
-
-    private lateinit var binding: ActivityMainBinding
-
+class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContent {
+            MyApp()
+        }
+    }
+}
 
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+sealed class Screen(val route: String, val label: String, val icon: ImageVector) {
+    object Home : Screen("home", "Home", Icons.Default.Home)
+    object Dashboard : Screen("dashboard", "Dashboard", Icons.AutoMirrored.Filled.List)
+    object Notifications : Screen("notifications", "Notifications", Icons.Default.Notifications)
+}
 
-        val navView: BottomNavigationView = binding.navView
+@Composable
+fun MyApp() {
+    val navController = rememberNavController()
+    val items = listOf(
+        Screen.Home,
+        Screen.Dashboard,
+        Screen.Notifications
+    )
 
-        val navController = findNavController(R.id.nav_host_fragment_activity_main)
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-        val appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications
-            )
-        )
-        setupActionBarWithNavController(navController, appBarConfiguration)
-        navView.setupWithNavController(navController)
+    Scaffold(
+        bottomBar = {
+            NavigationBar {
+                val currentDestination = navController.currentBackStackEntryAsState().value?.destination
+                items.forEach { screen ->
+                    NavigationBarItem(
+                        icon = { Icon(screen.icon, contentDescription = null) },
+                        label = { Text(screen.label) },
+                        selected = currentDestination?.route == screen.route,
+                        onClick = {
+                            navController.navigate(screen.route) {
+                                popUpTo(navController.graph.startDestinationId) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        }
+                    )
+                }
+            }
+        }
+    ) { padding ->
+        NavHost(
+            navController = navController,
+            startDestination = Screen.Home.route,
+            modifier = Modifier.padding(padding)
+        ) {
+            composable(Screen.Home.route) { HomeScreen() }
+            composable(Screen.Dashboard.route) { DashboardScreen() }
+            composable(Screen.Notifications.route) { NotificationsScreen() }
+        }
     }
 }
