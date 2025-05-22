@@ -1,24 +1,26 @@
 package com.example.familymafiaapp.ui.home
 
 import android.content.Context
-import android.widget.Button
 import android.widget.Toast
 import androidx.annotation.RawRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -27,9 +29,11 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
-import com.example.familymafiaapp.R
-import com.example.familymafiaapp.entities.Rating
+import com.example.familymafiaapp.entities.seasons.RatingUniversal
+import com.example.familymafiaapp.enums.Role
 import com.example.familymafiaapp.enums.Season
+import com.example.familymafiaapp.extensions.roundTo2Digits
+import kotlin.math.roundToInt
 
 @Composable
 fun HomeScreen(homeViewModel: HomeViewModel) {
@@ -49,7 +53,7 @@ fun HomeScreen(homeViewModel: HomeViewModel) {
             Season.entries.forEach { season ->
                 Button(onClick = {
                     val json = readJsonFromAssets(context, season.jsonFileRes)
-                    homeViewModel.loadDataBySeason(json)
+                    homeViewModel.loadDataBySeason(season, json)
                 }) {
                     Text(season.title)
                 }
@@ -80,26 +84,40 @@ fun HomeScreen(homeViewModel: HomeViewModel) {
 }
 
 @Composable
-fun RatingItem(rating: Rating) {
-    Column(
+fun RatingItem(rating: RatingUniversal) {
+    Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp)
+            .padding(vertical = 8.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
-        Text("Player: ${rating.player}", style = MaterialTheme.typography.titleMedium)
-        Text("Rating Coef: ${rating.ratingCoefficient}")
-        Text("Win Points: ${rating.winPoints}")
-        Text("Games Played: ${rating.gamesPlayed}")
-        Text("First Killed: ${rating.firstKilled}")
-        Text("MVP: ${rating.mvp}")
-        rating.winByRole.forEach {
-            Text("Won on ${it.first}: ${it.second}")
-        }
-        rating.additionalPointsByRole.forEach {
-            Text("Add points on ${it.first}: ${it.second}")
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(rating.player, style = MaterialTheme.typography.titleLarge)
+
+            Spacer(Modifier.height(8.dp))
+
+            Text("Rating Coefficient: ${rating.ratingCoefficient}")
+            Text("Wins: ${rating.wins} / Games: ${rating.gamesPlayed} (${(rating.winRate * 100).roundToInt()}%)")
+            Text("MVP: ${rating.mvp.roundTo2Digits()}")
+            Text("CI/Game: ${rating.ciForGame.roundTo2Digits()} | CI: ${rating.ci.roundTo2Digits()}")
+            Text("Add. Points: ${rating.additionalPoints.roundTo2Digits()} | Penalty: ${rating.penaltyPoints.roundTo2Digits()}")
+            Text("Best Move Points: ${rating.bestMovePoints.roundTo2Digits()}")
+            Text("First Killed: ${rating.firstKilled} (City Lost: ${rating.firstKilledCityLost})")
+            Text("Death percentage: ${(rating.percentOfDeath * 100).roundToInt()}%")
+
+            Spacer(Modifier.height(8.dp))
+
+            Role.entries.forEach { role ->
+                val roleName = role.name.lowercase().replaceFirstChar { it.uppercaseChar() }
+                val wins = rating.winByRole.find { it.first == role.sheetValue }?.second ?: 0
+                val games = rating.gamesByRole.find { it.first == role.sheetValue }?.second ?: 0
+                val add = rating.additionalPointsByRole.find { it.first == role.sheetValue }?.second ?: 0f
+                val winRatePercent = if (games > 0) (wins.toFloat() / games * 100).roundToInt() else 0
+
+                Text("$roleName: $wins wins / $games games, $winRatePercent% winrate, ${add.roundTo2Digits()} Add. Points")
+            }
         }
     }
-    Divider()
 }
 
 @Composable

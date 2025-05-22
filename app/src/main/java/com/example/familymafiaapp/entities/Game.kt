@@ -4,7 +4,7 @@ import com.example.familymafiaapp.enums.Role
 import com.example.familymafiaapp.enums.Values
 
 
-data class GameSeason0(
+data class Game(
     val players: List<String>,
     val roles: List<String>,
     val wonByPlayer: List<String>,
