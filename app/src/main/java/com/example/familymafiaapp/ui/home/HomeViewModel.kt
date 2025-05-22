@@ -23,114 +23,15 @@ class HomeViewModel : ViewModel() {
     fun loadDataBySeason(season: Season, fileContent: String) {
         if (fileContent.isNotEmpty()) {
             when (season) {
-                Season.SEASON_0 -> loadSeason0(season, fileContent)
-                Season.SEASON_1 -> loadSeason1(season, fileContent)
+                Season.SEASON_0 -> loadSeason0and1(season, fileContent)
+                Season.SEASON_1 -> loadSeason0and1(season, fileContent)
             }
         } else {
 //            loadDataFromServer()
         }
     }
 
-    private fun loadSeason1(season: Season, fileContent: String) {
-        val rawData = loadDataFromFile(fileContent)
-            .filter { it.number.toIntOrNull() != null }
-        val gamesData = getGamesData(rawData)
-        val playersList = getPlayersList(rawData)
-        val ratings = playersList.map { player ->
-            val gamesForPlayer = gamesData.filter { it.players.contains(player) }
-            val gamesPlayed = gamesForPlayer.size
-            val firstKilled = gamesForPlayer.filter { it.isFirstKilled(player) }.size
-            val firstKilledCityLost = gamesForPlayer.filter { it.isFirstKilled(player) && !(it.cityWon ?: false) }.size
-            val gamesAsRed = getGamesForRole(gamesForPlayer, player, Role.SHERIFF).size + getGamesForRole(gamesForPlayer, player, Role.CIVILIAN).size
-            val fullGamesForRole = Role.entries.map { role ->
-                Pair(role.sheetValue, getGamesForRole(gamesForPlayer, player, role))
-            }
-            val winByRole = fullGamesForRole.map { gameForRole ->
-                Pair(
-                    gameForRole.first,
-                    gameForRole.second.filter {
-                        if (it.isNormalGame()) {
-                            it.hasPlayerWon(player)
-                        } else {
-                            it.wonByPlayer[it.players.indexOf(player)] == Values.YES.sheetValue
-                        }
-                    }.size
-                )
-            }
-            val loseByRole = fullGamesForRole.map { gameForRole ->
-                Pair(
-                    gameForRole.first,
-                    gameForRole.second.filter {
-                        if (it.isNormalGame()) {
-                            !it.hasPlayerWon(player)
-                        } else {
-                            it.wonByPlayer[it.players.indexOf(player)] == Values.NO.sheetValue
-                        }
-                    }.size
-                )
-            }
-            val penaltyPointsByRole = Role.entries.map { role ->
-                role.sheetValue to getGamesForRole(gamesForPlayer, player, role)
-                    .map { it.getPlayerPenaltyPoints(player) }.sum()
-            }
-            val winByRoleSum = winByRole.sumOf {
-                if (playerIsDonOrSheriff(it.first)) {
-                    it.second * 4
-                } else {
-                    it.second * 3
-                }
-            }
-            val loseByRoleSum = loseByRole.sumOf {
-                if (playerIsDonOrSheriff(it.first)) {
-                    it.second
-                } else {
-                    0
-                }
-            }
-            val additionalPointsByRoleSum = gamesForPlayer
-                .map {
-                    if (it.isFirstKilled(player))
-                        it.bestMovePoints
-                    else 0.0f
-                }.sum()
-            val penaltyPointsByRoleSum = penaltyPointsByRole
-                .map {
-                    it.second
-                }.sum()
-            val winPoints =
-                (winByRoleSum - loseByRoleSum - penaltyPointsByRoleSum + additionalPointsByRoleSum)
-
-            val mvp = (winPoints / gamesPlayed).roundTo2Digits()
-            val ratingCoefficient = Math.round(mvp * 100 + gamesPlayed * 0.25F)
-
-            val wins = winByRole.sumOf { it.second }
-
-            val gamesForRole = fullGamesForRole.map { it.first to it.second.size }
-            RatingUniversal(
-                player = player,
-                ratingCoefficient = ratingCoefficient,
-                wins = wins,
-                gamesPlayed = gamesPlayed,
-                winRate = wins.toFloat()/gamesPlayed,
-                additionalPoints = additionalPointsByRoleSum,
-                penaltyPoints = penaltyPointsByRoleSum,
-                bestMovePoints = 0F,
-                firstKilled = firstKilled,
-                firstKilledCityLost = firstKilledCityLost,
-                percentOfDeath = firstKilled.toFloat()/gamesAsRed,
-                ciForGame = 0F,
-                ci = 0F,
-                mvp = mvp,
-                winByRole = winByRole,
-                gamesByRole = gamesForRole,
-                additionalPointsByRole = emptyList(),
-            )
-        }
-        _ratings.value = ratings.filter { it.gamesPlayed >= season.gameLimit }
-            .sortedByDescending { it.ratingCoefficient }
-    }
-
-    private fun loadSeason0(season: Season, fileContent: String) {
+    private fun loadSeason0and1(season: Season, fileContent: String) {
         val rawData = loadDataFromFile(fileContent)
             .filter { it.number.toIntOrNull() != null }
         val gamesData = getGamesData(rawData)
