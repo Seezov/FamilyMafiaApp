@@ -3,13 +3,10 @@ package com.example.familymafiaapp
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -19,13 +16,17 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.familymafiaapp.ui.dashboard.DashboardScreen
+import com.example.familymafiaapp.ui.dashboard.DashboardViewModel
 import com.example.familymafiaapp.ui.home.HomeScreen
+import com.example.familymafiaapp.ui.home.HomeViewModel
 import com.example.familymafiaapp.ui.notifications.NotificationsScreen
+import com.example.familymafiaapp.ui.notifications.NotificationsViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -79,9 +80,18 @@ fun MyApp() {
             startDestination = Screen.Home.route,
             modifier = Modifier.padding(padding)
         ) {
-            composable(Screen.Home.route) { HomeScreen() }
-            composable(Screen.Dashboard.route) { DashboardScreen() }
-            composable(Screen.Notifications.route) { NotificationsScreen() }
+            composable(Screen.Home.route) {
+                val homeViewModel: HomeViewModel = viewModel()
+                HomeScreen(homeViewModel)
+            }
+            composable(Screen.Dashboard.route) {
+                val dashboardViewModel: DashboardViewModel = viewModel()
+                DashboardScreen(dashboardViewModel)
+            }
+            composable(Screen.Notifications.route) {
+                val notificationsViewModel: NotificationsViewModel = viewModel()
+                NotificationsScreen(notificationsViewModel)
+            }
         }
     }
 }

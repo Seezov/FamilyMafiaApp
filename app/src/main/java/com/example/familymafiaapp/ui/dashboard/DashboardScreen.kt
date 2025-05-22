@@ -8,7 +8,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 @Composable
-fun DashboardScreen() {
+fun DashboardScreen(dashboardViewModel: DashboardViewModel) {
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Text("Dashboard Screen")
     }
