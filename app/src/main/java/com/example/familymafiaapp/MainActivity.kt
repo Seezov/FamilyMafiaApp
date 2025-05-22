@@ -1,5 +1,6 @@
 package com.example.familymafiaapp
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -82,7 +83,7 @@ fun MyApp() {
         ) {
             composable(Screen.Home.route) {
                 val homeViewModel: HomeViewModel = viewModel()
-                HomeScreen(homeViewModel)
+                HomeScreen(homeViewModel,)
             }
             composable(Screen.Dashboard.route) {
                 val dashboardViewModel: DashboardViewModel = viewModel()
