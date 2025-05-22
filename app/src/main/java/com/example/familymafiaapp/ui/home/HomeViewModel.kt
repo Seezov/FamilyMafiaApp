@@ -1,6 +1,5 @@
 package com.example.familymafiaapp.ui.home
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.familymafiaapp.enums.Role
@@ -23,15 +22,10 @@ class HomeViewModel : ViewModel() {
 
     private val service = GoogleSheetService.create()
 
-    private fun playerIsDonOrSheriff(role: String) = Role.findByValue(role)?.sheetValue == Role.DON.sheetValue || Role.findByValue(
-        role
-    )?.sheetValue == Role.SHERIFF.sheetValue
-
-    fun loadData(fileContent: String) {
+    fun loadDataBySeason(fileContent: String) {
         if (fileContent.isNotEmpty()) {
             val rawData = loadDataFromFile(fileContent)
                 .filter { it.number.toIntOrNull() != null }
-            // 10 players per game
             val gamesData = getGamesData(rawData)
             val playersList = getPlayersList(rawData)
             val ratings = playersList.map { player ->
@@ -80,8 +74,16 @@ class HomeViewModel : ViewModel() {
                         0
                     }
                 }
-                val additionalPointsByRoleSum = gamesForPlayer.map { if(it.isFirstKilled(player)) it.bestMovePoints else 0.0f }.sum()
-                val penaltyPointsByRoleSum =  penaltyPointsByRole.map { it.second }.sum()
+                val additionalPointsByRoleSum = gamesForPlayer
+                    .map {
+                        if (it.isFirstKilled(player))
+                            it.bestMovePoints
+                        else 0.0f
+                    }.sum()
+                val penaltyPointsByRoleSum =  penaltyPointsByRole
+                    .map {
+                        it.second
+                    }.sum()
                 val winPoints = (winByRoleSum - loseByRoleSum - penaltyPointsByRoleSum + additionalPointsByRoleSum).toInt()
 
                 val mvp = (winPoints.toFloat() / gamesPlayed).roundTo2Digits()
@@ -103,6 +105,10 @@ class HomeViewModel : ViewModel() {
             loadDataFromServer()
         }
     }
+
+    private fun playerIsDonOrSheriff(role: String) = Role.findByValue(role)?.sheetValue == Role.DON.sheetValue || Role.findByValue(
+        role
+    )?.sheetValue == Role.SHERIFF.sheetValue
 
     private fun getGamesForRole(gamesForPlayer: List<GameSeason0>, player: String, role: Role) = gamesForPlayer.filter {
         it.getPlayerRole(player) == role.sheetValue
