@@ -1,6 +1,7 @@
 package com.example.familymafiaapp.entities
 
 import com.example.familymafiaapp.enums.Role
+import com.example.familymafiaapp.enums.Values
 
 
 data class GameSeason0(
@@ -28,7 +29,7 @@ data class GameSeason0(
 
     fun isFirstKilled(player: String): Boolean = players.indexOf(player) + 1 == firstKilled
 
-    fun isNormalGame(): Boolean = wonByPlayer.contains("Нет") && wonByPlayer.contains("Да")
+    fun isNormalGame(): Boolean = wonByPlayer.contains(Values.NO.sheetValue) && wonByPlayer.contains(Values.YES.sheetValue)
 }
 
 
