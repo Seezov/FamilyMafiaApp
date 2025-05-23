@@ -1,4 +1,4 @@
-package com.example.familymafiaapp.entities.seasons
+package com.example.familymafiaapp.entities
 
 data class RatingUniversal(
     val player: String,

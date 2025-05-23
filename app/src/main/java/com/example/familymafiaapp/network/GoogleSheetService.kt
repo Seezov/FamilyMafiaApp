@@ -1,6 +1,6 @@
 package com.example.familymafiaapp.network
 
-import com.example.familymafiaapp.entities.PlayerData
+import com.example.familymafiaapp.entities.seasons.season0and1.PlayerDataSeason0And1
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit
 interface  GoogleSheetService {
 
     @GET("exec")
-    suspend fun fetchData(): List<PlayerData>
+    suspend fun fetchData(): List<PlayerDataSeason0And1>
 
     companion object {
         // Season 0 https://script.google.com/macros/s/AKfycbxObz_uchvy3h9L5w3lBCweU8rtiCqmLx_Xg2ofq9KTRYGvY_4JhD1Ucg1VacXwQYAj/exec

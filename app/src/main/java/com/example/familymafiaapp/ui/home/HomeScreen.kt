@@ -29,7 +29,7 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
-import com.example.familymafiaapp.entities.seasons.RatingUniversal
+import com.example.familymafiaapp.entities.RatingUniversal
 import com.example.familymafiaapp.enums.Role
 import com.example.familymafiaapp.enums.Season
 import com.example.familymafiaapp.extensions.roundTo2Digits
@@ -39,11 +39,13 @@ import kotlin.math.roundToInt
 fun HomeScreen(homeViewModel: HomeViewModel) {
     val context = LocalContext.current
     val ratings by homeViewModel.ratings.collectAsState()
+    val debugText by homeViewModel.debugText.collectAsState()
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(8.dp)) {
+            .padding(8.dp)
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -60,23 +62,27 @@ fun HomeScreen(homeViewModel: HomeViewModel) {
             }
         }
 
-        if (ratings.isNotEmpty()) {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-            ) {
-                items(ratings) { rating ->
-                    RatingItem(rating)
-                }
-            }
+        if (debugText.isNotEmpty()) {
+            Text(debugText)
         } else {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .weight(1f),
-                contentAlignment = Alignment.Center
-            ) {
-                Text("Select a season")
+            if (ratings.isNotEmpty()) {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                ) {
+                    items(ratings) { rating ->
+                        RatingItem(rating)
+                    }
+                }
+            } else {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .weight(1f),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text("Select a season")
+                }
             }
         }
     }
@@ -111,8 +117,10 @@ fun RatingItem(rating: RatingUniversal) {
                 val roleName = role.name.lowercase().replaceFirstChar { it.uppercaseChar() }
                 val wins = rating.winByRole.find { it.first == role.sheetValue }?.second ?: 0
                 val games = rating.gamesByRole.find { it.first == role.sheetValue }?.second ?: 0
-                val add = rating.additionalPointsByRole.find { it.first == role.sheetValue }?.second ?: 0f
-                val winRatePercent = if (games > 0) (wins.toFloat() / games * 100).roundToInt() else 0
+                val add =
+                    rating.additionalPointsByRole.find { it.first == role.sheetValue }?.second ?: 0f
+                val winRatePercent =
+                    if (games > 0) (wins.toFloat() / games * 100).roundToInt() else 0
 
                 Text("$roleName: $wins wins / $games games, $winRatePercent% winrate, ${add.roundTo2Digits()} Add. Points")
             }

@@ -2,9 +2,10 @@ package com.example.familymafiaapp.ui.home
 
 import androidx.lifecycle.ViewModel
 import com.example.familymafiaapp.enums.Role
-import com.example.familymafiaapp.entities.Game
-import com.example.familymafiaapp.entities.PlayerData
-import com.example.familymafiaapp.entities.seasons.RatingUniversal
+import com.example.familymafiaapp.entities.seasons.season0and1.GameSeason0And1
+import com.example.familymafiaapp.entities.seasons.season0and1.PlayerDataSeason0And1
+import com.example.familymafiaapp.entities.seasons.season2.PlayerDataSeason2
+import com.example.familymafiaapp.entities.RatingUniversal
 import com.example.familymafiaapp.enums.Season
 import com.example.familymafiaapp.enums.Values
 import com.example.familymafiaapp.extensions.roundTo2Digits
@@ -12,11 +13,15 @@ import com.google.gson.reflect.TypeToken
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlin.math.roundToInt
 
 class HomeViewModel : ViewModel() {
 
     private val _ratings = MutableStateFlow<List<RatingUniversal>>(emptyList())
     val ratings: StateFlow<List<RatingUniversal>> = _ratings
+
+    private val _debugText = MutableStateFlow<String>("")
+    val debugText: StateFlow<String> = _debugText
 
 //    private val service = GoogleSheetService.create()
 
@@ -25,22 +30,30 @@ class HomeViewModel : ViewModel() {
             when (season) {
                 Season.SEASON_0 -> loadSeason0and1(season, fileContent)
                 Season.SEASON_1 -> loadSeason0and1(season, fileContent)
+                Season.SEASON_2 -> loadSeason2(season, fileContent)
             }
         } else {
 //            loadDataFromServer()
         }
     }
 
-    private fun loadSeason0and1(season: Season, fileContent: String) {
-        val rawData = loadDataFromFile(fileContent)
+    private fun loadSeason2(season: Season, fileContent: String) {
+        val rawData = parseJsonList<PlayerDataSeason2>(fileContent)
             .filter { it.number.toIntOrNull() != null }
-        val gamesData = getGamesData(rawData)
+        _debugText.value = rawData.toString()
+        val gamesData = getGamesDataSeason2(rawData)
+    }
+
+    private fun loadSeason0and1(season: Season, fileContent: String) {
+        val rawData = parseJsonList<PlayerDataSeason0And1>(fileContent)
+            .filter { it.number.toIntOrNull() != null }
+        val gamesData = getGamesDataSeason0And1(rawData)
         val playersList = getPlayersList(rawData)
         val ratings = playersList.map { player ->
             val gamesForPlayer = gamesData.filter { it.players.contains(player) }
             val gamesPlayed = gamesForPlayer.size
             val firstKilled = gamesForPlayer.filter { it.isFirstKilled(player) }.size
-            val firstKilledCityLost = gamesForPlayer.filter { it.isFirstKilled(player) && !(it.cityWon ?: false) }.size
+            val firstKilledCityLost = gamesForPlayer.filter { it.isFirstKilled(player) && it.cityWon != true }.size
             val gamesAsRed = getGamesForRole(gamesForPlayer, player, Role.SHERIFF).size + getGamesForRole(gamesForPlayer, player, Role.CIVILIAN).size
             val fullGamesForRole = Role.entries.map { role ->
                 Pair(role.sheetValue, getGamesForRole(gamesForPlayer, player, role))
@@ -101,7 +114,7 @@ class HomeViewModel : ViewModel() {
                 (winByRoleSum - loseByRoleSum - penaltyPointsByRoleSum + additionalPointsByRoleSum)
 
             val mvp = (winPoints / gamesPlayed).roundTo2Digits()
-            val ratingCoefficient = Math.round(mvp * 100 + gamesPlayed * 0.25F)
+            val ratingCoefficient = (mvp * 100 + gamesPlayed * 0.25F).roundToInt()
 
             val wins = winByRole.sumOf { it.second }
 
@@ -135,20 +148,20 @@ class HomeViewModel : ViewModel() {
             role
         )?.sheetValue == Role.SHERIFF.sheetValue
 
-    private fun getGamesForRole(gamesForPlayer: List<Game>, player: String, role: Role) =
+    private fun getGamesForRole(gamesForPlayer: List<GameSeason0And1>, player: String, role: Role) =
         gamesForPlayer.filter {
             it.getPlayerRole(player) == role.sheetValue
         }
 
-    private fun getPlayersList(rawData: List<PlayerData>) = rawData
+    private fun getPlayersList(rawData: List<PlayerDataSeason0And1>) = rawData
         // Рауль had excluded himself from the 0th season
         .filter { it.player != "Рауль" }
         .groupBy { it.player }.keys
 
-    private fun getGamesData(rawData: List<PlayerData>) = rawData.chunked(10)
+    private fun getGamesDataSeason0And1(rawData: List<PlayerDataSeason0And1>) = rawData.chunked(10)
         .map { playersInfo ->
             val firstPlayer = playersInfo.first()
-            Game(
+            GameSeason0And1(
                 playersInfo.map { it.player },
                 playersInfo.map { it.role },
                 playersInfo.map { it.won },
@@ -164,12 +177,32 @@ class HomeViewModel : ViewModel() {
             )
         }
 
-    private fun loadDataFromFile(fileContent: String): List<PlayerData> = try {
-        val listType = object : TypeToken<List<PlayerData>>() {}.type
-        val players = Gson().fromJson<List<PlayerData>>(fileContent, listType)
-        players
-    } catch (e: Exception) {
-        emptyList()
+    private fun getGamesDataSeason2(rawData: List<PlayerDataSeason2>) = rawData.chunked(10)
+        .map { playersInfo ->
+            val firstPlayer = playersInfo.first()
+            GameSeason0And1(
+                playersInfo.map { it.player },
+                playersInfo.map { it.role },
+                playersInfo.map { it.won },
+                if (Role.findByValue(firstPlayer.role)!!.isBlack) {
+                    firstPlayer.won != Values.YES.sheetValue
+                } else {
+                    firstPlayer.won == Values.YES.sheetValue
+                },
+                 0,
+                playersInfo.find { it.bestMovePoints.isNotEmpty() }?.bestMovePoints?.toFloat()
+                    ?: 0.0F,
+                emptyList()
+            )
+        }
+
+    inline fun <reified T> parseJsonList(json: String): List<T> {
+        return try {
+            val type = object : TypeToken<List<T>>() {}.type
+            Gson().fromJson(json, type)
+        } catch (e: Exception) {
+            emptyList()
+        }
     }
 
 //    private fun loadDataFromServer() {
