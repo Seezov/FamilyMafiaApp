@@ -1,4 +1,4 @@
-package com.example.familymafiaapp.entities.seasons.season0and1
+package com.example.familymafiaapp.entities.seasons.season0And1
 
 import com.google.gson.annotations.SerializedName
 

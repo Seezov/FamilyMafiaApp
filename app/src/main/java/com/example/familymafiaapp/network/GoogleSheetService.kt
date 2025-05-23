@@ -1,6 +1,6 @@
 package com.example.familymafiaapp.network
 
-import com.example.familymafiaapp.entities.seasons.season0and1.PlayerDataSeason0And1
+import com.example.familymafiaapp.entities.seasons.season0And1.PlayerDataSeason0And1
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

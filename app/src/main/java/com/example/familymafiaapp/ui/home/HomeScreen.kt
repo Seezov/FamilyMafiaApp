@@ -103,13 +103,13 @@ fun RatingItem(rating: RatingUniversal) {
             Spacer(Modifier.height(8.dp))
 
             Text("Rating Coefficient: ${rating.ratingCoefficient}")
-            Text("Wins: ${rating.wins} / Games: ${rating.gamesPlayed} (${(rating.winRate * 100).roundToInt()}%)")
+            Text("Wins: ${rating.wins} / Games: ${rating.gamesPlayed} (${(rating.winRate * 100).roundTo2Digits()}%)")
             Text("MVP: ${rating.mvp.roundTo2Digits()}")
             Text("CI/Game: ${rating.ciForGame.roundTo2Digits()} | CI: ${rating.ci.roundTo2Digits()}")
             Text("Add. Points: ${rating.additionalPoints.roundTo2Digits()} | Penalty: ${rating.penaltyPoints.roundTo2Digits()}")
             Text("Best Move Points: ${rating.bestMovePoints.roundTo2Digits()}")
             Text("First Killed: ${rating.firstKilled} (City Lost: ${rating.firstKilledCityLost})")
-            Text("Death percentage: ${(rating.percentOfDeath * 100).roundToInt()}%")
+            Text("Death percentage: ${(rating.percentOfDeath * 100).roundTo2Digits()}%")
 
             Spacer(Modifier.height(8.dp))
 
@@ -120,7 +120,7 @@ fun RatingItem(rating: RatingUniversal) {
                 val add =
                     rating.additionalPointsByRole.find { it.first == role.sheetValue }?.second ?: 0f
                 val winRatePercent =
-                    if (games > 0) (wins.toFloat() / games * 100).roundToInt() else 0
+                    if (games > 0) (wins.toFloat() / games * 100).roundTo2Digits() else 0
 
                 Text("$roleName: $wins wins / $games games, $winRatePercent% winrate, ${add.roundTo2Digits()} Add. Points")
             }

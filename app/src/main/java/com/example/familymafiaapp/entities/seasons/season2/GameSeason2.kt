@@ -1,32 +1,23 @@
 package com.example.familymafiaapp.entities.seasons.season2
 
+import com.example.familymafiaapp.entities.seasons.GameSeason
 import com.example.familymafiaapp.enums.Role
 import com.example.familymafiaapp.enums.Values
 
-data class GameSeason2(
-    val players: List<String>,
-    val roles: List<String>,
+class GameSeason2(
+    players: List<String>,
+    roles: List<String>,
+    cityWon: Boolean?,
+    firstKilled: Int,
+    bestMovePoints: Float,
     val fouls: List<String>,
-    // True if city won
-    // False if mafia won
-    // Null if non rating game
-    val cityWon: Boolean?,
-    val firstKilled: Int,
     val bestMove: List<Int>,
-    val bestMovePoints: Float,
-    val additionalPoints: List<Float>?
-) {
-    fun getPlayerRole(player: String): String = roles[players.indexOf(player)]
+    val additionalPoints: List<Float>,
+): GameSeason(players, roles, cityWon, firstKilled, bestMovePoints)  {
     fun getPlayerAdditionalPoints(player: String): Float =
-        additionalPoints?.get(players.indexOf(player)) ?: 0F
+        additionalPoints[players.indexOf(player)]
 
-    fun hasPlayerWon(player: String): Boolean = cityWon?.let {
-        if (Role.findByValue(getPlayerRole(player))!!.isBlack) {
-            !cityWon
-        } else {
-            cityWon
-        }
-    } == true
+    fun getPlayerFouls(player: String): Int =
+        fouls[players.indexOf(player)].toIntOrNull() ?: 0
 
-    fun isFirstKilled(player: String): Boolean = players.indexOf(player) + 1 == firstKilled
 }
