@@ -6,6 +6,7 @@ import com.example.familymafiaapp.entities.seasons.season0and1.GameSeason0And1
 import com.example.familymafiaapp.entities.seasons.season0and1.PlayerDataSeason0And1
 import com.example.familymafiaapp.entities.seasons.season2.PlayerDataSeason2
 import com.example.familymafiaapp.entities.RatingUniversal
+import com.example.familymafiaapp.entities.seasons.season2.GameSeason2
 import com.example.familymafiaapp.enums.Season
 import com.example.familymafiaapp.enums.Values
 import com.example.familymafiaapp.extensions.roundTo2Digits
@@ -40,8 +41,8 @@ class HomeViewModel : ViewModel() {
     private fun loadSeason2(season: Season, fileContent: String) {
         val rawData = parseJsonList<PlayerDataSeason2>(fileContent)
             .filter { it.number.toIntOrNull() != null }
-        _debugText.value = rawData.toString()
         val gamesData = getGamesDataSeason2(rawData)
+        _debugText.value = gamesData.toString()
     }
 
     private fun loadSeason0and1(season: Season, fileContent: String) {
@@ -179,21 +180,32 @@ class HomeViewModel : ViewModel() {
 
     private fun getGamesDataSeason2(rawData: List<PlayerDataSeason2>) = rawData.chunked(10)
         .map { playersInfo ->
-            val firstPlayer = playersInfo.first()
-            GameSeason0And1(
+            GameSeason2(
                 playersInfo.map { it.player },
                 playersInfo.map { it.role },
-                playersInfo.map { it.won },
-                if (Role.findByValue(firstPlayer.role)!!.isBlack) {
-                    firstPlayer.won != Values.YES.sheetValue
-                } else {
-                    firstPlayer.won == Values.YES.sheetValue
-                },
-                 0,
-                playersInfo.find { it.bestMovePoints.isNotEmpty() }?.bestMovePoints?.toFloat()
-                    ?: 0.0F,
-                emptyList()
+                playersInfo.map { it.fouls },
+                getVictoryTeam(playersInfo[0].c),
+                playersInfo[1].c.toIntOrNull() ?: 0,
+                listOf(
+                    playersInfo[3].c.toIntOrNull() ?: 0,
+                    playersInfo[3].d.toIntOrNull() ?: 0,
+                    playersInfo[3].e.toIntOrNull() ?: 0,
+                ),
+                playersInfo[1].c.toIntOrNull()?.let { firstKilled ->
+                    if (firstKilled == 0) {
+                        0f
+                    } else {
+                        playersInfo.map { it.bestMovePoints }[firstKilled-1].toFloat()
+                    }
+                } ?: 0F,
+                playersInfo.map { it.additionalPoints.toFloatOrNull() ?: 0F }
             )
+        }
+
+    private fun getVictoryTeam(string: String): Boolean? = when (string) {
+            Values.MAFIA_WON.sheetValue -> false
+            Values.CITY_WON.sheetValue -> true
+            else -> null
         }
 
     inline fun <reified T> parseJsonList(json: String): List<T> {

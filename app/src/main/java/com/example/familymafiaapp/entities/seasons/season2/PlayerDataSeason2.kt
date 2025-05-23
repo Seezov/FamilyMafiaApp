@@ -12,8 +12,8 @@ data class PlayerDataSeason2(
     @SerializedName("Игрок") val player: String = "",
     @SerializedName("Роль") val role: String = "",
     @SerializedName("Победил") val won: String = "",
-    @SerializedName("ЛХ") val bestMove: String = "",
-    @SerializedName("ЛИ") val bestMovePoints: String = "",
+    @SerializedName("ЛХ") val bestMovePoints: String = "",
+    @SerializedName("ЛИ") val additionalPoints: String = "",
     @SerializedName("X") val x: String = "",
     @SerializedName("Рейтинг") val rating: String = ""
 )
