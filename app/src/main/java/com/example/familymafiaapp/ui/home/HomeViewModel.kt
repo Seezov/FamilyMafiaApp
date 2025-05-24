@@ -37,10 +37,7 @@ class HomeViewModel : ViewModel() {
             when (season) {
                 Season.SEASON_0 -> loadSeason0and1(season, fileContent)
                 Season.SEASON_1 -> loadSeason0and1(season, fileContent)
-                Season.SEASON_2 -> loadSeason2And3(season, fileContent)
-                Season.SEASON_3 -> loadSeason2And3(season, fileContent)
-                Season.SEASON_4 -> loadSeason2And3(season, fileContent)
-                Season.SEASON_5 -> loadSeason2And3(season, fileContent)
+                Season.SEASON_2, Season.SEASON_3,Season.SEASON_4, Season.SEASON_5, Season.SEASON_6 -> loadSeason2And3(season, fileContent)
             }
         } else {
 //            loadDataFromServer()
@@ -146,7 +143,7 @@ class HomeViewModel : ViewModel() {
             Season.SEASON_4 -> {
                 (winPoints/gamesPlayed + gamesPlayed * season.gamesMultiplier)*100
             }
-            Season.SEASON_5 -> {
+            Season.SEASON_5, Season.SEASON_6 -> {
                 (winPoints/gamesPlayed + gamesPlayed * (winRate*100).roundTo2Digits() / 100 * season.gamesMultiplier)*100
             }
         }.roundTo2Digits()
@@ -166,11 +163,10 @@ class HomeViewModel : ViewModel() {
             Season.SEASON_2,Season.SEASON_3 -> {
                 wins * 2
             }
-            Season.SEASON_4, Season.SEASON_5 -> {
+            Season.SEASON_4, Season.SEASON_5, Season.SEASON_6 -> {
                 wins
             }
         }
-
 
     private fun loadSeason0and1(season: Season, fileContent: String) {
         val rawData = parseJsonList<PlayerDataSeason0And1>(fileContent)
