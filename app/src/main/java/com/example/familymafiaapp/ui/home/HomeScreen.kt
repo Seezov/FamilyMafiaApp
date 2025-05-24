@@ -23,6 +23,7 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -45,6 +46,12 @@ fun HomeScreen(homeViewModel: HomeViewModel) {
     val selectedSeason by homeViewModel.selectedSeason.collectAsState()
     val debugText by homeViewModel.debugText.collectAsState()
 
+    LaunchedEffect(Unit) {
+        val season = Season.entries.last()
+        val json = readJsonFromAssets(context, season.jsonFileRes)
+        homeViewModel.loadDataBySeason(season, json)
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -57,7 +64,7 @@ fun HomeScreen(homeViewModel: HomeViewModel) {
                 .padding(bottom = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Season.entries.forEach { season ->
+            Season.entries.reversed().forEach { season ->
                 Button(onClick = {
                     val json = readJsonFromAssets(context, season.jsonFileRes)
                     homeViewModel.loadDataBySeason(season, json)
