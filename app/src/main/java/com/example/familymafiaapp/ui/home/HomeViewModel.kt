@@ -40,6 +40,7 @@ class HomeViewModel : ViewModel() {
                 Season.SEASON_2 -> loadSeason2And3(season, fileContent)
                 Season.SEASON_3 -> loadSeason2And3(season, fileContent)
                 Season.SEASON_4 -> loadSeason2And3(season, fileContent)
+                Season.SEASON_5 -> loadSeason2And3(season, fileContent)
             }
         } else {
 //            loadDataFromServer()
@@ -104,18 +105,16 @@ class HomeViewModel : ViewModel() {
             val winPoints = winByRoleSum + additionalPointsByRoleSum + bestMovePointsByRoleSum - penaltyPointsByRoleSum
             Log.d(TAG, player)
             val mvp = ((additionalPointsByRoleSum + bestMovePointsByRoleSum).toFloat() / gamesPlayed).roundTo2Digits()
-
-            val ratingCoefficient = calculateRatingCoefficient(winPoints, gamesPlayed, season)
-
             val wins = winByRole.sumOf { it.second }
-
+            val winRate = wins.toFloat()/gamesPlayed
+            val ratingCoefficient = calculateRatingCoefficient(winPoints, gamesPlayed, winRate, season)
             val gamesForRole = fullGamesForRole.map { it.first to it.second.size }
             RatingUniversal(
                 player = player,
                 ratingCoefficient = ratingCoefficient,
                 wins = wins,
                 gamesPlayed = gamesPlayed,
-                winRate = wins.toFloat()/gamesPlayed,
+                winRate = winRate,
                 additionalPoints = additionalPointsByRoleSum,
                 penaltyPoints = penaltyPointsByRoleSum,
                 bestMovePoints = bestMovePointsByRoleSum,
@@ -135,6 +134,7 @@ class HomeViewModel : ViewModel() {
     private fun calculateRatingCoefficient(
         winPoints: Float,
         gamesPlayed: Int,
+        winRate: Float,
         season: Season
     ) = when(season) {
             Season.SEASON_0, Season.SEASON_1 -> {
@@ -145,6 +145,9 @@ class HomeViewModel : ViewModel() {
             }
             Season.SEASON_4 -> {
                 (winPoints/gamesPlayed + gamesPlayed * season.gamesMultiplier)*100
+            }
+            Season.SEASON_5 -> {
+                (winPoints/gamesPlayed + gamesPlayed * (winRate*100).roundTo2Digits() / 100 * season.gamesMultiplier)*100
             }
         }.roundTo2Digits()
 
@@ -163,7 +166,7 @@ class HomeViewModel : ViewModel() {
             Season.SEASON_2,Season.SEASON_3 -> {
                 wins * 2
             }
-            Season.SEASON_4 -> {
+            Season.SEASON_4, Season.SEASON_5 -> {
                 wins
             }
         }
@@ -239,11 +242,10 @@ class HomeViewModel : ViewModel() {
                 }.sum()
             val winPoints =
                 (winByRoleSum - loseByRoleSum - penaltyPointsByRoleSum + additionalPointsByRoleSum)
-
-            val mvp = (winPoints / gamesPlayed).roundTo2Digits()
-            val ratingCoefficient = calculateRatingCoefficient(winPoints, gamesPlayed, season)
-
             val wins = winByRole.sumOf { it.second }
+            val mvp = (winPoints / gamesPlayed).roundTo2Digits()
+            val winRate = wins.toFloat()/gamesPlayed
+            val ratingCoefficient = calculateRatingCoefficient(winPoints, gamesPlayed, winRate, season)
 
             val gamesForRole = fullGamesForRole.map { it.first to it.second.size }
             RatingUniversal(
@@ -251,7 +253,7 @@ class HomeViewModel : ViewModel() {
                 ratingCoefficient = ratingCoefficient,
                 wins = wins,
                 gamesPlayed = gamesPlayed,
-                winRate = wins.toFloat()/gamesPlayed,
+                winRate = winRate,
                 additionalPoints = additionalPointsByRoleSum,
                 penaltyPoints = penaltyPointsByRoleSum,
                 firstKilled = firstKilled,
