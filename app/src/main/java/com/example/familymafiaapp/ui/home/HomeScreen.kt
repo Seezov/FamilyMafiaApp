@@ -3,6 +3,7 @@ package com.example.familymafiaapp.ui.home
 import android.content.Context
 import android.widget.Toast
 import androidx.annotation.RawRes
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -33,12 +35,14 @@ import com.example.familymafiaapp.entities.RatingUniversal
 import com.example.familymafiaapp.enums.Role
 import com.example.familymafiaapp.enums.Season
 import com.example.familymafiaapp.extensions.roundTo2Digits
+import org.intellij.lang.annotations.JdkConstants
 import kotlin.math.roundToInt
 
 @Composable
 fun HomeScreen(homeViewModel: HomeViewModel) {
     val context = LocalContext.current
     val ratings by homeViewModel.ratings.collectAsState()
+    val selectedSeason by homeViewModel.selectedSeason.collectAsState()
     val debugText by homeViewModel.debugText.collectAsState()
 
     Column(
@@ -49,6 +53,7 @@ fun HomeScreen(homeViewModel: HomeViewModel) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .horizontalScroll(rememberScrollState())
                 .padding(bottom = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
@@ -65,6 +70,15 @@ fun HomeScreen(homeViewModel: HomeViewModel) {
         if (debugText.isNotEmpty()) {
             Text(debugText)
         } else {
+            selectedSeason?.let {
+                Text(
+                    text = it.title,
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier
+                        .padding(vertical = 8.dp)
+                        .align(Alignment.CenterHorizontally)
+                )
+            }
             if (ratings.isNotEmpty()) {
                 LazyColumn(
                     modifier = Modifier

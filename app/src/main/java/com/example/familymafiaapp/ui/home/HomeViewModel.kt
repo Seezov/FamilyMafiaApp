@@ -23,12 +23,16 @@ class HomeViewModel : ViewModel() {
     private val _ratings = MutableStateFlow<List<RatingUniversal>>(emptyList())
     val ratings: StateFlow<List<RatingUniversal>> = _ratings
 
+    private val _selectedSeason = MutableStateFlow<Season?>(null)
+    val selectedSeason: StateFlow<Season?> = _selectedSeason
+
     private val _debugText = MutableStateFlow<String>("")
     val debugText: StateFlow<String> = _debugText
 
 //    private val service = GoogleSheetService.create()
 
     fun loadDataBySeason(season: Season, fileContent: String) {
+        _selectedSeason.value = season
         if (fileContent.isNotEmpty()) {
             when (season) {
                 Season.SEASON_0 -> loadSeason0and1(season, fileContent)
