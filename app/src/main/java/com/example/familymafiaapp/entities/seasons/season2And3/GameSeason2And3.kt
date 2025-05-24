@@ -1,10 +1,8 @@
-package com.example.familymafiaapp.entities.seasons.season2
+package com.example.familymafiaapp.entities.seasons.season2And3
 
 import com.example.familymafiaapp.entities.seasons.GameSeason
-import com.example.familymafiaapp.enums.Role
-import com.example.familymafiaapp.enums.Values
 
-class GameSeason2(
+class GameSeason2And3(
     players: List<String>,
     roles: List<String>,
     cityWon: Boolean?,

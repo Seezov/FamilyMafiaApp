@@ -6,10 +6,10 @@ import com.example.familymafiaapp.R
 import com.example.familymafiaapp.enums.Role
 import com.example.familymafiaapp.entities.seasons.season0And1.GameSeason0And1
 import com.example.familymafiaapp.entities.seasons.season0And1.PlayerDataSeason0And1
-import com.example.familymafiaapp.entities.seasons.season2.PlayerDataSeason2
+import com.example.familymafiaapp.entities.seasons.season2And3.PlayerDataSeason2And3
 import com.example.familymafiaapp.entities.RatingUniversal
 import com.example.familymafiaapp.entities.seasons.GameSeason
-import com.example.familymafiaapp.entities.seasons.season2.GameSeason2
+import com.example.familymafiaapp.entities.seasons.season2And3.GameSeason2And3
 import com.example.familymafiaapp.enums.Season
 import com.example.familymafiaapp.enums.Values
 import com.example.familymafiaapp.extensions.roundTo2Digits
@@ -33,18 +33,19 @@ class HomeViewModel : ViewModel() {
             when (season) {
                 Season.SEASON_0 -> loadSeason0and1(season, fileContent)
                 Season.SEASON_1 -> loadSeason0and1(season, fileContent)
-                Season.SEASON_2 -> loadSeason2(season, fileContent)
+                Season.SEASON_2 -> loadSeason2And3(season, fileContent)
+                Season.SEASON_3 -> loadSeason2And3(season, fileContent)
             }
         } else {
 //            loadDataFromServer()
         }
     }
 
-    private fun loadSeason2(season: Season, fileContent: String) {
-        val rawData = parseJsonList<PlayerDataSeason2>(fileContent)
+    private fun loadSeason2And3(season: Season, fileContent: String) {
+        val rawData = parseJsonList<PlayerDataSeason2And3>(fileContent)
             .filter { it.number.toIntOrNull() != null }
         val gamesData = getGamesDataSeason2(rawData).filter { it.isRatingGame() }
-        val playersList = getPlayersListSeason2(rawData)
+        val playersList = getPlayersListSeason2And3(rawData)
         val ratings = playersList.map { player ->
             val gamesForPlayer = gamesData.filter { it.players.contains(player) }
             val gamesPlayed = gamesForPlayer.size
@@ -98,7 +99,7 @@ class HomeViewModel : ViewModel() {
             val winPoints = winByRoleSum + additionalPointsByRoleSum + bestMovePointsByRoleSum - penaltyPointsByRoleSum
             Log.d(TAG, player)
             val mvp = ((additionalPointsByRoleSum + bestMovePointsByRoleSum).toFloat() / gamesPlayed).roundTo2Digits()
-            val ratingCoefficient = (winPoints/gamesPlayed + gamesPlayed * 0.02F).roundTo2Digits()
+            val ratingCoefficient = (winPoints/gamesPlayed + gamesPlayed * season.gamesMultiplier).roundTo2Digits()
 
             val wins = winByRole.sumOf { it.second }
 
@@ -201,7 +202,7 @@ class HomeViewModel : ViewModel() {
                 (winByRoleSum - loseByRoleSum - penaltyPointsByRoleSum + additionalPointsByRoleSum)
 
             val mvp = (winPoints / gamesPlayed).roundTo2Digits()
-            val ratingCoefficient = (mvp * 100 + gamesPlayed * 0.25F).roundTo2Digits()
+            val ratingCoefficient = (mvp * 100 + gamesPlayed * season.gamesMultiplier).roundTo2Digits()
 
             val wins = winByRole.sumOf { it.second }
 
@@ -240,7 +241,7 @@ class HomeViewModel : ViewModel() {
     private fun getPlayersListSeason1(rawData: List<PlayerDataSeason0And1>) = rawData
         .groupBy { it.player }.keys
 
-    private fun getPlayersListSeason2(rawData: List<PlayerDataSeason2>) = rawData
+    private fun getPlayersListSeason2And3(rawData: List<PlayerDataSeason2And3>) = rawData
         .groupBy { it.player }.keys
 
     private fun getGamesDataSeason0And1(rawData: List<PlayerDataSeason0And1>) = rawData.chunked(10)
@@ -262,28 +263,32 @@ class HomeViewModel : ViewModel() {
             )
         }
 
-    private fun getGamesDataSeason2(rawData: List<PlayerDataSeason2>) = rawData.chunked(10)
+    private fun getGamesDataSeason2(rawData: List<PlayerDataSeason2And3>) = rawData.chunked(10)
         .map { playersInfo ->
-            GameSeason2(
-                playersInfo.map { it.player },
-                playersInfo.map { it.role },
-                getVictoryTeam(playersInfo[0].c),
-                playersInfo[1].c.toIntOrNull() ?: 0,
-
-                playersInfo[1].c.toIntOrNull()?.let { firstKilled ->
+            GameSeason2And3(
+                players = playersInfo.map { it.player },
+                roles = playersInfo.map { it.role },
+                cityWon = getVictoryTeam(playersInfo[0].c),
+                firstKilled = playersInfo[1].c.toIntOrNull() ?: 0,
+                bestMovePoints = playersInfo[1].c.toIntOrNull()?.let { firstKilled ->
                     if (firstKilled == 0) {
                         0f
                     } else {
-                        playersInfo.map { it.bestMovePoints }[firstKilled-1].toFloat()
+                        try {
+                            playersInfo.map { it.bestMovePoints }[firstKilled-1].toFloat()
+                        } catch (e: Exception) {
+                            val a = 1
+                            0f
+                        }
                     }
                 } ?: 0F,
-                playersInfo.map { it.fouls },
-                listOf(
+                fouls = playersInfo.map { it.fouls },
+                bestMove = listOf(
                     playersInfo[3].c.toIntOrNull() ?: 0,
                     playersInfo[3].d.toIntOrNull() ?: 0,
                     playersInfo[3].e.toIntOrNull() ?: 0,
                 ),
-                playersInfo.map { it.additionalPoints.toFloatOrNull() ?: 0F }
+                additionalPoints = playersInfo.map { it.additionalPoints.toFloatOrNull() ?: 0F }
             )
         }
 
