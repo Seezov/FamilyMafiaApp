@@ -1,6 +1,7 @@
 package com.example.familymafiaapp.entities.seasons.season2And3
 
 import com.example.familymafiaapp.entities.seasons.GameSeason
+import com.example.familymafiaapp.enums.Role
 
 class GameSeason2And3(
     players: List<String>,
@@ -18,4 +19,5 @@ class GameSeason2And3(
     fun getPlayerFouls(player: String): Int =
         fouls[players.indexOf(player)].toIntOrNull() ?: 0
 
+    fun isNormalGame(): Boolean = roles.containsAll(Role.entries.map { it.sheetValue })
 }
