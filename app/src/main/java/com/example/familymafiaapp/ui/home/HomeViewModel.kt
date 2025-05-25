@@ -48,6 +48,11 @@ class HomeViewModel : ViewModel() {
         val rawData = parseJsonList<PlayerDataSeason2And3>(fileContent)
             .filter { it.number.toIntOrNull() != null }
         val gamesData = getGamesDataSeason2(rawData).filter { it.isRatingGame() }
+        gamesData.forEachIndexed { index, game  ->
+            if (!game.isNormalGame()) {
+                throw Exception("is not normal game #$index ${game.players}")
+            }
+        }
         val playersList = getPlayersListSeason2And3(rawData)
         val ratings = playersList.map { player ->
             val gamesForPlayer = gamesData.filter { it.players.contains(player) }
