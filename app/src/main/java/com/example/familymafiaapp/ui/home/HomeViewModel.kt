@@ -46,6 +46,7 @@ class HomeViewModel : ViewModel() {
                 Season.SEASON_8,
                 Season.SEASON_9,
                 Season.SEASON_10,
+                Season.SEASON_11,
                     -> loadSeason2And3(season, fileContent)
             }
         } else {
@@ -163,7 +164,7 @@ class HomeViewModel : ViewModel() {
             (winPoints / gamesPlayed + gamesPlayed * season.gamesMultiplier) * 100
         }
 
-        Season.SEASON_5, Season.SEASON_6, Season.SEASON_7, Season.SEASON_8, Season.SEASON_9, Season.SEASON_10 -> {
+        Season.SEASON_5, Season.SEASON_6, Season.SEASON_7, Season.SEASON_8, Season.SEASON_9, Season.SEASON_10, Season.SEASON_11 -> {
             (winPoints / gamesPlayed + gamesPlayed * (winRate * 100).roundTo2Digits() / 100 * season.gamesMultiplier) * 100
         }
     }.roundTo2Digits()
@@ -185,7 +186,7 @@ class HomeViewModel : ViewModel() {
             wins * 2
         }
 
-        Season.SEASON_4, Season.SEASON_5, Season.SEASON_6, Season.SEASON_7, Season.SEASON_8, Season.SEASON_9, Season.SEASON_10 -> {
+        Season.SEASON_4, Season.SEASON_5, Season.SEASON_6, Season.SEASON_7, Season.SEASON_8, Season.SEASON_9, Season.SEASON_10, Season.SEASON_11 -> {
             wins
         }
     }
