@@ -37,6 +37,7 @@ class HomeViewModel : ViewModel() {
                 Season.SEASON_0,
                 Season.SEASON_1
                     -> loadSeason0and1(season, fileContent)
+
                 Season.SEASON_2,
                 Season.SEASON_3,
                 Season.SEASON_4,
@@ -47,6 +48,7 @@ class HomeViewModel : ViewModel() {
                 Season.SEASON_9,
                 Season.SEASON_10,
                 Season.SEASON_11,
+                Season.SEASON_12,
                     -> loadSeason2And3(season, fileContent)
             }
         } else {
@@ -116,7 +118,9 @@ class HomeViewModel : ViewModel() {
                 it.second
             }.toFloat()
             val winPoints =
-                winByRoleSum + additionalPointsByRoleSum + bestMovePointsByRoleSum - penaltyPointsByRoleSum
+                winByRoleSum + additionalPointsByRoleSum + bestMovePointsByRoleSum - if (season == Season.SEASON_2 || season == Season.SEASON_3) {
+                    penaltyPointsByRoleSum
+                } else 0F
             val mvp =
                 ((additionalPointsByRoleSum + bestMovePointsByRoleSum).toFloat() / gamesPlayed).roundTo2Digits()
             val wins = winByRole.sumOf { it.second }
@@ -164,7 +168,7 @@ class HomeViewModel : ViewModel() {
             (winPoints / gamesPlayed + gamesPlayed * season.gamesMultiplier) * 100
         }
 
-        Season.SEASON_5, Season.SEASON_6, Season.SEASON_7, Season.SEASON_8, Season.SEASON_9, Season.SEASON_10, Season.SEASON_11 -> {
+        Season.SEASON_5, Season.SEASON_6, Season.SEASON_7, Season.SEASON_8, Season.SEASON_9, Season.SEASON_10, Season.SEASON_11, Season.SEASON_12 -> {
             (winPoints / gamesPlayed + gamesPlayed * (winRate * 100).roundTo2Digits() / 100 * season.gamesMultiplier) * 100
         }
     }.roundTo2Digits()
@@ -186,7 +190,7 @@ class HomeViewModel : ViewModel() {
             wins * 2
         }
 
-        Season.SEASON_4, Season.SEASON_5, Season.SEASON_6, Season.SEASON_7, Season.SEASON_8, Season.SEASON_9, Season.SEASON_10, Season.SEASON_11 -> {
+        Season.SEASON_4, Season.SEASON_5, Season.SEASON_6, Season.SEASON_7, Season.SEASON_8, Season.SEASON_9, Season.SEASON_10, Season.SEASON_11, Season.SEASON_12 -> {
             wins
         }
     }

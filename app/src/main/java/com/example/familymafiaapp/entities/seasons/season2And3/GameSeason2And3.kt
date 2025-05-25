@@ -22,6 +22,10 @@ class GameSeason2And3(
     fun isNormalGame(): Boolean =
         roles.count { it == Role.MAFIA.sheetValue } == 2 &&
                 roles.count { it == Role.SHERIFF.sheetValue } == 1 &&
-                roles.count { it == Role.DON.sheetValue } == 1
+                roles.count { it == Role.DON.sheetValue } == 1 &&
+                players.let {
+                    val set = it.toSet()
+                    it.size == set.size
+                }
 
 }
