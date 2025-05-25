@@ -23,4 +23,5 @@ class GameSeason2And3(
         roles.count { it == Role.MAFIA.sheetValue } == 2 &&
                 roles.count { it == Role.SHERIFF.sheetValue } == 1 &&
                 roles.count { it == Role.DON.sheetValue } == 1
+
 }
