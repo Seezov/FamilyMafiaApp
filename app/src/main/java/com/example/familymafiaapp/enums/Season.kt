@@ -18,4 +18,5 @@ enum class Season(val title: String, val jsonFileRes: Int, val gameLimit: Int, v
     SEASON_12("Season 12",R.raw.season12, 50, 0.004F),
     SEASON_13("Season 13",R.raw.season13, 40, 0.004F),
     SEASON_14("Season 14",R.raw.season14, 58, 0.004F),
+    SEASON_15("Season 15",R.raw.season15, 56, 0.004F),
 }
