@@ -139,10 +139,10 @@ fun RatingItem(rating: RatingUniversal) {
 
             Role.entries.forEach { role ->
                 val roleName = role.name.lowercase().replaceFirstChar { it.uppercaseChar() }
-                val wins = rating.winByRole.find { it.first == role.sheetValue }?.second ?: 0
-                val games = rating.gamesByRole.find { it.first == role.sheetValue }?.second ?: 0
+                val wins = rating.winByRole.find { role.sheetValue.contains(it.first) }?.second ?: 0
+                val games = rating.gamesByRole.find { role.sheetValue.contains(it.first) }?.second ?: 0
                 val add =
-                    rating.additionalPointsByRole.find { it.first == role.sheetValue }?.second ?: 0f
+                    rating.additionalPointsByRole.find { role.sheetValue.contains(it.first)}?.second ?: 0f
                 val winRatePercent =
                     if (games > 0) (wins.toFloat() / games * 100).roundTo2Digits() else 0
 
