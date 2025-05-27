@@ -50,6 +50,7 @@ class HomeViewModel : ViewModel() {
                 Season.SEASON_11,
                 Season.SEASON_12,
                 Season.SEASON_13,
+                Season.SEASON_14,
                     -> loadSeason2And3(season, fileContent)
             }
         } else {
@@ -157,11 +158,13 @@ class HomeViewModel : ViewModel() {
         winRate: Float,
         season: Season
     ) = when (season) {
-        Season.SEASON_0, Season.SEASON_1 -> {
+        Season.SEASON_0,
+        Season.SEASON_1 -> {
             (winPoints / gamesPlayed).roundTo2Digits() * 100 + gamesPlayed * season.gamesMultiplier
         }
 
-        Season.SEASON_2, Season.SEASON_3 -> {
+        Season.SEASON_2,
+        Season.SEASON_3 -> {
             winPoints / gamesPlayed + gamesPlayed * season.gamesMultiplier
         }
 
@@ -169,7 +172,16 @@ class HomeViewModel : ViewModel() {
             (winPoints / gamesPlayed + gamesPlayed * season.gamesMultiplier) * 100
         }
 
-        Season.SEASON_5, Season.SEASON_6, Season.SEASON_7, Season.SEASON_8, Season.SEASON_9, Season.SEASON_10, Season.SEASON_11, Season.SEASON_12, Season.SEASON_13 -> {
+        Season.SEASON_5,
+        Season.SEASON_6,
+        Season.SEASON_7,
+        Season.SEASON_8,
+        Season.SEASON_9,
+        Season.SEASON_10,
+        Season.SEASON_11,
+        Season.SEASON_12,
+        Season.SEASON_13,
+        Season.SEASON_14 -> {
             (winPoints / gamesPlayed + gamesPlayed * (winRate * 100).roundTo2Digits() / 100 * season.gamesMultiplier) * 100
         }
     }.roundTo2Digits()
@@ -179,7 +191,8 @@ class HomeViewModel : ViewModel() {
         role: String,
         wins: Int
     ) = when (season) {
-        Season.SEASON_0, Season.SEASON_1 -> {
+        Season.SEASON_0,
+        Season.SEASON_1 -> {
             if (playerIsDonOrSheriff(role)) {
                 wins * 4
             } else {
@@ -187,11 +200,22 @@ class HomeViewModel : ViewModel() {
             }
         }
 
-        Season.SEASON_2, Season.SEASON_3 -> {
+        Season.SEASON_2,
+        Season.SEASON_3 -> {
             wins * 2
         }
 
-        Season.SEASON_4, Season.SEASON_5, Season.SEASON_6, Season.SEASON_7, Season.SEASON_8, Season.SEASON_9, Season.SEASON_10, Season.SEASON_11, Season.SEASON_12, Season.SEASON_13 -> {
+        Season.SEASON_4,
+        Season.SEASON_5,
+        Season.SEASON_6,
+        Season.SEASON_7,
+        Season.SEASON_8,
+        Season.SEASON_9,
+        Season.SEASON_10,
+        Season.SEASON_11,
+        Season.SEASON_12,
+        Season.SEASON_13,
+        Season.SEASON_14 -> {
             wins
         }
     }
