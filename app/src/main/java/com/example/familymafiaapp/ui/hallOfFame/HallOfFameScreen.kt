@@ -1,4 +1,4 @@
-package com.example.familymafiaapp.ui.notifications
+package com.example.familymafiaapp.ui.hallOfFame
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,8 +8,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 @Composable
-fun NotificationsScreen(notificationsViewModel: NotificationsViewModel) {
+fun HallOfFameScreen(hallOfFameViewModel: HallOfFameViewModel) {
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("Notifications Screen")
+        Text("Hall Of Fame")
     }
 }

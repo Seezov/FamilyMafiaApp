@@ -1,14 +1,13 @@
 package com.example.familymafiaapp
 
-import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.Dashboard
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -24,10 +23,10 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.familymafiaapp.ui.dashboard.DashboardScreen
 import com.example.familymafiaapp.ui.dashboard.DashboardViewModel
+import com.example.familymafiaapp.ui.hallOfFame.HallOfFameScreen
 import com.example.familymafiaapp.ui.home.HomeScreen
 import com.example.familymafiaapp.ui.home.HomeViewModel
-import com.example.familymafiaapp.ui.notifications.NotificationsScreen
-import com.example.familymafiaapp.ui.notifications.NotificationsViewModel
+import com.example.familymafiaapp.ui.hallOfFame.HallOfFameViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,7 +40,7 @@ class MainActivity : ComponentActivity() {
 sealed class Screen(val route: String, val label: String, val icon: ImageVector) {
     object Home : Screen("home", "Home", Icons.Default.Home)
     object Dashboard : Screen("dashboard", "Dashboard", Icons.AutoMirrored.Filled.List)
-    object Notifications : Screen("notifications", "Notifications", Icons.Default.Notifications)
+    object HallOfFame : Screen("hallOfFame", "Hall Of Fame", Icons.Default.Dashboard)
 }
 
 @Composable
@@ -50,7 +49,7 @@ fun MyApp() {
     val items = listOf(
         Screen.Home,
         Screen.Dashboard,
-        Screen.Notifications
+        Screen.HallOfFame
     )
 
     Scaffold(
@@ -89,9 +88,9 @@ fun MyApp() {
                 val dashboardViewModel: DashboardViewModel = viewModel()
                 DashboardScreen(dashboardViewModel)
             }
-            composable(Screen.Notifications.route) {
-                val notificationsViewModel: NotificationsViewModel = viewModel()
-                NotificationsScreen(notificationsViewModel)
+            composable(Screen.HallOfFame.route) {
+                val hallOfFameViewModel: HallOfFameViewModel = viewModel()
+                HallOfFameScreen(hallOfFameViewModel)
             }
         }
     }

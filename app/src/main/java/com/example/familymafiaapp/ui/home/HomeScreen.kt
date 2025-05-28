@@ -48,9 +48,10 @@ fun HomeScreen(homeViewModel: HomeViewModel) {
     val debugText by homeViewModel.debugText.collectAsState()
 
     LaunchedEffect(Unit) {
-        val season = Season.entries.last()
-        val json = readJsonFromAssets(context, season.jsonFileRes)
-        homeViewModel.loadDataBySeason(season, json)
+        Season.entries.forEach {
+            val json = readJsonFromAssets(context, it.jsonFileRes)
+            homeViewModel.loadDataBySeason(it, json)
+        }
     }
 
     Column(
@@ -67,8 +68,7 @@ fun HomeScreen(homeViewModel: HomeViewModel) {
         ) {
             Season.entries.reversed().forEach { season ->
                 Button(onClick = {
-                    val json = readJsonFromAssets(context, season.jsonFileRes)
-                    homeViewModel.loadDataBySeason(season, json)
+                    homeViewModel.displaySeason(season)
                 }) {
                     Text(season.title)
                 }
