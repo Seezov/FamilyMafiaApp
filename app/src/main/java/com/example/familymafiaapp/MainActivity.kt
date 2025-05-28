@@ -91,8 +91,7 @@ fun MyApp() {
                 DashboardScreen(dashboardViewModel)
             }
             composable(Screen.HallOfFame.route) {
-                val hallOfFameViewModel: HallOfFameViewModel = viewModel()
-                HallOfFameScreen(hallOfFameViewModel)
+                HallOfFameScreen()
             }
         }
     }

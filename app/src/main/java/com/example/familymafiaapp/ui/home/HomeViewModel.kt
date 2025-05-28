@@ -1,6 +1,7 @@
 package com.example.familymafiaapp.ui.home
 
 import androidx.lifecycle.ViewModel
+import com.example.familymafiaapp.entities.Player
 import com.example.familymafiaapp.enums.Role
 import com.example.familymafiaapp.entities.seasons.season0And1.GameSeason0And1
 import com.example.familymafiaapp.entities.seasons.season0And1.PlayerDataSeason0And1
@@ -15,6 +16,7 @@ import com.example.familymafiaapp.entities.seasons.season2to16.GameSeason2to16
 import com.example.familymafiaapp.enums.Season
 import com.example.familymafiaapp.enums.Values
 import com.example.familymafiaapp.extensions.roundTo2Digits
+import com.example.familymafiaapp.repository.PlayersRepository
 import com.example.familymafiaapp.repository.RatingRepository
 import com.google.gson.reflect.TypeToken
 import com.google.gson.Gson
@@ -27,7 +29,8 @@ import kotlin.math.roundToInt
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val ratingRepository: RatingRepository
+    private val ratingRepository: RatingRepository,
+    private val playersRepository: PlayersRepository,
 ) : ViewModel() {
 
     private val _ratings = MutableStateFlow<List<RatingUniversal>>(emptyList())
@@ -41,8 +44,13 @@ class HomeViewModel @Inject constructor(
 
     fun displaySeason(season: Season) {
         _ratings.value =
-            ratingRepository.getRatingsForSeason(season)?.filter { it.gamesPlayed >= season.gameLimit }
-                ?.sortedByDescending { it.ratingCoefficient } ?: emptyList()
+            ratingRepository.getRatingsForSeason(season).filter { it.gamesPlayed >= season.gameLimit }
+                .sortedByDescending { it.ratingCoefficient }
+    }
+
+    fun loadPlayers(json: String) {
+        val players = parseJsonList<Player>(json)
+        playersRepository.addPlayers(players)
     }
 
     fun loadDataBySeason(season: Season, fileContent: String) {

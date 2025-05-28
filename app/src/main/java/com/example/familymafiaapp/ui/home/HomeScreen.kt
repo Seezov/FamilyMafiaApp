@@ -1,7 +1,6 @@
 package com.example.familymafiaapp.ui.home
 
 import android.content.Context
-import android.widget.Toast
 import androidx.annotation.RawRes
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -20,7 +19,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,17 +27,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.familymafiaapp.R
 import com.example.familymafiaapp.entities.RatingUniversal
 import com.example.familymafiaapp.enums.Role
 import com.example.familymafiaapp.enums.Season
 import com.example.familymafiaapp.extensions.roundTo2Digits
-import org.intellij.lang.annotations.JdkConstants
-import kotlin.math.roundToInt
 
 @Composable
 fun HomeScreen(homeViewModel: HomeViewModel = hiltViewModel()) {
@@ -49,6 +44,8 @@ fun HomeScreen(homeViewModel: HomeViewModel = hiltViewModel()) {
     val debugText by homeViewModel.debugText.collectAsState()
 
     LaunchedEffect(Unit) {
+        val json = readJsonFromAssets(context, R.raw.players)
+        homeViewModel.loadPlayers(json)
         Season.entries.forEach {
             val json = readJsonFromAssets(context, it.jsonFileRes)
             homeViewModel.loadDataBySeason(it, json)
@@ -150,20 +147,6 @@ fun RatingItem(rating: RatingUniversal) {
                 Text("$roleName: $wins wins / $games games, $winRatePercent% winrate, ${add.roundTo2Digits()} Add. Points")
             }
         }
-    }
-}
-
-@Composable
-fun CopyToClipboardButton(textToCopy: String) {
-    val context = LocalContext.current
-    val clipboardManager = LocalClipboardManager.current
-    val toastMessage = "Copied to clipboard"
-
-    Button(onClick = {
-        clipboardManager.setText(AnnotatedString(textToCopy))
-        Toast.makeText(context, toastMessage, Toast.LENGTH_SHORT).show()
-    }) {
-        Text("Copy")
     }
 }
 
