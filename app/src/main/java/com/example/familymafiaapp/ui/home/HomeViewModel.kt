@@ -60,6 +60,7 @@ class HomeViewModel : ViewModel() {
                 Season.SEASON_17,
                 Season.SEASON_18,
                 Season.SEASON_19,
+                Season.SEASON_20
                     -> loadSeason17to24(season, fileContent)
             }
         } else {
@@ -161,7 +162,7 @@ class HomeViewModel : ViewModel() {
     ): Float {
         return when (season) {
             Season.SEASON_17, Season.SEASON_18 -> firstKilledCityLost * 0.1.toFloat()
-            Season.SEASON_19 -> {
+            Season.SEASON_19, Season.SEASON_20 -> {
                 val firstKilledToGamesPlayed = firstKilled.toFloat()/gamesPlayed
                 if (firstKilledToGamesPlayed > 0.399) {
                     0.4 * firstKilledCityLost
@@ -181,7 +182,7 @@ class HomeViewModel : ViewModel() {
     ): Float {
         return when (season) {
             Season.SEASON_17, Season.SEASON_18 -> firstKilledCityLost * 0.1.toFloat()/gamesPlayed
-            Season.SEASON_19 -> {
+            Season.SEASON_19, Season.SEASON_20 -> {
                 val firstKilledToGamesPlayed = firstKilled.toFloat()/gamesPlayed
                 if (firstKilledToGamesPlayed > 0.399) {
                     0.4 * firstKilledCityLost
@@ -435,7 +436,7 @@ class HomeViewModel : ViewModel() {
         Season.SEASON_17 -> {
             winRate * 100 + (winPoints/gamesPlayed) + ci + bestMovePointsByRoleSum + autoAdditionalPointsByRoleSum + additionalPointsByRoleSum
         }
-        Season.SEASON_18, Season.SEASON_19 -> {
+        Season.SEASON_18, Season.SEASON_19, Season.SEASON_20 -> {
             val gamesWithoutAutoPoints = gamesPlayed - (autoAdditionalPointsByRoleSum / 0.3).roundToInt()
             winRate * 100 + (winPoints / gamesPlayed) + ci + bestMovePointsByRoleSum + additionalPointsByRoleSum - gamesWithoutAutoPoints * 0.3F
          }
