@@ -21,6 +21,7 @@ activity-compose = "1.10.1"
 lifecycle-viewmodel-compose = "2.8.5"
 hilt = "2.47"
 ksp = "1.9.10-1.0.13"
+hiltNavigationCompose = "1.1.0-alpha01"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -52,6 +53,7 @@ navigation-compose = { module = "androidx.navigation:navigation-compose", versio
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
 hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hilt" }
 ksp = { module = "com.google.devtools.ksp:ksp", version.ref = "ksp" }
+hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

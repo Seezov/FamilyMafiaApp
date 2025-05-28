@@ -2,8 +2,9 @@ package com.example.familymafiaapp.repository
 
 import com.example.familymafiaapp.entities.RatingUniversal
 import com.example.familymafiaapp.enums.Season
+import javax.inject.Inject
 
-object RatingsRepository {
+class RatingRepository @Inject constructor()  {
     private val _localRatings = mutableListOf<Pair<Season, List<RatingUniversal>>>()
     val localRatings: List<Pair<Season, List<RatingUniversal>>>
         get() = _localRatings

@@ -16,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -27,7 +28,9 @@ import com.example.familymafiaapp.ui.hallOfFame.HallOfFameScreen
 import com.example.familymafiaapp.ui.home.HomeScreen
 import com.example.familymafiaapp.ui.home.HomeViewModel
 import com.example.familymafiaapp.ui.hallOfFame.HallOfFameViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,8 +84,7 @@ fun MyApp() {
             modifier = Modifier.padding(padding)
         ) {
             composable(Screen.Home.route) {
-                val homeViewModel: HomeViewModel = viewModel()
-                HomeScreen(homeViewModel,)
+                HomeScreen()
             }
             composable(Screen.Dashboard.route) {
                 val dashboardViewModel: DashboardViewModel = viewModel()

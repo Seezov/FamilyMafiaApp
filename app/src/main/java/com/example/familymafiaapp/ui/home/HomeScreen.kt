@@ -33,6 +33,7 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.familymafiaapp.entities.RatingUniversal
 import com.example.familymafiaapp.enums.Role
 import com.example.familymafiaapp.enums.Season
@@ -41,7 +42,7 @@ import org.intellij.lang.annotations.JdkConstants
 import kotlin.math.roundToInt
 
 @Composable
-fun HomeScreen(homeViewModel: HomeViewModel) {
+fun HomeScreen(homeViewModel: HomeViewModel = hiltViewModel()) {
     val context = LocalContext.current
     val ratings by homeViewModel.ratings.collectAsState()
     val selectedSeason by homeViewModel.selectedSeason.collectAsState()

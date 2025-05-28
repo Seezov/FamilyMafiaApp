@@ -64,6 +64,7 @@ dependencies {
     implementation(libs.compose.ui)
 
     implementation(libs.hilt.android)
+    implementation(libs.hilt.navigation.compose)
     ksp(libs.hilt.compiler)
 
     implementation(libs.compose.ui.tooling.preview)

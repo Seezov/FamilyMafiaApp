@@ -15,14 +15,20 @@ import com.example.familymafiaapp.entities.seasons.season2to16.GameSeason2to16
 import com.example.familymafiaapp.enums.Season
 import com.example.familymafiaapp.enums.Values
 import com.example.familymafiaapp.extensions.roundTo2Digits
+import com.example.familymafiaapp.repository.RatingRepository
 import com.google.gson.reflect.TypeToken
 import com.google.gson.Gson
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import javax.inject.Inject
 import kotlin.collections.filter
 import kotlin.math.roundToInt
 
-class HomeViewModel : ViewModel() {
+@HiltViewModel
+class HomeViewModel @Inject constructor(
+    private val ratingRepository: RatingRepository
+) : ViewModel() {
 
     private val _ratings = MutableStateFlow<List<RatingUniversal>>(emptyList())
     val ratings: StateFlow<List<RatingUniversal>> = _ratings
@@ -33,12 +39,9 @@ class HomeViewModel : ViewModel() {
     private val _debugText = MutableStateFlow<String>("")
     val debugText: StateFlow<String> = _debugText
 
-    private val localRatings: MutableList<Pair<Season, List<RatingUniversal>>> = mutableListOf()
-//    private val service = GoogleSheetService.create()
-
     fun displaySeason(season: Season) {
         _ratings.value =
-            localRatings.find { it.first == season }?.second?.filter { it.gamesPlayed >= season.gameLimit }
+            ratingRepository.getRatingsForSeason(season)?.filter { it.gamesPlayed >= season.gameLimit }
                 ?.sortedByDescending { it.ratingCoefficient } ?: emptyList()
     }
 
@@ -177,7 +180,7 @@ class HomeViewModel : ViewModel() {
                 additionalPointsByRole = additionalPointsByRole,
             )
         }
-        localRatings.add(season to ratings)
+        ratingRepository.addRatings(season, ratings)
     }
 
     private fun loadSeason17to20(season: Season, fileContent: String) {
@@ -274,7 +277,7 @@ class HomeViewModel : ViewModel() {
                 additionalPointsByRole = additionalPointsByRole,
             )
         }
-        localRatings.add(season to ratings)
+        ratingRepository.addRatings(season, ratings)
     }
 
     private fun calculateCi(
@@ -423,7 +426,7 @@ class HomeViewModel : ViewModel() {
                 additionalPointsByRole = additionalPointsByRole,
             )
         }
-        localRatings.add(season to ratings)
+        ratingRepository.addRatings(season, ratings)
     }
 
     private fun loadSeason0and1(season: Season, fileContent: String) {
@@ -522,7 +525,7 @@ class HomeViewModel : ViewModel() {
                 additionalPointsByRole = emptyList(),
             )
         }
-        localRatings.add(season to ratings)
+        ratingRepository.addRatings(season, ratings)
     }
 
 
