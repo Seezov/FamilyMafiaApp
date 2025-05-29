@@ -16,6 +16,7 @@ data class RatingUniversal(
     val ci: Float = 0F,
     val mvp: Float = 0F,
     val winByRole: List<Pair<String, Int>> = emptyList(),
-    val gamesByRole: List<Pair<String, Int>> = emptyList(),
-    val additionalPointsByRole: List<Pair<String, Float>> = emptyList()
+    val gamesForRole: List<Pair<String, Int>> = emptyList(),
+    val additionalPointsByRole: List<Pair<String, Float>> = emptyList(),
+    val penaltyPointsByRole: List<Pair<String, Float>> = emptyList(),
 )

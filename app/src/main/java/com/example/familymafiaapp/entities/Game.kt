@@ -21,13 +21,17 @@ data class Game(
 ) {
     fun getPlayerRole(player: String): String = roles[players.indexOf(player)]
 
-    fun hasPlayerWon(player: String): Boolean = cityWon?.let {
-        if (Role.Companion.findByValue(getPlayerRole(player))!!.isBlack) {
-            !cityWon
-        } else {
-            cityWon
-        }
-    } == true
+    fun hasPlayerWon(player: String): Boolean = if (wonByPlayer != null) {
+        Values.YES.sheetValue.contains(wonByPlayer[players.indexOf(player)])
+    } else {
+        cityWon?.let {
+            if (Role.Companion.findByValue(getPlayerRole(player))!!.isBlack) {
+                !cityWon
+            } else {
+                cityWon
+            }
+        } == true
+    }
 
     fun isFirstKilled(player: String): Boolean = players.indexOf(player) + 1 == firstKilled
 
@@ -44,13 +48,18 @@ data class Game(
 
     // Used to check if game has all the roles and no player duplications
     fun isNormalGame(): Boolean =
-        roles.count { Role.MAFIA.sheetValue.contains(it) } == 2 &&
-                roles.count { Role.SHERIFF.sheetValue.contains(it) } == 1 &&
-                roles.count { Role.DON.sheetValue.contains(it) } == 1 &&
-                players.let {
-                    val set = it.toSet()
-                    it.size == set.size
-                }
+        if (seasonId > 1) {
+            roles.count { Role.MAFIA.sheetValue.contains(it) } == 2 &&
+                    roles.count { Role.SHERIFF.sheetValue.contains(it) } == 1 &&
+                    roles.count { Role.DON.sheetValue.contains(it) } == 1 &&
+                    players.let {
+                        val set = it.toSet()
+                        it.size == set.size
+                    }
+        } else {
+            true
+        }
+
 
     // Used to check WinPoints in first seasons
     fun isRegularGame(): Boolean = wonByPlayer?.contains(Values.NO.sheetValue.first()) == true && wonByPlayer.contains(
