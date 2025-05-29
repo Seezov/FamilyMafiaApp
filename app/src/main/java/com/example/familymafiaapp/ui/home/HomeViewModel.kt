@@ -10,6 +10,7 @@ import com.example.familymafiaapp.entities.Game
 import com.example.familymafiaapp.enums.Season
 import com.example.familymafiaapp.enums.Values
 import com.example.familymafiaapp.extensions.roundTo2Digits
+import com.example.familymafiaapp.repository.GamesRepository
 import com.example.familymafiaapp.repository.PlayersRepository
 import com.example.familymafiaapp.repository.RatingRepository
 import com.google.gson.reflect.TypeToken
@@ -26,6 +27,7 @@ import kotlin.text.toFloat
 class HomeViewModel @Inject constructor(
     private val ratingRepository: RatingRepository,
     private val playersRepository: PlayersRepository,
+    private val gamesRepository: GamesRepository,
 ) : ViewModel() {
 
     private val _ratings = MutableStateFlow<List<RatingUniversal>>(emptyList())
@@ -66,6 +68,7 @@ class HomeViewModel @Inject constructor(
                 throw Exception("is not normal game #$index ${game.players}")
             }
         }
+        gamesRepository.addGames(gamesData)
         val playersList = gamesData.getPlayersList(season.id)
         val ratings = playersList.map { player ->
             val gamesForPlayer = gamesData.filter { it.players.contains(player) }

@@ -1585,6 +1585,9 @@
     "displayName": "Фурія"
   },
   {
+    "displayName": "Night"
+  },
+  {
     "displayName": "Хантер"
   },
   {
@@ -1592,6 +1595,9 @@
   },
   {
     "displayName": "Харциз"
+  },
+  {
+    "displayName": "Sky"
   },
   {
     "displayName": "Харьок"
@@ -1606,9 +1612,11 @@
     "displayName": "Хозяин"
   },
   {
+    "displayName": "Хотабыч"
+  },
+  {
     "displayName": "Хоттабич",
     "nicknames": [
-      "Хотабыч",
       "Хоттабич",
       "Хоттабыч"
     ]

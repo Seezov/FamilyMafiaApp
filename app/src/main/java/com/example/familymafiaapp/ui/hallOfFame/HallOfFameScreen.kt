@@ -5,9 +5,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
@@ -47,7 +50,7 @@ fun HallOfFameScreen(hallOfFameViewModel: HallOfFameViewModel = hiltViewModel())
 }
 
 @Composable
-fun PlayerStatsScreen(stats: List<Pair<String, Int>>) {
+fun PlayerStatsScreen(stats: List<Triple<String, Int, Float>>) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -60,7 +63,7 @@ fun PlayerStatsScreen(stats: List<Pair<String, Int>>) {
 }
 
 @Composable
-fun PlayerStatsItem(player: Pair<String, Int>) {
+fun PlayerStatsItem(player: Triple<String, Int, Float>) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -76,8 +79,14 @@ fun PlayerStatsItem(player: Pair<String, Int>) {
                 text = player.first,
                 style = MaterialTheme.typography.titleMedium
             )
+            Spacer(Modifier.width(8.dp))
             Text(
                 text = "${player.second} games",
+                style = MaterialTheme.typography.bodyMedium
+            )
+            Spacer(Modifier.width(8.dp))
+            Text(
+                text = "${player.third}% WR",
                 style = MaterialTheme.typography.bodyMedium
             )
         }
