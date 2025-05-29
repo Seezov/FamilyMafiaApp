@@ -1,9 +1,10 @@
-package com.example.familymafiaapp.entities.seasons.season17to20
+package com.example.familymafiaapp.entities.seasons.season17Plus
 
 import com.example.familymafiaapp.entities.seasons.GameSeason
 import com.example.familymafiaapp.enums.Role
 
-class GameSeason17to20(
+class GameSeason17Plus(
+    seasonId: Int,
     players: List<String>,
     roles: List<String>,
     cityWon: Boolean?,
@@ -11,13 +12,17 @@ class GameSeason17to20(
     bestMovePoints: Float,
     val bestMove: List<Int>,
     val additionalPoints: List<Float>,
-    val autoAdditionalPoints: List<Float>,
-): GameSeason(players, roles, cityWon, firstKilled, bestMovePoints)  {
+    val autoAdditionalPoints: List<Float>? = null,
+    val penaltyPoints: List<Float>? = null,
+): GameSeason(seasonId, players, roles, cityWon, firstKilled, bestMovePoints)  {
     fun getPlayerAdditionalPoints(player: String): Float =
         additionalPoints[players.indexOf(player)]
 
     fun getPlayerAutoAdditionalPoints(player: String): Float =
-        autoAdditionalPoints[players.indexOf(player)]
+        autoAdditionalPoints?.get(players.indexOf(player)) ?: 0F
+
+    fun getPlayerPenaltyPoints(player: String): Float =
+        penaltyPoints?.get(players.indexOf(player)) ?: 0F
 
     fun isNormalGame(): Boolean =
         roles.count { Role.MAFIA.sheetValue.contains(it) } == 2 &&

@@ -4,6 +4,7 @@ import com.example.familymafiaapp.enums.Role
 import com.example.familymafiaapp.enums.Values
 
 open class GameSeason(
+    val seasonId: Int,
     val players: List<String>,
     val roles: List<String>,
     // True if city won

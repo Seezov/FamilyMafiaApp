@@ -4,6 +4,7 @@ import com.example.familymafiaapp.entities.seasons.GameSeason
 import com.example.familymafiaapp.enums.Role
 
 class GameSeason2to16(
+    seasonId: Int,
     players: List<String>,
     roles: List<String>,
     cityWon: Boolean?,
@@ -12,7 +13,7 @@ class GameSeason2to16(
     val fouls: List<String>,
     val bestMove: List<Int>,
     val additionalPoints: List<Float>,
-): GameSeason(players, roles, cityWon, firstKilled, bestMovePoints)  {
+): GameSeason(seasonId, players, roles, cityWon, firstKilled, bestMovePoints)  {
     fun getPlayerAdditionalPoints(player: String): Float =
         additionalPoints[players.indexOf(player)]
 

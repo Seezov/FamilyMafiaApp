@@ -8,10 +8,8 @@ import com.example.familymafiaapp.entities.seasons.season0And1.PlayerDataSeason0
 import com.example.familymafiaapp.entities.seasons.season2to16.PlayerDataSeason2to16
 import com.example.familymafiaapp.entities.RatingUniversal
 import com.example.familymafiaapp.entities.seasons.GameSeason
-import com.example.familymafiaapp.entities.seasons.season17to20.GameSeason17to20
-import com.example.familymafiaapp.entities.seasons.season17to20.PlayerDataSeason17to20
-import com.example.familymafiaapp.entities.seasons.season21Plus.GameSeason21Plus
-import com.example.familymafiaapp.entities.seasons.season21Plus.PlayerDataSeason21Plus
+import com.example.familymafiaapp.entities.seasons.season17Plus.GameSeason17Plus
+import com.example.familymafiaapp.entities.seasons.season17Plus.PlayerDataSeason17Plus
 import com.example.familymafiaapp.entities.seasons.season2to16.GameSeason2to16
 import com.example.familymafiaapp.enums.Season
 import com.example.familymafiaapp.enums.Values
@@ -26,6 +24,7 @@ import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 import kotlin.collections.filter
 import kotlin.math.roundToInt
+import kotlin.text.toFloat
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
@@ -79,25 +78,23 @@ class HomeViewModel @Inject constructor(
                 Season.SEASON_17,
                 Season.SEASON_18,
                 Season.SEASON_19,
-                Season.SEASON_20
-                    -> loadSeason17to20(season, fileContent)
-
+                Season.SEASON_20,
                 Season.SEASON_21,
                 Season.SEASON_22,
                 Season.SEASON_23,
                 Season.SEASON_24,
                 Season.SEASON_25,
-                    -> loadSeason21Plus(season, fileContent)
+                    -> loadSeason17Plus(season, fileContent)
             }
         } else {
 //            loadDataFromServer()
         }
     }
 
-    private fun loadSeason21Plus(season: Season, fileContent: String) {
-        val rawData = parseJsonList<PlayerDataSeason21Plus>(fileContent)
+    private fun loadSeason17Plus(season: Season, fileContent: String) {
+        val rawData = parseJsonList<PlayerDataSeason17Plus>(fileContent)
             .filter { it.a != "" && it.c != "" }
-        val gamesData = getGamesDataSeason21Plus(rawData).filter { it.isRatingGame() }
+        val gamesData = getGamesDataSeason17Plus(season.id, rawData).filter { it.isRatingGame() }
         gamesData.forEachIndexed { index, game ->
             if (!game.isNormalGame()) {
                 throw Exception("is not normal game #$index ${game.players}")
@@ -148,24 +145,27 @@ class HomeViewModel @Inject constructor(
                 }.sum()
             val penaltyPointsByRoleSum =
                 gamesForPlayer.map { it.getPlayerPenaltyPoints(player) }.sum()
+            val autoAdditionalPointsByRoleSum =
+                gamesForPlayer.map { it.getPlayerAutoAdditionalPoints(player) }.sum()
             val ciForGame =
                 calculateCiForGame(firstKilledCityLost, firstKilled, gamesPlayed, season)
             val ci = ciForGame * firstKilledCityLost
             val winPoints =
-                additionalPointsByRoleSum + penaltyPointsByRoleSum + bestMovePointsByRoleSum + ci
+                additionalPointsByRoleSum + autoAdditionalPointsByRoleSum  + penaltyPointsByRoleSum + bestMovePointsByRoleSum + ci
             val mvp =
                 ((additionalPointsByRoleSum + bestMovePointsByRoleSum).toFloat() / gamesPlayed).roundTo2Digits()
             val wins = winByRole.sumOf { it.second }
             val winRate = wins.toFloat() / gamesPlayed
             val ratingCoefficient = calculateRatingCoefficient(
-                winPoints,
-                gamesPlayed,
-                winRate,
-                ci,
-                bestMovePointsByRoleSum,
-                additionalPointsByRoleSum,
-                penaltyPointsByRoleSum,
-                season
+                winPoints = winPoints,
+                gamesPlayed = gamesPlayed,
+                winRate = winRate,
+                ci = ci,
+                bestMovePointsByRoleSum = bestMovePointsByRoleSum,
+                additionalPointsByRoleSum = additionalPointsByRoleSum,
+                penaltyPointsByRoleSum = penaltyPointsByRoleSum,
+                autoAdditionalPointBySum = autoAdditionalPointsByRoleSum,
+                season = season,
             )
             val gamesForRole = fullGamesForRole.map { it.first to it.second.size }
             RatingUniversal(
@@ -185,164 +185,16 @@ class HomeViewModel @Inject constructor(
                 ciForGame = ciForGame,
                 winByRole = winByRole,
                 gamesByRole = gamesForRole,
-                additionalPointsByRole = additionalPointsByRole,
+                additionalPointsByRole = additionalPointsByRole
             )
         }
         ratingRepository.addRatings(season, ratings)
-    }
-
-    private fun loadSeason17to20(season: Season, fileContent: String) {
-        val rawData = parseJsonList<PlayerDataSeason17to20>(fileContent)
-            .filter { it.a != "" && it.c != "" }
-        val gamesData = getGamesDataSeason17to20(rawData).filter { it.isRatingGame() }
-        gamesData.forEachIndexed { index, game ->
-            if (!game.isNormalGame()) {
-                throw Exception("is not normal game #$index ${game.players}")
-            }
-        }
-        val playersList = gamesData.getPlayersList(season)
-        val ratings = playersList.map { player ->
-            val gamesForPlayer = gamesData.filter { it.players.contains(player) }
-            val gamesPlayed = gamesForPlayer.size
-            if (gamesPlayed == 0) {
-                return@map RatingUniversal(player)
-            }
-            val firstKilled = gamesForPlayer.filter { it.isFirstKilled(player) }.size
-            val firstKilledCityLost =
-                gamesForPlayer.filter { it.isFirstKilled(player) && !it.hasPlayerWon(player) }.size
-            val fullGamesForRole = Role.entries.map { role ->
-                Pair(role.sheetValue.last(), gamesForPlayer.getGamesForRole(player, role))
-            }
-            val additionalPointsByRole = fullGamesForRole.map {
-                Pair(it.first, it.second.map {
-                    if (it.isFirstKilled(player)) {
-                        it.getPlayerAdditionalPoints(player) + it.bestMovePoints
-                    } else {
-                        it.getPlayerAdditionalPoints(player)
-                    }
-                }.sum())
-            }
-            val gamesAsRed = fullGamesForRole
-                .filter { it.first == Role.SHERIFF.sheetValue.last() || it.first == Role.CIVILIAN.sheetValue.last() }
-                .sumOf { it.second.size }
-            val winByRole = fullGamesForRole.map { gameForRole ->
-                Pair(
-                    gameForRole.first,
-                    gameForRole.second.filter {
-                        it.hasPlayerWon(player)
-                    }.size
-                )
-            }
-            val additionalPointsByRoleSum = gamesForPlayer
-                .map {
-                    it.getPlayerAdditionalPoints(player)
-                }.sum()
-            val bestMovePointsByRoleSum = gamesForPlayer
-                .map {
-                    if (it.isFirstKilled(player))
-                        it.bestMovePoints
-                    else 0.0f
-                }.sum()
-            val autoAdditionalPointsByRoleSum =
-                gamesForPlayer.map { it.getPlayerAutoAdditionalPoints(player) }.sum()
-            val ci = calculateCi(firstKilledCityLost, firstKilled, gamesPlayed, season)
-            val ciForGame =
-                calculateCiForGame(firstKilledCityLost, firstKilled, gamesPlayed, season)
-            val winPoints =
-                additionalPointsByRoleSum + autoAdditionalPointsByRoleSum + bestMovePointsByRoleSum + ci
-            val mvp =
-                ((additionalPointsByRoleSum + bestMovePointsByRoleSum).toFloat() / gamesPlayed).roundTo2Digits()
-            val wins = winByRole.sumOf { it.second }
-            val winRate = wins.toFloat() / gamesPlayed
-            val ratingCoefficient = calculateRatingCoefficient(
-                winPoints,
-                gamesPlayed,
-                winRate,
-                ci,
-                bestMovePointsByRoleSum,
-                additionalPointsByRoleSum,
-                autoAdditionalPointsByRoleSum,
-                season,
-            )
-            val gamesForRole = fullGamesForRole.map { it.first to it.second.size }
-            RatingUniversal(
-                player = player,
-                ratingCoefficient = ratingCoefficient.toFloat(),
-                wins = wins,
-                gamesPlayed = gamesPlayed,
-                winRate = winRate,
-                additionalPoints = additionalPointsByRoleSum,
-                penaltyPoints = 0F,
-                bestMovePoints = bestMovePointsByRoleSum,
-                firstKilled = firstKilled,
-                firstKilledCityLost = firstKilledCityLost,
-                percentOfDeath = firstKilled.toFloat() / gamesAsRed,
-                mvp = mvp,
-                ci = ci,
-                ciForGame = ciForGame,
-                winByRole = winByRole,
-                gamesByRole = gamesForRole,
-                additionalPointsByRole = additionalPointsByRole,
-            )
-        }
-        ratingRepository.addRatings(season, ratings)
-    }
-
-    private fun calculateCi(
-        firstKilledCityLost: Int,
-        firstKilled: Int,
-        gamesPlayed: Int,
-        season: Season
-    ): Float {
-        return when (season) {
-            Season.SEASON_17, Season.SEASON_18 -> firstKilledCityLost * 0.1.toFloat()
-            Season.SEASON_19, Season.SEASON_20 -> {
-                val firstKilledToGamesPlayed = firstKilled.toFloat() / gamesPlayed
-                if (firstKilledToGamesPlayed > 0.399) {
-                    0.4 * firstKilledCityLost
-                } else {
-                    firstKilledToGamesPlayed * firstKilledCityLost
-                }
-            }
-
-            else -> 0F
-        }.toFloat()
-    }
-
-    private fun calculateCiForGame(
-        firstKilledCityLost: Int,
-        firstKilled: Int,
-        gamesPlayed: Int,
-        season: Season
-    ): Float {
-        return when (season) {
-            Season.SEASON_17, Season.SEASON_18 -> firstKilledCityLost * 0.1.toFloat() / gamesPlayed
-            Season.SEASON_19, Season.SEASON_20 -> {
-                val firstKilledToGamesPlayed = firstKilled.toFloat() / gamesPlayed
-                if (firstKilledToGamesPlayed > 0.399) {
-                    0.4 * firstKilledCityLost
-                } else {
-                    firstKilledToGamesPlayed * 5 / 2 * 0.4
-                }
-            }
-
-            Season.SEASON_21, Season.SEASON_22, Season.SEASON_23, Season.SEASON_24, Season.SEASON_25 -> {
-                val firstKilledToGamesPlayed = firstKilled.toFloat() / gamesPlayed
-                if (firstKilledToGamesPlayed > 0.399) {
-                    0.5
-                } else {
-                    firstKilledToGamesPlayed * 1.25
-                }
-            }
-
-            else -> 0F
-        }.toFloat()
     }
 
     private fun loadSeason2to16(season: Season, fileContent: String) {
         val rawData = parseJsonList<PlayerDataSeason2to16>(fileContent)
             .filter { it.number.toIntOrNull() != null }
-        val gamesData = getGamesDataSeason2to16(rawData).filter { it.isRatingGame() }
+        val gamesData = getGamesDataSeason2to16(season.id, rawData).filter { it.isRatingGame() }
         gamesData.forEachIndexed { index, game ->
             if (!game.isNormalGame()) {
                 throw Exception("is not normal game #$index ${game.players}")
@@ -440,7 +292,7 @@ class HomeViewModel @Inject constructor(
     private fun loadSeason0and1(season: Season, fileContent: String) {
         val rawData = parseJsonList<PlayerDataSeason0And1>(fileContent)
             .filter { it.number.toIntOrNull() != null }
-        val gamesData = getGamesDataSeason0And1(rawData)
+        val gamesData = getGamesDataSeason0And1(season.id, rawData)
         val playersList = gamesData.getPlayersList(season)
         val ratings = playersList.map { player ->
             val gamesForPlayer = gamesData.filter { it.players.contains(player) }
@@ -536,6 +388,35 @@ class HomeViewModel @Inject constructor(
         ratingRepository.addRatings(season, ratings)
     }
 
+    private fun calculateCiForGame(
+        firstKilledCityLost: Int,
+        firstKilled: Int,
+        gamesPlayed: Int,
+        season: Season
+    ): Float {
+        return when (season) {
+            Season.SEASON_17, Season.SEASON_18 -> 0.1
+            Season.SEASON_19, Season.SEASON_20 -> {
+                val firstKilledToGamesPlayed = firstKilled.toFloat() / gamesPlayed
+                if (firstKilledToGamesPlayed > 0.399) {
+                    0.4 * firstKilledCityLost
+                } else {
+                    firstKilledToGamesPlayed * 5 / 2 * 0.4
+                }
+            }
+
+            Season.SEASON_21, Season.SEASON_22, Season.SEASON_23, Season.SEASON_24, Season.SEASON_25 -> {
+                val firstKilledToGamesPlayed = firstKilled.toFloat() / gamesPlayed
+                if (firstKilledToGamesPlayed > 0.399) {
+                    0.5
+                } else {
+                    firstKilledToGamesPlayed * 1.25
+                }
+            }
+
+            else -> 0F
+        }.toFloat()
+    }
 
     private fun calculateRatingCoefficient(
         winPoints: Float,
@@ -544,7 +425,8 @@ class HomeViewModel @Inject constructor(
         ci: Float = 0F,
         bestMovePointsByRoleSum: Float = 0F,
         additionalPointsByRoleSum: Float = 0F,
-        extraPointsByRoleSum: Float = 0F,
+        penaltyPointsByRoleSum: Float = 0F,
+        autoAdditionalPointBySum: Float = 0F,
         season: Season
     ) = when (season) {
         Season.SEASON_0,
@@ -577,16 +459,16 @@ class HomeViewModel @Inject constructor(
         }
 
         Season.SEASON_17 -> {
-            winRate * 100 + (winPoints / gamesPlayed) + ci + bestMovePointsByRoleSum + extraPointsByRoleSum + additionalPointsByRoleSum
+            winRate * 100 + (winPoints / gamesPlayed) + ci + bestMovePointsByRoleSum + autoAdditionalPointBySum + additionalPointsByRoleSum
         }
 
         Season.SEASON_18, Season.SEASON_19, Season.SEASON_20 -> {
-            val gamesWithoutAutoPoints = gamesPlayed - (extraPointsByRoleSum / 0.3).roundToInt()
+            val gamesWithoutAutoPoints = gamesPlayed - (autoAdditionalPointBySum / 0.3).roundToInt()
             winRate * 100 + (winPoints / gamesPlayed) + ci + bestMovePointsByRoleSum + additionalPointsByRoleSum - gamesWithoutAutoPoints * 0.3F
         }
 
         Season.SEASON_21, Season.SEASON_22, Season.SEASON_23, Season.SEASON_24, Season.SEASON_25 -> {
-            winRate * 100 + (winPoints / gamesPlayed) + ci + bestMovePointsByRoleSum + extraPointsByRoleSum + additionalPointsByRoleSum
+            winRate * 100 + (winPoints / gamesPlayed) + ci + bestMovePointsByRoleSum + additionalPointsByRoleSum + penaltyPointsByRoleSum
         }
     }.roundTo2Digits()
 
@@ -633,29 +515,31 @@ class HomeViewModel @Inject constructor(
             role
         )?.sheetValue == Role.SHERIFF.sheetValue
 
-    private fun getGamesDataSeason0And1(rawData: List<PlayerDataSeason0And1>) = rawData.chunked(10)
+    private fun getGamesDataSeason0And1(seasonId: Int, rawData: List<PlayerDataSeason0And1>) = rawData.chunked(10)
         .map { playersInfo ->
             val firstPlayer = playersInfo.first()
             GameSeason0And1(
-                playersInfo.map { it.player },
-                playersInfo.map { it.role },
-                if (Role.findByValue(firstPlayer.role)!!.isBlack) {
+                seasonId = seasonId,
+                players = playersInfo.map { it.player },
+                roles = playersInfo.map { it.role },
+                cityWon = if (Role.findByValue(firstPlayer.role)!!.isBlack) {
                     !Values.YES.sheetValue.contains(firstPlayer.won)
                 } else {
                     Values.YES.sheetValue.contains(firstPlayer.won)
                 },
-                playersInfo.find { Values.YES.sheetValue.contains(firstPlayer.firstKilled) }?.number?.toInt()
+                firstKilled = playersInfo.find { Values.YES.sheetValue.contains(firstPlayer.firstKilled) }?.number?.toInt()
                     ?: 0,
-                playersInfo.find { it.bestMovePoints.isNotEmpty() }?.bestMovePoints?.toFloat()
+                bestMovePoints = playersInfo.find { it.bestMovePoints.isNotEmpty() }?.bestMovePoints?.toFloat()
                     ?: 0.0F,
-                playersInfo.map { it.won },
-                playersInfo.map { if (Values.YES.sheetValue.contains(firstPlayer.eliminated)) 1F else 0f }
+                wonByPlayer = playersInfo.map { it.won },
+                penaltyPoints = playersInfo.map { if (Values.YES.sheetValue.contains(firstPlayer.eliminated)) 1F else 0f }
             )
         }
 
-    private fun getGamesDataSeason2to16(rawData: List<PlayerDataSeason2to16>) = rawData.chunked(10)
+    private fun getGamesDataSeason2to16(seasonId: Int, rawData: List<PlayerDataSeason2to16>) = rawData.chunked(10)
         .map { playersInfo ->
             GameSeason2to16(
+                seasonId = seasonId,
                 players = playersInfo.map { it.player },
                 roles = playersInfo.map { it.role },
                 cityWon = getVictoryTeam(playersInfo[0].c),
@@ -681,10 +565,11 @@ class HomeViewModel @Inject constructor(
             )
         }
 
-    private fun getGamesDataSeason17to20(rawData: List<PlayerDataSeason17to20>) =
+    private fun getGamesDataSeason17Plus(seasonId: Int, rawData: List<PlayerDataSeason17Plus>) =
         rawData.chunked(14)
             .map { playersInfo ->
-                GameSeason17to20(
+                GameSeason17Plus(
+                    seasonId = seasonId,
                     players = playersInfo.subList(2, 12).map { it.b },
                     roles = playersInfo.subList(2, 12).map { it.c },
                     cityWon = getVictoryTeam(playersInfo.last().c),
@@ -707,39 +592,18 @@ class HomeViewModel @Inject constructor(
                     ),
                     additionalPoints = playersInfo.subList(2, 12)
                         .map { it.j.toFloatOrNull() ?: 0F },
-                    autoAdditionalPoints = playersInfo.subList(2, 12)
-                        .map { it.h.toFloatOrNull() ?: 0F }
-                )
-            }
-
-    private fun getGamesDataSeason21Plus(rawData: List<PlayerDataSeason21Plus>) =
-        rawData.chunked(14)
-            .map { playersInfo ->
-                GameSeason21Plus(
-                    players = playersInfo.subList(2, 12).map { it.b },
-                    roles = playersInfo.subList(2, 12).map { it.c },
-                    cityWon = getVictoryTeam(playersInfo.last().c),
-                    firstKilled = playersInfo[12].b.toIntOrNull() ?: 0,
-                    bestMovePoints = playersInfo[12].b.toIntOrNull()?.let { firstKilled ->
-                        if (firstKilled == 0) {
-                            0f
-                        } else {
-                            try {
-                                playersInfo.map { it.i }[firstKilled + 1].toFloat()
-                            } catch (e: Exception) {
-                                0f
-                            }
-                        }
-                    } ?: 0F,
-                    bestMove = listOf(
-                        playersInfo[12].d.toIntOrNull() ?: 0,
-                        playersInfo[12].e.toIntOrNull() ?: 0,
-                        playersInfo[12].f.toIntOrNull() ?: 0,
-                    ),
-                    additionalPoints = playersInfo.subList(2, 12)
-                        .map { it.j.toFloatOrNull() ?: 0F },
-                    penaltyPoints = playersInfo.subList(2, 12)
-                        .map { it.h.toFloatOrNull() ?: 0F }
+                    autoAdditionalPoints = if (seasonId in 17..20) {
+                        playersInfo.subList(2, 12)
+                            .map { it.h.toFloatOrNull() ?: 0F }
+                    } else {
+                        null
+                    },
+                    penaltyPoints = if (seasonId !in 17..20) {
+                        playersInfo.subList(2, 12)
+                            .map { it.h.toFloatOrNull() ?: 0F }
+                    } else {
+                        null
+                    }
                 )
             }
 
@@ -791,5 +655,3 @@ fun <T : GameSeason> List<T>.getPlayersList(
         else -> true
     }
 }
-
-
