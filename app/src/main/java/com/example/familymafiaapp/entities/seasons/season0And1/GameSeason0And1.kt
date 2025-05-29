@@ -17,6 +17,6 @@ class GameSeason0And1(
 ): GameSeason(seasonId, players, roles, cityWon, firstKilled, bestMovePoints) {
     fun getPlayerPenaltyPoints(player: String): Float = penaltyPoints[players.indexOf(player)]
 
-    fun isNormalGame(): Boolean = wonByPlayer.contains(Values.NO.sheetValue.first()) && wonByPlayer.contains(
+    fun isRegularGame(): Boolean = wonByPlayer.contains(Values.NO.sheetValue.first()) && wonByPlayer.contains(
         Values.YES.sheetValue.first())
 }

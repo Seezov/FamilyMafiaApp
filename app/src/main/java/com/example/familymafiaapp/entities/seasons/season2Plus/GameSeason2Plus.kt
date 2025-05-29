@@ -1,9 +1,9 @@
-package com.example.familymafiaapp.entities.seasons.season17Plus
+package com.example.familymafiaapp.entities.seasons.season2Plus
 
 import com.example.familymafiaapp.entities.seasons.GameSeason
 import com.example.familymafiaapp.enums.Role
 
-class GameSeason17Plus(
+class GameSeason2Plus(
     seasonId: Int,
     players: List<String>,
     roles: List<String>,

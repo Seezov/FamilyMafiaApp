@@ -7,8 +7,7 @@ import com.example.familymafiaapp.entities.seasons.season0And1.GameSeason0And1
 import com.example.familymafiaapp.entities.seasons.PlayerDataSeason
 import com.example.familymafiaapp.entities.RatingUniversal
 import com.example.familymafiaapp.entities.seasons.GameSeason
-import com.example.familymafiaapp.entities.seasons.season17Plus.GameSeason17Plus
-import com.example.familymafiaapp.entities.seasons.season2to16.GameSeason2to16
+import com.example.familymafiaapp.entities.seasons.season2Plus.GameSeason2Plus
 import com.example.familymafiaapp.enums.Season
 import com.example.familymafiaapp.enums.Values
 import com.example.familymafiaapp.extensions.roundTo2Digits
@@ -310,7 +309,7 @@ class HomeViewModel @Inject constructor(
                 Pair(
                     gameForRole.first,
                     gameForRole.second.filter {
-                        if (it.isNormalGame()) {
+                        if (it.isRegularGame()) {
                             it.hasPlayerWon(player)
                         } else {
                             Values.YES.sheetValue.contains(it.wonByPlayer[it.players.indexOf(player)])
@@ -322,7 +321,7 @@ class HomeViewModel @Inject constructor(
                 Pair(
                     gameForRole.first,
                     gameForRole.second.filter {
-                        if (it.isNormalGame()) {
+                        if (it.isRegularGame()) {
                             !it.hasPlayerWon(player)
                         } else {
                             Values.NO.sheetValue.contains(it.wonByPlayer[it.players.indexOf(player)])
@@ -542,7 +541,7 @@ class HomeViewModel @Inject constructor(
     private fun getGamesDataSeason2to16(seasonId: Int, rawData: List<PlayerDataSeason>) =
         rawData.chunked(10)
             .map { playersInfo ->
-                GameSeason2to16(
+                GameSeason2Plus(
                     seasonId = seasonId,
                     players = playersInfo.map { it.g },
                     roles = playersInfo.map { it.h },
@@ -577,7 +576,7 @@ class HomeViewModel @Inject constructor(
     private fun getGamesDataSeason17Plus(seasonId: Int, rawData: List<PlayerDataSeason>) =
         rawData.chunked(14)
             .map { playersInfo ->
-                GameSeason17Plus(
+                GameSeason2Plus(
                     seasonId = seasonId,
                     players = playersInfo.subList(2, 12).map { it.b },
                     roles = playersInfo.subList(2, 12).map { it.c },
