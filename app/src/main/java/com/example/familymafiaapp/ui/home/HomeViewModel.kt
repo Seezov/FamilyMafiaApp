@@ -3,11 +3,9 @@ package com.example.familymafiaapp.ui.home
 import androidx.lifecycle.ViewModel
 import com.example.familymafiaapp.entities.Player
 import com.example.familymafiaapp.enums.Role
-import com.example.familymafiaapp.entities.seasons.season0And1.GameSeason0And1
-import com.example.familymafiaapp.entities.seasons.PlayerDataSeason
+import com.example.familymafiaapp.entities.seasons.GamesDataSeason
 import com.example.familymafiaapp.entities.RatingUniversal
-import com.example.familymafiaapp.entities.seasons.GameSeason
-import com.example.familymafiaapp.entities.seasons.season2Plus.GameSeason2Plus
+import com.example.familymafiaapp.entities.Game
 import com.example.familymafiaapp.enums.Season
 import com.example.familymafiaapp.enums.Values
 import com.example.familymafiaapp.extensions.roundTo2Digits
@@ -91,7 +89,7 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun loadSeason17Plus(season: Season, fileContent: String) {
-        val rawData = parseJsonList<PlayerDataSeason>(fileContent)
+        val rawData = parseJsonList<GamesDataSeason>(fileContent)
             .filter { it.a != "" && it.c != "" }
         val gamesData = getGamesDataSeason17Plus(season.id, rawData).filter { it.isRatingGame() }
         gamesData.forEachIndexed { index, game ->
@@ -191,7 +189,7 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun loadSeason2to16(season: Season, fileContent: String) {
-        val rawData = parseJsonList<PlayerDataSeason>(fileContent)
+        val rawData = parseJsonList<GamesDataSeason>(fileContent)
             .filter { it.a.toIntOrNull() != null }
         val gamesData = getGamesDataSeason2to16(season.id, rawData).filter { it.isRatingGame() }
         gamesData.forEachIndexed { index, game ->
@@ -289,7 +287,7 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun loadSeason0and1(season: Season, fileContent: String) {
-        val rawData = parseJsonList<PlayerDataSeason>(fileContent)
+        val rawData = parseJsonList<GamesDataSeason>(fileContent)
             .filter { it.a.toIntOrNull() != null }
         val gamesData = getGamesDataSeason0And1(season.id, rawData)
         val playersList = gamesData.getPlayersList(season)
@@ -312,7 +310,7 @@ class HomeViewModel @Inject constructor(
                         if (it.isRegularGame()) {
                             it.hasPlayerWon(player)
                         } else {
-                            Values.YES.sheetValue.contains(it.wonByPlayer[it.players.indexOf(player)])
+                            Values.YES.sheetValue.contains(it.wonByPlayer?.get(it.players.indexOf(player)))
                         }
                     }.size
                 )
@@ -324,7 +322,7 @@ class HomeViewModel @Inject constructor(
                         if (it.isRegularGame()) {
                             !it.hasPlayerWon(player)
                         } else {
-                            Values.NO.sheetValue.contains(it.wonByPlayer[it.players.indexOf(player)])
+                            Values.NO.sheetValue.contains(it.wonByPlayer?.get(it.players.indexOf(player)))
                         }
                     }.size
                 )
@@ -514,11 +512,11 @@ class HomeViewModel @Inject constructor(
             role
         )?.sheetValue == Role.SHERIFF.sheetValue
 
-    private fun getGamesDataSeason0And1(seasonId: Int, rawData: List<PlayerDataSeason>) =
+    private fun getGamesDataSeason0And1(seasonId: Int, rawData: List<GamesDataSeason>) =
         rawData.chunked(10)
             .map { playersInfo ->
                 val firstPlayer = playersInfo.first()
-                GameSeason0And1(
+                Game(
                     seasonId = seasonId,
                     players = playersInfo.map { it.b },
                     roles = playersInfo.map { it.c },
@@ -538,10 +536,10 @@ class HomeViewModel @Inject constructor(
                 )
             }
 
-    private fun getGamesDataSeason2to16(seasonId: Int, rawData: List<PlayerDataSeason>) =
+    private fun getGamesDataSeason2to16(seasonId: Int, rawData: List<GamesDataSeason>) =
         rawData.chunked(10)
             .map { playersInfo ->
-                GameSeason2Plus(
+                Game(
                     seasonId = seasonId,
                     players = playersInfo.map { it.g },
                     roles = playersInfo.map { it.h },
@@ -573,10 +571,10 @@ class HomeViewModel @Inject constructor(
                 )
             }
 
-    private fun getGamesDataSeason17Plus(seasonId: Int, rawData: List<PlayerDataSeason>) =
+    private fun getGamesDataSeason17Plus(seasonId: Int, rawData: List<GamesDataSeason>) =
         rawData.chunked(14)
             .map { playersInfo ->
-                GameSeason2Plus(
+                Game(
                     seasonId = seasonId,
                     players = playersInfo.subList(2, 12).map { it.b },
                     roles = playersInfo.subList(2, 12).map { it.c },
@@ -641,14 +639,14 @@ class HomeViewModel @Inject constructor(
     }
 }
 
-fun <T : GameSeason> List<T>.getGamesForRole(
+fun List<Game>.getGamesForRole(
     player: String,
     role: Role
 ) = filter {
     role.sheetValue.contains(it.getPlayerRole(player))
 }
 
-fun <T : GameSeason> List<T>.getPlayersList(
+fun List<Game>.getPlayersList(
     season: Season
 ) = flatMap {
     it.players
