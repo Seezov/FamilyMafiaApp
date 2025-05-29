@@ -535,17 +535,15 @@ class HomeViewModel @Inject constructor(
                             players = playersInfo.map { it.b },
                             roles = playersInfo.map { it.c },
                             cityWon = if (Role.findByValue(firstPlayer.c)!!.isBlack) {
-                                !Values.YES.sheetValue.contains(firstPlayer.d)
+                                firstPlayer.d != Values.YES.sheetValue.first()
                             } else {
-                                Values.YES.sheetValue.contains(firstPlayer.d)
+                                firstPlayer.d == Values.YES.sheetValue.first()
                             },
-                            firstKilled = playersInfo.find { Values.YES.sheetValue.contains(firstPlayer.f) }?.a?.toInt()
-                                ?: 0,
+                            firstKilled = playersInfo.find { it.f == Values.YES.sheetValue.first() }?.a?.toInt() ?: 0,
                             bestMovePoints = playersInfo.find { it.g.isNotEmpty() }?.g?.toFloat()
                                 ?: 0.0F,
                             wonByPlayer = playersInfo.map { it.d },
-                            penaltyPoints = playersInfo.map { if (Values.YES.sheetValue.contains(firstPlayer.e)) 1F else 0f },
-                            // TODO: IMPLEMENT PARSING
+                            penaltyPoints = playersInfo.map { if (it.e == Values.YES.sheetValue.first()) 1F else 0f },
                             bestMove = emptyList()
                         )
                     }
