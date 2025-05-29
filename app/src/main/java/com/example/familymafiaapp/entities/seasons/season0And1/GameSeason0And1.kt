@@ -10,6 +10,7 @@ class GameSeason0And1(
     cityWon: Boolean?,
     firstKilled: Int,
     bestMovePoints: Float,
+    val bestMove: List<Int>,
     val wonByPlayer: List<String>,
     val penaltyPoints: List<Float>
 ): GameSeason(seasonId, players, roles, cityWon, firstKilled, bestMovePoints) {

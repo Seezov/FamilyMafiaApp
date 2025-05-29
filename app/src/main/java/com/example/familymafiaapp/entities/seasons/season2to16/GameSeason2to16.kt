@@ -10,15 +10,15 @@ class GameSeason2to16(
     cityWon: Boolean?,
     firstKilled: Int,
     bestMovePoints: Float,
-    val fouls: List<String>,
     val bestMove: List<Int>,
+    val penaltyPoints: List<Float>? = null,
     val additionalPoints: List<Float>,
 ): GameSeason(seasonId, players, roles, cityWon, firstKilled, bestMovePoints)  {
     fun getPlayerAdditionalPoints(player: String): Float =
         additionalPoints[players.indexOf(player)]
 
-    fun getPlayerFouls(player: String): Int =
-        fouls[players.indexOf(player)].toIntOrNull() ?: 0
+    fun getPlayerPenaltyPoints(player: String): Float =
+        penaltyPoints?.get(players.indexOf(player)) ?: 0F
 
     fun isNormalGame(): Boolean =
         roles.count { Role.MAFIA.sheetValue.contains(it) } == 2 &&

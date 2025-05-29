@@ -43,7 +43,8 @@ class HomeViewModel @Inject constructor(
 
     fun displaySeason(season: Season) {
         _ratings.value =
-            ratingRepository.getRatingsForSeason(season).filter { it.gamesPlayed >= season.gameLimit }
+            ratingRepository.getRatingsForSeason(season)
+                .filter { it.gamesPlayed >= season.gameLimit }
                 .sortedByDescending { it.ratingCoefficient }
     }
 
@@ -58,6 +59,7 @@ class HomeViewModel @Inject constructor(
                 Season.SEASON_0,
                 Season.SEASON_1
                     -> loadSeason0and1(season, fileContent)
+
                 Season.SEASON_2,
                 Season.SEASON_3,
                 Season.SEASON_4,
@@ -151,7 +153,7 @@ class HomeViewModel @Inject constructor(
                 calculateCiForGame(firstKilledCityLost, firstKilled, gamesPlayed, season)
             val ci = ciForGame * firstKilledCityLost
             val winPoints =
-                additionalPointsByRoleSum + autoAdditionalPointsByRoleSum  + penaltyPointsByRoleSum + bestMovePointsByRoleSum + ci
+                additionalPointsByRoleSum + autoAdditionalPointsByRoleSum + penaltyPointsByRoleSum + bestMovePointsByRoleSum + ci
             val mvp =
                 ((additionalPointsByRoleSum + bestMovePointsByRoleSum).toFloat() / gamesPlayed).roundTo2Digits()
             val wins = winByRole.sumOf { it.second }
@@ -234,7 +236,7 @@ class HomeViewModel @Inject constructor(
                 )
             }
             val penaltyPointsByRole = fullGamesForRole.map {
-                it.first to it.second.map { if (it.getPlayerFouls(player) == 4) 1 else 0 }.sum()
+                it.first to it.second.sumOf { it.getPlayerPenaltyPoints(player).toInt() }
             }
             val winByRoleSum = winByRole.sumOf {
                 calculateWinByRole(season, it.first, it.second)
@@ -515,55 +517,64 @@ class HomeViewModel @Inject constructor(
             role
         )?.sheetValue == Role.SHERIFF.sheetValue
 
-    private fun getGamesDataSeason0And1(seasonId: Int, rawData: List<PlayerDataSeason0And1>) = rawData.chunked(10)
-        .map { playersInfo ->
-            val firstPlayer = playersInfo.first()
-            GameSeason0And1(
-                seasonId = seasonId,
-                players = playersInfo.map { it.player },
-                roles = playersInfo.map { it.role },
-                cityWon = if (Role.findByValue(firstPlayer.role)!!.isBlack) {
-                    !Values.YES.sheetValue.contains(firstPlayer.won)
-                } else {
-                    Values.YES.sheetValue.contains(firstPlayer.won)
-                },
-                firstKilled = playersInfo.find { Values.YES.sheetValue.contains(firstPlayer.firstKilled) }?.number?.toInt()
-                    ?: 0,
-                bestMovePoints = playersInfo.find { it.bestMovePoints.isNotEmpty() }?.bestMovePoints?.toFloat()
-                    ?: 0.0F,
-                wonByPlayer = playersInfo.map { it.won },
-                penaltyPoints = playersInfo.map { if (Values.YES.sheetValue.contains(firstPlayer.eliminated)) 1F else 0f }
-            )
-        }
-
-    private fun getGamesDataSeason2to16(seasonId: Int, rawData: List<PlayerDataSeason2to16>) = rawData.chunked(10)
-        .map { playersInfo ->
-            GameSeason2to16(
-                seasonId = seasonId,
-                players = playersInfo.map { it.player },
-                roles = playersInfo.map { it.role },
-                cityWon = getVictoryTeam(playersInfo[0].c),
-                firstKilled = playersInfo[1].c.toIntOrNull() ?: 0,
-                bestMovePoints = playersInfo[1].c.toIntOrNull()?.let { firstKilled ->
-                    if (firstKilled == 0) {
-                        0f
+    private fun getGamesDataSeason0And1(seasonId: Int, rawData: List<PlayerDataSeason0And1>) =
+        rawData.chunked(10)
+            .map { playersInfo ->
+                val firstPlayer = playersInfo.first()
+                GameSeason0And1(
+                    seasonId = seasonId,
+                    players = playersInfo.map { it.player },
+                    roles = playersInfo.map { it.role },
+                    cityWon = if (Role.findByValue(firstPlayer.role)!!.isBlack) {
+                        !Values.YES.sheetValue.contains(firstPlayer.won)
                     } else {
-                        try {
-                            playersInfo.map { it.bestMovePoints }[firstKilled - 1].toFloat()
-                        } catch (e: Exception) {
+                        Values.YES.sheetValue.contains(firstPlayer.won)
+                    },
+                    firstKilled = playersInfo.find { Values.YES.sheetValue.contains(firstPlayer.firstKilled) }?.number?.toInt()
+                        ?: 0,
+                    bestMovePoints = playersInfo.find { it.bestMovePoints.isNotEmpty() }?.bestMovePoints?.toFloat()
+                        ?: 0.0F,
+                    wonByPlayer = playersInfo.map { it.won },
+                    penaltyPoints = playersInfo.map { if (Values.YES.sheetValue.contains(firstPlayer.eliminated)) 1F else 0f },
+                    // TODO: IMPLEMENT PARSING
+                    bestMove = emptyList()
+                )
+            }
+
+    private fun getGamesDataSeason2to16(seasonId: Int, rawData: List<PlayerDataSeason2to16>) =
+        rawData.chunked(10)
+            .map { playersInfo ->
+                GameSeason2to16(
+                    seasonId = seasonId,
+                    players = playersInfo.map { it.player },
+                    roles = playersInfo.map { it.role },
+                    cityWon = getVictoryTeam(playersInfo[0].c),
+                    firstKilled = playersInfo[1].c.toIntOrNull() ?: 0,
+                    bestMovePoints = playersInfo[1].c.toIntOrNull()?.let { firstKilled ->
+                        if (firstKilled == 0) {
                             0f
+                        } else {
+                            try {
+                                playersInfo.map { it.bestMovePoints }[firstKilled - 1].toFloat()
+                            } catch (e: Exception) {
+                                0f
+                            }
                         }
-                    }
-                } ?: 0F,
-                fouls = playersInfo.map { it.fouls },
-                bestMove = listOf(
-                    playersInfo[3].c.toIntOrNull() ?: 0,
-                    playersInfo[3].d.toIntOrNull() ?: 0,
-                    playersInfo[3].e.toIntOrNull() ?: 0,
-                ),
-                additionalPoints = playersInfo.map { it.additionalPoints.toFloatOrNull() ?: 0F }
-            )
-        }
+                    } ?: 0F,
+                    penaltyPoints = playersInfo.map {
+                        if (it.fouls.toIntOrNull() == 4)
+                            1F
+                        else
+                            0F
+                    },
+                    bestMove = listOf(
+                        playersInfo[3].c.toIntOrNull() ?: 0,
+                        playersInfo[3].d.toIntOrNull() ?: 0,
+                        playersInfo[3].e.toIntOrNull() ?: 0,
+                    ),
+                    additionalPoints = playersInfo.map { it.additionalPoints.toFloatOrNull() ?: 0F }
+                )
+            }
 
     private fun getGamesDataSeason17Plus(seasonId: Int, rawData: List<PlayerDataSeason17Plus>) =
         rawData.chunked(14)
