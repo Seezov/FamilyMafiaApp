@@ -12,7 +12,8 @@ class GameSeason0And1(
     bestMovePoints: Float,
     val bestMove: List<Int>,
     val wonByPlayer: List<String>,
-    val penaltyPoints: List<Float>
+    val penaltyPoints: List<Float>,
+    val additionalPoints: List<Float>? = null
 ): GameSeason(seasonId, players, roles, cityWon, firstKilled, bestMovePoints) {
     fun getPlayerPenaltyPoints(player: String): Float = penaltyPoints[players.indexOf(player)]
 

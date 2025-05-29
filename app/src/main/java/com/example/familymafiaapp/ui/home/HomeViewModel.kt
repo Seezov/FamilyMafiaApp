@@ -293,7 +293,7 @@ class HomeViewModel @Inject constructor(
 
     private fun loadSeason0and1(season: Season, fileContent: String) {
         val rawData = parseJsonList<PlayerDataSeason0And1>(fileContent)
-            .filter { it.number.toIntOrNull() != null }
+            .filter { it.a.toIntOrNull() != null }
         val gamesData = getGamesDataSeason0And1(season.id, rawData)
         val playersList = gamesData.getPlayersList(season)
         val ratings = playersList.map { player ->
@@ -523,19 +523,19 @@ class HomeViewModel @Inject constructor(
                 val firstPlayer = playersInfo.first()
                 GameSeason0And1(
                     seasonId = seasonId,
-                    players = playersInfo.map { it.player },
-                    roles = playersInfo.map { it.role },
-                    cityWon = if (Role.findByValue(firstPlayer.role)!!.isBlack) {
-                        !Values.YES.sheetValue.contains(firstPlayer.won)
+                    players = playersInfo.map { it.b },
+                    roles = playersInfo.map { it.c },
+                    cityWon = if (Role.findByValue(firstPlayer.c)!!.isBlack) {
+                        !Values.YES.sheetValue.contains(firstPlayer.d)
                     } else {
-                        Values.YES.sheetValue.contains(firstPlayer.won)
+                        Values.YES.sheetValue.contains(firstPlayer.d)
                     },
-                    firstKilled = playersInfo.find { Values.YES.sheetValue.contains(firstPlayer.firstKilled) }?.number?.toInt()
+                    firstKilled = playersInfo.find { Values.YES.sheetValue.contains(firstPlayer.f) }?.a?.toInt()
                         ?: 0,
-                    bestMovePoints = playersInfo.find { it.bestMovePoints.isNotEmpty() }?.bestMovePoints?.toFloat()
+                    bestMovePoints = playersInfo.find { it.g.isNotEmpty() }?.g?.toFloat()
                         ?: 0.0F,
-                    wonByPlayer = playersInfo.map { it.won },
-                    penaltyPoints = playersInfo.map { if (Values.YES.sheetValue.contains(firstPlayer.eliminated)) 1F else 0f },
+                    wonByPlayer = playersInfo.map { it.d },
+                    penaltyPoints = playersInfo.map { if (Values.YES.sheetValue.contains(firstPlayer.e)) 1F else 0f },
                     // TODO: IMPLEMENT PARSING
                     bestMove = emptyList()
                 )
