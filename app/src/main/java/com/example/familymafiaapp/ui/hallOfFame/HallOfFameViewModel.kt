@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.familymafiaapp.entities.RatingUniversal
+import com.example.familymafiaapp.enums.Role
 import com.example.familymafiaapp.enums.Season
 import com.example.familymafiaapp.extensions.roundTo2Digits
 import com.example.familymafiaapp.repository.GamesRepository
@@ -54,7 +55,7 @@ class HallOfFameViewModel @Inject constructor(
                 }.size
                 val winRate = (gamesWon.toFloat()/gamesForPlayerSize * 100).roundTo2Digits()
                 Triple(player.displayName, gamesForPlayer.size,winRate )
-            }.filter { it.second  >= 200 }.sortedBy { it.third }
+            }.filter { it.second  >= 200 }.sortedByDescending { it.third }
             _ratings.value = playerToNumberOfGames
         }
     }

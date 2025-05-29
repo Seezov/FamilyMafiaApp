@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -56,14 +57,14 @@ fun PlayerStatsScreen(stats: List<Triple<String, Int, Float>>) {
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        items(stats) { player ->
-            PlayerStatsItem(player)
+        itemsIndexed(stats) { index, player ->
+            PlayerStatsItem(index, player)
         }
     }
 }
 
 @Composable
-fun PlayerStatsItem(player: Triple<String, Int, Float>) {
+fun PlayerStatsItem(index: Int, player: Triple<String, Int, Float>) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -75,6 +76,11 @@ fun PlayerStatsItem(player: Triple<String, Int, Float>) {
                 .padding(16.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
+            Text(
+                text = (index+1).toString(),
+                style = MaterialTheme.typography.titleMedium
+            )
+            Spacer(Modifier.width(8.dp))
             Text(
                 text = player.first,
                 style = MaterialTheme.typography.titleMedium
