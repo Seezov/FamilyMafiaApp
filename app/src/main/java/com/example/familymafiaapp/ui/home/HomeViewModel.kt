@@ -4,12 +4,10 @@ import androidx.lifecycle.ViewModel
 import com.example.familymafiaapp.entities.Player
 import com.example.familymafiaapp.enums.Role
 import com.example.familymafiaapp.entities.seasons.season0And1.GameSeason0And1
-import com.example.familymafiaapp.entities.seasons.season0And1.PlayerDataSeason0And1
-import com.example.familymafiaapp.entities.seasons.season2to16.PlayerDataSeason2to16
+import com.example.familymafiaapp.entities.seasons.PlayerDataSeason
 import com.example.familymafiaapp.entities.RatingUniversal
 import com.example.familymafiaapp.entities.seasons.GameSeason
 import com.example.familymafiaapp.entities.seasons.season17Plus.GameSeason17Plus
-import com.example.familymafiaapp.entities.seasons.season17Plus.PlayerDataSeason17Plus
 import com.example.familymafiaapp.entities.seasons.season2to16.GameSeason2to16
 import com.example.familymafiaapp.enums.Season
 import com.example.familymafiaapp.enums.Values
@@ -94,7 +92,7 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun loadSeason17Plus(season: Season, fileContent: String) {
-        val rawData = parseJsonList<PlayerDataSeason17Plus>(fileContent)
+        val rawData = parseJsonList<PlayerDataSeason>(fileContent)
             .filter { it.a != "" && it.c != "" }
         val gamesData = getGamesDataSeason17Plus(season.id, rawData).filter { it.isRatingGame() }
         gamesData.forEachIndexed { index, game ->
@@ -194,8 +192,8 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun loadSeason2to16(season: Season, fileContent: String) {
-        val rawData = parseJsonList<PlayerDataSeason2to16>(fileContent)
-            .filter { it.number.toIntOrNull() != null }
+        val rawData = parseJsonList<PlayerDataSeason>(fileContent)
+            .filter { it.a.toIntOrNull() != null }
         val gamesData = getGamesDataSeason2to16(season.id, rawData).filter { it.isRatingGame() }
         gamesData.forEachIndexed { index, game ->
             if (!game.isNormalGame()) {
@@ -292,7 +290,7 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun loadSeason0and1(season: Season, fileContent: String) {
-        val rawData = parseJsonList<PlayerDataSeason0And1>(fileContent)
+        val rawData = parseJsonList<PlayerDataSeason>(fileContent)
             .filter { it.a.toIntOrNull() != null }
         val gamesData = getGamesDataSeason0And1(season.id, rawData)
         val playersList = gamesData.getPlayersList(season)
@@ -517,7 +515,7 @@ class HomeViewModel @Inject constructor(
             role
         )?.sheetValue == Role.SHERIFF.sheetValue
 
-    private fun getGamesDataSeason0And1(seasonId: Int, rawData: List<PlayerDataSeason0And1>) =
+    private fun getGamesDataSeason0And1(seasonId: Int, rawData: List<PlayerDataSeason>) =
         rawData.chunked(10)
             .map { playersInfo ->
                 val firstPlayer = playersInfo.first()
@@ -541,13 +539,13 @@ class HomeViewModel @Inject constructor(
                 )
             }
 
-    private fun getGamesDataSeason2to16(seasonId: Int, rawData: List<PlayerDataSeason2to16>) =
+    private fun getGamesDataSeason2to16(seasonId: Int, rawData: List<PlayerDataSeason>) =
         rawData.chunked(10)
             .map { playersInfo ->
                 GameSeason2to16(
                     seasonId = seasonId,
-                    players = playersInfo.map { it.player },
-                    roles = playersInfo.map { it.role },
+                    players = playersInfo.map { it.g },
+                    roles = playersInfo.map { it.h },
                     cityWon = getVictoryTeam(playersInfo[0].c),
                     firstKilled = playersInfo[1].c.toIntOrNull() ?: 0,
                     bestMovePoints = playersInfo[1].c.toIntOrNull()?.let { firstKilled ->
@@ -555,14 +553,14 @@ class HomeViewModel @Inject constructor(
                             0f
                         } else {
                             try {
-                                playersInfo.map { it.bestMovePoints }[firstKilled - 1].toFloat()
+                                playersInfo.map { it.j }[firstKilled - 1].toFloat()
                             } catch (e: Exception) {
                                 0f
                             }
                         }
                     } ?: 0F,
                     penaltyPoints = playersInfo.map {
-                        if (it.fouls.toIntOrNull() == 4)
+                        if (it.f.toIntOrNull() == 4)
                             1F
                         else
                             0F
@@ -572,11 +570,11 @@ class HomeViewModel @Inject constructor(
                         playersInfo[3].d.toIntOrNull() ?: 0,
                         playersInfo[3].e.toIntOrNull() ?: 0,
                     ),
-                    additionalPoints = playersInfo.map { it.additionalPoints.toFloatOrNull() ?: 0F }
+                    additionalPoints = playersInfo.map { it.i.toFloatOrNull() ?: 0F }
                 )
             }
 
-    private fun getGamesDataSeason17Plus(seasonId: Int, rawData: List<PlayerDataSeason17Plus>) =
+    private fun getGamesDataSeason17Plus(seasonId: Int, rawData: List<PlayerDataSeason>) =
         rawData.chunked(14)
             .map { playersInfo ->
                 GameSeason17Plus(

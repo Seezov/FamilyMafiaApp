@@ -1,8 +1,8 @@
-package com.example.familymafiaapp.entities.seasons.season17Plus
+package com.example.familymafiaapp.entities.seasons
 
 import com.google.gson.annotations.SerializedName
 
-data class PlayerDataSeason17Plus(
+data class PlayerDataSeason(
     @SerializedName("A") val a: String = "",
     @SerializedName("B") val b: String = "",
     @SerializedName("C") val c: String = "",
@@ -12,5 +12,5 @@ data class PlayerDataSeason17Plus(
     @SerializedName("G") val g: String = "",
     @SerializedName("H") val h: String = "",
     @SerializedName("I") val i: String = "",
-    @SerializedName("J") val j: String = "",
+    @SerializedName("J") val j: String = ""
 )
