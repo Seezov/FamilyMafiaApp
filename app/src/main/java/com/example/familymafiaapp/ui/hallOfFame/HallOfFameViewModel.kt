@@ -1,10 +1,13 @@
 package com.example.familymafiaapp.ui.hallOfFame
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.familymafiaapp.entities.Game
+import com.example.familymafiaapp.entities.Player
 import com.example.familymafiaapp.entities.RatingUniversal
 import com.example.familymafiaapp.enums.Role
 import com.example.familymafiaapp.enums.Season
@@ -12,10 +15,13 @@ import com.example.familymafiaapp.extensions.roundTo2Digits
 import com.example.familymafiaapp.repository.GamesRepository
 import com.example.familymafiaapp.repository.PlayersRepository
 import com.example.familymafiaapp.repository.RatingRepository
+import com.google.gson.Gson
+import dagger.hilt.android.internal.Contexts
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.io.File
 import javax.inject.Inject
 import kotlin.math.sign
 
@@ -37,27 +43,39 @@ class HallOfFameViewModel @Inject constructor(
             val games = gamesRepository.getAllGames()
             val players = playersRepository.getAllPlayers()
             val playerToNumberOfGames = players.map { player ->
-                val gamesForPlayer = games.filter { game ->
-                    if (player.nicknames == null) {
-                        game.players.contains(player.displayName)
-                    } else {
-                        player.nicknames.any { game.players.contains(it) }
-                    }
+                val gamesForPlayer = getGamesForPlayer(games, player)
+                val gamesForPlayerOnSheriff = gamesForPlayer.filter { game ->
+                    val role = game.getPlayerRole(getNicknameInGame(game,player))
+                    Role.CIVILIAN.sheetValue.contains(role)
                 }
-                val gamesForPlayerSize = gamesForPlayer.size
-                val gamesWon = gamesForPlayer.filter { game ->
-                    val nicknameInGame = if (player.nicknames == null) {
-                        player.displayName
-                    } else {
-                        player.nicknames.find { game.players.contains(it) } ?: player.displayName
-                    }
-                    game.hasPlayerWon(nicknameInGame)
-                }.size
-                val winRate = (gamesWon.toFloat()/gamesForPlayerSize * 100).roundTo2Digits()
-                Triple(player.displayName, gamesForPlayer.size,winRate )
-            }.filter { it.second  >= 200 }.sortedByDescending { it.third }
+                val gamesForPlayerOnSheriffSize = gamesForPlayerOnSheriff.size
+                val gamesWonOnSheriff = gamesForPlayerOnSheriff.filter { game ->
+                    game.hasPlayerWon(getNicknameInGame(game,player))
+                }
+                val gamesWonOnSheriffSize = gamesWonOnSheriff.size
+                if (gamesWonOnSheriffSize > 0 && gamesForPlayerOnSheriffSize > 0) {
+                    val winRate = (gamesWonOnSheriffSize.toFloat() / gamesForPlayerOnSheriffSize * 100).roundTo2Digits()
+                    Triple(player.displayName, gamesForPlayerOnSheriffSize, winRate)
+                } else {
+                    Triple(player.displayName, 0, 0F)
+                }
+            }.filter { it.second >= 250 }.sortedByDescending { it.third }
             _ratings.value = playerToNumberOfGames
         }
+    }
+
+    fun getGamesForPlayer(games: List<Game>, player: Player) = games.filter { game ->
+        if (player.nicknames == null) {
+            game.players.contains(player.displayName)
+        } else {
+            player.nicknames.any { game.players.contains(it) }
+        }
+    }
+
+    fun getNicknameInGame(game: Game, player: Player) = if (player.nicknames == null) {
+        player.displayName
+    } else {
+        player.nicknames.find { game.players.contains(it) } ?: player.displayName
     }
 
     companion object {

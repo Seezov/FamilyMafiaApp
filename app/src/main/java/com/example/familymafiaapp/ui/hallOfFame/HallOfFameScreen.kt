@@ -22,6 +22,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -87,7 +88,7 @@ fun PlayerStatsItem(index: Int, player: Triple<String, Int, Float>) {
             )
             Spacer(Modifier.width(8.dp))
             Text(
-                text = "${player.second} games",
+                text = "${player.second} games on Civilian",
                 style = MaterialTheme.typography.bodyMedium
             )
             Spacer(Modifier.width(8.dp))
