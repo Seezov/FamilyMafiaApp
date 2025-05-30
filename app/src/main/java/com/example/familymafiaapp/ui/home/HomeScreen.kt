@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -120,18 +121,47 @@ fun RatingItem(rating: RatingUniversal) {
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text(rating.player, style = MaterialTheme.typography.titleLarge)
+            Row {
+                Text(rating.player, style = MaterialTheme.typography.titleLarge)
+                Spacer(Modifier.width(16.dp))
+                Text(
+                    "${rating.ratingCoefficient}",
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.align(Alignment.CenterVertically)
+                )
+            }
 
             Spacer(Modifier.height(8.dp))
 
-            Text("Rating Coefficient: ${rating.ratingCoefficient}")
-            Text("Wins: ${rating.wins} / Games: ${rating.gamesPlayed} (${(rating.winRate * 100).roundTo2Digits()}%)")
-            Text("MVP: ${rating.mvp.roundTo2Digits()}")
-            Text("CI/Game: ${rating.ciForGame.roundTo2Digits()} | CI: ${rating.ci.roundTo2Digits()}")
-            Text("Add. Points: ${rating.additionalPoints.roundTo2Digits()} | Penalty: ${rating.penaltyPoints.roundTo2Digits()}")
-            Text("Best Move Points: ${rating.bestMovePoints.roundTo2Digits()}")
-            Text("First Killed: ${rating.firstKilled} (City Lost: ${rating.firstKilledCityLost})")
-            Text("Death percentage: ${(rating.percentOfDeath * 100).roundTo2Digits()}%")
+            Text(
+                "Wins: ${rating.wins}/${rating.gamesPlayed} games (${(rating.winRate * 100).roundTo2Digits()}% WR)",
+                style = MaterialTheme.typography.bodySmall
+            )
+            Text(
+                "Add. Points: ${rating.additionalPoints.roundTo2Digits()} | Penalty: ${rating.penaltyPoints.roundTo2Digits()}",
+                style = MaterialTheme.typography.bodySmall
+            )
+            Text(
+                "Best Move Points: ${rating.bestMovePoints.roundTo2Digits()}",
+                style = MaterialTheme.typography.bodySmall
+            )
+            Text(
+                "MVP: ${rating.mvp.roundTo2Digits()}",
+                style = MaterialTheme.typography.bodySmall
+            )
+            Text(
+                "First Killed: ${rating.firstKilled} (City Lost: ${rating.firstKilledCityLost})",
+                style = MaterialTheme.typography.bodySmall
+            )
+            Text(
+                "Death percentage: ${(rating.percentOfDeath * 100).roundTo2Digits()}%",
+                style = MaterialTheme.typography.bodySmall
+            )
+            Text(
+                "CI/Game: ${rating.ciForGame.roundTo2Digits()} | CI: ${rating.ci.roundTo2Digits()}",
+                style = MaterialTheme.typography.bodySmall
+            )
+
 
             Spacer(Modifier.height(8.dp))
 
@@ -150,7 +180,7 @@ fun RatingItem(rating: RatingUniversal) {
                     if (games > 0) (wins.toFloat() / games * 100).roundTo2Digits() else 0
 
                 Text(
-                    text = "$roleName: $wins wins / $games games, $winRatePercent% winrate, ${(add + penalty).roundTo2Digits()} Add. Points",
+                    text = "$roleName: $wins/$games games, $winRatePercent% winrate, ${(add + penalty).roundTo2Digits()} Add. Points",
                     style = MaterialTheme.typography.bodySmall
                 )
             }
