@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.familymafiaapp.entities.Game
 import com.example.familymafiaapp.entities.Player
+import com.example.familymafiaapp.entities.SlotStats
 import com.example.familymafiaapp.entities.Stats
 import com.example.familymafiaapp.enums.Role
 import com.example.familymafiaapp.enums.Season
@@ -24,6 +25,9 @@ class HallOfFameViewModel @Inject constructor(
     private val gamesRepository: GamesRepository,
 ) : ViewModel() {
 
+    private val _slotStats = MutableStateFlow<List<SlotStats>>(emptyList())
+    val slotStats: StateFlow<List<SlotStats>> = _slotStats
+
     private val _stats = MutableStateFlow<List<Stats>>(emptyList())
     val stats: StateFlow<List<Stats>> = _stats
 
@@ -39,29 +43,48 @@ class HallOfFameViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             val games = gamesRepository.getAllGames()
-            val players = playersRepository.getAllPlayers().filter { it.displayName == "Seezov" }
-            val playerToNumberOfGames = players.map { player ->
-                val gamesForPlayer = getGamesForPlayer(games, player)
-                val role = Role.DON
-                val gamesForPlayerOnSheriff = gamesForPlayer.getGamesForRole(player, role)
-                val gamesForPlayerOnSheriffSize = gamesForPlayerOnSheriff.size
-                if (gamesForPlayerOnSheriffSize > 0) {
-                    val slotToGame = gamesForPlayerOnSheriff.groupBy { it.getPlayerSlot(getNicknameInGame(it, player)) }
-                    val slotToGameCount = slotToGame.map { it.key to it.value.size }
-                    val slotToGameWinCount =  slotToGame.map { it.key to it.value.filter { it.hasPlayerWon(getNicknameInGame(it,player)) }.size }
-                    val slotToWr = slotToGame.toSortedMap().map { slot ->
-                        val selectedSlotToGameWinCount = slotToGameWinCount.find { entry -> entry.first == slot.key }?.second ?: 0
-                        val selectedSlotToGameCount = slotToGameCount.find { entry -> entry.first == slot.key }?.second ?: 0
-                        Triple(slot.key, selectedSlotToGameWinCount, selectedSlotToGameCount)
-                    }
-                    Stats(player.displayName, role.sheetValue.last(), gamesForPlayer.size, slotToWr)
-                } else {
-                    Stats(player.displayName, role.sheetValue.last(), 0, emptyList())
+            val players = playersRepository.getAllPlayers()
+            val slots = listOf(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
+            val wrForRole = calculateSlotRoleWinrates(games)
+            _slotStats.value = slots.map { slot ->
+                val slotStats = wrForRole[slot]
+                val slotStatResult = SlotStats(slot, Role.entries.map { role ->
+                   val roleStats = slotStats!![role]
+                    role.sheetValue.last() to roleStats!!
+                })
+                slotStatResult
+            }
+        }
+    }
+    fun calculateSlotRoleWinrates(games: List<Game>): Map<Int, Map<Role, Float>> {
+        // Map<slotIndex, Map<role, total and wins>>
+        val totalBySlotRole = mutableMapOf<Int, MutableMap<Role, Int>>()
+        val winsBySlotRole = mutableMapOf<Int, MutableMap<Role, Int>>()
+
+        for (game in games) {
+            if (!game.isRatingGame()) continue
+
+            for (i in game.players.indices) {
+                val role = Role.findByValue(game.roles[i]) ?: continue
+                val player = game.players[i]
+                val won = game.hasPlayerWon(player)
+
+                totalBySlotRole.getOrPut(i) { mutableMapOf() }[role] =
+                    totalBySlotRole[i]?.getOrDefault(role, 0)?.plus(1) ?: 1
+
+                if (won) {
+                    winsBySlotRole.getOrPut(i) { mutableMapOf() }[role] =
+                        winsBySlotRole[i]?.getOrDefault(role, 0)?.plus(1) ?: 1
                 }
-            }.sortedByDescending { it.gamesPlayed }
-            _stats.value = playerToNumberOfGames
-//            }.filter { it.second >= 10 }.sortedByDescending { it.third }
-//            _ratings.value = playerToNumberOfGames
+            }
+        }
+
+        // Calculate winrate = wins / total
+        return totalBySlotRole.mapValues { (slot, roleMap) ->
+            roleMap.mapValues { (role, total) ->
+                val wins = winsBySlotRole[slot]?.get(role) ?: 0
+                if (total > 0) (wins.toFloat() / total*100).roundTo2Digits() else 0f
+            }
         }
     }
 
@@ -87,6 +110,29 @@ class HallOfFameViewModel @Inject constructor(
 
         return maxStreak
     }
+
+
+// ALL STATS PER PLAYER
+//    val playerToNumberOfGames = players.map { player ->
+//        val gamesForPlayer = getGamesForPlayer(games, player)
+//        val role = Role.DON
+//        val gamesForPlayerOnSheriff = gamesForPlayer.getGamesForRole(player, role)
+//        val gamesForPlayerOnSheriffSize = gamesForPlayerOnSheriff.size
+//        if (gamesForPlayerOnSheriffSize > 0) {
+//            val slotToGame = gamesForPlayerOnSheriff.groupBy { it.getPlayerSlot(getNicknameInGame(it, player)) }
+//            val slotToGameCount = slotToGame.map { it.key to it.value.size }
+//            val slotToGameWinCount =  slotToGame.map { it.key to it.value.filter { it.hasPlayerWon(getNicknameInGame(it,player)) }.size }
+//            val slotToWr = slotToGame.toSortedMap().map { slot ->
+//                val selectedSlotToGameWinCount = slotToGameWinCount.find { entry -> entry.first == slot.key }?.second ?: 0
+//                val selectedSlotToGameCount = slotToGameCount.find { entry -> entry.first == slot.key }?.second ?: 0
+//                Triple(slot.key, selectedSlotToGameWinCount, selectedSlotToGameCount)
+//            }
+//            Stats(player.displayName, role.sheetValue.last(), gamesForPlayer.size, slotToWr)
+//        } else {
+//            Stats(player.displayName, role.sheetValue.last(), 0, emptyList())
+//        }
+//    }.sortedByDescending { it.gamesPlayed }
+//    _stats.value = playerToNumberOfGames
 
  // WR per slot
 //    val slotToGame = gamesForPlayer

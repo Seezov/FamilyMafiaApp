@@ -32,6 +32,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.familymafiaapp.entities.SlotStats
 import com.example.familymafiaapp.entities.Stats
 import com.example.familymafiaapp.extensions.roundTo2Digits
 
@@ -42,6 +43,7 @@ fun HallOfFameScreen(hallOfFameViewModel: HallOfFameViewModel = hiltViewModel())
     val ratings by hallOfFameViewModel.ratings.collectAsState()
     val playerOnSlot by hallOfFameViewModel.playerOnSlot.collectAsState()
     val stats by hallOfFameViewModel.stats.collectAsState()
+    val slotStats by hallOfFameViewModel.slotStats.collectAsState()
 
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         if (debugText.isNotEmpty()) {
@@ -51,6 +53,8 @@ fun HallOfFameScreen(hallOfFameViewModel: HallOfFameViewModel = hiltViewModel())
             }
         } else if (stats.isNotEmpty()) {
             PlayerWholeStatsScreen(stats)
+        } else if (slotStats.isNotEmpty()) {
+            SlotStatsScreen(slotStats)
         } else if (playerOnSlot.isNotEmpty()) {
             PlayerOnSlotStatsScreen(playerOnSlot)
         } else {
@@ -114,12 +118,12 @@ fun PlayerWholeStatsItem(index: Int, player: Stats) {
                     Row {
                         Text(
                             text = "Slot ${slot.first + 1}",
-                            style = MaterialTheme.typography.bodyMedium
+                            style = MaterialTheme.typography.bodySmall
                         )
                         Spacer(Modifier.width(8.dp))
                         Text(
                             text = "${slot.second}/${slot.third}",
-                            style = MaterialTheme.typography.bodyMedium
+                            style = MaterialTheme.typography.bodySmall
                         )
                         Spacer(Modifier.width(8.dp))
                         val wr = if (slot.second > 0) {
@@ -129,7 +133,7 @@ fun PlayerWholeStatsItem(index: Int, player: Stats) {
                         }.roundTo2Digits()
                         Text(
                             text = "${wr}% WR",
-                            style = MaterialTheme.typography.bodyMedium
+                            style = MaterialTheme.typography.bodySmall
                         )
 //                        Spacer(Modifier.width(8.dp))
 //                        Text(
@@ -208,6 +212,77 @@ fun PlayerOnSlotStatsItem(index: Int, player: Triple<String, Int, List<Pair<Int,
 //                        )
                     }
                 }
+            }
+        }
+    }
+}
+
+@Composable
+fun SlotStatsScreen(stats: List<SlotStats>) {
+    Column {
+        Row {
+            Spacer(Modifier.width(16.dp))
+            Spacer(Modifier.width(16.dp))
+            Text(
+                text = "#",
+                style = MaterialTheme.typography.titleMedium
+            )
+            Spacer(Modifier.width(16.dp))
+            Spacer(Modifier.width(16.dp))
+            Text(
+                text = "S",
+                style = MaterialTheme.typography.titleMedium
+            )
+            Spacer(Modifier.width(16.dp))
+            Spacer(Modifier.width(16.dp))
+            Text(
+                text = "D",
+                style = MaterialTheme.typography.titleMedium
+            )
+            Spacer(Modifier.width(16.dp))
+            Spacer(Modifier.width(16.dp))
+            Text(
+                text = "C",
+                style = MaterialTheme.typography.titleMedium
+            )
+            Spacer(Modifier.width(16.dp))
+            Spacer(Modifier.width(16.dp))
+            Text(
+                text = "M",
+                style = MaterialTheme.typography.titleMedium
+            )
+        }
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
+            itemsIndexed(stats) { index, player ->
+                SlotStatsItem(index, player)
+            }
+        }
+    }
+}
+
+@Composable
+fun SlotStatsItem(index: Int, slotStats: SlotStats) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(4.dp),
+        elevation = CardDefaults.cardElevation(4.dp)
+    ) {
+        Row(modifier = Modifier.padding(8.dp)) {
+            Text(
+                text = "${slotStats.slot+1}",
+                        style = MaterialTheme.typography.titleMedium
+            )
+            slotStats.roleWr.forEach { roleStats ->
+                Spacer(Modifier.width(16.dp))
+                Text(
+                    text = roleStats.second.toString(),
+                    style = MaterialTheme.typography.bodySmall
+                )
             }
         }
     }
