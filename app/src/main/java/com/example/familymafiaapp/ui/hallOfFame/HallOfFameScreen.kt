@@ -43,8 +43,8 @@ fun HallOfFameScreen(hallOfFameViewModel: HallOfFameViewModel = hiltViewModel())
         if (debugText.isNotEmpty()) {
             Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
                 Text(debugText)
+                CopyToClipboardButton(debugText)
             }
-            CopyToClipboardButton(debugText)
         } else {
             PlayerStatsScreen(ratings)
         }
@@ -88,7 +88,7 @@ fun PlayerStatsItem(index: Int, player: Triple<String, Int, Float>) {
             )
             Spacer(Modifier.width(8.dp))
             Text(
-                text = "${player.second} games on Civilian",
+                text = "${player.second} games on Don",
                 style = MaterialTheme.typography.bodyMedium
             )
             Spacer(Modifier.width(8.dp))

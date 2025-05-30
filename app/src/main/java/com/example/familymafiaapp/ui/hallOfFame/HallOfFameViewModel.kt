@@ -1,29 +1,20 @@
 package com.example.familymafiaapp.ui.hallOfFame
 
-import android.content.Context
-import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.familymafiaapp.entities.Game
 import com.example.familymafiaapp.entities.Player
-import com.example.familymafiaapp.entities.RatingUniversal
 import com.example.familymafiaapp.enums.Role
 import com.example.familymafiaapp.enums.Season
 import com.example.familymafiaapp.extensions.roundTo2Digits
 import com.example.familymafiaapp.repository.GamesRepository
 import com.example.familymafiaapp.repository.PlayersRepository
 import com.example.familymafiaapp.repository.RatingRepository
-import com.google.gson.Gson
-import dagger.hilt.android.internal.Contexts
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import java.io.File
 import javax.inject.Inject
-import kotlin.math.sign
 
 @HiltViewModel
 class HallOfFameViewModel @Inject constructor(
@@ -46,7 +37,7 @@ class HallOfFameViewModel @Inject constructor(
                 val gamesForPlayer = getGamesForPlayer(games, player)
                 val gamesForPlayerOnSheriff = gamesForPlayer.filter { game ->
                     val role = game.getPlayerRole(getNicknameInGame(game,player))
-                    Role.CIVILIAN.sheetValue.contains(role)
+                    Role.DON.sheetValue.contains(role)
                 }
                 val gamesForPlayerOnSheriffSize = gamesForPlayerOnSheriff.size
                 val gamesWonOnSheriff = gamesForPlayerOnSheriff.filter { game ->
@@ -59,18 +50,25 @@ class HallOfFameViewModel @Inject constructor(
                 } else {
                     Triple(player.displayName, 0, 0F)
                 }
-            }.filter { it.second >= 250 }.sortedByDescending { it.third }
+            }.filter { it.second >= 10 }.sortedByDescending { it.third }
             _ratings.value = playerToNumberOfGames
         }
     }
 
-    fun getGamesForPlayer(games: List<Game>, player: Player) = games.filter { game ->
-        if (player.nicknames == null) {
-            game.players.contains(player.displayName)
-        } else {
-            player.nicknames.any { game.players.contains(it) }
+    fun getGamesForPlayer(
+        games: List<Game>,
+        player: Player,
+        from: Int = Season.entries.first().id,
+        to: Int = Season.entries.last().id
+    ) = games.filter {
+            it.seasonId in from..to
+        }.filter { game ->
+            if (player.nicknames == null) {
+                game.players.contains(player.displayName)
+            } else {
+                player.nicknames.any { game.players.contains(it) }
+            }
         }
-    }
 
     fun getNicknameInGame(game: Game, player: Player) = if (player.nicknames == null) {
         player.displayName
