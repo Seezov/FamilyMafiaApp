@@ -97,12 +97,7 @@ fun PlayerWholeStatsItem(index: Int, player: Stats) {
                 )
                 Spacer(Modifier.width(8.dp))
                 Text(
-                    text = "${player.gamesPlayed} games",
-                    style = MaterialTheme.typography.bodyMedium
-                )
-                Spacer(Modifier.width(8.dp))
-                Text(
-                    text = "Stats for ${player.role}",
+                    text = "${player.gamesPlayed} Total games",
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
@@ -111,6 +106,10 @@ fun PlayerWholeStatsItem(index: Int, player: Stats) {
                     .padding(8.dp, 2.dp, 0.dp, 8.dp),
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
+                Text(
+                    text = "Stats for ${player.role} (${player.slotToWr.sumOf { it.third }} games)",
+                    style = MaterialTheme.typography.bodyMedium
+                )
                 player.slotToWr.forEach { slot ->
                     Row {
                         Text(
@@ -119,7 +118,17 @@ fun PlayerWholeStatsItem(index: Int, player: Stats) {
                         )
                         Spacer(Modifier.width(8.dp))
                         Text(
-                            text = "${slot.second}% WR",
+                            text = "${slot.second}/${slot.third}",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                        Spacer(Modifier.width(8.dp))
+                        val wr = if (slot.second > 0) {
+                            slot.second.toFloat()/slot.third*100
+                        } else {
+                            0F
+                        }.roundTo2Digits()
+                        Text(
+                            text = "${wr}% WR",
                             style = MaterialTheme.typography.bodyMedium
                         )
 //                        Spacer(Modifier.width(8.dp))

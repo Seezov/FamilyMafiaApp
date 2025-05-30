@@ -39,10 +39,10 @@ class HallOfFameViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             val games = gamesRepository.getAllGames()
-            val players = playersRepository.getAllPlayers()
+            val players = playersRepository.getAllPlayers().filter { it.displayName == "Seezov" }
             val playerToNumberOfGames = players.map { player ->
                 val gamesForPlayer = getGamesForPlayer(games, player)
-                val role = Role.SHERIFF
+                val role = Role.DON
                 val gamesForPlayerOnSheriff = gamesForPlayer.getGamesForRole(player, role)
                 val gamesForPlayerOnSheriffSize = gamesForPlayerOnSheriff.size
                 if (gamesForPlayerOnSheriffSize > 0) {
@@ -50,13 +50,9 @@ class HallOfFameViewModel @Inject constructor(
                     val slotToGameCount = slotToGame.map { it.key to it.value.size }
                     val slotToGameWinCount =  slotToGame.map { it.key to it.value.filter { it.hasPlayerWon(getNicknameInGame(it,player)) }.size }
                     val slotToWr = slotToGame.toSortedMap().map { slot ->
-                        val selectedSlotToGameWinCount = slotToGameWinCount.find { entry -> entry.first == slot.key }?.second?.toFloat() ?: 0F
-                        val selectedSlotToGameCount = slotToGameCount.find { entry -> entry.first == slot.key }?.second?.toFloat() ?: 0F
-                        if (selectedSlotToGameWinCount > 0 && selectedSlotToGameCount > 0) {
-                            slot.key to (selectedSlotToGameWinCount/selectedSlotToGameCount * 100).roundTo2Digits()
-                        } else {
-                            slot.key to 0F
-                        }
+                        val selectedSlotToGameWinCount = slotToGameWinCount.find { entry -> entry.first == slot.key }?.second ?: 0
+                        val selectedSlotToGameCount = slotToGameCount.find { entry -> entry.first == slot.key }?.second ?: 0
+                        Triple(slot.key, selectedSlotToGameWinCount, selectedSlotToGameCount)
                     }
                     Stats(player.displayName, role.sheetValue.last(), gamesForPlayer.size, slotToWr)
                 } else {
