@@ -75,31 +75,36 @@ class HomeViewModel @Inject constructor(
         players: List<RatingPlayerStats>,
         role: Role
     ): RatingPlayerStats? {
-        // Filter only players who played this role
-        val playersWithRoleStats = players.mapNotNull { player ->
-            val gamesForRole = player.gamesForRole.find { it.first == role.sheetValue.last() }?.second ?: 0
+        // Precalculate player stats for the role with filters
+        val roleStats = players.mapNotNull { player ->
+            val roleKey = role.sheetValue.last()
+            val gamesForRole = player.gamesForRole.find { it.first == roleKey }?.second ?: 0
+            val winsForRole = player.winByRole.find { it.first == roleKey }?.second ?: 0
+            val pointsForRole = player.bestMoveAndAdditionalPointsByRole.find { it.first == roleKey }?.second ?: 0f
             val gameLimitByRole = player.seasonGameLimit * role.chanceToDraw
+
             if (gamesForRole == 0 || gamesForRole <= gameLimitByRole) return@mapNotNull null
 
-            val winsForRole = player.winByRole.find { it.first == role.sheetValue.last() }?.second ?: 0
             val winRate = winsForRole.toFloat() / gamesForRole
+            val avgPoints = pointsForRole / gamesForRole
 
-            val bestMoveAndAdd = player.bestMoveAndAdditionalPointsByRole.find { it.first == role.sheetValue.last() }?.second ?: 0f
-            val perGamePerformance = bestMoveAndAdd / gamesForRole
-
-            Triple(player, winRate, perGamePerformance)
+            Triple(player, winRate, avgPoints)
         }
 
-        if (playersWithRoleStats.isEmpty()) return null
+        if (roleStats.isEmpty()) return null
 
-        // Find player with highest win rate
-        val bestWinRate = playersWithRoleStats.maxOf { it.second }
-        val bestCandidates = playersWithRoleStats.filter {
-            bestWinRate - it.second <= 0.1f // Within 10% win rate margin
-        }
+        // Determine the max values for normalization
+        val maxWinRate = roleStats.maxOf { it.second }
+        val maxAvgPoints = roleStats.maxOf { it.third }
 
-        // Among candidates, pick one with highest performance per game
-        return bestCandidates.maxByOrNull { it.third }?.first
+        // Compute score
+        return roleStats.maxByOrNull { (player, winRate, avgPoints) ->
+            val normalizedWinRate = if (maxWinRate > 0) winRate / maxWinRate else 0f
+            val normalizedAvgPoints = if (maxAvgPoints > 0) avgPoints / maxAvgPoints else 0f
+
+            // Weighted scoring (adjust weights if needed)
+            normalizedWinRate * 0.7f + normalizedAvgPoints * 0.3f
+        }?.first
     }
 
     fun loadPlayers(json: String) {
