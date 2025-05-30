@@ -8,6 +8,7 @@ import com.example.familymafiaapp.entities.SlotStats
 import com.example.familymafiaapp.entities.Stats
 import com.example.familymafiaapp.enums.Role
 import com.example.familymafiaapp.enums.Season
+import com.example.familymafiaapp.extensions.roundTo
 import com.example.familymafiaapp.extensions.roundTo2Digits
 import com.example.familymafiaapp.repository.GamesRepository
 import com.example.familymafiaapp.repository.PlayersRepository
@@ -83,7 +84,7 @@ class HallOfFameViewModel @Inject constructor(
         return totalBySlotRole.mapValues { (slot, roleMap) ->
             roleMap.mapValues { (role, total) ->
                 val wins = winsBySlotRole[slot]?.get(role) ?: 0
-                if (total > 0) (wins.toFloat() / total*100).roundTo2Digits() else 0f
+                if (total > 0) (wins.toFloat() / total*100).roundTo(2) else 0f
             }
         }
     }

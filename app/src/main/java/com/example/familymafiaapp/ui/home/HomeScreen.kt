@@ -32,15 +32,17 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.familymafiaapp.R
-import com.example.familymafiaapp.entities.RatingUniversal
+import com.example.familymafiaapp.entities.RatingPlayerStats
+import com.example.familymafiaapp.entities.SeasonStats
 import com.example.familymafiaapp.enums.Role
 import com.example.familymafiaapp.enums.Season
+import com.example.familymafiaapp.extensions.roundTo
 import com.example.familymafiaapp.extensions.roundTo2Digits
 
 @Composable
 fun HomeScreen(homeViewModel: HomeViewModel = hiltViewModel()) {
     val context = LocalContext.current
-    val ratings by homeViewModel.ratings.collectAsState()
+    val seasonStats by homeViewModel.seasonStats.collectAsState()
     val selectedSeason by homeViewModel.selectedSeason.collectAsState()
     val debugText by homeViewModel.debugText.collectAsState()
 
@@ -88,13 +90,27 @@ fun HomeScreen(homeViewModel: HomeViewModel = hiltViewModel()) {
                         .align(Alignment.CenterHorizontally)
                 )
             }
-            if (ratings.isNotEmpty()) {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                ) {
-                    items(ratings) { rating ->
-                        RatingItem(rating)
+            if (seasonStats != null) {
+                Column {
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            "Season ${seasonStats!!.playerStats.first().seasonId}",
+                            style = MaterialTheme.typography.titleLarge,
+                        )
+                    }
+                    Spacer(Modifier.height(8.dp))
+                    StatsView(seasonStats!!)
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                    ) {
+                        val items = seasonStats!!.playerStats
+                        items(items) { rating ->
+                            PlayerStatsSeasonItem(rating)
+                        }
                     }
                 }
             } else {
@@ -113,7 +129,57 @@ fun HomeScreen(homeViewModel: HomeViewModel = hiltViewModel()) {
 }
 
 @Composable
-fun RatingItem(rating: RatingUniversal) {
+fun StatsView(seasonStats: SeasonStats) {
+    Column {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = "MVP: ${seasonStats.playerStats[seasonStats.mvpIndex].player}",
+                style = MaterialTheme.typography.titleMedium,
+            )
+            Spacer(Modifier.width(16.dp))
+            Text(
+                text = "Most Killed: ${seasonStats.playerStats[seasonStats.mostKilledIndex].player}",
+                style = MaterialTheme.typography.titleMedium,
+            )
+        }
+        Spacer(Modifier.height(8.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = "Best Sheriff: ${seasonStats.playerStats[seasonStats.bestSheriffIndex].player}",
+                style = MaterialTheme.typography.titleSmall,
+            )
+            Spacer(Modifier.width(8.dp))
+            Text(
+                text = "Best Don: ${seasonStats.playerStats[seasonStats.bestDonIndex].player}",
+                style = MaterialTheme.typography.titleSmall,
+            )
+        }
+        Spacer(Modifier.height(8.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = "Best Civilian: ${seasonStats.playerStats[seasonStats.bestCivilianIndex].player}",
+                style = MaterialTheme.typography.titleSmall,
+            )
+            Spacer(Modifier.width(8.dp))
+            Text(
+                text = "Best Mafia: ${seasonStats.playerStats[seasonStats.bestMafiaIndex].player}",
+                style = MaterialTheme.typography.titleSmall,
+            )
+        }
+    }
+}
+
+@Composable
+fun PlayerStatsSeasonItem(rating: RatingPlayerStats) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -134,19 +200,19 @@ fun RatingItem(rating: RatingUniversal) {
             Spacer(Modifier.height(8.dp))
 
             Text(
-                "Wins: ${rating.wins}/${rating.gamesPlayed} games (${(rating.winRate * 100).roundTo2Digits()}% WR)",
+                "Wins: ${rating.wins}/${rating.gamesPlayed} games (${(rating.winRate * 100).roundTo(2)}% WR)",
                 style = MaterialTheme.typography.bodySmall
             )
             Text(
-                "Add. Points: ${rating.additionalPoints.roundTo2Digits()} | Penalty: ${rating.penaltyPoints.roundTo2Digits()}",
+                "Add. Points: ${rating.additionalPoints.roundTo(2)} | Penalty: ${rating.penaltyPoints.roundTo(2)}",
                 style = MaterialTheme.typography.bodySmall
             )
             Text(
-                "Best Move Points: ${rating.bestMovePoints.roundTo2Digits()}",
+                "Best Move Points: ${rating.bestMovePoints.roundTo(2)}",
                 style = MaterialTheme.typography.bodySmall
             )
             Text(
-                "MVP: ${rating.mvp.roundTo2Digits()}",
+                "MVP: ${rating.mvp.roundTo(3)}",
                 style = MaterialTheme.typography.bodySmall
             )
             Text(
@@ -154,11 +220,11 @@ fun RatingItem(rating: RatingUniversal) {
                 style = MaterialTheme.typography.bodySmall
             )
             Text(
-                "Death percentage: ${(rating.percentOfDeath * 100).roundTo2Digits()}%",
+                "Death percentage: ${(rating.percentOfDeath * 100).roundTo(2)}%",
                 style = MaterialTheme.typography.bodySmall
             )
             Text(
-                "CI/Game: ${rating.ciForGame.roundTo2Digits()} | CI: ${rating.ci.roundTo2Digits()}",
+                "CI/Game: ${rating.ciForGame.roundTo(2)} | CI: ${rating.ci.roundTo(2)}",
                 style = MaterialTheme.typography.bodySmall
             )
 
@@ -177,10 +243,10 @@ fun RatingItem(rating: RatingUniversal) {
                     rating.penaltyPointsByRole.find { role.sheetValue.contains(it.first) }?.second
                         ?: 0f
                 val winRatePercent =
-                    if (games > 0) (wins.toFloat() / games * 100).roundTo2Digits() else 0
+                    if (games > 0) (wins.toFloat() / games * 100).roundTo(2) else 0
 
                 Text(
-                    text = "$roleName: $wins/$games games, $winRatePercent% winrate, ${(add + penalty).roundTo2Digits()} Add. Points",
+                    text = "$roleName: $wins/$games games, $winRatePercent% winrate, ${(add + penalty).roundTo(2)} Add. Points",
                     style = MaterialTheme.typography.bodySmall
                 )
             }

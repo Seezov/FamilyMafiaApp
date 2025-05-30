@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.familymafiaapp.entities.SlotStats
 import com.example.familymafiaapp.entities.Stats
+import com.example.familymafiaapp.extensions.roundTo
 import com.example.familymafiaapp.extensions.roundTo2Digits
 
 @Composable
@@ -130,7 +131,7 @@ fun PlayerWholeStatsItem(index: Int, player: Stats) {
                             slot.second.toFloat()/slot.third*100
                         } else {
                             0F
-                        }.roundTo2Digits()
+                        }.roundTo(2)
                         Text(
                             text = "${wr}% WR",
                             style = MaterialTheme.typography.bodySmall
