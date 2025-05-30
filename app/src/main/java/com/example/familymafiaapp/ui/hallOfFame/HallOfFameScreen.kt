@@ -32,12 +32,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.familymafiaapp.extensions.roundTo2Digits
 
 @Composable
 fun HallOfFameScreen(hallOfFameViewModel: HallOfFameViewModel = hiltViewModel()) {
 
     val debugText by hallOfFameViewModel.debugText.collectAsState()
     val ratings by hallOfFameViewModel.ratings.collectAsState()
+    val playerOnSlot by hallOfFameViewModel.playerOnSlot.collectAsState()
 
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         if (debugText.isNotEmpty()) {
@@ -45,8 +47,80 @@ fun HallOfFameScreen(hallOfFameViewModel: HallOfFameViewModel = hiltViewModel())
                 Text(debugText)
                 CopyToClipboardButton(debugText)
             }
+        } else if (playerOnSlot.isNotEmpty()) {
+            PlayerOnSlotStatsScreen(playerOnSlot)
         } else {
             PlayerStatsScreen(ratings)
+        }
+    }
+}
+
+@Composable
+fun PlayerOnSlotStatsScreen(stats: List<Triple<String, Int, List<Pair<Int, Int>>>>) {
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        itemsIndexed(stats) { index, player ->
+            PlayerOnSlotStatsItem(index, player)
+        }
+    }
+}
+
+@Composable
+fun PlayerOnSlotStatsItem(index: Int, player: Triple<String, Int, List<Pair<Int, Int>>>) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        elevation = CardDefaults.cardElevation(4.dp)
+    ) {
+        Column {
+            Row(
+                modifier = Modifier
+                    .padding(8.dp,8.dp,8.dp,0.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = (index + 1).toString(),
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Spacer(Modifier.width(8.dp))
+                Text(
+                    text = player.first,
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Spacer(Modifier.width(8.dp))
+                Text(
+                    text = "${player.second} games",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+            Column (
+                modifier = Modifier
+                    .padding(8.dp, 2.dp, 0.dp, 8.dp),
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
+                player.third.forEach { slot ->
+                    Row {
+                        Text(
+                            text = "Slot ${slot.first + 1}",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                        Spacer(Modifier.width(8.dp))
+                        Text(
+                            text = "${slot.second}% WR",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+//                        Spacer(Modifier.width(8.dp))
+//                        Text(
+//                            text = "${(slot.second.toFloat() / player.second * 100).roundTo2Digits()}%",
+//                            style = MaterialTheme.typography.bodyMedium
+//                        )
+                    }
+                }
+            }
         }
     }
 }
@@ -78,7 +152,7 @@ fun PlayerStatsItem(index: Int, player: Triple<String, Int, Float>) {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = (index+1).toString(),
+                text = (index + 1).toString(),
                 style = MaterialTheme.typography.titleMedium
             )
             Spacer(Modifier.width(8.dp))
@@ -88,12 +162,12 @@ fun PlayerStatsItem(index: Int, player: Triple<String, Int, Float>) {
             )
             Spacer(Modifier.width(8.dp))
             Text(
-                text = "${player.second} games on Don",
+                text = "М ${player.second} games",
                 style = MaterialTheme.typography.bodyMedium
             )
             Spacer(Modifier.width(8.dp))
             Text(
-                text = "${player.third}% WR",
+                text = "- winstreak ${player.third.toInt()} games",
                 style = MaterialTheme.typography.bodyMedium
             )
         }

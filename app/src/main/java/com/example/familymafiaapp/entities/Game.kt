@@ -19,6 +19,8 @@ data class Game(
     val autoAdditionalPoints: List<Float>? = null,
     val wonByPlayer: List<String>? = null,
 ) {
+    fun getPlayerSlot(player: String): Int = players.indexOf(player)
+
     fun getPlayerRole(player: String): String = roles[players.indexOf(player)]
 
     fun hasPlayerWon(player: String): Boolean = if (wonByPlayer != null) {

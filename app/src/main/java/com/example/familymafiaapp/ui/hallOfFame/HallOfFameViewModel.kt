@@ -26,6 +26,9 @@ class HallOfFameViewModel @Inject constructor(
     private val _ratings = MutableStateFlow<List<Triple<String, Int, Float>>>(emptyList())
     val ratings: StateFlow<List<Triple<String, Int, Float>>> = _ratings
 
+    private val _playerOnSlot = MutableStateFlow<List<Triple<String, Int, List<Pair<Int, Int>>>>>(emptyList())
+    val playerOnSlot: StateFlow<List<Triple<String, Int, List<Pair<Int, Int>>>>> = _playerOnSlot
+
     private val _debugText = MutableStateFlow<String>("")
     val debugText: StateFlow<String> = _debugText
 
@@ -35,26 +38,94 @@ class HallOfFameViewModel @Inject constructor(
             val players = playersRepository.getAllPlayers()
             val playerToNumberOfGames = players.map { player ->
                 val gamesForPlayer = getGamesForPlayer(games, player)
-                val gamesForPlayerOnSheriff = gamesForPlayer.filter { game ->
-                    val role = game.getPlayerRole(getNicknameInGame(game,player))
-                    Role.DON.sheetValue.contains(role)
-                }
+                val gamesForPlayerOnSheriff = gamesForPlayer.getGamesForRole(player, Role.MAFIA)
                 val gamesForPlayerOnSheriffSize = gamesForPlayerOnSheriff.size
                 val gamesWonOnSheriff = gamesForPlayerOnSheriff.filter { game ->
-                    game.hasPlayerWon(getNicknameInGame(game,player))
+                    game.hasPlayerWon(getNicknameInGame(game, player))
                 }
                 val gamesWonOnSheriffSize = gamesWonOnSheriff.size
                 if (gamesWonOnSheriffSize > 0 && gamesForPlayerOnSheriffSize > 0) {
-                    val winRate = (gamesWonOnSheriffSize.toFloat() / gamesForPlayerOnSheriffSize * 100).roundTo2Digits()
-                    Triple(player.displayName, gamesForPlayerOnSheriffSize, winRate)
+                    val winStreak = longestWinStreak(gamesForPlayerOnSheriff.map { it.hasPlayerWon(getNicknameInGame(it,player)) })
+
+                    Triple(player.displayName, gamesForPlayerOnSheriffSize, winStreak.toFloat())
                 } else {
                     Triple(player.displayName, 0, 0F)
                 }
-            }.filter { it.second >= 10 }.sortedByDescending { it.third }
+            }.sortedByDescending { it.third }
             _ratings.value = playerToNumberOfGames
+//            }.filter { it.second >= 10 }.sortedByDescending { it.third }
+//            _ratings.value = playerToNumberOfGames
         }
     }
 
+    fun List<Game>.getGamesForRole(
+        player: Player,
+        role: Role
+    ) = filter {
+        role.sheetValue.contains(it.getPlayerRole(getNicknameInGame(it, player)))
+    }
+
+    fun longestWinStreak(results: List<Boolean>): Int {
+        var maxStreak = 0
+        var currentStreak = 0
+
+        for (result in results) {
+            if (result) {
+                currentStreak++
+                maxStreak = maxOf(maxStreak, currentStreak)
+            } else {
+                currentStreak = 0
+            }
+        }
+
+        return maxStreak
+    }
+
+ // WR per slot
+//    val slotToGame = gamesForPlayer
+//        .groupBy { game -> game.getPlayerSlot(getNicknameInGame(game,player)) }.toSortedMap()
+//    val slotToGameWr = slotToGame.map { slot ->
+//        val gamesWon = slot.value.filter { it.hasPlayerWon(getNicknameInGame(it, player)) }.size
+//        slot.key to (gamesWon.toFloat()/slot.value.size*100).toInt()
+//    }
+//    Triple(player.displayName, gamesForPlayer.size, slotToGameWr)
+
+  // Add points per game last ye
+//    if (gamesForPlayer.isEmpty()) {
+//        Triple(player.displayName, 0, 0f)
+//    } else {
+//        val additionalPoints = gamesForPlayer.map { game -> game.getPlayerAdditionalPoints(getNicknameInGame(game,player))}.sum().roundTo2Digits()
+//        val bestMovePoints = gamesForPlayer.map { game ->
+//            if (game.isFirstKilled(getNicknameInGame(game,player))) {
+//                game.bestMovePoints
+//            } else {
+//                0F
+//            }
+//        }.sum().roundTo2Digits()
+//        Triple(player.displayName, gamesForPlayer.size, ((additionalPoints+bestMovePoints)/gamesForPlayer.size).roundTo2Digits())
+//    }
+
+    // Player on slot
+//    val gamesForPlayer = getGamesForPlayer(games, player)
+//    val slotToGames = gamesForPlayer.groupBy { it.getPlayerSlot(getNicknameInGame(it, player)) }.map { it.key to it.value.size }.sortedBy { it.first }
+//    Triple(player.displayName, gamesForPlayer.size, slotToGames)
+
+    // WR on role
+//    val gamesForPlayerOnSheriff = gamesForPlayer.filter { game ->
+//        val role = game.getPlayerRole(getNicknameInGame(game,player))
+//        Role.DON.sheetValue.contains(role)
+//    }
+//    val gamesForPlayerOnSheriffSize = gamesForPlayerOnSheriff.size
+//    val gamesWonOnSheriff = gamesForPlayerOnSheriff.filter { game ->
+//        game.hasPlayerWon(getNicknameInGame(game,player))
+//    }
+//    val gamesWonOnSheriffSize = gamesWonOnSheriff.size
+//    if (gamesWonOnSheriffSize > 0 && gamesForPlayerOnSheriffSize > 0) {
+//        val winRate = (gamesWonOnSheriffSize.toFloat() / gamesForPlayerOnSheriffSize * 100).roundTo2Digits()
+//        Triple(player.displayName, gamesForPlayerOnSheriffSize, winRate)
+//    } else {
+//        Triple(player.displayName, 0, 0F)
+//    }
     fun getGamesForPlayer(
         games: List<Game>,
         player: Player,
