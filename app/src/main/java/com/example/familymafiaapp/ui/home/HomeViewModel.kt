@@ -1,6 +1,5 @@
 package com.example.familymafiaapp.ui.home
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.familymafiaapp.entities.Player
 import com.example.familymafiaapp.enums.Role
@@ -120,7 +119,15 @@ class HomeViewModel @Inject constructor(
                         it.bestMovePoints
                     else 0.0f
                 }.sum()
-
+            val bestMoveAndAdditionalPointsByRole = fullGamesForRole.map {
+                Pair(it.first, it.second.map {
+                    it.getPlayerAdditionalPoints(player) + if (it.isFirstKilled(player)) {
+                        it.bestMovePoints
+                    } else {
+                        0F
+                    }
+                }.sum())
+            }
             val autoAdditionalPointsByRoleSum =
                 gamesForPlayer.map { it.getPlayerAutoAdditionalPoints(player) }.sum()
 
@@ -186,7 +193,7 @@ class HomeViewModel @Inject constructor(
                 mvp = mvp,
                 winByRole = winByRole,
                 gamesForRole = gamesForRole,
-                additionalPointsByRole = additionalPointsByRole,
+                bestMoveAndAdditionalPointsByRole = bestMoveAndAdditionalPointsByRole,
                 penaltyPointsByRole = penaltyPointsByRole
             )
         }

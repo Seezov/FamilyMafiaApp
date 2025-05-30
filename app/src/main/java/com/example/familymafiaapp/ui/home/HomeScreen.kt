@@ -171,7 +171,7 @@ fun RatingItem(rating: RatingUniversal) {
                 val games =
                     rating.gamesForRole.find { role.sheetValue.contains(it.first) }?.second ?: 0
                 val add =
-                    rating.additionalPointsByRole.find { role.sheetValue.contains(it.first) }?.second
+                    rating.bestMoveAndAdditionalPointsByRole.find { role.sheetValue.contains(it.first) }?.second
                         ?: 0f
                 val penalty =
                     rating.penaltyPointsByRole.find { role.sheetValue.contains(it.first) }?.second
