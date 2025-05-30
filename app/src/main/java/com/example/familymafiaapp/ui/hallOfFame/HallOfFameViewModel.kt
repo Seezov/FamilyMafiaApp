@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.familymafiaapp.entities.Game
 import com.example.familymafiaapp.entities.Player
+import com.example.familymafiaapp.entities.Stats
 import com.example.familymafiaapp.enums.Role
 import com.example.familymafiaapp.enums.Season
 import com.example.familymafiaapp.extensions.roundTo2Digits
@@ -23,6 +24,9 @@ class HallOfFameViewModel @Inject constructor(
     private val gamesRepository: GamesRepository,
 ) : ViewModel() {
 
+    private val _stats = MutableStateFlow<List<Stats>>(emptyList())
+    val stats: StateFlow<List<Stats>> = _stats
+
     private val _ratings = MutableStateFlow<List<Triple<String, Int, Float>>>(emptyList())
     val ratings: StateFlow<List<Triple<String, Int, Float>>> = _ratings
 
@@ -38,21 +42,28 @@ class HallOfFameViewModel @Inject constructor(
             val players = playersRepository.getAllPlayers()
             val playerToNumberOfGames = players.map { player ->
                 val gamesForPlayer = getGamesForPlayer(games, player)
-                val gamesForPlayerOnSheriff = gamesForPlayer.getGamesForRole(player, Role.MAFIA)
+                val role = Role.SHERIFF
+                val gamesForPlayerOnSheriff = gamesForPlayer.getGamesForRole(player, role)
                 val gamesForPlayerOnSheriffSize = gamesForPlayerOnSheriff.size
-                val gamesWonOnSheriff = gamesForPlayerOnSheriff.filter { game ->
-                    game.hasPlayerWon(getNicknameInGame(game, player))
-                }
-                val gamesWonOnSheriffSize = gamesWonOnSheriff.size
-                if (gamesWonOnSheriffSize > 0 && gamesForPlayerOnSheriffSize > 0) {
-                    val winStreak = longestWinStreak(gamesForPlayerOnSheriff.map { it.hasPlayerWon(getNicknameInGame(it,player)) })
-
-                    Triple(player.displayName, gamesForPlayerOnSheriffSize, winStreak.toFloat())
+                if (gamesForPlayerOnSheriffSize > 0) {
+                    val slotToGame = gamesForPlayerOnSheriff.groupBy { it.getPlayerSlot(getNicknameInGame(it, player)) }
+                    val slotToGameCount = slotToGame.map { it.key to it.value.size }
+                    val slotToGameWinCount =  slotToGame.map { it.key to it.value.filter { it.hasPlayerWon(getNicknameInGame(it,player)) }.size }
+                    val slotToWr = slotToGame.toSortedMap().map { slot ->
+                        val selectedSlotToGameWinCount = slotToGameWinCount.find { entry -> entry.first == slot.key }?.second?.toFloat() ?: 0F
+                        val selectedSlotToGameCount = slotToGameCount.find { entry -> entry.first == slot.key }?.second?.toFloat() ?: 0F
+                        if (selectedSlotToGameWinCount > 0 && selectedSlotToGameCount > 0) {
+                            slot.key to (selectedSlotToGameWinCount/selectedSlotToGameCount * 100).roundTo2Digits()
+                        } else {
+                            slot.key to 0F
+                        }
+                    }
+                    Stats(player.displayName, role.sheetValue.last(), gamesForPlayer.size, slotToWr)
                 } else {
-                    Triple(player.displayName, 0, 0F)
+                    Stats(player.displayName, role.sheetValue.last(), 0, emptyList())
                 }
-            }.sortedByDescending { it.third }
-            _ratings.value = playerToNumberOfGames
+            }.sortedByDescending { it.gamesPlayed }
+            _stats.value = playerToNumberOfGames
 //            }.filter { it.second >= 10 }.sortedByDescending { it.third }
 //            _ratings.value = playerToNumberOfGames
         }
