@@ -95,16 +95,9 @@ class HomeViewModel @Inject constructor(
 
         // Determine the max values for normalization
         val maxWinRate = roleStats.maxOf { it.second }
-        val maxAvgPoints = roleStats.maxOf { it.third }
 
         // Compute score
-        return roleStats.maxByOrNull { (player, winRate, avgPoints) ->
-            val normalizedWinRate = if (maxWinRate > 0) winRate / maxWinRate else 0f
-            val normalizedAvgPoints = if (maxAvgPoints > 0) avgPoints / maxAvgPoints else 0f
-
-            // Weighted scoring (adjust weights if needed)
-            normalizedWinRate * 0.7f + normalizedAvgPoints * 0.3f
-        }?.first
+        return roleStats.filter { it.second  >= (maxWinRate - 0.2) }.maxByOrNull { it.third }!!.first
     }
 
     fun loadPlayers(json: String) {

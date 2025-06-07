@@ -45,16 +45,18 @@ class HallOfFameViewModel @Inject constructor(
         viewModelScope.launch {
             val games = gamesRepository.getAllGames()
             val players = playersRepository.getAllPlayers()
-            val slots = listOf(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
-            val wrForRole = calculateSlotRoleWinrates(games)
-            _slotStats.value = slots.map { slot ->
-                val slotStats = wrForRole[slot]
-                val slotStatResult = SlotStats(slot, Role.entries.map { role ->
-                   val roleStats = slotStats!![role]
-                    role.sheetValue.last() to roleStats!!
-                })
-                slotStatResult
-            }
+            val gamesWithSheriffDead = games.filter { it.cityWon != null  }
+            _debugText.value = "Wr when miss - City: ${gamesWithSheriffDead.filter { it.cityWon!! }.size.toFloat()/gamesWithSheriffDead.size}, Mafia:${gamesWithSheriffDead.filter { !it.cityWon!! }.size.toFloat()/gamesWithSheriffDead.size}"
+//            val slots = listOf(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
+//            val wrForRole = calculateSlotRoleWinrates(games)
+//            _slotStats.value = slots.map { slot ->
+//                val slotStats = wrForRole[slot]
+//                val slotStatResult = SlotStats(slot, Role.entries.map { role ->
+//                   val roleStats = slotStats!![role]
+//                    role.sheetValue.last() to roleStats!!
+//                })
+//                slotStatResult
+//            }
         }
     }
     fun calculateSlotRoleWinrates(games: List<Game>): Map<Int, Map<Role, Float>> {

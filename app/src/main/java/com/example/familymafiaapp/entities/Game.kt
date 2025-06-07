@@ -23,6 +23,8 @@ data class Game(
 
     fun getPlayerRole(player: String): String = roles[players.indexOf(player)]
 
+    fun getRoleSlot(role: Role): Int = roles.indexOf(roles.find { role.sheetValue.contains(it) })
+
     fun hasPlayerWon(player: String): Boolean = if (wonByPlayer != null) {
         Values.YES.sheetValue.contains(wonByPlayer[players.indexOf(player)])
     } else {
