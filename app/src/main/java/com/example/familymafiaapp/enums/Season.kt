@@ -9,15 +9,15 @@ enum class Season(
     val gameLimit: Int,
     val gamesMultiplier: Float
 ) {
-    SEASON_0(0, "Season 0", R.raw.season0, 10, 0.25F),
+    SEASON_0(0, "Season 0", R.raw.season0, 17, 0.25F),
     SEASON_1(1, "Season 1", R.raw.season1, 30, 0.25F),
     SEASON_2(2, "Season 2", R.raw.season2, 50, 0.02F),
-    SEASON_3(3, "Season 3", R.raw.season3, 20, 0.015F),
+    SEASON_3(3, "Season 3", R.raw.season3, 30, 0.015F),
     SEASON_4(4, "Season 4", R.raw.season4, 40, 0.007F),
     SEASON_5(5, "Season 5", R.raw.season5, 50, 0.004F),
     SEASON_6(6, "Season 6", R.raw.season6, 70, 0.004F),
     SEASON_7(7, "Season 7", R.raw.season7, 50, 0.004F),
-    SEASON_8(8, "Season 8", R.raw.season8, 30, 0.004F),
+    SEASON_8(8, "Season 8", R.raw.season8, 40, 0.004F),
     SEASON_9(9, "Season 9", R.raw.season9, 40, 0.004F),
     SEASON_10(10, "Season 10", R.raw.season10, 40, 0.004F),
     SEASON_11(11, "Season 11", R.raw.season11, 45, 0.004F),

@@ -81,9 +81,9 @@ class HomeViewModel @Inject constructor(
             val gamesForRole = player.gamesForRole.find { it.first == roleKey }?.second ?: 0
             val winsForRole = player.winByRole.find { it.first == roleKey }?.second ?: 0
             val pointsForRole = player.bestMoveAndAdditionalPointsByRole.find { it.first == roleKey }?.second ?: 0f
-            val gameLimitByRole = player.seasonGameLimit * role.chanceToDraw
+            val gameLimitByRole = player.seasonGameLimit.toFloat() * role.chanceToDraw
 
-            if (gamesForRole == 0 || gamesForRole <= gameLimitByRole) return@mapNotNull null
+            if (gamesForRole == 0 || gamesForRole < gameLimitByRole) return@mapNotNull null
 
             val winRate = winsForRole.toFloat() / gamesForRole
             val avgPoints = pointsForRole / gamesForRole
@@ -97,7 +97,10 @@ class HomeViewModel @Inject constructor(
         val maxWinRate = roleStats.maxOf { it.second }
 
         // Compute score
-        return roleStats.filter { it.second  >= (maxWinRate - 0.2) }.maxByOrNull { it.third }!!.first
+        return roleStats
+            .filter { it.second  >= (maxWinRate - 0.2) }
+            .sortedByDescending { it.second }
+            .maxByOrNull { it.third }!!.first
     }
 
     fun loadPlayers(json: String) {
@@ -268,8 +271,8 @@ class HomeViewModel @Inject constructor(
         winByRoleSum: Int,
         loseByRoleSum: Int
     ) = when (seasonId) {
-        in 0..1 -> winByRoleSum - loseByRoleSum - penaltyPointsByRoleSum + bestMovePointsByRoleSum
-        in 2..3 -> winByRoleSum + additionalPointsByRoleSum + bestMovePointsByRoleSum - penaltyPointsByRoleSum
+        in 0..1 -> winByRoleSum - loseByRoleSum + penaltyPointsByRoleSum + bestMovePointsByRoleSum
+        in 2..3 -> winByRoleSum + additionalPointsByRoleSum + bestMovePointsByRoleSum + penaltyPointsByRoleSum
         in 4..16 -> winByRoleSum + additionalPointsByRoleSum + bestMovePointsByRoleSum
         else -> additionalPointsByRoleSum + autoAdditionalPointsByRoleSum + penaltyPointsByRoleSum + bestMovePointsByRoleSum + ci
     }
@@ -283,7 +286,7 @@ class HomeViewModel @Inject constructor(
         winPoints: Float
     ) = when (seasonId) {
         in 0..1 -> (winPoints / gamesPlayed).roundTo(3)
-        else -> ((additionalPointsByRoleSum + bestMovePointsByRoleSum + penaltyPointsByRoleSum).toFloat() / gamesPlayed).roundTo(3)
+        else -> ((additionalPointsByRoleSum + bestMovePointsByRoleSum + penaltyPointsByRoleSum).toFloat() / gamesPlayed).roundTo(4)
     }
 
     private fun filterRawData(
@@ -389,12 +392,12 @@ class HomeViewModel @Inject constructor(
                         bestMovePoints = playersInfo.find { it.g.isNotEmpty() }?.g?.toFloat()
                             ?: 0.0F,
                         wonByPlayer = playersInfo.map { it.d },
-                        penaltyPoints = playersInfo.map { if (it.e == Values.YES.sheetValue.first()) 1F else 0f },
+                        penaltyPoints = playersInfo.map { if (it.e == Values.YES.sheetValue.first()) -1F else 0f },
                         bestMove = emptyList()
                     )
                 }
 
-                in 2..16 -> {
+                in 2..3 -> {
                     Game(
                         seasonId = seasonId,
                         players = playersInfo.map { it.g },
@@ -414,10 +417,37 @@ class HomeViewModel @Inject constructor(
                         } ?: 0F,
                         penaltyPoints = playersInfo.map {
                             if (it.f.toIntOrNull() == 4)
-                                1F
+                                -1F
                             else
                                 0F
                         },
+                        bestMove = listOf(
+                            playersInfo[3].c.toIntOrNull() ?: 0,
+                            playersInfo[3].d.toIntOrNull() ?: 0,
+                            playersInfo[3].e.toIntOrNull() ?: 0,
+                        ),
+                        additionalPoints = playersInfo.map { it.i.toFloatOrNull() ?: 0F }
+                    )
+                }
+
+                in 4..16 -> {
+                    Game(
+                        seasonId = seasonId,
+                        players = playersInfo.map { it.g },
+                        roles = playersInfo.map { it.h },
+                        cityWon = getVictoryTeam(playersInfo[0].c),
+                        firstKilled = playersInfo[1].c.toIntOrNull() ?: 0,
+                        bestMovePoints = playersInfo[1].c.toIntOrNull()?.let { firstKilled ->
+                            if (firstKilled == 0) {
+                                0f
+                            } else {
+                                try {
+                                    playersInfo.map { it.j }[firstKilled - 1].toFloat()
+                                } catch (e: Exception) {
+                                    0f
+                                }
+                            }
+                        } ?: 0F,
                         bestMove = listOf(
                             playersInfo[3].c.toIntOrNull() ?: 0,
                             playersInfo[3].d.toIntOrNull() ?: 0,

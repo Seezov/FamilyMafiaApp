@@ -212,7 +212,7 @@ fun PlayerStatsSeasonItem(rating: RatingPlayerStats) {
                 style = MaterialTheme.typography.bodySmall
             )
             Text(
-                "MVP: ${rating.mvp.roundTo(3)}",
+                "MVP: ${rating.mvp.roundTo(4)}",
                 style = MaterialTheme.typography.bodySmall
             )
             Text(

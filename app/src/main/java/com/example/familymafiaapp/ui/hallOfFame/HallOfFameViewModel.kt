@@ -45,7 +45,11 @@ class HallOfFameViewModel @Inject constructor(
         viewModelScope.launch {
             val games = gamesRepository.getAllGames()
             val players = playersRepository.getAllPlayers()
-            val gamesWithSheriffDead = games.filter { it.cityWon != null  }
+            val gamesWithSheriffDead = games
+                .filter { it.cityWon != null  }
+                .filter { it.players.contains("Don`Tright") }
+                .filter { it.isFirstKilled("Don`Tright") }
+//                .filter { Role.SHERIFF.sheetValue.contains(it.getPlayerRole("Don`Tright")) || Role.CIVILIAN.sheetValue.contains(it.getPlayerRole("Don`Tright")) }
             _debugText.value = "Wr when miss - City: ${gamesWithSheriffDead.filter { it.cityWon!! }.size.toFloat()/gamesWithSheriffDead.size}, Mafia:${gamesWithSheriffDead.filter { !it.cityWon!! }.size.toFloat()/gamesWithSheriffDead.size}"
 //            val slots = listOf(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
 //            val wrForRole = calculateSlotRoleWinrates(games)
