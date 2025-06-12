@@ -225,6 +225,7 @@ class HomeViewModel @Inject constructor(
                 winPoints
             )
             val ratingCoefficient = calculateRatingCoefficient(
+                player = player,
                 winPoints = winPoints,
                 gamesPlayed = gamesPlayed,
                 winRate = winRate,
@@ -325,6 +326,7 @@ class HomeViewModel @Inject constructor(
 
 
     private fun calculateRatingCoefficient(
+        player: String,
         winPoints: Float,
         gamesPlayed: Int,
         winRate: Float,
@@ -335,11 +337,16 @@ class HomeViewModel @Inject constructor(
         autoAdditionalPointByRoleSum: Float = 0F,
         season: Season
     ) = when (season.id) {
-        in 0..1 -> (winPoints / gamesPlayed).roundTo(3) * 100 + gamesPlayed * season.gamesMultiplier
+        in 0..1 -> (winPoints / gamesPlayed).roundTo(2) * 100 + gamesPlayed * season.gamesMultiplier
         in 2..3 -> winPoints / gamesPlayed + gamesPlayed * season.gamesMultiplier
         4 -> (winPoints / gamesPlayed + gamesPlayed * season.gamesMultiplier) * 100
-        in 5..16 -> (winPoints / gamesPlayed + gamesPlayed * (winRate * 100).roundTo(3) / 100 * season.gamesMultiplier) * 100
-        17 -> winRate * 100 + (winPoints / gamesPlayed) + ci + bestMovePointsByRoleSum + autoAdditionalPointByRoleSum + additionalPointsByRoleSum
+        in 5..16 -> (((winPoints / gamesPlayed).roundTo(2) + gamesPlayed * (winRate * 100).roundTo(2) / 100 * season.gamesMultiplier)).roundTo(3) * 100
+        // In season 17 there was 1 fake win to Железный, which gave him 2nd place instead of 3rd
+        17 -> winRate * 100 + (winPoints / gamesPlayed) + ci + bestMovePointsByRoleSum + autoAdditionalPointByRoleSum + additionalPointsByRoleSum + if (player == "Железный") {
+            1
+        } else {
+            0
+        }
         in 18..20 -> {
             val gamesWithoutAutoPoints =
                 gamesPlayed - (autoAdditionalPointByRoleSum / 0.3).roundToInt()
