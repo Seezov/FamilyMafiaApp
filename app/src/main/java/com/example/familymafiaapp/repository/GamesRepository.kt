@@ -20,10 +20,6 @@ class GamesRepository @Inject constructor()  {
         _games.addAll(games)
     }
 
-    fun getAllGames(): List<Game> {
-        return _games
-    }
-
     fun clearGames() {
         _games.clear()
     }

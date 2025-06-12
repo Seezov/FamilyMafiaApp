@@ -5,7 +5,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class PlayersRepository @Inject constructor()  {
+class PlayersRepository @Inject constructor() {
     private val _players = mutableListOf<Player>()
     val players: List<Player>
         get() = _players
@@ -20,11 +20,15 @@ class PlayersRepository @Inject constructor()  {
         _players.addAll(players)
     }
 
-    fun getAllPlayers(): List<Player> {
-        return _players
-    }
-
     fun clearPlayers() {
         _players.clear()
     }
+
+    fun getDisplayName(playerName: String): String = _players.find {
+        if (it.nicknames != null) {
+            it.nicknames.contains(playerName)
+        } else {
+            it.displayName == playerName
+        }
+    }?.displayName ?: playerName
 }

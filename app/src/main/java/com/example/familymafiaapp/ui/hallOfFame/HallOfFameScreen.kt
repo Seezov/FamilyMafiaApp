@@ -32,6 +32,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.familymafiaapp.entities.PlayerPlacements
 import com.example.familymafiaapp.entities.SlotStats
 import com.example.familymafiaapp.entities.Stats
 import com.example.familymafiaapp.extensions.roundTo
@@ -42,6 +43,7 @@ fun HallOfFameScreen(hallOfFameViewModel: HallOfFameViewModel = hiltViewModel())
 
     val debugText by hallOfFameViewModel.debugText.collectAsState()
     val ratings by hallOfFameViewModel.ratings.collectAsState()
+    val playerPlacements by hallOfFameViewModel.playerPlacements.collectAsState()
     val playerOnSlot by hallOfFameViewModel.playerOnSlot.collectAsState()
     val stats by hallOfFameViewModel.stats.collectAsState()
     val slotStats by hallOfFameViewModel.slotStats.collectAsState()
@@ -52,6 +54,8 @@ fun HallOfFameScreen(hallOfFameViewModel: HallOfFameViewModel = hiltViewModel())
                 Text(debugText)
                 CopyToClipboardButton(debugText)
             }
+        } else if (playerPlacements.isNotEmpty()) {
+            PlayerPlacementsScreen(playerPlacements)
         } else if (stats.isNotEmpty()) {
             PlayerWholeStatsScreen(stats)
         } else if (slotStats.isNotEmpty()) {
@@ -63,6 +67,94 @@ fun HallOfFameScreen(hallOfFameViewModel: HallOfFameViewModel = hiltViewModel())
         }
     }
 }
+
+@Composable
+fun PlayerPlacementsScreen(playerPlacements: List<PlayerPlacements>) {
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        itemsIndexed(playerPlacements) { index, playerPlacement ->
+            PlayerPlacementsItem(index, playerPlacement)
+        }
+    }
+}
+
+@Composable
+fun PlayerPlacementsItem(index: Int, placement: PlayerPlacements) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp, horizontal = 8.dp),
+        elevation = CardDefaults.cardElevation(4.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = (index + 1).toString() + ") " + placement.player,
+                    style = MaterialTheme.typography.titleLarge
+                )
+                Text(
+                    text = "Total: ${placement.sumOfNominations()}",
+                    style = MaterialTheme.typography.titleSmall,
+                    modifier = Modifier.align(Alignment.CenterVertically)
+                )
+            }
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                Text(
+                    text = "Seasons",
+                    style = MaterialTheme.typography.titleSmall
+                )
+            }
+
+            Spacer(Modifier.height(8.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text("\uD83E\uDD47: ${placement.firsts}")
+                Text("\uD83E\uDD48: ${placement.seconds}")
+                Text("\uD83E\uDD49: ${placement.thirds}")
+            }
+
+            Spacer(Modifier.height(12.dp))
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                Text(
+                    text = "Nominations",
+                    style = MaterialTheme.typography.titleSmall
+                )
+            }
+            Spacer(Modifier.height(8.dp))
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                Text("⭐: ${placement.mvp}")
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text("\uD83D\uDC6E\u200D♂\uFE0F: ${placement.bestSheriff}")
+                Text("\uD83C\uDFA9: ${placement.bestDon}")
+            }
+
+            Spacer(Modifier.height(8.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text("\uD83D\uDC4D: ${placement.bestCivilian}")
+                Text("\uD83D\uDC4E: ${placement.bestMafia}")
+            }
+        }
+    }
+}
+
 
 @Composable
 fun PlayerWholeStatsScreen(stats: List<Stats>) {
@@ -88,7 +180,7 @@ fun PlayerWholeStatsItem(index: Int, player: Stats) {
         Column {
             Row(
                 modifier = Modifier
-                    .padding(8.dp,8.dp,8.dp,0.dp),
+                    .padding(8.dp, 8.dp, 8.dp, 0.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
@@ -106,7 +198,7 @@ fun PlayerWholeStatsItem(index: Int, player: Stats) {
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
-            Column (
+            Column(
                 modifier = Modifier
                     .padding(8.dp, 2.dp, 0.dp, 8.dp),
                 verticalArrangement = Arrangement.SpaceBetween
@@ -128,7 +220,7 @@ fun PlayerWholeStatsItem(index: Int, player: Stats) {
                         )
                         Spacer(Modifier.width(8.dp))
                         val wr = if (slot.second > 0) {
-                            slot.second.toFloat()/slot.third*100
+                            slot.second.toFloat() / slot.third * 100
                         } else {
                             0F
                         }.roundTo(2)
@@ -172,7 +264,7 @@ fun PlayerOnSlotStatsItem(index: Int, player: Triple<String, Int, List<Pair<Int,
         Column {
             Row(
                 modifier = Modifier
-                    .padding(8.dp,8.dp,8.dp,0.dp),
+                    .padding(8.dp, 8.dp, 8.dp, 0.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
@@ -190,7 +282,7 @@ fun PlayerOnSlotStatsItem(index: Int, player: Triple<String, Int, List<Pair<Int,
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
-            Column (
+            Column(
                 modifier = Modifier
                     .padding(8.dp, 2.dp, 0.dp, 8.dp),
                 verticalArrangement = Arrangement.SpaceBetween
@@ -275,8 +367,8 @@ fun SlotStatsItem(index: Int, slotStats: SlotStats) {
     ) {
         Row(modifier = Modifier.padding(8.dp)) {
             Text(
-                text = "${slotStats.slot+1}",
-                        style = MaterialTheme.typography.titleMedium
+                text = "${slotStats.slot + 1}",
+                style = MaterialTheme.typography.titleMedium
             )
             slotStats.roleWr.forEach { roleStats ->
                 Spacer(Modifier.width(16.dp))

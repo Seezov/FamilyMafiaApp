@@ -20,10 +20,6 @@ class RatingRepository @Inject constructor()  {
         return _localRatings.find { it.first == season }?.second ?: emptyList()
     }
 
-    fun getAllRatings(): List<RatingPlayerStats> {
-        return _localRatings.flatMap { it.second }
-    }
-
     fun clearRatings() {
         _localRatings.clear()
     }

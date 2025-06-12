@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.familymafiaapp.entities.Game
 import com.example.familymafiaapp.entities.Player
+import com.example.familymafiaapp.entities.PlayerPlacements
+import com.example.familymafiaapp.entities.SeasonStats
 import com.example.familymafiaapp.entities.SlotStats
 import com.example.familymafiaapp.entities.Stats
 import com.example.familymafiaapp.enums.Role
@@ -13,6 +15,7 @@ import com.example.familymafiaapp.extensions.roundTo2Digits
 import com.example.familymafiaapp.repository.GamesRepository
 import com.example.familymafiaapp.repository.PlayersRepository
 import com.example.familymafiaapp.repository.RatingRepository
+import com.example.familymafiaapp.repository.SeasonRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -24,6 +27,7 @@ class HallOfFameViewModel @Inject constructor(
     private val ratingRepository: RatingRepository,
     private val playersRepository: PlayersRepository,
     private val gamesRepository: GamesRepository,
+    private val seasonRepository: SeasonRepository,
 ) : ViewModel() {
 
     private val _slotStats = MutableStateFlow<List<SlotStats>>(emptyList())
@@ -32,10 +36,14 @@ class HallOfFameViewModel @Inject constructor(
     private val _stats = MutableStateFlow<List<Stats>>(emptyList())
     val stats: StateFlow<List<Stats>> = _stats
 
+    private val _playerPlacements = MutableStateFlow<List<PlayerPlacements>>(emptyList())
+    val playerPlacements: StateFlow<List<PlayerPlacements>> = _playerPlacements
+
     private val _ratings = MutableStateFlow<List<Triple<String, Int, Float>>>(emptyList())
     val ratings: StateFlow<List<Triple<String, Int, Float>>> = _ratings
 
-    private val _playerOnSlot = MutableStateFlow<List<Triple<String, Int, List<Pair<Int, Int>>>>>(emptyList())
+    private val _playerOnSlot =
+        MutableStateFlow<List<Triple<String, Int, List<Pair<Int, Int>>>>>(emptyList())
     val playerOnSlot: StateFlow<List<Triple<String, Int, List<Pair<Int, Int>>>>> = _playerOnSlot
 
     private val _debugText = MutableStateFlow<String>("")
@@ -43,15 +51,53 @@ class HallOfFameViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            val games = gamesRepository.getAllGames()
-            val players = playersRepository.getAllPlayers()
-            val gamesWithSheriffDead = games
-                .filter { it.cityWon != null  }
-                .filter { it.players.contains("Don`Tright") }
-                .filter { it.isFirstKilled("Don`Tright") }
+            val games = gamesRepository.games
+            val players = playersRepository.players
+            val seasonsStats = seasonRepository.seasons
+            _playerPlacements.value = calculatePlayerPlacements(seasonsStats)
+        }
+    }
+
+    fun calculatePlayerPlacements(seasons: List<SeasonStats>): List<PlayerPlacements> {
+        val placementsMap = mutableMapOf<String, PlayerPlacements>()
+
+        seasons.forEach { season ->
+            val stats = season.playerStats
+
+            fun addPlacement(playerName: String, update: PlayerPlacements.() -> Unit) {
+                val placement = placementsMap.getOrPut(playerName) { PlayerPlacements(playerName) }
+                placement.update()
+            }
+
+            // Top 3
+            stats.getOrNull(0)?.player?.let { addPlacement(it) { firsts++ } }
+            stats.getOrNull(1)?.player?.let { addPlacement(it) { seconds++ } }
+            stats.getOrNull(2)?.player?.let { addPlacement(it) { thirds++ } }
+
+            // Role Awards
+            stats.getOrNull(season.mvpIndex)?.player?.let { addPlacement(it) { mvp++ } }
+            stats.getOrNull(season.bestSheriffIndex)?.player?.let { addPlacement(it) { bestSheriff++ } }
+            stats.getOrNull(season.bestDonIndex)?.player?.let { addPlacement(it) { bestDon++ } }
+            stats.getOrNull(season.bestCivilianIndex)?.player?.let { addPlacement(it) { bestCivilian++ } }
+            stats.getOrNull(season.bestMafiaIndex)?.player?.let { addPlacement(it) { bestMafia++ } }
+        }
+
+        return placementsMap.values.toList().sortedWith(
+            compareByDescending<PlayerPlacements> { it.firsts }
+                .thenByDescending { it.seconds }
+                .thenByDescending { it.thirds }
+                .thenByDescending { it.sumOfNominations() }
+        )
+    }
+
+
+//    val gamesWithSheriffDead = games
+//        .filter { it.cityWon != null  }
+//        .filter { it.players.contains("Don`Tright") }
+//        .filter { it.isFirstKilled("Don`Tright") }
 //                .filter { Role.SHERIFF.sheetValue.contains(it.getPlayerRole("Don`Tright")) || Role.CIVILIAN.sheetValue.contains(it.getPlayerRole("Don`Tright")) }
-            _debugText.value = "Wr when miss - City: ${gamesWithSheriffDead.filter { it.cityWon!! }.size.toFloat()/gamesWithSheriffDead.size}, Mafia:${gamesWithSheriffDead.filter { !it.cityWon!! }.size.toFloat()/gamesWithSheriffDead.size}"
-//            val slots = listOf(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
+//    _debugText.value = "Wr when miss - City: ${gamesWithSheriffDead.filter { it.cityWon!! }.size.toFloat()/gamesWithSheriffDead.size}, Mafia:${gamesWithSheriffDead.filter { !it.cityWon!! }.size.toFloat()/gamesWithSheriffDead.size}"
+    //            val slots = listOf(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
 //            val wrForRole = calculateSlotRoleWinrates(games)
 //            _slotStats.value = slots.map { slot ->
 //                val slotStats = wrForRole[slot]
@@ -61,8 +107,7 @@ class HallOfFameViewModel @Inject constructor(
 //                })
 //                slotStatResult
 //            }
-        }
-    }
+
     fun calculateSlotRoleWinrates(games: List<Game>): Map<Int, Map<Role, Float>> {
         // Map<slotIndex, Map<role, total and wins>>
         val totalBySlotRole = mutableMapOf<Int, MutableMap<Role, Int>>()
@@ -90,7 +135,7 @@ class HallOfFameViewModel @Inject constructor(
         return totalBySlotRole.mapValues { (slot, roleMap) ->
             roleMap.mapValues { (role, total) ->
                 val wins = winsBySlotRole[slot]?.get(role) ?: 0
-                if (total > 0) (wins.toFloat() / total*100).roundTo(2) else 0f
+                if (total > 0) (wins.toFloat() / total * 100).roundTo(2) else 0f
             }
         }
     }
@@ -141,7 +186,7 @@ class HallOfFameViewModel @Inject constructor(
 //    }.sortedByDescending { it.gamesPlayed }
 //    _stats.value = playerToNumberOfGames
 
- // WR per slot
+    // WR per slot
 //    val slotToGame = gamesForPlayer
 //        .groupBy { game -> game.getPlayerSlot(getNicknameInGame(game,player)) }.toSortedMap()
 //    val slotToGameWr = slotToGame.map { slot ->
@@ -150,7 +195,7 @@ class HallOfFameViewModel @Inject constructor(
 //    }
 //    Triple(player.displayName, gamesForPlayer.size, slotToGameWr)
 
-  // Add points per game last ye
+    // Add points per game last ye
 //    if (gamesForPlayer.isEmpty()) {
 //        Triple(player.displayName, 0, 0f)
 //    } else {
@@ -192,14 +237,14 @@ class HallOfFameViewModel @Inject constructor(
         from: Int = Season.entries.first().id,
         to: Int = Season.entries.last().id
     ) = games.filter {
-            it.seasonId in from..to
-        }.filter { game ->
-            if (player.nicknames == null) {
-                game.players.contains(player.displayName)
-            } else {
-                player.nicknames.any { game.players.contains(it) }
-            }
+        it.seasonId in from..to
+    }.filter { game ->
+        if (player.nicknames == null) {
+            game.players.contains(player.displayName)
+        } else {
+            player.nicknames.any { game.players.contains(it) }
         }
+    }
 
     fun getNicknameInGame(game: Game, player: Player) = if (player.nicknames == null) {
         player.displayName

@@ -13,6 +13,7 @@ import com.example.familymafiaapp.extensions.roundTo
 import com.example.familymafiaapp.repository.GamesRepository
 import com.example.familymafiaapp.repository.PlayersRepository
 import com.example.familymafiaapp.repository.RatingRepository
+import com.example.familymafiaapp.repository.SeasonRepository
 import com.google.gson.reflect.TypeToken
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,6 +29,7 @@ class HomeViewModel @Inject constructor(
     private val ratingRepository: RatingRepository,
     private val playersRepository: PlayersRepository,
     private val gamesRepository: GamesRepository,
+    private val seasonRepository: SeasonRepository,
 ) : ViewModel() {
 
     private val _seasonStats = MutableStateFlow<SeasonStats?>(null)
@@ -40,11 +42,7 @@ class HomeViewModel @Inject constructor(
     val debugText: StateFlow<String> = _debugText
 
     fun displaySeason(season: Season) {
-        val ratingPlayerStats = ratingRepository.getRatingsForSeason(season)
-            .filter { it.gamesPlayed >= season.gameLimit }
-            .sortedByDescending { it.ratingCoefficient }
-        _seasonStats.value = generateSeasonStats(ratingPlayerStats)
-
+        _seasonStats.value = seasonRepository.getSeason(season.id)
     }
 
     private fun generateSeasonStats(ratingPlayerStats: List<RatingPlayerStats>): SeasonStats {
@@ -238,7 +236,7 @@ class HomeViewModel @Inject constructor(
             )
             RatingPlayerStats(
                 seasonId = season.id,
-                player = player,
+                player = playersRepository.getDisplayName(player),
                 ratingCoefficient = ratingCoefficient,
                 wins = wins,
                 gamesPlayed = gamesPlayed,
@@ -260,6 +258,12 @@ class HomeViewModel @Inject constructor(
             )
         }
         ratingRepository.addRatings(season, ratings)
+
+        val ratingPlayerStats = ratings
+            .filter { it.gamesPlayed >= season.gameLimit }
+            .sortedByDescending { it.ratingCoefficient }
+
+        seasonRepository.addSeason(generateSeasonStats(ratingPlayerStats))
     }
 
     private fun calculateWinPoints(
