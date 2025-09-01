@@ -35,4 +35,5 @@ enum class Season(
     SEASON_23(23, "Season 23", R.raw.season23, 60, 0F),
     SEASON_24(24, "Season 24", R.raw.season24, 42, 0F),
     SEASON_25(25, "Season 25", R.raw.season25, 60, 0F),
+    SEASON_26(26, "Season 26", R.raw.season26, 60, 0F),
 }

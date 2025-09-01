@@ -34,9 +34,11 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.familymafiaapp.R
+import com.example.familymafiaapp.entities.BestMoves
 import com.example.familymafiaapp.entities.PlayerPlacements
 import com.example.familymafiaapp.entities.SlotStats
 import com.example.familymafiaapp.entities.Stats
@@ -48,6 +50,7 @@ fun HallOfFameScreen(hallOfFameViewModel: HallOfFameViewModel = hiltViewModel())
 
     val debugText by hallOfFameViewModel.debugText.collectAsState()
     val ratings by hallOfFameViewModel.ratings.collectAsState()
+    val bestMoves by hallOfFameViewModel.bestMoves.collectAsState()
     val playerPlacements by hallOfFameViewModel.playerPlacements.collectAsState()
     val playerOnSlot by hallOfFameViewModel.playerOnSlot.collectAsState()
     val stats by hallOfFameViewModel.stats.collectAsState()
@@ -59,6 +62,8 @@ fun HallOfFameScreen(hallOfFameViewModel: HallOfFameViewModel = hiltViewModel())
                 Text(debugText)
                 CopyToClipboardButton(debugText)
             }
+        } else if (bestMoves.isNotEmpty()) {
+            BestMovesScreen(bestMoves)
         } else if (playerPlacements.isNotEmpty()) {
             PlayerPlacementsScreen(playerPlacements)
         } else if (stats.isNotEmpty()) {
@@ -69,6 +74,57 @@ fun HallOfFameScreen(hallOfFameViewModel: HallOfFameViewModel = hiltViewModel())
             PlayerOnSlotStatsScreen(playerOnSlot)
         } else {
             PlayerStatsScreen(ratings)
+        }
+    }
+}
+
+@Composable
+fun BestMovesScreen(playerPlacements: List<BestMoves>) {
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        itemsIndexed(playerPlacements) { index, playerPlacement ->
+            BestMovesItem(index, playerPlacement)
+        }
+    }
+}
+
+@Composable
+fun BestMovesItem(index: Int, placement: BestMoves) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp, horizontal = 8.dp),
+        elevation = CardDefaults.cardElevation(4.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = (index + 1).toString() + ") " + placement.player,
+                    style = MaterialTheme.typography.titleLarge
+                )
+                Text("FK ", style = MaterialTheme.typography.titleSmall)
+                Text(placement.isFirstKilled.toString())
+            }
+
+            Spacer(Modifier.height(8.dp))
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                Text(" 0 Blacks ", style = MaterialTheme.typography.titleSmall)
+                Text(placement.zeroBlacks.toString() + " ${(placement.zeroBlacks.toDouble()/placement.isFirstKilled).roundTo2Digits() * 100}%")
+                Text(" 1 Black ", style = MaterialTheme.typography.titleSmall)
+                Text(placement.oneBlack.toString() + " ${(placement.oneBlack.toDouble()/placement.isFirstKilled).roundTo2Digits() * 100}%")
+            }
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                Text(" 2 Blacks ", style = MaterialTheme.typography.titleSmall)
+                Text(placement.twoBlacks.toString() + " ${(placement.twoBlacks.toDouble()/placement.isFirstKilled).roundTo2Digits() * 100}%")
+                Text(" 3 Blacks ", style = MaterialTheme.typography.titleSmall)
+                Text(placement.threeBlacks.toString() + " ${(placement.threeBlacks.toDouble()/placement.isFirstKilled).roundTo2Digits() * 100}%")
+            }
         }
     }
 }

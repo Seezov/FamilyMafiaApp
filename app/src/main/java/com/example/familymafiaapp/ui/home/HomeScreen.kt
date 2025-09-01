@@ -224,7 +224,7 @@ fun PlayerStatsSeasonItem(rating: RatingPlayerStats) {
                 style = MaterialTheme.typography.bodySmall
             )
             Text(
-                "CI/Game: ${rating.ciForGame.roundTo(2)} | CI: ${rating.ci.roundTo(2)}",
+                "CI/Game: ${rating.ciForGame.roundTo(3)} | CI: ${rating.ci.roundTo(3)}",
                 style = MaterialTheme.typography.bodySmall
             )
 
@@ -239,14 +239,11 @@ fun PlayerStatsSeasonItem(rating: RatingPlayerStats) {
                 val add =
                     rating.bestMoveAndAdditionalPointsByRole.find { role.sheetValue.contains(it.first) }?.second
                         ?: 0f
-                val penalty =
-                    rating.penaltyPointsByRole.find { role.sheetValue.contains(it.first) }?.second
-                        ?: 0f
                 val winRatePercent =
                     if (games > 0) (wins.toFloat() / games * 100).roundTo(2) else 0
 
                 Text(
-                    text = "$roleName: $wins/$games games, $winRatePercent% winrate, ${(add + penalty).roundTo(2)} Add. Points",
+                    text = "$roleName: $wins/$games games, $winRatePercent% winrate, ${add.roundTo(2)} Add. Points",
                     style = MaterialTheme.typography.bodySmall
                 )
             }

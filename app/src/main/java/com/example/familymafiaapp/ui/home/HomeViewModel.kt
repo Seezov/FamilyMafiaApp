@@ -182,7 +182,7 @@ class HomeViewModel @Inject constructor(
                     } else {
                         0F
                     }
-                }.sum())
+                }.sum() + penaltyPointsByRole.find { penalty -> penalty.first == it.first }!!.second)
             }
             val autoAdditionalPointsByRoleSum =
                 gamesForPlayer.map { it.getPlayerAutoAdditionalPoints(player) }.sum()
