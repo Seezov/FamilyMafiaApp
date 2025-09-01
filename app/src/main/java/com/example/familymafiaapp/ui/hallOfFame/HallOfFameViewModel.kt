@@ -57,58 +57,21 @@ class HallOfFameViewModel @Inject constructor(
         viewModelScope.launch {
             val games = gamesRepository.games
             val players = playersRepository.players
-            val playerToBadBestMoveMap = mutableListOf<BestMoves>()
-            games.forEach { game ->
-                try {
-                    val blacks = game.roles.mapIndexedNotNull { index, role ->
-                        if (Role.DON.sheetValue.contains(role) || Role.MAFIA.sheetValue.contains(
-                                role
-                            )
-                        ) index else null
-                    }
-                    val numOfBlacksInBestMove = game.bestMove.intersect(blacks).size
-                    if (game.firstKilled != 0) {
-                        val playerInGameName = game.players[game.firstKilled - 1]
-                        val playerDisplayName = players.find {
-                            it.nicknames?.contains(playerInGameName)
-                                ?: (it.displayName == playerInGameName)
-                        }!!.displayName
-                        var playersBM =
-                            playerToBadBestMoveMap.find { it.player == playerDisplayName }
-                        if (playersBM != null) {
-                            playerToBadBestMoveMap.remove(playersBM)
-                        }
-                        playersBM = playersBM?.copy(isFirstKilled = playersBM.isFirstKilled + 1)
-                            ?: BestMoves(player = playerDisplayName, isFirstKilled = 1, 0, 0, 0, 0)
-                        playersBM = when (numOfBlacksInBestMove) {
-                            0 -> playersBM.copy(zeroBlacks = playersBM.zeroBlacks + 1)
-                            1 -> playersBM.copy(oneBlack = playersBM.oneBlack + 1)
-                            2 -> playersBM.copy(twoBlacks = playersBM.twoBlacks + 1)
-                            3 -> playersBM.copy(threeBlacks = playersBM.threeBlacks + 1)
-                            else -> {
-                                throw NullPointerException("lolllll")
-                            }
-                        }
-                        playerToBadBestMoveMap.add(playersBM)
-                    }
-                } catch (e: Exception) {
-                    val a = 1
-                }
-            }
+            val seasons = seasonRepository.seasons
 
-            _bestMoves.value = playerToBadBestMoveMap.sortedByDescending { it.isFirstKilled }
+            _debugText.value = seasons.map { it.playerStats.first().seasonId to it.playerStats.filter { it.gamesPlayed >= Season.entries.find { season ->  season.id == it.seasonId }!!.gameLimit }.sumOf { it.gamesPlayed } }.toString()
 //            val seasonsStats = seasonRepository.seasons
 //            _playerPlacements.value = calculatePlayerPlacements(seasonsStats)
         }
     }
 
     fun calculatePlayerPlacements(seasons: List<SeasonStats>): List<PlayerPlacements> {
-        val placementsMap = mutableMapOf<String, PlayerPlacements>()
+        val placementsMap = mutableMapOf<Player, PlayerPlacements>()
 
         seasons.forEach { season ->
             val stats = season.playerStats
 
-            fun addPlacement(playerName: String, update: PlayerPlacements.() -> Unit) {
+            fun addPlacement(playerName: Player, update: PlayerPlacements.() -> Unit) {
                 val placement = placementsMap.getOrPut(playerName) { PlayerPlacements(playerName) }
                 placement.update()
             }
@@ -119,11 +82,11 @@ class HallOfFameViewModel @Inject constructor(
             stats.getOrNull(2)?.player?.let { addPlacement(it) { thirds++ } }
 
             // Role Awards
-            stats.getOrNull(season.mvpIndex)?.player?.let { addPlacement(it) { mvp++ } }
-            stats.getOrNull(season.bestSheriffIndex)?.player?.let { addPlacement(it) { bestSheriff++ } }
-            stats.getOrNull(season.bestDonIndex)?.player?.let { addPlacement(it) { bestDon++ } }
-            stats.getOrNull(season.bestCivilianIndex)?.player?.let { addPlacement(it) { bestCivilian++ } }
-            stats.getOrNull(season.bestMafiaIndex)?.player?.let { addPlacement(it) { bestMafia++ } }
+            stats.find { it.player.id == season.mvpPlayerId }?.player?.let { addPlacement(it) { mvp++ } }
+            stats.find { it.player.id == season.bestSheriffPlayerId}?.player?.let { addPlacement(it) { bestSheriff++ } }
+            stats.find { it.player.id == season.bestDonPlayerId}?.player?.let { addPlacement(it) { bestDon++ } }
+            stats.find { it.player.id == season.bestCivilianPlayerId}?.player?.let { addPlacement(it) { bestCivilian++ } }
+            stats.find { it.player.id == season.bestMafiaPlayerId}?.player?.let { addPlacement(it) { bestMafia++ } }
         }
 
         return placementsMap.values.toList().sortedWith(
@@ -134,6 +97,48 @@ class HallOfFameViewModel @Inject constructor(
         )
     }
 
+
+
+//    val playerToBadBestMoveMap = mutableListOf<BestMoves>()
+//    games.forEach { game ->
+//        try {
+//            val blacks = game.roles.mapIndexedNotNull { index, role ->
+//                if (Role.DON.sheetValue.contains(role) || Role.MAFIA.sheetValue.contains(
+//                        role
+//                    )
+//                ) index else null
+//            }
+//            val numOfBlacksInBestMove = game.bestMove.intersect(blacks).size
+//            if (game.firstKilled != 0) {
+//                val playerInGameName = game.players[game.firstKilled - 1]
+//                val playerDisplayName = players.find {
+//                    it.nicknames?.contains(playerInGameName)
+//                        ?: (it.displayName == playerInGameName)
+//                }!!.displayName
+//                var playersBM =
+//                    playerToBadBestMoveMap.find { it.player == playerDisplayName }
+//                if (playersBM != null) {
+//                    playerToBadBestMoveMap.remove(playersBM)
+//                }
+//                playersBM = playersBM?.copy(isFirstKilled = playersBM.isFirstKilled + 1)
+//                    ?: BestMoves(player = playerDisplayName, isFirstKilled = 1, 0, 0, 0, 0)
+//                playersBM = when (numOfBlacksInBestMove) {
+//                    0 -> playersBM.copy(zeroBlacks = playersBM.zeroBlacks + 1)
+//                    1 -> playersBM.copy(oneBlack = playersBM.oneBlack + 1)
+//                    2 -> playersBM.copy(twoBlacks = playersBM.twoBlacks + 1)
+//                    3 -> playersBM.copy(threeBlacks = playersBM.threeBlacks + 1)
+//                    else -> {
+//                        throw NullPointerException("lolllll")
+//                    }
+//                }
+//                playerToBadBestMoveMap.add(playersBM)
+//            }
+//        } catch (e: Exception) {
+//            val a = 1
+//        }
+//    }
+//
+//    _bestMoves.value = playerToBadBestMoveMap.sortedByDescending { it.isFirstKilled }
 
 //    val gamesWithSheriffDead = games
 //        .filter { it.cityWon != null  }

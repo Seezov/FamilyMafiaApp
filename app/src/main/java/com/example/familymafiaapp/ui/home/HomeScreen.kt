@@ -136,12 +136,12 @@ fun StatsView(seasonStats: SeasonStats) {
             horizontalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "MVP: ${seasonStats.playerStats[seasonStats.mvpIndex].player}",
+                text = "MVP: ${seasonStats.playerStats.find { it.player.id ==  seasonStats.mvpPlayerId }?.player?.displayName}",
                 style = MaterialTheme.typography.titleMedium,
             )
             Spacer(Modifier.width(16.dp))
             Text(
-                text = "Most Killed: ${seasonStats.playerStats[seasonStats.mostKilledIndex].player}",
+                text = "Most Killed: ${seasonStats.playerStats.find { it.player.id ==  seasonStats.mostKilledPlayerId }?.player?.displayName}",
                 style = MaterialTheme.typography.titleMedium,
             )
         }
@@ -151,12 +151,12 @@ fun StatsView(seasonStats: SeasonStats) {
             horizontalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "Best Sheriff: ${seasonStats.playerStats[seasonStats.bestSheriffIndex].player}",
+                text = "Best Sheriff: ${seasonStats.playerStats.find { it.player.id ==  seasonStats.bestSheriffPlayerId }?.player?.displayName}",
                 style = MaterialTheme.typography.titleSmall,
             )
             Spacer(Modifier.width(8.dp))
             Text(
-                text = "Best Don: ${seasonStats.playerStats[seasonStats.bestDonIndex].player}",
+                text = "Best Don: ${seasonStats.playerStats.find { it.player.id ==  seasonStats.bestDonPlayerId}?.player?.displayName}",
                 style = MaterialTheme.typography.titleSmall,
             )
         }
@@ -166,12 +166,12 @@ fun StatsView(seasonStats: SeasonStats) {
             horizontalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "Best Civilian: ${seasonStats.playerStats[seasonStats.bestCivilianIndex].player}",
+                text = "Best Civilian: ${seasonStats.playerStats.find { it.player.id ==  seasonStats.bestCivilianPlayerId}?.player?.displayName}",
                 style = MaterialTheme.typography.titleSmall,
             )
             Spacer(Modifier.width(8.dp))
             Text(
-                text = "Best Mafia: ${seasonStats.playerStats[seasonStats.bestMafiaIndex].player}",
+                text = "Best Mafia: ${seasonStats.playerStats.find { it.player.id ==  seasonStats.bestMafiaPlayerId}?.player?.displayName}",
                 style = MaterialTheme.typography.titleSmall,
             )
         }
@@ -188,7 +188,7 @@ fun PlayerStatsSeasonItem(rating: RatingPlayerStats) {
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row {
-                Text(rating.player, style = MaterialTheme.typography.titleLarge)
+                Text(rating.player.displayName, style = MaterialTheme.typography.titleLarge)
                 Spacer(Modifier.width(16.dp))
                 Text(
                     "${rating.ratingCoefficient}",

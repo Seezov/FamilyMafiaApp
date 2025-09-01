@@ -1,7 +1,7 @@
 package com.example.familymafiaapp.entities
 
     data class PlayerPlacements(
-        val player: String,
+        val player: Player,
         var firsts: Int = 0,
         var seconds: Int = 0,
         var thirds: Int = 0,

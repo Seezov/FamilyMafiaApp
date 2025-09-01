@@ -2,7 +2,7 @@ package com.example.familymafiaapp.entities
 
 data class RatingPlayerStats(
     val seasonId: Int,
-    val player: String,
+    val player: Player,
     val ratingCoefficient: Float = 0F,
     val wins: Int = 0,
     val gamesPlayed: Int = 0,

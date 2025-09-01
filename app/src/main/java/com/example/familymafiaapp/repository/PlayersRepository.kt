@@ -24,11 +24,19 @@ class PlayersRepository @Inject constructor() {
         _players.clear()
     }
 
-    fun getDisplayName(playerName: String): String = _players.find {
-        if (it.nicknames != null) {
-            it.nicknames.contains(playerName)
-        } else {
-            it.displayName == playerName
+    fun getDisplayName(playerName: String): String = findPlayer(playerName).displayName
+
+    fun findPlayer(playerName: String): Player {
+        val player = _players.find {
+            if (it.nicknames != null) {
+                it.nicknames.contains(playerName)
+            } else {
+                it.displayName == playerName
+            }
         }
-    }?.displayName ?: playerName
+        if (player == null) {
+            val a = 1
+        }
+        return player ?: throw IllegalArgumentException("Player \"$playerName\" not found")
+    }
 }

@@ -42,30 +42,34 @@ class HomeViewModel @Inject constructor(
     val debugText: StateFlow<String> = _debugText
 
     fun displaySeason(season: Season) {
-        _seasonStats.value = seasonRepository.getSeason(season.id)
+        val fullSeason = seasonRepository.getSeason(season.id)
+        _seasonStats.value = fullSeason.copy(
+            playerStats = fullSeason.playerStats.filter { it.gamesPlayed >= season.gameLimit }
+        )
     }
 
     private fun generateSeasonStats(ratingPlayerStats: List<RatingPlayerStats>): SeasonStats {
-        val mvp = ratingPlayerStats.maxByOrNull { it.mvp }!!
-        val mvpIndex = ratingPlayerStats.indexOf(mvp)
-        val mostKilled = ratingPlayerStats.maxByOrNull { it.firstKilled }!!
-        val mostKilledIndex = ratingPlayerStats.indexOf(mostKilled)
-        val bestSheriff = findBestPlayerForRole(ratingPlayerStats, Role.SHERIFF)
-        val bestSheriffIndex = ratingPlayerStats.indexOf(bestSheriff)
-        val bestDon = findBestPlayerForRole(ratingPlayerStats, Role.DON)
-        val bestDonIndex = ratingPlayerStats.indexOf(bestDon)
-        val bestCivilian = findBestPlayerForRole(ratingPlayerStats, Role.CIVILIAN)
-        val bestCivilianIndex = ratingPlayerStats.indexOf(bestCivilian)
-        val bestMafia = findBestPlayerForRole(ratingPlayerStats, Role.MAFIA)
-        val bestMafiaIndex = ratingPlayerStats.indexOf(bestMafia)
+        val playersWithGamesLimit = ratingPlayerStats.filter { it.gamesPlayed >= Season.entries.find { season -> season.id == it.seasonId  }!!.gameLimit }
+        val mvp = playersWithGamesLimit.maxByOrNull { it.mvp }!!
+        val mvpPlayerId = mvp.player.id
+        val mostKilled = playersWithGamesLimit.maxByOrNull { it.firstKilled }!!
+        val mostKilledPlayerId = mostKilled.player.id
+        val bestSheriff = findBestPlayerForRole(playersWithGamesLimit, Role.SHERIFF)!!
+        val bestSheriffPlayerId = bestSheriff.player.id
+        val bestDon = findBestPlayerForRole(playersWithGamesLimit, Role.DON)!!
+        val bestDonPlayerId = bestDon.player.id
+        val bestCivilian = findBestPlayerForRole(playersWithGamesLimit, Role.CIVILIAN)!!
+        val bestCivilianPlayerId = bestCivilian.player.id
+        val bestMafia = findBestPlayerForRole(playersWithGamesLimit, Role.MAFIA)!!
+        val bestMafiaPlayerId = bestMafia.player.id
         return SeasonStats(
             playerStats = ratingPlayerStats,
-            mvpIndex = mvpIndex,
-            bestSheriffIndex = bestSheriffIndex,
-            bestDonIndex = bestDonIndex,
-            bestCivilianIndex = bestCivilianIndex,
-            bestMafiaIndex = bestMafiaIndex,
-            mostKilledIndex = mostKilledIndex,
+            mvpPlayerId = mvpPlayerId,
+            bestSheriffPlayerId = bestSheriffPlayerId,
+            bestDonPlayerId = bestDonPlayerId,
+            bestCivilianPlayerId = bestCivilianPlayerId,
+            bestMafiaPlayerId = bestMafiaPlayerId,
+            mostKilledPlayerId = mostKilledPlayerId,
         )
     }
 
@@ -103,7 +107,8 @@ class HomeViewModel @Inject constructor(
 
     fun loadPlayers(json: String) {
         val players = parseJsonList<Player>(json)
-        playersRepository.addPlayers(players)
+        // TODO: Refactor player id logic
+        playersRepository.addPlayers(players.mapIndexed { index, player -> player.copy(id = index) })
     }
 
     fun loadDataBySeason(season: Season, fileContent: String) {
@@ -129,7 +134,7 @@ class HomeViewModel @Inject constructor(
             val gamesForPlayer = gamesData.filter { it.players.contains(player) }
             val gamesPlayed = gamesForPlayer.size
             if (gamesPlayed == 0) {
-                return@map RatingPlayerStats(season.id, player)
+                return@map RatingPlayerStats(season.id, playersRepository.findPlayer(player))
             }
             val firstKilled = gamesForPlayer.filter { it.isFirstKilled(player) }.size
             val firstKilledCityLost =
@@ -236,7 +241,7 @@ class HomeViewModel @Inject constructor(
             )
             RatingPlayerStats(
                 seasonId = season.id,
-                player = playersRepository.getDisplayName(player),
+                player =  playersRepository.findPlayer(player),
                 ratingCoefficient = ratingCoefficient,
                 wins = wins,
                 gamesPlayed = gamesPlayed,
@@ -260,7 +265,6 @@ class HomeViewModel @Inject constructor(
         ratingRepository.addRatings(season, ratings)
 
         val ratingPlayerStats = ratings
-            .filter { it.gamesPlayed >= season.gameLimit }
             .sortedByDescending { it.ratingCoefficient }
 
         seasonRepository.addSeason(generateSeasonStats(ratingPlayerStats))
