@@ -34,9 +34,6 @@ class PlayersRepository @Inject constructor() {
                 it.displayName == playerName
             }
         }
-        if (player == null) {
-            val a = 1
-        }
         return player ?: throw IllegalArgumentException("Player \"$playerName\" not found")
     }
 }

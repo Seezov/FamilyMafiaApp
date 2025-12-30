@@ -1477,7 +1477,11 @@
   },
   {
     "id": 0,
-    "displayName": "Луна"
+    "displayName": "Луна",
+    "nicknames": [
+      "Luna",
+      "Луна"
+    ]
   },
   {
     "id": 0,
@@ -1789,7 +1793,11 @@
   },
   {
     "id": 0,
-    "displayName": "Премьер Министр"
+    "displayName": "Прим'єр-міністр",
+    "nicknames": [
+      "Премьер Министр",
+      "Прим'єр-міністр"
+  ]
   },
   {
     "id": 0,
@@ -2233,7 +2241,11 @@
   },
   {
     "id": 0,
-    "displayName": "Чилиганчик"
+    "displayName": "Чилиганчик",
+    "nicknames":[
+      "Моргана",
+      "Чилиганчик"
+    ]
   },
   {
     "id": 0,
@@ -2378,5 +2390,53 @@
   {
     "id": 0,
     "displayName": "Официант"
+  },
+  {
+    "id": 0,
+    "displayName": "Шахіст"
+  },
+  {
+    "id": 0,
+    "displayName": "."
+  },
+  {
+    "id": 0,
+    "displayName": ".."
+  },
+  {
+    "id": 0,
+    "displayName": "Кіт"
+  },
+  {
+    "id": 0,
+    "displayName": "Лаккі"
+  },
+  {
+    "id": 0,
+    "displayName": "Ліпа"
+  },
+  {
+    "id": 0,
+    "displayName": "Торнадо"
+  },
+  {
+    "id": 0,
+    "displayName": "Рейн"
+  },
+  {
+    "id": 0,
+    "displayName": "Серфер"
+  },
+  {
+    "id": 0,
+    "displayName": "Марфа"
+  },
+  {
+    "id": 0,
+    "displayName": "Франко"
+  },
+  {
+    "id": 0,
+    "displayName": "Роза"
   }
 ]

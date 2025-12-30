@@ -17,6 +17,7 @@ import com.example.familymafiaapp.repository.GamesRepository
 import com.example.familymafiaapp.repository.PlayersRepository
 import com.example.familymafiaapp.repository.RatingRepository
 import com.example.familymafiaapp.repository.SeasonRepository
+import com.example.familymafiaapp.ui.home.getPlayersList
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -55,14 +56,27 @@ class HallOfFameViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            val games = gamesRepository.games
-            val players = playersRepository.players
-            val seasons = seasonRepository.seasons
-
-            _debugText.value = seasons.map { it.playerStats.first().seasonId to it.playerStats.filter { it.gamesPlayed >= Season.entries.find { season ->  season.id == it.seasonId }!!.gameLimit }.sumOf { it.gamesPlayed } }.toString()
+            val games = gamesRepository.games.filter {
+                it.isRatingGame() &&
+                        it.isNormalGame() &&
+                        it.seasonId in 24..27 }
+            val allStarsPlayers = listOf<String>("Seezov", "Залізний", "Аватар", "Kulav", "Валькірія", "Tina", "Малина", "Floppy", "Малишка", "Хоттабич", "Фурія", "Сирник", "Фрау", "Аглая")
+            val players = playersRepository.players.filter {
+                 allStarsPlayers.contains(it.displayName)
+            }
+            val player = players.first()
+            val gamesByPlayer = games.filter { it.players.contains(player.displayName) }
+            _debugText.value = getWinRate(gamesByPlayer, player, Role.MAFIA).toString() + "%"
 //            val seasonsStats = seasonRepository.seasons
 //            _playerPlacements.value = calculatePlayerPlacements(seasonsStats)
         }
+    }
+
+    fun getWinRate(gamesByPlayer: List<Game>, player: Player, role: Role? = null): Float {
+        val filteredGames = role?.let {
+            gamesByPlayer.filter { Role.Companion.findByValue(it.getPlayerRole(player.displayName)) == role }
+        } ?: gamesByPlayer
+        return (filteredGames.count { it.hasPlayerWon(player.displayName) }.toFloat() / filteredGames.size * 100).roundTo(2)
     }
 
     fun calculatePlayerPlacements(seasons: List<SeasonStats>): List<PlayerPlacements> {
@@ -96,8 +110,6 @@ class HallOfFameViewModel @Inject constructor(
                 .thenByDescending { it.sumOfNominations() }
         )
     }
-
-
 
 //    val playerToBadBestMoveMap = mutableListOf<BestMoves>()
 //    games.forEach { game ->
