@@ -60,13 +60,47 @@ class HallOfFameViewModel @Inject constructor(
             val games = gamesRepository.games.filter {
                 it.isRatingGame() &&
                         it.isNormalGame() &&
-                        it.seasonId in 24..27 }
-            val allStarsPlayers = listOf<String>("Seezov", "Залізний", "Аватар", "Kulav", "Валькірія", "Tina", "Малина", "Floppy", "Малишка", "Хоттабич", "Фурія", "Сирник", "Фрау", "Аглая")
+                        it.seasonId in 24..27
+            }
+            val allStarsPlayers = listOf<String>(
+                "Seezov",
+                "Залізний",
+                "Аватар",
+                "Kulav",
+                "Валькірія",
+                "Tina",
+                "Малина",
+                "Floppy",
+                "Малишка",
+                "Хоттабич",
+                "Фурія",
+                "Сирник",
+                "Фрау",
+                "Аглая"
+            )
             val players = playersRepository.players.filter {
-                 allStarsPlayers.contains(it.displayName)
+                allStarsPlayers.contains(it.displayName)
             }
             val yearStatsForPlayers = players.map { player ->
                 val gamesByPlayer = games.filter { it.players.contains(player.displayName) }
+                val gamesAsCivilian = gamesByPlayer.filter {
+                   Role.Companion.findByValue(it.getPlayerRole(player.displayName)) == Role.CIVILIAN
+                }
+                val gamesAsSheriff = gamesByPlayer.filter {
+                   Role.Companion.findByValue(it.getPlayerRole(player.displayName)) == Role.SHERIFF
+                }
+                val gamesAsMafia = gamesByPlayer.filter {
+                   Role.Companion.findByValue(it.getPlayerRole(player.displayName)) == Role.MAFIA
+                }
+                val gamesAsDon = gamesByPlayer.filter {
+                   Role.Companion.findByValue(it.getPlayerRole(player.displayName)) == Role.DON
+                }
+                val gamesAsRed = gamesAsCivilian + gamesAsSheriff
+                val avgAddPoints = getAddPoints(gamesByPlayer, player)
+                val averageAddPointsCiv = getAddPoints(gamesByPlayer, player, Role.CIVILIAN)
+                val averageAddPointsMaf = getAddPoints(gamesByPlayer, player, Role.MAFIA)
+                val averageAddPointsSher = getAddPoints(gamesByPlayer, player, Role.SHERIFF)
+                val averageAddPointsDon = getAddPoints(gamesByPlayer, player, Role.DON)
                 YearStats(
                     player = player.displayName,
                     gamesPlayed = gamesByPlayer.size,
@@ -75,21 +109,47 @@ class HallOfFameViewModel @Inject constructor(
                     mafWr = getWinRate(gamesByPlayer, player, Role.MAFIA),
                     sherWr = getWinRate(gamesByPlayer, player, Role.SHERIFF),
                     donWr = getWinRate(gamesByPlayer, player, Role.DON),
-                    firstKilled = 0.0F
+                    firstKilled = (gamesByPlayer.count { it.isFirstKilled(player.displayName) }
+                        .toFloat() / gamesAsRed.size * 100).roundTo(2),
+                    averageAddPoints = avgAddPoints,
+                    averageAddPointsCiv = averageAddPointsCiv,
+                    averageAddPointsMaf = averageAddPointsMaf,
+                    averageAddPointsSher = averageAddPointsSher,
+                    averageAddPointsDon = averageAddPointsDon,
                 )
-            }
-            val player = players.first()
+            }.sortedByDescending { it.gamesPlayed }
             _debugText.value = yearStatsForPlayers.toString()
-            val seasonsStats = seasonRepository.seasons
+
+//            val gamesOldLoc = gamesRepository.games.filter {
+//                it.isRatingGame() &&
+//                        it.isNormalGame() &&
+//                        it.seasonId in 6..27 }
+//            val uniquePlayers = gamesOldLoc.flatMap { it.players }.distinct()
+//            _debugText.value = uniquePlayers.size.toString()
+//            val seasonsStats = seasonRepository.seasons
 //            _playerPlacements.value = calculatePlayerPlacements(seasonsStats)
         }
+    }
+
+    fun getAddPoints(gamesByPlayer: List<Game>, player: Player, role: Role? = null): Float {
+        val filteredGames = role?.let {
+            gamesByPlayer.filter { Role.Companion.findByValue(it.getPlayerRole(player.displayName)) == role }
+        } ?: gamesByPlayer
+        return filteredGames.sumOf {
+            it.getPlayerAdditionalPoints(player.displayName).toDouble() + if (it.isFirstKilled(player.displayName)) {
+                it.bestMovePoints
+            } else {
+                0F
+            }
+        }.toFloat() / filteredGames.size
     }
 
     fun getWinRate(gamesByPlayer: List<Game>, player: Player, role: Role? = null): Float {
         val filteredGames = role?.let {
             gamesByPlayer.filter { Role.Companion.findByValue(it.getPlayerRole(player.displayName)) == role }
         } ?: gamesByPlayer
-        return (filteredGames.count { it.hasPlayerWon(player.displayName) }.toFloat() / filteredGames.size * 100).roundTo(2)
+        return (filteredGames.count { it.hasPlayerWon(player.displayName) }
+            .toFloat() / filteredGames.size * 100).roundTo(2)
     }
 
     fun calculatePlayerPlacements(seasons: List<SeasonStats>): List<PlayerPlacements> {
@@ -110,10 +170,14 @@ class HallOfFameViewModel @Inject constructor(
 
             // Role Awards
             stats.find { it.player.id == season.mvpPlayerId }?.player?.let { addPlacement(it) { mvp++ } }
-            stats.find { it.player.id == season.bestSheriffPlayerId}?.player?.let { addPlacement(it) { bestSheriff++ } }
-            stats.find { it.player.id == season.bestDonPlayerId}?.player?.let { addPlacement(it) { bestDon++ } }
-            stats.find { it.player.id == season.bestCivilianPlayerId}?.player?.let { addPlacement(it) { bestCivilian++ } }
-            stats.find { it.player.id == season.bestMafiaPlayerId}?.player?.let { addPlacement(it) { bestMafia++ } }
+            stats.find { it.player.id == season.bestSheriffPlayerId }?.player?.let { addPlacement(it) { bestSheriff++ } }
+            stats.find { it.player.id == season.bestDonPlayerId }?.player?.let { addPlacement(it) { bestDon++ } }
+            stats.find { it.player.id == season.bestCivilianPlayerId }?.player?.let {
+                addPlacement(
+                    it
+                ) { bestCivilian++ }
+            }
+            stats.find { it.player.id == season.bestMafiaPlayerId }?.player?.let { addPlacement(it) { bestMafia++ } }
         }
 
         return placementsMap.values.toList().sortedWith(
