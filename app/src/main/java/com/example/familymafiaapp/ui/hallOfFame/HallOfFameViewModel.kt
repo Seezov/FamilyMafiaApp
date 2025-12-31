@@ -9,6 +9,7 @@ import com.example.familymafiaapp.entities.PlayerPlacements
 import com.example.familymafiaapp.entities.SeasonStats
 import com.example.familymafiaapp.entities.SlotStats
 import com.example.familymafiaapp.entities.Stats
+import com.example.familymafiaapp.entities.YearStats
 import com.example.familymafiaapp.enums.Role
 import com.example.familymafiaapp.enums.Season
 import com.example.familymafiaapp.extensions.roundTo
@@ -64,10 +65,22 @@ class HallOfFameViewModel @Inject constructor(
             val players = playersRepository.players.filter {
                  allStarsPlayers.contains(it.displayName)
             }
+            val yearStatsForPlayers = players.map { player ->
+                val gamesByPlayer = games.filter { it.players.contains(player.displayName) }
+                YearStats(
+                    player = player.displayName,
+                    gamesPlayed = gamesByPlayer.size,
+                    totalWr = getWinRate(gamesByPlayer, player),
+                    civWr = getWinRate(gamesByPlayer, player, Role.CIVILIAN),
+                    mafWr = getWinRate(gamesByPlayer, player, Role.MAFIA),
+                    sherWr = getWinRate(gamesByPlayer, player, Role.SHERIFF),
+                    donWr = getWinRate(gamesByPlayer, player, Role.DON),
+                    firstKilled = 0.0F
+                )
+            }
             val player = players.first()
-            val gamesByPlayer = games.filter { it.players.contains(player.displayName) }
-            _debugText.value = getWinRate(gamesByPlayer, player, Role.MAFIA).toString() + "%"
-//            val seasonsStats = seasonRepository.seasons
+            _debugText.value = yearStatsForPlayers.toString()
+            val seasonsStats = seasonRepository.seasons
 //            _playerPlacements.value = calculatePlayerPlacements(seasonsStats)
         }
     }
