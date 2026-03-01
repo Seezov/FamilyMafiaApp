@@ -52,6 +52,10 @@ class HallOfFameViewModel @Inject constructor(
         MutableStateFlow<List<Triple<String, Int, List<Pair<Int, Int>>>>>(emptyList())
     val playerOnSlot: StateFlow<List<Triple<String, Int, List<Pair<Int, Int>>>>> = _playerOnSlot
 
+    private val _seasonGames =
+        MutableStateFlow<List<Pair<String, List<Pair<Int, Int>>>>>(emptyList())
+    val seasonGames: StateFlow<List<Pair<String, List<Pair<Int, Int>>>>> = _seasonGames
+
     private val _debugText = MutableStateFlow<String>("")
     val debugText: StateFlow<String> = _debugText
 
@@ -59,66 +63,28 @@ class HallOfFameViewModel @Inject constructor(
         viewModelScope.launch {
             val games = gamesRepository.games.filter {
                 it.isRatingGame() &&
-                        it.isNormalGame() &&
-                        it.seasonId in 24..27
+                        it.isNormalGame()
             }
-            val allStarsPlayers = listOf<String>(
-                "Seezov",
-                "Залізний",
-                "Аватар",
-                "Kulav",
-                "Валькірія",
-                "Tina",
-                "Малина",
-                "Floppy",
-                "Малишка",
-                "Хоттабич",
-                "Фурія",
-                "Сирник",
-                "Фрау",
-                "Аглая"
-            )
-            val players = playersRepository.players.filter {
-                allStarsPlayers.contains(it.displayName)
-            }
-            val yearStatsForPlayers = players.map { player ->
-                val gamesByPlayer = games.filter { it.players.contains(player.displayName) }
-                val gamesAsCivilian = gamesByPlayer.filter {
-                   Role.Companion.findByValue(it.getPlayerRole(player.displayName)) == Role.CIVILIAN
+
+            val players = playersRepository.players
+            val results = mutableListOf<Pair<String, List<Pair<Int, Int>>>>()
+            val statsForPlayers = players.map { player ->
+                val gamesByPlayer = games.filter {
+                    player.nicknames?.let { names ->
+                        it.players.any { it in names }
+                    } ?: it.players.contains(player.displayName)
                 }
-                val gamesAsSheriff = gamesByPlayer.filter {
-                   Role.Companion.findByValue(it.getPlayerRole(player.displayName)) == Role.SHERIFF
-                }
-                val gamesAsMafia = gamesByPlayer.filter {
-                   Role.Companion.findByValue(it.getPlayerRole(player.displayName)) == Role.MAFIA
-                }
-                val gamesAsDon = gamesByPlayer.filter {
-                   Role.Companion.findByValue(it.getPlayerRole(player.displayName)) == Role.DON
-                }
-                val gamesAsRed = gamesAsCivilian + gamesAsSheriff
-                val avgAddPoints = getAddPoints(gamesByPlayer, player)
-                val averageAddPointsCiv = getAddPoints(gamesByPlayer, player, Role.CIVILIAN)
-                val averageAddPointsMaf = getAddPoints(gamesByPlayer, player, Role.MAFIA)
-                val averageAddPointsSher = getAddPoints(gamesByPlayer, player, Role.SHERIFF)
-                val averageAddPointsDon = getAddPoints(gamesByPlayer, player, Role.DON)
-                YearStats(
-                    player = player.displayName,
-                    gamesPlayed = gamesByPlayer.size,
-                    totalWr = getWinRate(gamesByPlayer, player),
-                    civWr = getWinRate(gamesByPlayer, player, Role.CIVILIAN),
-                    mafWr = getWinRate(gamesByPlayer, player, Role.MAFIA),
-                    sherWr = getWinRate(gamesByPlayer, player, Role.SHERIFF),
-                    donWr = getWinRate(gamesByPlayer, player, Role.DON),
-                    firstKilled = (gamesByPlayer.count { it.isFirstKilled(player.displayName) }
-                        .toFloat() / gamesAsRed.size * 100).roundTo(2),
-                    averageAddPoints = avgAddPoints,
-                    averageAddPointsCiv = averageAddPointsCiv,
-                    averageAddPointsMaf = averageAddPointsMaf,
-                    averageAddPointsSher = averageAddPointsSher,
-                    averageAddPointsDon = averageAddPointsDon,
+                val seasonToGames = gamesByPlayer
+                    .groupBy { it.seasonId }
+                    .map { it.key to it.value.size }
+                results.add(
+                    Pair(
+                        player.displayName,
+                        seasonToGames
+                    )
                 )
-            }.sortedByDescending { it.gamesPlayed }
-            _debugText.value = yearStatsForPlayers.toString()
+            }
+            _seasonGames.value = results.sortedByDescending { it.second.sumOf { it.second } }
 
 //            val gamesOldLoc = gamesRepository.games.filter {
 //                it.isRatingGame() &&

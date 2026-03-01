@@ -1,6 +1,7 @@
 package com.example.familymafiaapp.ui.hallOfFame
 
 import android.widget.Toast
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,7 +30,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -55,6 +59,7 @@ fun HallOfFameScreen(hallOfFameViewModel: HallOfFameViewModel = hiltViewModel())
     val playerOnSlot by hallOfFameViewModel.playerOnSlot.collectAsState()
     val stats by hallOfFameViewModel.stats.collectAsState()
     val slotStats by hallOfFameViewModel.slotStats.collectAsState()
+    val seasonGames by hallOfFameViewModel.seasonGames.collectAsState()
 
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         if (debugText.isNotEmpty()) {
@@ -72,6 +77,8 @@ fun HallOfFameScreen(hallOfFameViewModel: HallOfFameViewModel = hiltViewModel())
             SlotStatsScreen(slotStats)
         } else if (playerOnSlot.isNotEmpty()) {
             PlayerOnSlotStatsScreen(playerOnSlot)
+        } else if (seasonGames.isNotEmpty()) {
+            SeasonGamesScreen(seasonGames)
         } else {
             PlayerStatsScreen(ratings)
         }
@@ -444,6 +451,175 @@ fun PlayerOnSlotStatsItem(index: Int, player: Triple<String, Int, List<Pair<Int,
 //                        )
                     }
                 }
+            }
+        }
+    }
+}
+
+@Composable
+fun SeasonGamesScreen(stats: List<Pair<String, List<Pair<Int, Int>>>>) {
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        itemsIndexed(stats) { index, player ->
+            SeasonGamesItem( player)
+        }
+    }
+}
+
+@Composable
+fun SeasonGamesItem( player: Pair<String, List<Pair<Int, Int>>>) {
+    val nickname = player.first
+    val seasonData = player.second.toMap()
+
+    // keep null for skipped seasons
+    val seasons: List<Pair<Int, Int?>> = (0..28).map { season ->
+        season to seasonData[season]
+    }
+
+    val maxYAxis = 200f
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+    ) {
+
+        Text(
+            text = nickname,
+            style = MaterialTheme.typography.titleMedium
+        )
+
+        Spacer(Modifier.height(8.dp))
+
+        Canvas(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(220.dp)
+        ) {
+
+            val leftPadding = 60f
+            val bottomPadding = 40f
+
+            val chartWidth = size.width - leftPadding
+            val chartHeight = size.height - bottomPadding
+
+            val widthStep = chartWidth / (seasons.size - 1)
+
+            val dashed = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
+
+            // horizontal grid lines
+            val ySteps = listOf(0, 50, 100, 150, 200)
+
+            ySteps.forEach { value ->
+
+                val yRatio = value / maxYAxis
+                val y = chartHeight - chartHeight * yRatio
+
+                drawLine(
+                    color = Color.LightGray,
+                    start = Offset(leftPadding, y),
+                    end = Offset(size.width, y),
+                    strokeWidth = 2f,
+                    pathEffect = dashed
+                )
+            }
+
+            // axes
+            drawLine(
+                color = Color.Gray,
+                start = Offset(leftPadding, 0f),
+                end = Offset(leftPadding, chartHeight),
+                strokeWidth = 2f
+            )
+
+            drawLine(
+                color = Color.Gray,
+                start = Offset(leftPadding, chartHeight),
+                end = Offset(size.width, chartHeight),
+                strokeWidth = 2f
+            )
+
+            // calculate points (nullable)
+            val points = seasons.mapIndexed { index, (_, games) ->
+
+                games?.let {
+
+                    val x = leftPadding + index * widthStep
+
+                    val clampedGames = it.coerceAtMost(maxYAxis.toInt())
+                    val yRatio = clampedGames / maxYAxis
+                    val y = chartHeight - chartHeight * yRatio
+
+                    Offset(x, y)
+                }
+            }
+
+            // draw segments only where both points exist
+            for (i in 0 until points.size - 1) {
+
+                val start = points[i]
+                val end = points[i + 1]
+
+                if (start != null && end != null) {
+                    drawLine(
+                        color = Color.Blue,
+                        start = start,
+                        end = end,
+                        strokeWidth = 4f
+                    )
+                }
+            }
+
+            // draw points
+            points.forEach {
+                it?.let {
+                    drawCircle(
+                        color = Color.Red,
+                        radius = 4f,
+                        center = it
+                    )
+                }
+            }
+
+            val textPaint = android.graphics.Paint().apply {
+                color = android.graphics.Color.GRAY
+                textSize = 24f
+                textAlign = android.graphics.Paint.Align.CENTER
+            }
+
+            // X axis labels
+            seasons.forEachIndexed { index, (seasonId, games) ->
+
+                if (games != null) {
+
+                    val x = leftPadding + index * widthStep
+
+                    drawContext.canvas.nativeCanvas.drawText(
+                        seasonId.toString(),
+                        x,
+                        chartHeight + 28f,
+                        textPaint
+                    )
+                }
+            }
+
+            // Y axis labels
+            textPaint.textAlign = android.graphics.Paint.Align.RIGHT
+
+            ySteps.forEach { value ->
+
+                val yRatio = value / maxYAxis
+                val y = chartHeight - chartHeight * yRatio
+
+                drawContext.canvas.nativeCanvas.drawText(
+                    value.toString(),
+                    leftPadding - 10f,
+                    y + 8f,
+                    textPaint
+                )
             }
         }
     }
