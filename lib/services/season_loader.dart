@@ -142,9 +142,9 @@ class SeasonLoaderService {
         penaltyPoints:
             p.map((r) => int.tryParse(r.f) == 4 ? -1.0 : 0.0).toList(),
         bestMove: [
-          int.tryParse(p[3].c) ?? 0,
-          int.tryParse(p[3].d) ?? 0,
-          int.tryParse(p[3].e) ?? 0,
+          int.tryParse(p[2].c) ?? 0,
+          int.tryParse(p[2].d) ?? 0,
+          int.tryParse(p[2].e) ?? 0,
         ],
         additionalPoints:
             p.map((r) => double.tryParse(r.i) ?? 0.0).toList(),
@@ -161,9 +161,9 @@ class SeasonLoaderService {
         firstKilled: firstKilled,
         bestMovePoints: _bestMovePointsOldFormat(firstKilled, p.map((r) => r.j).toList()),
         bestMove: [
-          int.tryParse(p[3].c) ?? 0,
-          int.tryParse(p[3].d) ?? 0,
-          int.tryParse(p[3].e) ?? 0,
+          int.tryParse(p[2].c) ?? 0,
+          int.tryParse(p[2].d) ?? 0,
+          int.tryParse(p[2].e) ?? 0,
         ],
         additionalPoints:
             p.map((r) => double.tryParse(r.i) ?? 0.0).toList(),
@@ -554,7 +554,10 @@ class SeasonLoaderService {
 
     return eligible
         .where((e) => e.$2 >= maxWinRate - 0.2)
-        .reduce((a, b) => a.$3 >= b.$3 ? a : b)
+        .reduce((a, b) {
+          if ((a.$3 - b.$3).abs() > 1e-9) return a.$3 > b.$3 ? a : b;
+          return a.$2 >= b.$2 ? a : b;
+        })
         .$1;
   }
 }

@@ -5,7 +5,6 @@ import 'package:family_mafia_app/models/player.dart';
 import 'package:family_mafia_app/models/player_accomplishments.dart';
 import 'package:family_mafia_app/repositories/games_repository.dart';
 import 'package:family_mafia_app/repositories/players_repository.dart';
-import 'package:family_mafia_app/repositories/rating_repository.dart';
 import 'package:family_mafia_app/repositories/season_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -123,37 +122,48 @@ final playerAccomplishmentsProvider =
   return acc;
 });
 
-/// Aggregated games-played count per role across all seasons for a player.
-/// Keys are role sheet values (e.g. 'Мирный', 'Мафия'); values are totals.
+/// Games-played count per role for a player (rating + normal games only).
 final playerRoleGamesProvider =
     Provider.family<Map<String, int>, Player>((ref, player) {
-  final ratings = ref.watch(ratingRepositoryProvider);
+  final games = ref.watch(gamesRepositoryProvider);
   final Map<String, int> result = {};
-  for (final statsList in ratings.values) {
-    for (final stat in statsList) {
-      if (stat.player.id != player.id) continue;
-      for (final (role, count) in stat.gamesForRole) {
-        result[role] = (result[role] ?? 0) + count;
+  for (final game in games) {
+    if (!game.isRatingGame() || !game.isNormalGame()) continue;
+    final names = player.nicknames ?? [player.displayName];
+    String? playerName;
+    for (final n in names) {
+      if (game.players.contains(n)) {
+        playerName = n;
+        break;
       }
-      break;
     }
+    if (playerName == null) continue;
+    final role = game.getPlayerRole(playerName);
+    result[role] = (result[role] ?? 0) + 1;
   }
   return result;
 });
 
-/// Aggregated first-kill totals across all seasons for a player.
+/// First-kill totals for a player (rating + normal games only).
 final playerFirstKillProvider =
     Provider.family<({int total, int cityLost}), Player>((ref, player) {
-  final ratings = ref.watch(ratingRepositoryProvider);
+  final games = ref.watch(gamesRepositoryProvider);
   int total = 0;
   int cityLost = 0;
-  for (final statsList in ratings.values) {
-    for (final stat in statsList) {
-      if (stat.player.id != player.id) continue;
-      total += stat.firstKilled;
-      cityLost += stat.firstKilledCityLost;
-      break;
+  for (final game in games) {
+    if (!game.isRatingGame() || !game.isNormalGame()) continue;
+    final names = player.nicknames ?? [player.displayName];
+    String? playerName;
+    for (final n in names) {
+      if (game.players.contains(n)) {
+        playerName = n;
+        break;
+      }
     }
+    if (playerName == null) continue;
+    if (!game.isFirstKilled(playerName)) continue;
+    total++;
+    if (game.cityWon == false) cityLost++;
   }
   return (total: total, cityLost: cityLost);
 });

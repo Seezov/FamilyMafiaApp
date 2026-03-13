@@ -625,7 +625,35 @@ class _BestMovesSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Best Moves', style: tt.titleMedium),
+        Row(
+          children: [
+            Text('Best Moves', style: tt.titleMedium),
+            const SizedBox(width: 4),
+            GestureDetector(
+              onTap: () => showDialog<void>(
+                context: context,
+                builder: (_) => AlertDialog(
+                  title: const Text('Best Moves'),
+                  content: const Text(
+                    'Best moves are only tracked starting from Season 2. '
+                    'First kills in Season 0 and Season 1 are not included in this count.',
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: const Text('OK'),
+                    ),
+                  ],
+                ),
+              ),
+              child: Icon(
+                Icons.info_outline,
+                size: 16,
+                color: cs.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ),
         const SizedBox(height: 2),
         Text(
           '$total best moves total',
