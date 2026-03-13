@@ -34,6 +34,7 @@ class PlayerProfileScreen extends ConsumerWidget {
       appBar: AppBar(title: Text(player.displayName)),
       body: SafeArea(
         child: SingleChildScrollView(
+          padding: const EdgeInsets.only(bottom: 24),
           child: Column(
             children: [
               Padding(
@@ -129,9 +130,36 @@ class _AccomplishmentsSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Accomplishments', style: tt.titleMedium),
+        Row(
+          children: [
+            Text('Accomplishments', style: tt.titleMedium),
+            const SizedBox(width: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: BoxDecoration(
+                color: cs.primaryContainer,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                '${acc.sumOfNominations()}',
+                style: tt.labelMedium?.copyWith(
+                  color: cs.onPrimaryContainer,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
         const SizedBox(height: 10),
-        Wrap(spacing: 8, runSpacing: 8, children: badges),
+        GridView.count(
+          crossAxisCount: 4,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          crossAxisSpacing: 8,
+          mainAxisSpacing: 8,
+          childAspectRatio: 0.9,
+          children: badges,
+        ),
       ],
     );
   }
@@ -155,7 +183,6 @@ class _AccBadge extends StatelessWidget {
     final cs = Theme.of(context).colorScheme;
     final tt = Theme.of(context).textTheme;
     return Container(
-      width: 76,
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
       decoration: BoxDecoration(
         color: cs.surface,
