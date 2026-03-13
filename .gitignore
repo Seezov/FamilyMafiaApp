@@ -75,3 +75,10 @@ lint/tmp/
 # App Specific cases 
 app/release/output.json
 .idea/codeStyles/
+# Flutter/Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
