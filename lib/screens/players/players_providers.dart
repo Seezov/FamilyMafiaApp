@@ -144,12 +144,14 @@ final playerRoleGamesProvider =
   return result;
 });
 
-/// First-kill totals for a player (rating + normal games only).
+/// First-kill totals for a player (rating + normal games, civ/sheriff only).
 final playerFirstKillProvider =
-    Provider.family<({int total, int cityLost}), Player>((ref, player) {
+    Provider.family<({int total, int cityLost, int civSherGames}), Player>(
+        (ref, player) {
   final games = ref.watch(gamesRepositoryProvider);
   int total = 0;
   int cityLost = 0;
+  int civSherGames = 0;
   for (final game in games) {
     if (!game.isRatingGame() || !game.isNormalGame()) continue;
     final names = player.nicknames ?? [player.displayName];
@@ -161,11 +163,14 @@ final playerFirstKillProvider =
       }
     }
     if (playerName == null) continue;
+    final role = Role.findByValue(game.getPlayerRole(playerName));
+    if (role == null || role.isBlack) continue;
+    civSherGames++;
     if (!game.isFirstKilled(playerName)) continue;
     total++;
     if (game.cityWon == false) cityLost++;
   }
-  return (total: total, cityLost: cityLost);
+  return (total: total, cityLost: cityLost, civSherGames: civSherGames);
 });
 
 /// Best-move breakdown for a player: how many times first-killed, and how many
@@ -190,6 +195,8 @@ final playerBestMovesProvider =
     }
     if (playerName == null) continue;
     if (!game.isFirstKilled(playerName)) continue;
+    final role = Role.findByValue(game.getPlayerRole(playerName));
+    if (role == null || role.isBlack) continue;
 
     firstKilledCount++;
     int blacks = 0;

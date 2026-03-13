@@ -98,7 +98,7 @@ class PlayerProfileScreen extends ConsumerWidget {
                       _FirstKillSection(
                         total: firstKill.total,
                         cityLost: firstKill.cityLost,
-                        totalGames: total,
+                        totalGames: firstKill.civSherGames,
                       ),
                       const SizedBox(height: 24),
                     ],
