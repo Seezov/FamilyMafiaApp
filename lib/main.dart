@@ -1,5 +1,5 @@
 import 'package:family_mafia_app/screens/dashboard/dashboard_screen.dart';
-import 'package:family_mafia_app/screens/hall_of_fame/hall_of_fame_screen.dart';
+import 'package:family_mafia_app/screens/players/players_screen.dart';
 import 'package:family_mafia_app/screens/home/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -36,7 +36,7 @@ class _RootNavState extends State<_RootNav> {
 
   static const _screens = [
     HomeScreen(),
-    HallOfFameScreen(),
+    PlayersScreen(),
     DashboardScreen(),
   ];
 
@@ -54,9 +54,9 @@ class _RootNavState extends State<_RootNav> {
             label: 'Season',
           ),
           NavigationDestination(
-            icon: Icon(Icons.emoji_events_outlined),
-            selectedIcon: Icon(Icons.emoji_events),
-            label: 'Hall of Fame',
+            icon: Icon(Icons.people_outline),
+            selectedIcon: Icon(Icons.people),
+            label: 'Players',
           ),
           NavigationDestination(
             icon: Icon(Icons.dashboard_outlined),

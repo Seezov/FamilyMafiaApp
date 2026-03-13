@@ -1,3 +1,4 @@
+import 'package:family_mafia_app/models/player.dart';
 import 'package:family_mafia_app/repositories/games_repository.dart';
 import 'package:family_mafia_app/repositories/players_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -43,4 +44,25 @@ final seasonGamesProvider = Provider<List<SeasonGamesEntry>>((ref) {
   });
 
   return result;
+});
+
+const _invalidNames = {'.', '..', '/'};
+
+/// All players sorted by total games descending,
+/// excluding those with empty nicknames lists or invalid display names.
+final playersListProvider = Provider<List<Player>>((ref) {
+  final players = ref.watch(playersRepositoryProvider);
+  final entries = ref.watch(seasonGamesProvider);
+  final totals = {
+    for (final e in entries)
+      e.name: e.seasonData.fold(0, (s, x) => s + x.games)
+  };
+  return (players
+        .where((p) =>
+            p.displayName.trim().isNotEmpty &&
+            !(p.nicknames != null && p.nicknames!.isEmpty) &&
+            !_invalidNames.contains(p.displayName))
+        .toList())
+      ..sort((a, b) =>
+          (totals[b.displayName] ?? 0).compareTo(totals[a.displayName] ?? 0));
 });
