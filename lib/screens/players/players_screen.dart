@@ -29,20 +29,84 @@ class _PlayersContent extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final players = ref.watch(playersListProvider);
+    final players = ref.watch(filteredPlayersProvider);
 
     return Scaffold(
       body: SafeArea(
-        child: GridView.builder(
-          padding: const EdgeInsets.all(12),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3,
-            crossAxisSpacing: 8,
-            mainAxisSpacing: 8,
-            childAspectRatio: 0.85,
+        child: Column(
+          children: [
+            const _SearchBar(),
+            Expanded(
+              child: players.isEmpty
+                  ? const Center(child: Text('No players found'))
+                  : GridView.builder(
+                      padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        crossAxisSpacing: 8,
+                        mainAxisSpacing: 8,
+                        childAspectRatio: 0.85,
+                      ),
+                      itemCount: players.length,
+                      itemBuilder: (context, i) =>
+                          _PlayerCard(player: players[i]),
+                    ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SearchBar extends ConsumerStatefulWidget {
+  const _SearchBar();
+
+  @override
+  ConsumerState<_SearchBar> createState() => _SearchBarState();
+}
+
+class _SearchBarState extends ConsumerState<_SearchBar> {
+  final _controller = TextEditingController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final query = ref.watch(playerSearchQueryProvider);
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+      child: TextField(
+        controller: _controller,
+        onChanged: (v) =>
+            ref.read(playerSearchQueryProvider.notifier).state = v,
+        decoration: InputDecoration(
+          hintText: 'Search players…',
+          prefixIcon: const Icon(Icons.search, size: 20),
+          suffixIcon: query.isNotEmpty
+              ? IconButton(
+                  icon: const Icon(Icons.clear, size: 18),
+                  onPressed: () {
+                    _controller.clear();
+                    ref.read(playerSearchQueryProvider.notifier).state = '';
+                  },
+                )
+              : null,
+          isDense: true,
+          contentPadding: const EdgeInsets.symmetric(vertical: 10),
+          filled: true,
+          fillColor: cs.surfaceContainerHighest.withValues(alpha: 0.7),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(30),
+            borderSide: BorderSide.none,
           ),
-          itemCount: players.length,
-          itemBuilder: (context, i) => _PlayerCard(player: players[i]),
         ),
       ),
     );

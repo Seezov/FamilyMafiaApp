@@ -6,6 +6,8 @@ import 'package:family_mafia_app/repositories/players_repository.dart';
 import 'package:family_mafia_app/repositories/season_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+final playerSearchQueryProvider = StateProvider<String>((ref) => '');
+
 typedef SeasonEntry = ({int seasonId, int games});
 typedef SeasonGamesEntry = ({String name, List<SeasonEntry> seasonData});
 
@@ -68,6 +70,16 @@ final playersListProvider = Provider<List<Player>>((ref) {
         .toList())
       ..sort((a, b) =>
           (totals[b.displayName] ?? 0).compareTo(totals[a.displayName] ?? 0));
+});
+
+/// Players filtered by the current search query.
+final filteredPlayersProvider = Provider<List<Player>>((ref) {
+  final players = ref.watch(playersListProvider);
+  final query = ref.watch(playerSearchQueryProvider).toLowerCase().trim();
+  if (query.isEmpty) return players;
+  return players
+      .where((p) => p.displayName.toLowerCase().contains(query))
+      .toList();
 });
 
 /// Counts all-time accomplishments (placements + awards) for a given player.

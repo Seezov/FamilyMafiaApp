@@ -24,8 +24,8 @@ Riverpod + Dart, Jetpack-style layering.
 
 **Layers:**
 - `lib/screens/` — Flutter screens, each with a `_providers.dart` sidecar
-  - `home/` — `HomeScreen` (season selector + player rating list)
-  - `hall_of_fame/` — `HallOfFameScreen` (games-per-season chart per player)
+  - `home/` — `HomeScreen` (season selector + per-season player rating list)
+  - `players/` — `PlayersScreen` (grid of all players, tap → `PlayerProfileScreen`); `players_providers.dart` owns `playersListProvider`, `filteredPlayersProvider`, `playerSearchQueryProvider`, `playerAccomplishmentsProvider`
   - `dashboard/` — `DashboardScreen` (placeholder)
 - `lib/repositories/` — Riverpod `StateNotifierProvider` singletons:
   `GamesRepository`, `PlayersRepository`, `RatingRepository`, `SeasonRepository`
@@ -49,9 +49,11 @@ No local database — all data loaded from `assets/raw/*.json` (one per season +
 ## Navigation
 
 `main.dart` uses a `NavigationBar` + `IndexedStack` with three tabs:
-- **Season** (`HomeScreen`) — per-season player ratings
-- **Hall of Fame** (`HallOfFameScreen`) — all-time games-per-season chart
+- **Season** (`HomeScreen`) — per-season player rating list (season chips + expandable player cards)
+- **Players** (`PlayersScreen`) — full player roster grid with search and tap-through to `PlayerProfileScreen`
 - **Dashboard** (`DashboardScreen`) — placeholder
+
+> **"Players screen"** always refers to `PlayersScreen` (`lib/screens/players/players_screen.dart`), not `HomeScreen`.
 
 ## Adding a New Season (Flutter)
 
