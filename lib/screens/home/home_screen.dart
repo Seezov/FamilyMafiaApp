@@ -392,44 +392,42 @@ class _ExpandedStats extends StatelessWidget {
 
   const _ExpandedStats({required this.rating});
 
+  Widget _row(List<Widget> tiles) => Row(
+        children: [
+          for (int i = 0; i < tiles.length; i++) ...[
+            if (i > 0) const SizedBox(width: 6),
+            Expanded(child: tiles[i]),
+          ],
+        ],
+      );
+
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _StatGrid(cells: [
-          _StatCell(
-              label: 'Games',
-              value: '${rating.wins}/${rating.gamesPlayed}'),
-          _StatCell(
-              label: 'Add. Pts',
-              value: rating.additionalPoints.roundTo(2).toString()),
-          _StatCell(
-              label: 'Penalty',
-              value: rating.penaltyPoints.roundTo(2).toString()),
-          _StatCell(
-              label: 'Best Move',
-              value: rating.bestMovePoints.roundTo(2).toString()),
+        _row([
+          _StatTile(label: 'Games', value: '${rating.wins}/${rating.gamesPlayed}'),
+          _StatTile(label: 'Add. Pts', value: rating.additionalPoints.roundTo(2).toString(), accent: _Accent.positive),
+          _StatTile(label: 'Penalty', value: rating.penaltyPoints.roundTo(2).toString(), accent: _Accent.negative),
+          _StatTile(label: 'Best Move', value: rating.bestMovePoints.roundTo(2).toString(), accent: _Accent.positive),
         ]),
-        const SizedBox(height: 8),
-        _StatGrid(cells: [
-          _StatCell(label: 'MVP', value: rating.mvp.roundTo(4).toString()),
-          _StatCell(
-              label: 'CI/Game',
-              value: rating.ciForGame.roundTo(3).toString()),
-          _StatCell(label: 'CI', value: rating.ci.roundTo(3).toString()),
-          _StatCell(
-              label: 'Death %',
-              value:
-                  '${(rating.percentOfDeath * 100).roundTo(1)}%'),
+        const SizedBox(height: 6),
+        _row([
+          _StatTile(label: 'MVP', value: rating.mvp.roundTo(4).toString()),
+          _StatTile(label: 'CI/Game', value: rating.ciForGame.roundTo(3).toString()),
+          _StatTile(label: 'CI', value: rating.ci.roundTo(3).toString()),
+          _StatTile(label: 'Death %', value: '${(rating.percentOfDeath * 100).roundTo(1)}%'),
         ]),
-        const SizedBox(height: 8),
-        _StatGrid(cells: [
-          _StatCell(label: 'First Killed', value: '${rating.firstKilled}'),
-          _StatCell(
-              label: 'City Lost',
-              value: '${rating.firstKilledCityLost}'),
-        ]),
+        const SizedBox(height: 6),
+        Row(
+          children: [
+            Expanded(child: _StatTile(label: 'First Killed', value: '${rating.firstKilled}')),
+            const SizedBox(width: 6),
+            Expanded(child: _StatTile(label: 'City Lost', value: '${rating.firstKilledCityLost}')),
+            const Spacer(flex: 2),
+          ],
+        ),
         const SizedBox(height: 12),
         _RoleBreakdown(rating: rating),
       ],
@@ -437,38 +435,47 @@ class _ExpandedStats extends StatelessWidget {
   }
 }
 
-class _StatGrid extends StatelessWidget {
-  final List<_StatCell> cells;
+enum _Accent { positive, negative }
 
-  const _StatGrid({required this.cells});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: cells.map((c) => Expanded(child: c)).toList(),
-    );
-  }
-}
-
-class _StatCell extends StatelessWidget {
+class _StatTile extends StatelessWidget {
   final String label;
   final String value;
+  final _Accent? accent;
 
-  const _StatCell({required this.label, required this.value});
+  const _StatTile({required this.label, required this.value, this.accent});
 
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final tt = Theme.of(context).textTheme;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label,
-            style: tt.labelSmall?.copyWith(color: cs.onSurfaceVariant)),
-        Text(value,
-            style:
-                tt.bodySmall?.copyWith(fontWeight: FontWeight.w600)),
-      ],
+
+    final bg = switch (accent) {
+      _Accent.positive => Colors.green.withValues(alpha: 0.09),
+      _Accent.negative => Colors.red.withValues(alpha: 0.09),
+      null => cs.surfaceContainerLow,
+    };
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            value,
+            style: tt.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: 1),
+          Text(
+            label,
+            style: tt.labelSmall?.copyWith(color: cs.onSurfaceVariant),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -478,6 +485,14 @@ class _RoleBreakdown extends StatelessWidget {
 
   const _RoleBreakdown({required this.rating});
 
+  static Color _roleColor(String roleName) => switch (roleName) {
+        'sheriff' => const Color(0xFF1565C0),
+        'don' => const Color(0xFFC62828),
+        'civilian' => const Color(0xFF2E7D32),
+        'mafia' => const Color(0xFF6A1B9A),
+        _ => Colors.grey,
+      };
+
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
@@ -486,14 +501,24 @@ class _RoleBreakdown extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'By role',
-          style: tt.labelSmall?.copyWith(color: cs.onSurfaceVariant),
+        Row(
+          children: [
+            Expanded(child: Divider(color: cs.outlineVariant)),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Text(
+                'By role',
+                style: tt.labelSmall?.copyWith(color: cs.onSurfaceVariant),
+              ),
+            ),
+            Expanded(child: Divider(color: cs.outlineVariant)),
+          ],
         ),
-        const SizedBox(height: 6),
+        const SizedBox(height: 8),
         ...Role.values.map((role) {
-          final roleName =
-              role.name[0].toUpperCase() + role.name.substring(1);
+          final roleName = role.name[0].toUpperCase() + role.name.substring(1);
+          final roleColor = _roleColor(role.name.toLowerCase());
+
           final wins = rating.winByRole
               .firstWhere((e) => role.sheetValues.contains(e.$1),
                   orElse: () => (role.sheetValue, 0))
@@ -508,29 +533,68 @@ class _RoleBreakdown extends StatelessWidget {
               .$2;
           final wr = games > 0 ? (wins / games * 100).roundTo(1) : 0.0;
 
+          final Color wrFg;
+          final Color wrBg;
+          if (games == 0) {
+            wrFg = cs.onSurfaceVariant;
+            wrBg = cs.surfaceContainerLow;
+          } else if (wr >= 50) {
+            wrFg = Colors.green.shade700;
+            wrBg = Colors.green.shade50;
+          } else if (wr >= 35) {
+            wrFg = Colors.amber.shade800;
+            wrBg = Colors.amber.shade50;
+          } else {
+            wrFg = Colors.red.shade700;
+            wrBg = Colors.red.shade50;
+          }
+
           return Padding(
-            padding: const EdgeInsets.only(bottom: 3),
+            padding: const EdgeInsets.only(bottom: 5),
             child: Row(
               children: [
+                Container(
+                  width: 8,
+                  height: 8,
+                  decoration: BoxDecoration(
+                    color: roleColor,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                const SizedBox(width: 8),
                 SizedBox(
-                  width: 68,
-                  child: Text(roleName,
-                      style: tt.bodySmall
-                          ?.copyWith(fontWeight: FontWeight.w500)),
+                  width: 62,
+                  child: Text(
+                    roleName,
+                    style: tt.bodySmall?.copyWith(fontWeight: FontWeight.w600),
+                  ),
                 ),
-                Text('$wins/$games',
-                    style: tt.bodySmall),
-                const SizedBox(width: 6),
                 Text(
-                  '$wr% WR',
-                  style: tt.bodySmall
-                      ?.copyWith(color: cs.onSurfaceVariant),
+                  '$wins/$games',
+                  style: tt.bodySmall?.copyWith(color: cs.onSurfaceVariant),
                 ),
-                const SizedBox(width: 6),
+                const SizedBox(width: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: wrBg,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    games > 0 ? '$wr% WR' : '–',
+                    style: tt.labelSmall?.copyWith(
+                      color: wrFg,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                const Spacer(),
                 Text(
-                  '+${add.roundTo(2)}',
-                  style: tt.bodySmall
-                      ?.copyWith(color: cs.primary),
+                  add >= 0 ? '+${add.roundTo(2)}' : add.roundTo(2).toString(),
+                  style: tt.bodySmall?.copyWith(
+                    color: add >= 0 ? cs.primary : Colors.red.shade600,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ],
             ),
