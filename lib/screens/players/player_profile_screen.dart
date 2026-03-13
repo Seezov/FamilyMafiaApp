@@ -18,6 +18,7 @@ class PlayerProfileScreen extends ConsumerWidget {
     final acc = ref.watch(playerAccomplishmentsProvider(player));
     final roleGames = ref.watch(playerRoleGamesProvider(player));
     final roleWins = ref.watch(playerRoleWinsProvider(player));
+    final rolePercentiles = ref.watch(roleWinRatePercentilesProvider(player));
     final firstKill = ref.watch(playerFirstKillProvider(player));
     final bestMoves = ref.watch(playerBestMovesProvider(player));
 
@@ -92,7 +93,7 @@ class PlayerProfileScreen extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if (roleGames.isNotEmpty) ...[
-                      _RoleDistributionSection(roleGames: roleGames, roleWins: roleWins),
+                      _RoleDistributionSection(roleGames: roleGames, roleWins: roleWins, rolePercentiles: rolePercentiles),
                       const SizedBox(height: 24),
                     ],
                     if (firstKill.total > 0) ...[
@@ -389,8 +390,13 @@ Color _avatarColor(String name) {
 class _RoleDistributionSection extends StatelessWidget {
   final Map<String, int> roleGames;
   final Map<String, int> roleWins;
+  final Map<Role, double?> rolePercentiles;
 
-  const _RoleDistributionSection({required this.roleGames, required this.roleWins});
+  const _RoleDistributionSection({
+    required this.roleGames,
+    required this.roleWins,
+    required this.rolePercentiles,
+  });
 
   static const _order = [Role.civilian, Role.mafia, Role.sheriff, Role.don];
 
@@ -444,6 +450,7 @@ class _RoleDistributionSection extends StatelessWidget {
                 total: total,
                 maxCount: maxCount,
                 color: _roleColor(role),
+                topPct: rolePercentiles[role],
               ),
             ),
       ],
@@ -458,6 +465,7 @@ class _RoleBar extends StatelessWidget {
   final int total;
   final int maxCount;
   final Color color;
+  final double? topPct;
 
   const _RoleBar({
     required this.label,
@@ -466,6 +474,7 @@ class _RoleBar extends StatelessWidget {
     required this.total,
     required this.maxCount,
     required this.color,
+    this.topPct,
   });
 
   @override
@@ -517,8 +526,16 @@ class _RoleBar extends StatelessWidget {
               ),
               Text(
                 '$winPct% WR',
-                style: tt.bodySmall?.copyWith(color: cs.onSurfaceVariant.withValues(alpha: 0.7)),
+                style: tt.bodySmall?.copyWith(
+                    color: cs.onSurfaceVariant.withValues(alpha: 0.7)),
               ),
+              if (topPct != null)
+                Text(
+                  'Top ${topPct! < 1 ? topPct!.toStringAsFixed(1) : topPct!.toInt()}%',
+                  style: tt.bodySmall?.copyWith(
+                      color: const Color(0xFF66BB6A),
+                      fontWeight: FontWeight.w600),
+                ),
             ],
           ),
         ),

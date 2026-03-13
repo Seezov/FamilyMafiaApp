@@ -5,6 +5,8 @@ import 'package:family_mafia_app/models/player.dart';
 import 'package:family_mafia_app/models/player_accomplishments.dart';
 import 'package:family_mafia_app/repositories/games_repository.dart';
 import 'package:family_mafia_app/repositories/players_repository.dart';
+import 'package:family_mafia_app/repositories/rating_repository.dart';
+import 'package:family_mafia_app/repositories/role_percentiles_repository.dart';
 import 'package:family_mafia_app/repositories/season_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -15,32 +17,22 @@ typedef SeasonGamesEntry = ({String name, List<SeasonEntry> seasonData});
 
 /// For each player: their display name + (seasonId → game count) pairs,
 /// sorted by total game count descending.
-/// Only counts rating + normal games.
+/// Aggregated from pre-computed RatingPlayerStats (no raw game scan).
 final seasonGamesProvider = Provider<List<SeasonGamesEntry>>((ref) {
-  final games = ref.watch(gamesRepositoryProvider);
   final players = ref.watch(playersRepositoryProvider);
-
-  final ratingGames =
-      games.where((g) => g.isRatingGame() && g.isNormalGame()).toList();
+  final allRatings = ref.watch(ratingRepositoryProvider);
 
   final result = players.map((player) {
-    final gamesByPlayer = ratingGames.where((game) {
-      if (player.nicknames == null) {
-        return game.players.contains(player.displayName);
+    final seasonData = <SeasonEntry>[];
+    for (final entry in allRatings.entries) {
+      final stats = entry.value
+          .where((r) => r.player.id == player.id)
+          .firstOrNull;
+      if (stats != null && stats.gamesPlayed > 0) {
+        seasonData.add((seasonId: entry.key, games: stats.gamesPlayed));
       }
-      return player.nicknames!.any((n) => game.players.contains(n));
-    }).toList();
-
-    final Map<int, int> seasonToCount = {};
-    for (final game in gamesByPlayer) {
-      seasonToCount[game.seasonId] = (seasonToCount[game.seasonId] ?? 0) + 1;
     }
-
-    final seasonData = seasonToCount.entries
-        .map((e) => (seasonId: e.key, games: e.value))
-        .toList()
-      ..sort((a, b) => a.seasonId.compareTo(b.seasonId));
-
+    seasonData.sort((a, b) => a.seasonId.compareTo(b.seasonId));
     return (name: player.displayName, seasonData: seasonData);
   }).toList();
 
@@ -122,76 +114,67 @@ final playerAccomplishmentsProvider =
   return acc;
 });
 
-/// Games-played count per role for a player (rating + normal games only).
+/// Games-played count per role for a player, aggregated from pre-computed
+/// RatingPlayerStats across all seasons.
 final playerRoleGamesProvider =
     Provider.family<Map<String, int>, Player>((ref, player) {
-  final games = ref.watch(gamesRepositoryProvider);
+  final allRatings = ref.watch(ratingRepositoryProvider);
   final Map<String, int> result = {};
-  for (final game in games) {
-    if (!game.isRatingGame() || !game.isNormalGame()) continue;
-    final names = player.nicknames ?? [player.displayName];
-    String? playerName;
-    for (final n in names) {
-      if (game.players.contains(n)) {
-        playerName = n;
-        break;
-      }
+  for (final seasonStats in allRatings.values) {
+    final stats =
+        seasonStats.where((r) => r.player.id == player.id).firstOrNull;
+    if (stats == null) continue;
+    for (final (roleValue, count) in stats.gamesForRole) {
+      result[roleValue] = (result[roleValue] ?? 0) + count;
     }
-    if (playerName == null) continue;
-    final role = game.getPlayerRole(playerName);
-    result[role] = (result[role] ?? 0) + 1;
   }
   return result;
 });
 
-/// Win count per role for a player (rating + normal games only).
+/// Percentile rank ("Top X%") per role for a player — precomputed during app load.
+/// Returns null for a role if the player has < 10 games in that role or < 100 total games.
+final roleWinRatePercentilesProvider =
+    Provider.family<Map<Role, double?>, Player>((ref, player) {
+  final cache = ref.watch(rolePercentilesRepositoryProvider);
+  return cache[player.id] ?? {for (final role in Role.values) role: null};
+});
+
+/// Win count per role for a player, aggregated from pre-computed
+/// RatingPlayerStats across all seasons.
 final playerRoleWinsProvider =
     Provider.family<Map<String, int>, Player>((ref, player) {
-  final games = ref.watch(gamesRepositoryProvider);
+  final allRatings = ref.watch(ratingRepositoryProvider);
   final Map<String, int> result = {};
-  for (final game in games) {
-    if (!game.isRatingGame() || !game.isNormalGame()) continue;
-    final names = player.nicknames ?? [player.displayName];
-    String? playerName;
-    for (final n in names) {
-      if (game.players.contains(n)) {
-        playerName = n;
-        break;
-      }
+  for (final seasonStats in allRatings.values) {
+    final stats =
+        seasonStats.where((r) => r.player.id == player.id).firstOrNull;
+    if (stats == null) continue;
+    for (final (roleValue, wins) in stats.winByRole) {
+      result[roleValue] = (result[roleValue] ?? 0) + wins;
     }
-    if (playerName == null) continue;
-    if (!game.hasPlayerWon(playerName)) continue;
-    final role = game.getPlayerRole(playerName);
-    result[role] = (result[role] ?? 0) + 1;
   }
   return result;
 });
 
-/// First-kill totals for a player (rating + normal games, civ/sheriff only).
+/// First-kill totals for a player (civ/sheriff only), aggregated from
+/// pre-computed RatingPlayerStats across all seasons.
 final playerFirstKillProvider =
     Provider.family<({int total, int cityLost, int civSherGames}), Player>(
         (ref, player) {
-  final games = ref.watch(gamesRepositoryProvider);
+  final allRatings = ref.watch(ratingRepositoryProvider);
   int total = 0;
   int cityLost = 0;
   int civSherGames = 0;
-  for (final game in games) {
-    if (!game.isRatingGame() || !game.isNormalGame()) continue;
-    final names = player.nicknames ?? [player.displayName];
-    String? playerName;
-    for (final n in names) {
-      if (game.players.contains(n)) {
-        playerName = n;
-        break;
-      }
+  for (final seasonStats in allRatings.values) {
+    final stats =
+        seasonStats.where((r) => r.player.id == player.id).firstOrNull;
+    if (stats == null) continue;
+    total += stats.firstKilled;
+    cityLost += stats.firstKilledCityLost;
+    for (final (roleValue, count) in stats.gamesForRole) {
+      final role = Role.findByValue(roleValue);
+      if (role != null && !role.isBlack) civSherGames += count;
     }
-    if (playerName == null) continue;
-    final role = Role.findByValue(game.getPlayerRole(playerName));
-    if (role == null || role.isBlack) continue;
-    civSherGames++;
-    if (!game.isFirstKilled(playerName)) continue;
-    total++;
-    if (game.cityWon == false) cityLost++;
   }
   return (total: total, cityLost: cityLost, civSherGames: civSherGames);
 });

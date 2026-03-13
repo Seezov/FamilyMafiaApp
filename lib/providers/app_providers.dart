@@ -1,6 +1,7 @@
 import 'package:family_mafia_app/repositories/games_repository.dart';
 import 'package:family_mafia_app/repositories/players_repository.dart';
 import 'package:family_mafia_app/repositories/rating_repository.dart';
+import 'package:family_mafia_app/repositories/role_percentiles_repository.dart';
 import 'package:family_mafia_app/repositories/season_repository.dart';
 import 'package:family_mafia_app/services/season_loader.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,6 +14,7 @@ final appDataProvider = FutureProvider<void>((ref) async {
     ref.read(gamesRepositoryProvider.notifier),
     ref.read(ratingRepositoryProvider.notifier),
     ref.read(seasonRepositoryProvider.notifier),
+    ref.read(rolePercentilesRepositoryProvider.notifier),
   );
   await loader.loadAll();
 });

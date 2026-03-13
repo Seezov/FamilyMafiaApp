@@ -14,57 +14,65 @@ import 'package:family_mafia_app/models/season_stats.dart';
 import 'package:family_mafia_app/repositories/games_repository.dart';
 import 'package:family_mafia_app/repositories/players_repository.dart';
 import 'package:family_mafia_app/repositories/rating_repository.dart';
+import 'package:family_mafia_app/repositories/role_percentiles_repository.dart';
 import 'package:family_mafia_app/repositories/season_repository.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
-class SeasonLoaderService {
-  final PlayersRepository _playersRepo;
-  final GamesRepository _gamesRepo;
-  final RatingRepository _ratingRepo;
-  final SeasonRepository _seasonRepo;
+// ── Background isolate I/O ──────────────────────────────────────────────────
 
-  SeasonLoaderService(
-    this._playersRepo,
-    this._gamesRepo,
-    this._ratingRepo,
-    this._seasonRepo,
-  );
+class _LoadInput {
+  final String playersJson;
+  // Parallel to Season.values order
+  final List<String> seasonJsons;
 
-  Future<void> loadAll() async {
-    final playersJson =
-        await rootBundle.loadString('assets/raw/players.json');
-    _loadPlayers(playersJson);
+  const _LoadInput(this.playersJson, this.seasonJsons);
+}
 
-    for (final season in Season.values) {
-      final json = await rootBundle.loadString(season.assetPath);
-      _loadSeason(season, json);
-    }
-  }
+class _LoadOutput {
+  final List<Player> players;
+  final List<Game> allGames;
+  final Map<int, List<RatingPlayerStats>> ratingsBySeason;
+  final Map<int, SeasonStats> statsBySeason;
+  final Map<int, Map<Role, double?>> percentiles;
 
-  // ─── Players ──────────────────────────────────────────────────────────────
+  const _LoadOutput({
+    required this.players,
+    required this.allGames,
+    required this.ratingsBySeason,
+    required this.statsBySeason,
+    required this.percentiles,
+  });
+}
 
-  void _loadPlayers(String json) {
-    final raw = (jsonDecode(json) as List).cast<Map<String, dynamic>>();
-    final players = raw
-        .asMap()
-        .entries
-        .map((e) => Player.fromJson(e.value).copyWith(id: e.key))
-        .toList();
-    _playersRepo.addPlayers(players);
-  }
+// Top-level function required by compute()
+_LoadOutput _computeAllData(_LoadInput input) {
+  final rawPlayers =
+      (jsonDecode(input.playersJson) as List).cast<Map<String, dynamic>>();
+  final players = rawPlayers
+      .asMap()
+      .entries
+      .map((e) => Player.fromJson(e.value).copyWith(id: e.key))
+      .toList();
 
-  // ─── Season loading ────────────────────────────────────────────────────────
+  final allGames = <Game>[];
+  final ratingsBySeason = <int, List<RatingPlayerStats>>{};
+  final statsBySeason = <int, SeasonStats>{};
 
-  void _loadSeason(Season season, String json) {
+  for (int si = 0; si < Season.values.length; si++) {
+    final season = Season.values[si];
+    final json = input.seasonJsons[si];
+
     final raw = (jsonDecode(json) as List).cast<Map<String, dynamic>>();
     final rawData = raw
         .map((e) => GamesDataSeason.fromJson(e))
-        .where((d) => _filterRawData(d, season.id))
+        .where((d) => SeasonLoaderService._filterRawData(d, season.id))
         .toList();
 
-    final gamesData = _getGamesDataSeason(season.id, rawData)
-        .where((g) => g.isRatingGame())
-        .toList();
+    final gamesData =
+        SeasonLoaderService._getGamesDataSeason(season.id, rawData)
+            .where((g) => g.isRatingGame())
+            .toList();
 
     for (var i = 0; i < gamesData.length; i++) {
       if (!gamesData[i].isNormalGame()) {
@@ -72,17 +80,72 @@ class SeasonLoaderService {
       }
     }
 
-    _gamesRepo.addGames(gamesData);
+    allGames.addAll(gamesData);
 
     final playerNames = gamesData.getPlayersList(season.id);
-    final ratings = playerNames.map((name) {
-      return _computePlayerRating(name, gamesData, season);
-    }).toList();
+    final ratings = playerNames
+        .map((name) => SeasonLoaderService._computePlayerRating(
+            name, gamesData, season, players))
+        .toList();
 
-    _ratingRepo.addRatings(season, ratings);
+    ratingsBySeason[season.id] = ratings;
 
     final sorted = ratings.sortedByDescending((r) => r.ratingCoefficient);
-    _seasonRepo.addSeason(season.id, _generateSeasonStats(sorted));
+    statsBySeason[season.id] = SeasonLoaderService._generateSeasonStats(sorted);
+  }
+
+  final percentiles =
+      SeasonLoaderService._computeRolePercentiles(players, allGames);
+
+  return _LoadOutput(
+    players: players,
+    allGames: allGames,
+    ratingsBySeason: ratingsBySeason,
+    statsBySeason: statsBySeason,
+    percentiles: percentiles,
+  );
+}
+
+// ── Service ─────────────────────────────────────────────────────────────────
+
+class SeasonLoaderService {
+  final PlayersRepository _playersRepo;
+  final GamesRepository _gamesRepo;
+  final RatingRepository _ratingRepo;
+  final SeasonRepository _seasonRepo;
+  final RolePercentilesRepository _rolePercRepo;
+
+  SeasonLoaderService(
+    this._playersRepo,
+    this._gamesRepo,
+    this._ratingRepo,
+    this._seasonRepo,
+    this._rolePercRepo,
+  );
+
+  Future<void> loadAll() async {
+    // Phase 1: load asset strings on the main thread (platform channel)
+    final playersJson =
+        await rootBundle.loadString('assets/raw/players.json');
+    final seasonJsons = <String>[];
+    for (final season in Season.values) {
+      seasonJsons.add(await rootBundle.loadString(season.assetPath));
+    }
+
+    // Phase 2: all CPU work in a background isolate
+    final out =
+        await compute(_computeAllData, _LoadInput(playersJson, seasonJsons));
+
+    // Phase 3: populate repositories on the main thread
+    _playersRepo.addPlayers(out.players);
+    _gamesRepo.addGames(out.allGames);
+    for (final entry in out.ratingsBySeason.entries) {
+      _ratingRepo.addRatings(Season.findById(entry.key)!, entry.value);
+    }
+    for (final entry in out.statsBySeason.entries) {
+      _seasonRepo.addSeason(entry.key, entry.value);
+    }
+    _rolePercRepo.setPercentiles(out.percentiles);
   }
 
   // ─── Raw data filtering ────────────────────────────────────────────────────
@@ -225,8 +288,17 @@ class SeasonLoaderService {
 
   // ─── Per-player rating computation ────────────────────────────────────────
 
-  RatingPlayerStats _computePlayerRating(
-      String name, List<Game> gamesData, Season season) {
+  static Player _findPlayer(String name, List<Player> players) {
+    return players.firstWhere(
+      (p) =>
+          p.displayName == name ||
+          (p.nicknames?.contains(name) ?? false),
+      orElse: () => Player(id: -1, displayName: name),
+    );
+  }
+
+  static RatingPlayerStats _computePlayerRating(
+      String name, List<Game> gamesData, Season season, List<Player> players) {
     final gamesForPlayer =
         gamesData.where((g) => g.players.contains(name)).toList();
     final gamesPlayed = gamesForPlayer.length;
@@ -234,68 +306,75 @@ class SeasonLoaderService {
     if (gamesPlayed == 0) {
       return RatingPlayerStats(
         seasonId: season.id,
-        player: _playersRepo.findPlayer(name),
+        player: _findPlayer(name, players),
       );
     }
 
-    final firstKilled =
-        gamesForPlayer.where((g) => g.isFirstKilled(name)).length;
-    final firstKilledCityLost = gamesForPlayer
-        .where((g) => g.isFirstKilled(name) && !g.hasPlayerWon(name))
-        .length;
+    // Single-pass accumulation over all games for this player.
+    // Keyed by canonical role.sheetValue to normalize Ukrainian/Russian variants.
+    ({int wins, int losses, double additional, double penalty, double bestMovePoints, int games}) emptyAcc() =>
+        (wins: 0, losses: 0, additional: 0.0, penalty: 0.0, bestMovePoints: 0.0, games: 0);
 
-    // (roleSheetValue → games) for each role
-    final fullGamesForRole = Role.values.map((role) {
-      return (role.sheetValue, gamesForPlayer.gamesForRole(name, role));
+    final Map<String, ({int wins, int losses, double additional, double penalty, double bestMovePoints, int games})>
+        roleAcc = {};
+    int firstKilled = 0;
+    int firstKilledCityLost = 0;
+    double autoAdditionalPointsByRoleSum = 0.0;
+
+    for (final g in gamesForPlayer) {
+      final rawRole = g.getPlayerRole(name);
+      final roleVal = Role.findByValue(rawRole)?.sheetValue ?? rawRole;
+      final won = g.hasPlayerWon(name);
+      final isFK = g.isFirstKilled(name);
+      final prev = roleAcc[roleVal] ?? emptyAcc();
+      roleAcc[roleVal] = (
+        wins: prev.wins + (won ? 1 : 0),
+        losses: prev.losses + (won ? 0 : 1),
+        additional: prev.additional + g.getPlayerAdditionalPoints(name),
+        penalty: prev.penalty + g.getPlayerPenaltyPoints(name),
+        bestMovePoints: prev.bestMovePoints + (isFK ? g.bestMovePoints : 0.0),
+        games: prev.games + 1,
+      );
+      if (isFK) {
+        firstKilled++;
+        if (!won) firstKilledCityLost++;
+      }
+      autoAdditionalPointsByRoleSum += g.getPlayerAutoAdditionalPoints(name);
+    }
+
+    // Derive per-role lists from accumulator (O(4 roles)).
+    final gamesForRole = Role.values
+        .map((r) => (r.sheetValue, roleAcc[r.sheetValue]?.games ?? 0))
+        .toList();
+    final winByRole = Role.values
+        .map((r) => (r.sheetValue, roleAcc[r.sheetValue]?.wins ?? 0))
+        .toList();
+    final loseByRole = Role.values
+        .map((r) => (r.sheetValue, roleAcc[r.sheetValue]?.losses ?? 0))
+        .toList();
+    final additionalPointsByRole = Role.values
+        .map((r) => (r.sheetValue, roleAcc[r.sheetValue]?.additional ?? 0.0))
+        .toList();
+    final penaltyPointsByRole = Role.values
+        .map((r) => (r.sheetValue, roleAcc[r.sheetValue]?.penalty ?? 0.0))
+        .toList();
+    final bestMoveAndAdditionalPointsByRole = Role.values.map((r) {
+      final acc = roleAcc[r.sheetValue];
+      if (acc == null) return (r.sheetValue, 0.0);
+      return (r.sheetValue, acc.additional + acc.bestMovePoints + acc.penalty);
     }).toList();
-
-    final gamesAsRed = fullGamesForRole
-        .where((e) =>
-            e.$1 == Role.sheriff.sheetValue ||
-            e.$1 == Role.civilian.sheetValue)
-        .fold(0, (acc, e) => acc + e.$2.length);
-
-    final winByRole = fullGamesForRole
-        .map((e) => (e.$1, e.$2.where((g) => g.hasPlayerWon(name)).length))
-        .toList();
-
-    final loseByRole = fullGamesForRole
-        .map((e) => (e.$1, e.$2.where((g) => !g.hasPlayerWon(name)).length))
-        .toList();
-
-    final additionalPointsByRole = fullGamesForRole.map((e) => (
-          e.$1,
-          e.$2.sumOfDouble((g) => g.getPlayerAdditionalPoints(name)),
-        )).toList();
 
     final additionalPointsByRoleSum =
         additionalPointsByRole.sumOfDouble((e) => e.$2);
-
-    final penaltyPointsByRole = fullGamesForRole.map((e) => (
-          e.$1,
-          e.$2.sumOfDouble((g) => g.getPlayerPenaltyPoints(name)),
-        )).toList();
-
     final penaltyPointsByRoleSum =
         penaltyPointsByRole.sumOfDouble((e) => e.$2);
+    final bestMovePointsByRoleSum =
+        bestMoveAndAdditionalPointsByRole.sumOfDouble((e) => e.$2) -
+            additionalPointsByRoleSum -
+            penaltyPointsByRoleSum;
 
-    final bestMovePointsByRoleSum = gamesForPlayer.sumOfDouble(
-        (g) => g.isFirstKilled(name) ? g.bestMovePoints : 0.0);
-
-    final bestMoveAndAdditionalPointsByRole = fullGamesForRole.map((e) {
-      final penalty =
-          penaltyPointsByRole.firstWhere((p) => p.$1 == e.$1).$2;
-      return (
-        e.$1,
-        e.$2.sumOfDouble((g) =>
-                g.getPlayerAdditionalPoints(name) +
-                (g.isFirstKilled(name) ? g.bestMovePoints : 0.0)) +
-            penalty,
-      );
-    }).toList();
-
-    final autoAdditionalPointsByRoleSum = gamesForPlayer
-        .sumOfDouble((g) => g.getPlayerAutoAdditionalPoints(name));
+    final gamesAsRed = (roleAcc[Role.sheriff.sheetValue]?.games ?? 0) +
+        (roleAcc[Role.civilian.sheetValue]?.games ?? 0);
 
     final wins = winByRole.sumOfInt((e) => e.$2);
 
@@ -304,9 +383,6 @@ class SeasonLoaderService {
 
     final loseByRoleSum = loseByRole.sumOfInt((e) =>
         _isDonOrSheriff(e.$1) ? e.$2 : 0);
-
-    final gamesForRole =
-        fullGamesForRole.map((e) => (e.$1, e.$2.length)).toList();
 
     final ciForGame = _calculateCiForGame(
         firstKilledCityLost, firstKilled, gamesPlayed, season.id);
@@ -351,7 +427,7 @@ class SeasonLoaderService {
 
     return RatingPlayerStats(
       seasonId: season.id,
-      player: _playersRepo.findPlayer(name),
+      player: _findPlayer(name, players),
       ratingCoefficient: ratingCoefficient,
       wins: wins,
       gamesPlayed: gamesPlayed,
@@ -559,5 +635,94 @@ class SeasonLoaderService {
           return a.$2 >= b.$2 ? a : b;
         })
         .$1;
+  }
+
+  // ─── Role percentiles ─────────────────────────────────────────────────────
+
+  static Map<int, Map<Role, double?>> _computeRolePercentiles(
+      List<Player> players, List<Game> games) {
+    const minRoleGames = 10;
+
+    // Build role stats for every valid player with 100+ rating games
+    final pool = <int, Map<Role, ({int games, int wins})>>{};
+    for (final player in players) {
+      if (player.displayName.trim().isEmpty) continue;
+      if (player.nicknames != null && player.nicknames!.isEmpty) continue;
+      if (const {'.', '..', '/'}.contains(player.displayName)) continue;
+
+      final names = player.nicknames ?? [player.displayName];
+      final Map<Role, ({int games, int wins})> roleStats = {};
+      int totalGames = 0;
+
+      for (final game in games) {
+        if (!game.isRatingGame() || !game.isNormalGame()) continue;
+        String? playerName;
+        for (final n in names) {
+          if (game.players.contains(n)) {
+            playerName = n;
+            break;
+          }
+        }
+        if (playerName == null) continue;
+        totalGames++;
+        final role = Role.findByValue(game.getPlayerRole(playerName));
+        if (role == null) continue;
+        final prev = roleStats[role] ?? (games: 0, wins: 0);
+        final won = game.hasPlayerWon(playerName) ? 1 : 0;
+        roleStats[role] = (games: prev.games + 1, wins: prev.wins + won);
+      }
+
+      if (totalGames >= 100) pool[player.id] = roleStats;
+    }
+
+    // Pre-sort WR lists per role once instead of per-player
+    final sortedWrsByRole = <Role, List<double>>{};
+    for (final role in Role.values) {
+      sortedWrsByRole[role] = pool.values
+          .map((m) => m[role])
+          .whereType<({int games, int wins})>()
+          .where((s) => s.games >= minRoleGames)
+          .map((s) => s.wins / s.games)
+          .toList()
+        ..sort((a, b) => b.compareTo(a));
+    }
+
+    // Compute percentile per player per role
+    final result = <int, Map<Role, double?>>{};
+    for (final entry in pool.entries) {
+      final myStats = entry.value;
+      final Map<Role, double?> percentiles = {};
+
+      for (final role in Role.values) {
+        final myRoleStats = myStats[role];
+        if (myRoleStats == null || myRoleStats.games < minRoleGames) {
+          percentiles[role] = null;
+          continue;
+        }
+        final myWr = myRoleStats.wins / myRoleStats.games;
+        final poolWrs = sortedWrsByRole[role]!;
+
+        if (poolWrs.isEmpty) {
+          percentiles[role] = null;
+          continue;
+        }
+
+        final rank = poolWrs.indexWhere((wr) => wr <= myWr) + 1;
+        final exact = rank / poolWrs.length * 100;
+
+        double snapped;
+        if (exact < 1) {
+          snapped = (exact * 10).round() / 10.0;
+          if (snapped == 0) snapped = 0.1;
+        } else {
+          snapped = exact.round().toDouble();
+          if (snapped == 0) snapped = 1;
+        }
+        percentiles[role] = snapped;
+      }
+      result[entry.key] = percentiles;
+    }
+
+    return result;
   }
 }
