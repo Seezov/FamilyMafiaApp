@@ -1,6 +1,6 @@
 import 'package:family_mafia_app/models/player.dart';
 
-class PlayerPlacements {
+class PlayerAccomplishments {
   final Player player;
   int firsts;
   int seconds;
@@ -11,7 +11,7 @@ class PlayerPlacements {
   int bestCivilian;
   int bestMafia;
 
-  PlayerPlacements(
+  PlayerAccomplishments(
     this.player, {
     this.firsts = 0,
     this.seconds = 0,

@@ -1,6 +1,9 @@
+import 'package:family_mafia_app/enums/season.dart';
 import 'package:family_mafia_app/models/player.dart';
+import 'package:family_mafia_app/models/player_accomplishments.dart';
 import 'package:family_mafia_app/repositories/games_repository.dart';
 import 'package:family_mafia_app/repositories/players_repository.dart';
+import 'package:family_mafia_app/repositories/season_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 typedef SeasonEntry = ({int seasonId, int games});
@@ -65,4 +68,42 @@ final playersListProvider = Provider<List<Player>>((ref) {
         .toList())
       ..sort((a, b) =>
           (totals[b.displayName] ?? 0).compareTo(totals[a.displayName] ?? 0));
+});
+
+/// Counts all-time accomplishments (placements + awards) for a given player.
+final playerAccomplishmentsProvider =
+    Provider.family<PlayerAccomplishments, Player>((ref, player) {
+  final allSeasonStats = ref.watch(seasonRepositoryProvider);
+  final acc = PlayerAccomplishments(player);
+
+  for (final entry in allSeasonStats.entries) {
+    final season = Season.findById(entry.key);
+    if (season == null) continue;
+    final stats = entry.value;
+
+    final qualifiers = stats.playerStats
+        .where((p) => p.gamesPlayed >= season.gameLimit)
+        .toList(); // already sorted by ratingCoefficient desc
+
+    for (var i = 0; i < qualifiers.length && i < 3; i++) {
+      if (qualifiers[i].player.id == player.id) {
+        if (i == 0) {
+          acc.firsts++;
+        } else if (i == 1) {
+          acc.seconds++;
+        } else {
+          acc.thirds++;
+        }
+        break;
+      }
+    }
+
+    if (stats.mvpPlayerId == player.id) acc.mvp++;
+    if (stats.bestSheriffPlayerId == player.id) acc.bestSheriff++;
+    if (stats.bestDonPlayerId == player.id) acc.bestDon++;
+    if (stats.bestCivilianPlayerId == player.id) acc.bestCivilian++;
+    if (stats.bestMafiaPlayerId == player.id) acc.bestMafia++;
+  }
+
+  return acc;
 });

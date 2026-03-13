@@ -165,7 +165,7 @@ class _SeasonHeaderCard extends StatelessWidget {
               runSpacing: 8,
               children: [
                 _AwardBadge(
-                  icon: Icons.emoji_events,
+                  icon: Icons.star,
                   label: 'MVP',
                   value: _name(stats.mvpPlayerId),
                   color: cs.onPrimaryContainer,
@@ -183,13 +183,13 @@ class _SeasonHeaderCard extends StatelessWidget {
                   color: cs.onPrimaryContainer,
                 ),
                 _AwardBadge(
-                  icon: Icons.groups,
+                  icon: Icons.thumb_down,
                   label: 'Mafia',
                   value: _name(stats.bestMafiaPlayerId),
                   color: cs.onPrimaryContainer,
                 ),
                 _AwardBadge(
-                  icon: Icons.manage_accounts,
+                  icon: Icons.gps_fixed,
                   label: 'Don',
                   value: _name(stats.bestDonPlayerId),
                   color: cs.onPrimaryContainer,
