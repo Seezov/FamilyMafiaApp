@@ -5,6 +5,8 @@ import 'package:family_mafia_app/models/rating_player_stats.dart';
 import 'package:family_mafia_app/models/season_stats.dart';
 import 'package:family_mafia_app/providers/app_providers.dart';
 import 'package:family_mafia_app/screens/home/home_providers.dart';
+import 'dart:ui' show ImageFilter;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -41,6 +43,17 @@ class _HomeContent extends ConsumerWidget {
           SliverAppBar(
             pinned: true,
             toolbarHeight: 0,
+            backgroundColor: Colors.transparent,
+            surfaceTintColor: Colors.transparent,
+            elevation: 0,
+            flexibleSpace: ClipRect(
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+                child: Container(
+                  color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.82),
+                ),
+              ),
+            ),
             bottom: PreferredSize(
               preferredSize: const Size.fromHeight(52),
               child: _SeasonChips(selectedSeason: selectedSeason),
