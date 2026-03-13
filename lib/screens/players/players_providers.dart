@@ -144,6 +144,29 @@ final playerRoleGamesProvider =
   return result;
 });
 
+/// Win count per role for a player (rating + normal games only).
+final playerRoleWinsProvider =
+    Provider.family<Map<String, int>, Player>((ref, player) {
+  final games = ref.watch(gamesRepositoryProvider);
+  final Map<String, int> result = {};
+  for (final game in games) {
+    if (!game.isRatingGame() || !game.isNormalGame()) continue;
+    final names = player.nicknames ?? [player.displayName];
+    String? playerName;
+    for (final n in names) {
+      if (game.players.contains(n)) {
+        playerName = n;
+        break;
+      }
+    }
+    if (playerName == null) continue;
+    if (!game.hasPlayerWon(playerName)) continue;
+    final role = game.getPlayerRole(playerName);
+    result[role] = (result[role] ?? 0) + 1;
+  }
+  return result;
+});
+
 /// First-kill totals for a player (rating + normal games, civ/sheriff only).
 final playerFirstKillProvider =
     Provider.family<({int total, int cityLost, int civSherGames}), Player>(

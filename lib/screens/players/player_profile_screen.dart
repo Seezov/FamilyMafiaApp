@@ -17,6 +17,7 @@ class PlayerProfileScreen extends ConsumerWidget {
     final entries = ref.watch(seasonGamesProvider);
     final acc = ref.watch(playerAccomplishmentsProvider(player));
     final roleGames = ref.watch(playerRoleGamesProvider(player));
+    final roleWins = ref.watch(playerRoleWinsProvider(player));
     final firstKill = ref.watch(playerFirstKillProvider(player));
     final bestMoves = ref.watch(playerBestMovesProvider(player));
 
@@ -91,7 +92,7 @@ class PlayerProfileScreen extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if (roleGames.isNotEmpty) ...[
-                      _RoleDistributionSection(roleGames: roleGames),
+                      _RoleDistributionSection(roleGames: roleGames, roleWins: roleWins),
                       const SizedBox(height: 24),
                     ],
                     if (firstKill.total > 0) ...[
@@ -387,8 +388,9 @@ Color _avatarColor(String name) {
 
 class _RoleDistributionSection extends StatelessWidget {
   final Map<String, int> roleGames;
+  final Map<String, int> roleWins;
 
-  const _RoleDistributionSection({required this.roleGames});
+  const _RoleDistributionSection({required this.roleGames, required this.roleWins});
 
   static const _order = [Role.civilian, Role.mafia, Role.sheriff, Role.don];
 
@@ -417,6 +419,12 @@ class _RoleDistributionSection extends StatelessWidget {
     }
     if (summary.isEmpty) return const SizedBox.shrink();
 
+    final wins = <Role, int>{};
+    for (final entry in roleWins.entries) {
+      final role = Role.findByValue(entry.key);
+      if (role != null) wins[role] = (wins[role] ?? 0) + entry.value;
+    }
+
     final total = summary.values.fold(0, (a, b) => a + b);
     final maxCount = summary.values.reduce((a, b) => a > b ? a : b);
 
@@ -432,6 +440,7 @@ class _RoleDistributionSection extends StatelessWidget {
               child: _RoleBar(
                 label: _roleName(role),
                 count: summary[role]!,
+                wins: wins[role] ?? 0,
                 total: total,
                 maxCount: maxCount,
                 color: _roleColor(role),
@@ -445,6 +454,7 @@ class _RoleDistributionSection extends StatelessWidget {
 class _RoleBar extends StatelessWidget {
   final String label;
   final int count;
+  final int wins;
   final int total;
   final int maxCount;
   final Color color;
@@ -452,6 +462,7 @@ class _RoleBar extends StatelessWidget {
   const _RoleBar({
     required this.label,
     required this.count,
+    required this.wins,
     required this.total,
     required this.maxCount,
     required this.color,
@@ -462,6 +473,7 @@ class _RoleBar extends StatelessWidget {
     final tt = Theme.of(context).textTheme;
     final cs = Theme.of(context).colorScheme;
     final pct = total > 0 ? (count / total * 100).round() : 0;
+    final winPct = count > 0 ? (wins / count * 100).round() : 0;
 
     return Row(
       children: [
@@ -495,11 +507,19 @@ class _RoleBar extends StatelessWidget {
         ),
         const SizedBox(width: 8),
         SizedBox(
-          width: 52,
-          child: Text(
-            '$count ($pct%)',
-            style: tt.bodySmall?.copyWith(color: cs.onSurfaceVariant),
-            textAlign: TextAlign.end,
+          width: 80,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                '$count ($pct%)',
+                style: tt.bodySmall?.copyWith(color: cs.onSurfaceVariant),
+              ),
+              Text(
+                '$winPct% WR',
+                style: tt.bodySmall?.copyWith(color: cs.onSurfaceVariant.withValues(alpha: 0.7)),
+              ),
+            ],
           ),
         ),
       ],
