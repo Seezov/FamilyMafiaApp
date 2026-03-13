@@ -1,8 +1,11 @@
+import 'package:family_mafia_app/enums/role.dart';
 import 'package:family_mafia_app/enums/season.dart';
+import 'package:family_mafia_app/models/best_moves.dart';
 import 'package:family_mafia_app/models/player.dart';
 import 'package:family_mafia_app/models/player_accomplishments.dart';
 import 'package:family_mafia_app/repositories/games_repository.dart';
 import 'package:family_mafia_app/repositories/players_repository.dart';
+import 'package:family_mafia_app/repositories/rating_repository.dart';
 import 'package:family_mafia_app/repositories/season_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -118,4 +121,92 @@ final playerAccomplishmentsProvider =
   }
 
   return acc;
+});
+
+/// Aggregated games-played count per role across all seasons for a player.
+/// Keys are role sheet values (e.g. 'Мирный', 'Мафия'); values are totals.
+final playerRoleGamesProvider =
+    Provider.family<Map<String, int>, Player>((ref, player) {
+  final ratings = ref.watch(ratingRepositoryProvider);
+  final Map<String, int> result = {};
+  for (final statsList in ratings.values) {
+    for (final stat in statsList) {
+      if (stat.player.id != player.id) continue;
+      for (final (role, count) in stat.gamesForRole) {
+        result[role] = (result[role] ?? 0) + count;
+      }
+      break;
+    }
+  }
+  return result;
+});
+
+/// Aggregated first-kill totals across all seasons for a player.
+final playerFirstKillProvider =
+    Provider.family<({int total, int cityLost}), Player>((ref, player) {
+  final ratings = ref.watch(ratingRepositoryProvider);
+  int total = 0;
+  int cityLost = 0;
+  for (final statsList in ratings.values) {
+    for (final stat in statsList) {
+      if (stat.player.id != player.id) continue;
+      total += stat.firstKilled;
+      cityLost += stat.firstKilledCityLost;
+      break;
+    }
+  }
+  return (total: total, cityLost: cityLost);
+});
+
+/// Best-move breakdown for a player: how many times first-killed, and how many
+/// of those nominations found 0/1/2/3 black cards.
+final playerBestMovesProvider =
+    Provider.family<BestMoves, Player>((ref, player) {
+  final games = ref.watch(gamesRepositoryProvider);
+  int firstKilledCount = 0;
+  int zero = 0, one = 0, two = 0, three = 0;
+
+  for (final game in games) {
+    if (!game.isRatingGame() || !game.isNormalGame()) continue;
+    if (game.bestMove.isEmpty || game.bestMove.every((s) => s == 0)) continue;
+
+    final names = player.nicknames ?? [player.displayName];
+    String? playerName;
+    for (final n in names) {
+      if (game.players.contains(n)) {
+        playerName = n;
+        break;
+      }
+    }
+    if (playerName == null) continue;
+    if (!game.isFirstKilled(playerName)) continue;
+
+    firstKilledCount++;
+    int blacks = 0;
+    for (final slot in game.bestMove) {
+      if (slot == 0) continue;
+      final idx = slot - 1;
+      if (idx < 0 || idx >= game.roles.length) continue;
+      if (Role.findByValue(game.roles[idx])?.isBlack == true) blacks++;
+    }
+    switch (blacks) {
+      case 0:
+        zero++;
+      case 1:
+        one++;
+      case 2:
+        two++;
+      case 3:
+        three++;
+    }
+  }
+
+  return BestMoves(
+    player: player.displayName,
+    isFirstKilled: firstKilledCount,
+    zeroBlacks: zero,
+    oneBlack: one,
+    twoBlacks: two,
+    threeBlacks: three,
+  );
 });

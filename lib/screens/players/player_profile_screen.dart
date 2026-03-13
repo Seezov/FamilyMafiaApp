@@ -1,3 +1,5 @@
+import 'package:family_mafia_app/enums/role.dart';
+import 'package:family_mafia_app/models/best_moves.dart';
 import 'package:family_mafia_app/models/player.dart';
 import 'package:family_mafia_app/models/player_accomplishments.dart';
 import 'package:family_mafia_app/screens/players/players_providers.dart';
@@ -14,6 +16,9 @@ class PlayerProfileScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final entries = ref.watch(seasonGamesProvider);
     final acc = ref.watch(playerAccomplishmentsProvider(player));
+    final roleGames = ref.watch(playerRoleGamesProvider(player));
+    final firstKill = ref.watch(playerFirstKillProvider(player));
+    final bestMoves = ref.watch(playerBestMovesProvider(player));
 
     SeasonGamesEntry? entry;
     for (final e in entries) {
@@ -80,6 +85,35 @@ class PlayerProfileScreen extends ConsumerWidget {
                 ),
               ),
               _SeasonChart(gamesBySeason: gamesBySeason),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (roleGames.isNotEmpty) ...[
+                      _RoleDistributionSection(roleGames: roleGames),
+                      const SizedBox(height: 24),
+                    ],
+                    if (firstKill.total > 0) ...[
+                      _FirstKillSection(
+                        total: firstKill.total,
+                        cityLost: firstKill.cityLost,
+                        totalGames: total,
+                      ),
+                      const SizedBox(height: 24),
+                    ],
+                    () {
+                      final bmTotal = bestMoves.zeroBlacks +
+                          bestMoves.oneBlack +
+                          bestMoves.twoBlacks +
+                          bestMoves.threeBlacks;
+                      return bmTotal > 0
+                          ? _BestMovesSection(bm: bestMoves)
+                          : const SizedBox.shrink();
+                    }(),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
@@ -345,4 +379,337 @@ Color _avatarColor(String name) {
   ];
   final index = name.codeUnits.fold(0, (s, c) => s + c) % colors.length;
   return colors[index];
+}
+
+// ---------------------------------------------------------------------------
+// Role Distribution
+// ---------------------------------------------------------------------------
+
+class _RoleDistributionSection extends StatelessWidget {
+  final Map<String, int> roleGames;
+
+  const _RoleDistributionSection({required this.roleGames});
+
+  static const _order = [Role.civilian, Role.mafia, Role.sheriff, Role.don];
+
+  static Color _roleColor(Role role) => switch (role) {
+        Role.civilian => const Color(0xFFE53935),
+        Role.mafia => const Color(0xFF616161),
+        Role.sheriff => const Color(0xFF00BCD4),
+        Role.don => const Color(0xFF212121),
+      };
+
+  static String _roleName(Role role) => switch (role) {
+        Role.civilian => 'Civilian',
+        Role.mafia => 'Mafia',
+        Role.sheriff => 'Sheriff',
+        Role.don => 'Don',
+      };
+
+  @override
+  Widget build(BuildContext context) {
+    final tt = Theme.of(context).textTheme;
+
+    final summary = <Role, int>{};
+    for (final entry in roleGames.entries) {
+      final role = Role.findByValue(entry.key);
+      if (role != null) summary[role] = (summary[role] ?? 0) + entry.value;
+    }
+    if (summary.isEmpty) return const SizedBox.shrink();
+
+    final total = summary.values.fold(0, (a, b) => a + b);
+    final maxCount = summary.values.reduce((a, b) => a > b ? a : b);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Role Distribution', style: tt.titleMedium),
+        const SizedBox(height: 12),
+        for (final role in _order)
+          if ((summary[role] ?? 0) > 0)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: _RoleBar(
+                label: _roleName(role),
+                count: summary[role]!,
+                total: total,
+                maxCount: maxCount,
+                color: _roleColor(role),
+              ),
+            ),
+      ],
+    );
+  }
+}
+
+class _RoleBar extends StatelessWidget {
+  final String label;
+  final int count;
+  final int total;
+  final int maxCount;
+  final Color color;
+
+  const _RoleBar({
+    required this.label,
+    required this.count,
+    required this.total,
+    required this.maxCount,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final tt = Theme.of(context).textTheme;
+    final cs = Theme.of(context).colorScheme;
+    final pct = total > 0 ? (count / total * 100).round() : 0;
+
+    return Row(
+      children: [
+        SizedBox(
+          width: 64,
+          child: Text(label,
+              style: tt.bodySmall?.copyWith(color: cs.onSurfaceVariant)),
+        ),
+        Expanded(
+          child: LayoutBuilder(builder: (ctx, constraints) {
+            final barW =
+                maxCount > 0 ? constraints.maxWidth * count / maxCount : 0.0;
+            return Stack(children: [
+              Container(
+                height: 20,
+                decoration: BoxDecoration(
+                  color: cs.surfaceContainerHighest,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+              Container(
+                height: 20,
+                width: barW,
+                decoration: BoxDecoration(
+                  color: color,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+            ]);
+          }),
+        ),
+        const SizedBox(width: 8),
+        SizedBox(
+          width: 52,
+          child: Text(
+            '$count ($pct%)',
+            style: tt.bodySmall?.copyWith(color: cs.onSurfaceVariant),
+            textAlign: TextAlign.end,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// First Kill
+// ---------------------------------------------------------------------------
+
+class _FirstKillSection extends StatelessWidget {
+  final int total;
+  final int cityLost;
+  final int totalGames;
+
+  const _FirstKillSection({
+    required this.total,
+    required this.cityLost,
+    required this.totalGames,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final tt = Theme.of(context).textTheme;
+    final cityLostPct = total > 0 ? (cityLost / total * 100).round() : 0;
+    final firstKillPct =
+        totalGames > 0 ? (total / totalGames * 100).round() : 0;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('First Kill', style: tt.titleMedium),
+        const SizedBox(height: 12),
+        Row(children: [
+          Expanded(
+            child: _StatCard(
+              value: '$total',
+              label: 'first-killed',
+              sub: '$firstKillPct% of games',
+              color: const Color(0xFFFB8C00),
+              icon: Icons.flash_on,
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: _StatCard(
+              value: '$cityLost',
+              label: 'city lost',
+              sub: '$cityLostPct% of first kills',
+              color: const Color(0xFFE53935),
+              icon: Icons.trending_down,
+            ),
+          ),
+        ]),
+      ],
+    );
+  }
+}
+
+class _StatCard extends StatelessWidget {
+  final String value;
+  final String label;
+  final String sub;
+  final Color color;
+  final IconData icon;
+
+  const _StatCard({
+    required this.value,
+    required this.label,
+    required this.sub,
+    required this.color,
+    required this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final tt = Theme.of(context).textTheme;
+    final cs = Theme.of(context).colorScheme;
+
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: cs.surface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withValues(alpha: 0.4), width: 1.5),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, color: color, size: 18),
+          const SizedBox(height: 6),
+          Text(value,
+              style: tt.headlineSmall
+                  ?.copyWith(fontWeight: FontWeight.bold)),
+          Text(label,
+              style: tt.bodySmall?.copyWith(color: cs.onSurfaceVariant)),
+          const SizedBox(height: 2),
+          Text(sub,
+              style: tt.labelSmall?.copyWith(color: cs.onSurfaceVariant)),
+        ],
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Best Moves
+// ---------------------------------------------------------------------------
+
+class _BestMovesSection extends StatelessWidget {
+  final BestMoves bm;
+
+  const _BestMovesSection({required this.bm});
+
+  @override
+  Widget build(BuildContext context) {
+    final tt = Theme.of(context).textTheme;
+    final cs = Theme.of(context).colorScheme;
+    final total =
+        bm.zeroBlacks + bm.oneBlack + bm.twoBlacks + bm.threeBlacks;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Best Moves', style: tt.titleMedium),
+        const SizedBox(height: 2),
+        Text(
+          '$total best moves total',
+          style: tt.bodySmall?.copyWith(color: cs.onSurfaceVariant),
+        ),
+        const SizedBox(height: 12),
+        Row(children: [
+          Expanded(child: _BlackCard(blacks: 0, count: bm.zeroBlacks, total: total)),
+          const SizedBox(width: 8),
+          Expanded(child: _BlackCard(blacks: 1, count: bm.oneBlack, total: total)),
+          const SizedBox(width: 8),
+          Expanded(child: _BlackCard(blacks: 2, count: bm.twoBlacks, total: total)),
+          const SizedBox(width: 8),
+          Expanded(child: _BlackCard(blacks: 3, count: bm.threeBlacks, total: total)),
+        ]),
+      ],
+    );
+  }
+}
+
+class _BlackCard extends StatelessWidget {
+  final int blacks;
+  final int count;
+  final int total;
+
+  const _BlackCard(
+      {required this.blacks, required this.count, required this.total});
+
+  static const _colors = [
+    Color(0xFFBDBDBD), // 0 blacks — light gray
+    Color(0xFF757575), // 1 black  — medium gray
+    Color(0xFF424242), // 2 blacks — dark gray
+    Color(0xFF212121), // 3 blacks — near black
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final tt = Theme.of(context).textTheme;
+    final cs = Theme.of(context).colorScheme;
+    final color = _colors[blacks];
+    final pct = total > 0 ? (count / total * 100).round() : 0;
+    final label = blacks == 1 ? '1 black' : '$blacks blacks';
+
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 6),
+      decoration: BoxDecoration(
+        color: cs.surface,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: color.withValues(alpha: 0.6), width: 1.5),
+      ),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(
+              3,
+              (i) => Padding(
+                padding: const EdgeInsets.only(right: 2),
+                child: Container(
+                  width: 8,
+                  height: 8,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: i < blacks
+                        ? color
+                        : color.withValues(alpha: 0.2),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text('$count',
+              style: tt.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+          Text('$pct%',
+              style: tt.labelSmall?.copyWith(color: cs.onSurfaceVariant)),
+          const SizedBox(height: 2),
+          Text(label,
+              style: tt.labelSmall?.copyWith(
+                color: Colors.black,
+                fontWeight: FontWeight.w600,
+              )),
+        ],
+      ),
+    );
+  }
 }
