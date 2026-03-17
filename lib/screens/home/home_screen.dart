@@ -112,7 +112,9 @@ class _HomeContent extends ConsumerWidget {
                 childCount: seasonStats.playerStats.length,
               ),
             ),
-            const SliverToBoxAdapter(child: SizedBox(height: 24)),
+            SliverToBoxAdapter(
+              child: SizedBox(height: MediaQuery.paddingOf(context).bottom + 24),
+            ),
           ] else
             const SliverFillRemaining(
               child: Center(child: Text('Select a season')),

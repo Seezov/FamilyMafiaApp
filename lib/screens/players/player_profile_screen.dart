@@ -432,7 +432,6 @@ class _RoleDistributionSection extends StatelessWidget {
     }
 
     final total = summary.values.fold(0, (a, b) => a + b);
-    final maxCount = summary.values.reduce((a, b) => a > b ? a : b);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -448,7 +447,6 @@ class _RoleDistributionSection extends StatelessWidget {
                 count: summary[role]!,
                 wins: wins[role] ?? 0,
                 total: total,
-                maxCount: maxCount,
                 color: _roleColor(role),
                 topPct: rolePercentiles[role],
               ),
@@ -463,7 +461,6 @@ class _RoleBar extends StatelessWidget {
   final int count;
   final int wins;
   final int total;
-  final int maxCount;
   final Color color;
   final double? topPct;
 
@@ -472,7 +469,6 @@ class _RoleBar extends StatelessWidget {
     required this.count,
     required this.wins,
     required this.total,
-    required this.maxCount,
     required this.color,
     this.topPct,
   });
@@ -494,7 +490,7 @@ class _RoleBar extends StatelessWidget {
         Expanded(
           child: LayoutBuilder(builder: (ctx, constraints) {
             final barW =
-                maxCount > 0 ? constraints.maxWidth * count / maxCount : 0.0;
+                total > 0 ? constraints.maxWidth * count / total : 0.0;
             return Stack(children: [
               Container(
                 height: 20,

@@ -643,7 +643,7 @@ class SeasonLoaderService {
       List<Player> players, List<Game> games) {
     const minRoleGames = 10;
 
-    // Build role stats for every valid player with 100+ rating games
+    // Build role stats for every valid player with 140+ rating games
     final pool = <int, Map<Role, ({int games, int wins})>>{};
     for (final player in players) {
       if (player.displayName.trim().isEmpty) continue;
@@ -672,7 +672,7 @@ class SeasonLoaderService {
         roleStats[role] = (games: prev.games + 1, wins: prev.wins + won);
       }
 
-      if (totalGames >= 100) pool[player.id] = roleStats;
+      if (totalGames >= 140) pool[player.id] = roleStats;
     }
 
     // Pre-sort WR lists per role once instead of per-player

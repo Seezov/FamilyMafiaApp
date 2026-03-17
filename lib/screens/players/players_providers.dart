@@ -132,7 +132,7 @@ final playerRoleGamesProvider =
 });
 
 /// Percentile rank ("Top X%") per role for a player — precomputed during app load.
-/// Returns null for a role if the player has < 10 games in that role or < 100 total games.
+/// Returns null for a role if the player has < 10 games in that role or < 140 total games.
 final roleWinRatePercentilesProvider =
     Provider.family<Map<Role, double?>, Player>((ref, player) {
   final cache = ref.watch(rolePercentilesRepositoryProvider);

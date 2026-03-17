@@ -1,8 +1,9 @@
-import 'package:family_mafia_app/screens/dashboard/dashboard_screen.dart';
-import 'package:family_mafia_app/screens/players/players_screen.dart';
-import 'package:family_mafia_app/screens/home/home_screen.dart';
 import 'dart:ui' show ImageFilter;
 
+import 'package:family_mafia_app/providers/app_providers.dart';
+import 'package:family_mafia_app/screens/dashboard/dashboard_screen.dart';
+import 'package:family_mafia_app/screens/home/home_screen.dart';
+import 'package:family_mafia_app/screens/players/players_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -26,14 +27,14 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class _RootNav extends StatefulWidget {
+class _RootNav extends ConsumerStatefulWidget {
   const _RootNav();
 
   @override
-  State<_RootNav> createState() => _RootNavState();
+  ConsumerState<_RootNav> createState() => _RootNavState();
 }
 
-class _RootNavState extends State<_RootNav> {
+class _RootNavState extends ConsumerState<_RootNav> {
   int _index = 0;
 
   static const _screens = [
@@ -44,10 +45,12 @@ class _RootNavState extends State<_RootNav> {
 
   @override
   Widget build(BuildContext context) {
+    final isLoading = ref.watch(appDataProvider).isLoading;
+
     return Scaffold(
-      extendBody: true,
+      extendBody: !isLoading,
       body: IndexedStack(index: _index, children: _screens),
-      bottomNavigationBar: ClipRect(
+      bottomNavigationBar: isLoading ? null : ClipRect(
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
           child: NavigationBar(
