@@ -1,14 +1,137 @@
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
+import 'package:family_mafia_app/enums/season.dart';
+import 'package:family_mafia_app/models/season_config.dart';
 import 'package:family_mafia_app/repositories/games_repository.dart';
 import 'package:family_mafia_app/repositories/players_repository.dart';
 import 'package:family_mafia_app/repositories/rating_repository.dart';
 import 'package:family_mafia_app/repositories/role_percentiles_repository.dart';
 import 'package:family_mafia_app/repositories/season_repository.dart';
+import 'package:family_mafia_app/services/season_cache_service.dart';
+import 'package:family_mafia_app/services/season_data_service.dart';
 import 'package:family_mafia_app/services/season_loader.dart';
+import 'package:family_mafia_app/services/sheets_service.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// Loads all season data from assets. Watch this provider to know when the
-/// app data is ready. Throws on JSON/logic errors.
+// ── Optional overrides via --dart-define ──────────────────────────────────
+const _dartDefineApiKey = String.fromEnvironment('SHEETS_API_KEY');
+const _dartDefineConfigUrl = String.fromEnvironment('REMOTE_CONFIG_URL');
+
+// ── Singletons ────────────────────────────────────────────────────────────
+
+final dioProvider = Provider<Dio>((ref) => Dio());
+
+final seasonCacheServiceProvider = Provider<SeasonCacheService>(
+  (ref) => SeasonCacheService(),
+);
+
+// ── Parsed config ─────────────────────────────────────────────────────────
+
+class _ParsedConfig {
+  final List<SeasonConfig> seasons;
+  final String? sheetsApiKey;
+
+  const _ParsedConfig(this.seasons, this.sheetsApiKey);
+}
+
+_ParsedConfig _parseConfig(String json) {
+  final map = jsonDecode(json) as Map<String, dynamic>;
+  final seasons = (map['seasons'] as List).cast<Map<String, dynamic>>();
+  final apiKey = map['sheetsApiKey'] as String?;
+  return _ParsedConfig(
+    seasons.map((e) => SeasonConfig.fromJson(e)).toList(),
+    apiKey,
+  );
+}
+
+/// Loads season configs + API key. Priority:
+/// 1. Remote URL (if REMOTE_CONFIG_URL is set) → cache it
+/// 2. Cached remote config (if remote fetch fails)
+/// 3. Bundled asset `assets/raw/season_config.json`
+/// 4. Hardcoded `Season.allConfigs()` (ultimate fallback)
+final parsedConfigProvider = FutureProvider<_ParsedConfig>((ref) async {
+  final cacheService = ref.read(seasonCacheServiceProvider);
+  final dio = ref.read(dioProvider);
+
+  if (_dartDefineConfigUrl.isNotEmpty) {
+    try {
+      final response = await dio.get<String>(_dartDefineConfigUrl);
+      final json = response.data!;
+      await cacheService.cacheRemoteConfig(json);
+      return _parseConfig(json);
+    } catch (e) {
+      debugPrint('Remote config fetch failed: $e');
+    }
+
+    final cached = await cacheService.getCachedRemoteConfig();
+    if (cached != null) {
+      try {
+        return _parseConfig(cached);
+      } catch (e) {
+        debugPrint('Cached remote config parse failed: $e');
+      }
+    }
+  }
+
+  try {
+    final json = await rootBundle.loadString('assets/raw/season_config.json');
+    return _parseConfig(json);
+  } catch (e) {
+    debugPrint('Bundled season_config.json load failed: $e');
+  }
+
+  return _ParsedConfig(Season.allConfigs(), null);
+});
+
+/// The resolved API key: --dart-define wins, then config file, then null.
+final sheetsApiKeyProvider = Provider<String?>((ref) {
+  if (_dartDefineApiKey.isNotEmpty) return _dartDefineApiKey;
+  return ref.watch(parsedConfigProvider).valueOrNull?.sheetsApiKey;
+});
+
+final seasonConfigsProvider = Provider<List<SeasonConfig>>((ref) {
+  return ref.watch(parsedConfigProvider).valueOrNull?.seasons ?? [];
+});
+
+// ── App data ──────────────────────────────────────────────────────────────
+
+/// Loads all season data. Watch this provider to know when the app data is ready.
 final appDataProvider = FutureProvider<void>((ref) async {
+  // Phase 1: get configs + API key
+  final parsed = await ref.watch(parsedConfigProvider.future);
+  final configs = parsed.seasons;
+  final apiKey = _dartDefineApiKey.isNotEmpty
+      ? _dartDefineApiKey
+      : parsed.sheetsApiKey;
+
+  // Phase 2: create sheets service (needs API key from config)
+  final dio = ref.read(dioProvider);
+  final cacheService = ref.read(seasonCacheServiceProvider);
+  final sheetsService = apiKey != null && apiKey.isNotEmpty
+      ? SheetsService(dio: dio, apiKey: apiKey)
+      : null;
+  final dataService = SeasonDataService(
+    sheetsService: sheetsService,
+    cacheService: cacheService,
+  );
+
+  // Phase 3: load all season JSONs (bundled or remote)
+  final playersJson = await rootBundle.loadString('assets/raw/players.json');
+
+  final seasonJsons = <String>[];
+  final loadedConfigs = <SeasonConfig>[];
+  for (final config in configs) {
+    final json = await dataService.loadSeasonJson(config);
+    if (json != null) {
+      seasonJsons.add(json);
+      loadedConfigs.add(config);
+    }
+  }
+
+  // Phase 4: compute ratings in background isolate + populate repos
   final loader = SeasonLoaderService(
     ref.read(playersRepositoryProvider.notifier),
     ref.read(gamesRepositoryProvider.notifier),
@@ -16,5 +139,19 @@ final appDataProvider = FutureProvider<void>((ref) async {
     ref.read(seasonRepositoryProvider.notifier),
     ref.read(rolePercentilesRepositoryProvider.notifier),
   );
-  await loader.loadAll();
+
+  await loader.loadAll(
+    metas: loadedConfigs
+        .map((c) => SeasonMeta(c.id, c.gameLimit, c.gamesMultiplier))
+        .toList(),
+    playersJson: playersJson,
+    seasonJsons: seasonJsons,
+  );
+
+  ref.read(loadedSeasonConfigsProvider.notifier).state = loadedConfigs;
 });
+
+/// Holds the list of successfully loaded season configs after appDataProvider resolves.
+final loadedSeasonConfigsProvider = StateProvider<List<SeasonConfig>>(
+  (ref) => [],
+);

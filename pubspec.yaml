@@ -43,6 +43,9 @@ dependencies:
   # HTTP client
   dio: ^5.8.0+1
 
+  # Local storage
+  path_provider: ^2.1.5
+
   # JSON serialization
   freezed_annotation: ^2.4.4
   json_annotation: ^4.9.0

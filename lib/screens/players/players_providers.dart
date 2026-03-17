@@ -1,8 +1,8 @@
 import 'package:family_mafia_app/enums/role.dart';
-import 'package:family_mafia_app/enums/season.dart';
 import 'package:family_mafia_app/models/best_moves.dart';
 import 'package:family_mafia_app/models/player.dart';
 import 'package:family_mafia_app/models/player_accomplishments.dart';
+import 'package:family_mafia_app/providers/app_providers.dart';
 import 'package:family_mafia_app/repositories/games_repository.dart';
 import 'package:family_mafia_app/repositories/players_repository.dart';
 import 'package:family_mafia_app/repositories/rating_repository.dart';
@@ -80,15 +80,17 @@ final filteredPlayersProvider = Provider<List<Player>>((ref) {
 final playerAccomplishmentsProvider =
     Provider.family<PlayerAccomplishments, Player>((ref, player) {
   final allSeasonStats = ref.watch(seasonRepositoryProvider);
+  final configs = ref.watch(loadedSeasonConfigsProvider);
+  final configById = {for (final c in configs) c.id: c};
   final acc = PlayerAccomplishments(player);
 
   for (final entry in allSeasonStats.entries) {
-    final season = Season.findById(entry.key);
-    if (season == null) continue;
+    final config = configById[entry.key];
+    if (config == null) continue;
     final stats = entry.value;
 
     final qualifiers = stats.playerStats
-        .where((p) => p.gamesPlayed >= season.gameLimit)
+        .where((p) => p.gamesPlayed >= config.gameLimit)
         .toList(); // already sorted by ratingCoefficient desc
 
     for (var i = 0; i < qualifiers.length && i < 3; i++) {

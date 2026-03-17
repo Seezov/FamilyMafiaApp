@@ -2,9 +2,9 @@ import 'dart:async';
 import 'dart:ui' show ImageFilter;
 
 import 'package:family_mafia_app/enums/role.dart';
-import 'package:family_mafia_app/enums/season.dart';
 import 'package:family_mafia_app/extensions/double_extensions.dart';
 import 'package:family_mafia_app/models/rating_player_stats.dart';
+import 'package:family_mafia_app/models/season_config.dart';
 import 'package:family_mafia_app/models/season_stats.dart';
 import 'package:family_mafia_app/providers/app_providers.dart';
 import 'package:family_mafia_app/screens/home/home_providers.dart';
@@ -73,6 +73,8 @@ class _HomeContent extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedSeason = ref.watch(selectedSeasonProvider);
     final seasonStats = ref.watch(currentSeasonStatsProvider);
+    final hasQualifying = ref.watch(hasQualifyingPlayersProvider);
+    final effectiveLimit = ref.watch(effectiveGameLimitProvider);
 
     return Scaffold(
       body: CustomScrollView(
@@ -103,15 +105,27 @@ class _HomeContent extends ConsumerWidget {
                 stats: seasonStats,
               ),
             ),
-            SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) => _PlayerCard(
-                  rating: seasonStats.playerStats[index],
-                  rank: index + 1,
+            if (!hasQualifying)
+              SliverToBoxAdapter(
+                child: _GameLimitPicker(
+                  currentLimit: effectiveLimit,
+                  defaultLimit: selectedSeason.gameLimit,
                 ),
-                childCount: seasonStats.playerStats.length,
               ),
-            ),
+            if (seasonStats.playerStats.isNotEmpty) ...[
+              SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) => _PlayerCard(
+                    rating: seasonStats.playerStats[index],
+                    rank: index + 1,
+                  ),
+                  childCount: seasonStats.playerStats.length,
+                ),
+              ),
+            ] else
+              const SliverFillRemaining(
+                child: Center(child: Text('No players meet this game limit')),
+              ),
             SliverToBoxAdapter(
               child: SizedBox(height: MediaQuery.paddingOf(context).bottom + 24),
             ),
@@ -130,29 +144,95 @@ class _HomeContent extends ConsumerWidget {
 // ---------------------------------------------------------------------------
 
 class _SeasonChips extends ConsumerWidget {
-  final Season? selectedSeason;
+  final SeasonConfig? selectedSeason;
 
   const _SeasonChips({required this.selectedSeason});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final configs = ref.watch(loadedSeasonConfigsProvider);
+
     return SizedBox(
       height: 52,
       child: ListView(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        children: Season.values.reversed.map((season) {
-          final isSelected = season == selectedSeason;
+        children: configs.reversed.map((config) {
+          final isSelected = config == selectedSeason;
           return Padding(
             padding: const EdgeInsets.only(right: 6),
             child: ChoiceChip(
-              label: Text(season.title),
+              label: Text(config.title),
               selected: isSelected,
-              onSelected: (_) =>
-                  ref.read(selectedSeasonProvider.notifier).state = season,
+              onSelected: (_) {
+                ref.read(gameLimitOverrideProvider.notifier).state = null;
+                ref.read(selectedSeasonProvider.notifier).state = config;
+              },
             ),
           );
         }).toList(),
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Game limit picker (shown when no players meet the default limit)
+// ---------------------------------------------------------------------------
+
+class _GameLimitPicker extends ConsumerWidget {
+  final int currentLimit;
+  final int defaultLimit;
+
+  const _GameLimitPicker({required this.currentLimit, required this.defaultLimit});
+
+  static const _steps = [5, 10, 20, 30, 40, 50, 60];
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      child: Card(
+        elevation: 0,
+        color: cs.tertiaryContainer.withValues(alpha: 0.5),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'No players with $defaultLimit+ games yet',
+                style: tt.bodySmall?.copyWith(color: cs.onTertiaryContainer),
+              ),
+              const SizedBox(height: 8),
+              SizedBox(
+                height: 36,
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  children: _steps.map((limit) {
+                    final isSelected = limit == currentLimit;
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 6),
+                      child: ChoiceChip(
+                        label: Text('$limit+'),
+                        selected: isSelected,
+                        labelStyle: tt.labelSmall,
+                        visualDensity: VisualDensity.compact,
+                        onSelected: (_) => ref
+                            .read(gameLimitOverrideProvider.notifier)
+                            .state = limit,
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -163,18 +243,21 @@ class _SeasonChips extends ConsumerWidget {
 // ---------------------------------------------------------------------------
 
 class _SeasonHeaderCard extends StatelessWidget {
-  final Season season;
+  final SeasonConfig season;
   final SeasonStats stats;
 
   const _SeasonHeaderCard({required this.season, required this.stats});
 
-  String _name(int playerId) => stats.playerStats
-      .firstWhere(
-        (p) => p.player.id == playerId,
-        orElse: () => stats.playerStats.first,
-      )
-      .player
-      .displayName;
+  String _name(int playerId) {
+    if (playerId == -1 || stats.playerStats.isEmpty) return '—';
+    return stats.playerStats
+        .firstWhere(
+          (p) => p.player.id == playerId,
+          orElse: () => stats.playerStats.first,
+        )
+        .player
+        .displayName;
+  }
 
   @override
   Widget build(BuildContext context) {

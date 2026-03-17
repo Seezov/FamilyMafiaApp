@@ -3,7 +3,6 @@ import 'dart:math';
 
 import 'package:family_mafia_app/enums/game_values.dart';
 import 'package:family_mafia_app/enums/role.dart';
-import 'package:family_mafia_app/enums/season.dart';
 import 'package:family_mafia_app/extensions/double_extensions.dart';
 import 'package:family_mafia_app/extensions/list_extensions.dart';
 import 'package:family_mafia_app/models/game.dart';
@@ -17,16 +16,24 @@ import 'package:family_mafia_app/repositories/rating_repository.dart';
 import 'package:family_mafia_app/repositories/role_percentiles_repository.dart';
 import 'package:family_mafia_app/repositories/season_repository.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 
 // ── Background isolate I/O ──────────────────────────────────────────────────
 
+/// Lightweight serializable struct for passing season metadata into an isolate.
+class SeasonMeta {
+  final int id;
+  final int gameLimit;
+  final double gamesMultiplier;
+
+  const SeasonMeta(this.id, this.gameLimit, this.gamesMultiplier);
+}
+
 class _LoadInput {
   final String playersJson;
-  // Parallel to Season.values order
   final List<String> seasonJsons;
+  final List<SeasonMeta> seasonMetas;
 
-  const _LoadInput(this.playersJson, this.seasonJsons);
+  const _LoadInput(this.playersJson, this.seasonJsons, this.seasonMetas);
 }
 
 class _LoadOutput {
@@ -59,18 +66,18 @@ _LoadOutput _computeAllData(_LoadInput input) {
   final ratingsBySeason = <int, List<RatingPlayerStats>>{};
   final statsBySeason = <int, SeasonStats>{};
 
-  for (int si = 0; si < Season.values.length; si++) {
-    final season = Season.values[si];
+  for (int si = 0; si < input.seasonMetas.length; si++) {
+    final meta = input.seasonMetas[si];
     final json = input.seasonJsons[si];
 
     final raw = (jsonDecode(json) as List).cast<Map<String, dynamic>>();
     final rawData = raw
         .map((e) => GamesDataSeason.fromJson(e))
-        .where((d) => SeasonLoaderService._filterRawData(d, season.id))
+        .where((d) => SeasonLoaderService._filterRawData(d, meta.id))
         .toList();
 
     final gamesData =
-        SeasonLoaderService._getGamesDataSeason(season.id, rawData)
+        SeasonLoaderService._getGamesDataSeason(meta.id, rawData)
             .where((g) => g.isRatingGame())
             .toList();
 
@@ -82,16 +89,17 @@ _LoadOutput _computeAllData(_LoadInput input) {
 
     allGames.addAll(gamesData);
 
-    final playerNames = gamesData.getPlayersList(season.id);
+    final playerNames = gamesData.getPlayersList(meta.id);
     final ratings = playerNames
         .map((name) => SeasonLoaderService._computePlayerRating(
-            name, gamesData, season, players))
+            name, gamesData, meta, players))
         .toList();
 
-    ratingsBySeason[season.id] = ratings;
+    ratingsBySeason[meta.id] = ratings;
 
     final sorted = ratings.sortedByDescending((r) => r.ratingCoefficient);
-    statsBySeason[season.id] = SeasonLoaderService._generateSeasonStats(sorted);
+    statsBySeason[meta.id] =
+        SeasonLoaderService._generateSeasonStats(sorted, meta.gameLimit);
   }
 
   final percentiles =
@@ -123,24 +131,25 @@ class SeasonLoaderService {
     this._rolePercRepo,
   );
 
-  Future<void> loadAll() async {
-    // Phase 1: load asset strings on the main thread (platform channel)
-    final playersJson =
-        await rootBundle.loadString('assets/raw/players.json');
-    final seasonJsons = <String>[];
-    for (final season in Season.values) {
-      seasonJsons.add(await rootBundle.loadString(season.assetPath));
-    }
+  /// [configs] describes every season to load. [playersJson] is the raw
+  /// players.json content. [seasonJsons] is parallel to [configs] — the raw
+  /// JSON string for each season (already loaded from bundled assets or remote).
+  Future<void> loadAll({
+    required List<SeasonMeta> metas,
+    required String playersJson,
+    required List<String> seasonJsons,
+  }) async {
+    // All CPU work in a background isolate
+    final out = await compute(
+      _computeAllData,
+      _LoadInput(playersJson, seasonJsons, metas),
+    );
 
-    // Phase 2: all CPU work in a background isolate
-    final out =
-        await compute(_computeAllData, _LoadInput(playersJson, seasonJsons));
-
-    // Phase 3: populate repositories on the main thread
+    // Populate repositories on the main thread
     _playersRepo.addPlayers(out.players);
     _gamesRepo.addGames(out.allGames);
     for (final entry in out.ratingsBySeason.entries) {
-      _ratingRepo.addRatings(Season.findById(entry.key)!, entry.value);
+      _ratingRepo.addRatings(entry.key, entry.value);
     }
     for (final entry in out.statsBySeason.entries) {
       _seasonRepo.addSeason(entry.key, entry.value);
@@ -155,6 +164,13 @@ class SeasonLoaderService {
     return d.a.isNotEmpty && d.c.isNotEmpty;
   }
 
+  /// Replace blank player names with unique placeholders so they don't
+  /// collide in uniqueness checks or set-based lookups.
+  static List<String> _fillBlanks(List<String> names) {
+    var blankIdx = 0;
+    return names.map((n) => n.trim().isEmpty ? '_blank_${blankIdx++}' : n).toList();
+  }
+
   // ─── JSON → Game objects ───────────────────────────────────────────────────
 
   static List<Game> _getGamesDataSeason(
@@ -167,7 +183,7 @@ class SeasonLoaderService {
     if (seasonId <= 1) {
       return Game(
         seasonId: seasonId,
-        players: p.map((r) => r.b).toList(),
+        players: _fillBlanks(p.map((r) => r.b).toList()),
         roles: p.map((r) => r.c).toList(),
         cityWon: () {
           final role = Role.findByValue(p.first.c);
@@ -197,7 +213,7 @@ class SeasonLoaderService {
       final firstKilled = int.tryParse(p[1].c) ?? 0;
       return Game(
         seasonId: seasonId,
-        players: p.map((r) => r.g).toList(),
+        players: _fillBlanks(p.map((r) => r.g).toList()),
         roles: p.map((r) => r.h).toList(),
         cityWon: _getVictoryTeam(p[0].c),
         firstKilled: firstKilled,
@@ -218,7 +234,7 @@ class SeasonLoaderService {
       final firstKilled = int.tryParse(p[1].c) ?? 0;
       return Game(
         seasonId: seasonId,
-        players: p.map((r) => r.g).toList(),
+        players: _fillBlanks(p.map((r) => r.g).toList()),
         roles: p.map((r) => r.h).toList(),
         cityWon: _getVictoryTeam(p[0].c),
         firstKilled: firstKilled,
@@ -233,15 +249,43 @@ class SeasonLoaderService {
       );
     }
 
-    // Season 17+: chunk of 14 rows; player rows are p[2]..p[11]
+    // Season 17–28: chunk of 14 rows; player rows are p[2]..p[11]
     final firstKilled = int.tryParse(p[12].b) ?? 0;
+    final playerRows = p.sublist(2, 12);
+
+    if (seasonId <= 28) {
+      return Game(
+        seasonId: seasonId,
+        players: _fillBlanks(playerRows.map((r) => r.b).toList()),
+        roles: playerRows.map((r) => r.c).toList(),
+        cityWon: _getVictoryTeam(p.last.c),
+        firstKilled: firstKilled,
+        bestMovePoints: firstKilled == 0
+            ? 0.0
+            : _tryParseDouble(p.map((r) => r.i).toList(), firstKilled + 1),
+        bestMove: [
+          int.tryParse(p[12].d) ?? 0,
+          int.tryParse(p[12].e) ?? 0,
+          int.tryParse(p[12].f) ?? 0,
+        ],
+        additionalPoints:
+            playerRows.map((r) => double.tryParse(r.j) ?? 0.0).toList(),
+        autoAdditionalPoints: seasonId <= 20
+            ? playerRows.map((r) => double.tryParse(r.h) ?? 0.0).toList()
+            : null,
+        penaltyPoints: seasonId > 20
+            ? playerRows.map((r) => double.tryParse(r.h) ?? 0.0).toList()
+            : null,
+      );
+    }
+
+    // Season 29+: same 14-row chunk layout + extra columns K–Q
     return Game(
       seasonId: seasonId,
-      players: p.sublist(2, 12).map((r) => r.b).toList(),
-      roles: p.sublist(2, 12).map((r) => r.c).toList(),
+      players: _fillBlanks(playerRows.map((r) => r.b).toList()),
+      roles: playerRows.map((r) => r.c).toList(),
       cityWon: _getVictoryTeam(p.last.c),
       firstKilled: firstKilled,
-      // index = firstKilled + 1 because player rows start at index 2
       bestMovePoints: firstKilled == 0
           ? 0.0
           : _tryParseDouble(p.map((r) => r.i).toList(), firstKilled + 1),
@@ -251,14 +295,13 @@ class SeasonLoaderService {
         int.tryParse(p[12].f) ?? 0,
       ],
       additionalPoints:
-          p.sublist(2, 12).map((r) => double.tryParse(r.j) ?? 0.0).toList(),
-      // H column = autoAdditionalPoints for S17-20, penaltyPoints for S21+
-      autoAdditionalPoints: seasonId <= 20
-          ? p.sublist(2, 12).map((r) => double.tryParse(r.h) ?? 0.0).toList()
-          : null,
-      penaltyPoints: seasonId > 20
-          ? p.sublist(2, 12).map((r) => double.tryParse(r.h) ?? 0.0).toList()
-          : null,
+          playerRows.map((r) => double.tryParse(r.j) ?? 0.0).toList(),
+      penaltyPoints:
+          playerRows.map((r) => double.tryParse(r.h) ?? 0.0).toList(),
+      protocolAdditionalPoints:
+          playerRows.map((r) => double.tryParse(r.k) ?? 0.0).toList(),
+      protocolPenaltyPoints:
+          playerRows.map((r) => double.tryParse(r.l) ?? 0.0).toList(),
     );
   }
 
@@ -298,7 +341,7 @@ class SeasonLoaderService {
   }
 
   static RatingPlayerStats _computePlayerRating(
-      String name, List<Game> gamesData, Season season, List<Player> players) {
+      String name, List<Game> gamesData, SeasonMeta season, List<Player> players) {
     final gamesForPlayer =
         gamesData.where((g) => g.players.contains(name)).toList();
     final gamesPlayed = gamesForPlayer.length;
@@ -330,8 +373,12 @@ class SeasonLoaderService {
       roleAcc[roleVal] = (
         wins: prev.wins + (won ? 1 : 0),
         losses: prev.losses + (won ? 0 : 1),
-        additional: prev.additional + g.getPlayerAdditionalPoints(name),
-        penalty: prev.penalty + g.getPlayerPenaltyPoints(name),
+        additional: prev.additional
+            + g.getPlayerAdditionalPoints(name)
+            + g.getPlayerProtocolAdditionalPoints(name),
+        penalty: prev.penalty
+            + g.getPlayerPenaltyPoints(name)
+            + g.getPlayerProtocolPenaltyPoints(name),
         bestMovePoints: prev.bestMovePoints + (isFK ? g.bestMovePoints : 0.0),
         games: prev.games + 1,
       );
@@ -526,7 +573,7 @@ class SeasonLoaderService {
     required double additionalPoints,
     required double penaltyPoints,
     required double autoAdditionalPoints,
-    required Season season,
+    required SeasonMeta season,
   }) {
     final id = season.id;
     final m = season.gamesMultiplier;
@@ -578,10 +625,9 @@ class SeasonLoaderService {
 
   // ─── Season stats ─────────────────────────────────────────────────────────
 
-  static SeasonStats _generateSeasonStats(List<RatingPlayerStats> sorted) {
+  static SeasonStats _generateSeasonStats(List<RatingPlayerStats> sorted, int gameLimit) {
     final withLimit = sorted.where((p) {
-      final season = Season.findById(p.seasonId)!;
-      return p.gamesPlayed >= season.gameLimit;
+      return p.gamesPlayed >= gameLimit;
     }).toList();
 
     return SeasonStats(

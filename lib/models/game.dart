@@ -20,6 +20,8 @@ class Game with _$Game {
     List<double>? additionalPoints,
     List<double>? penaltyPoints,
     List<double>? autoAdditionalPoints,
+    List<double>? protocolAdditionalPoints,
+    List<double>? protocolPenaltyPoints,
     List<String>? wonByPlayer,
   }) = _Game;
 
@@ -53,13 +55,21 @@ class Game with _$Game {
   double getPlayerPenaltyPoints(String player) =>
       penaltyPoints?[players.indexOf(player)] ?? 0.0;
 
+  double getPlayerProtocolAdditionalPoints(String player) =>
+      protocolAdditionalPoints?[players.indexOf(player)] ?? 0.0;
+
+  double getPlayerProtocolPenaltyPoints(String player) =>
+      protocolPenaltyPoints?[players.indexOf(player)] ?? 0.0;
+
   // Validates game has correct role composition (seasons 2+)
   bool isNormalGame() {
     if (seasonId <= 1) return true;
+    // Ignore placeholder names when checking uniqueness
+    final real = players.where((p) => !p.startsWith('_blank_')).toList();
     return roles.where((r) => Role.mafia.sheetValues.contains(r)).length == 2 &&
         roles.where((r) => Role.sheriff.sheetValues.contains(r)).length == 1 &&
         roles.where((r) => Role.don.sheetValues.contains(r)).length == 1 &&
-        players.length == players.toSet().length;
+        real.length == real.toSet().length;
   }
 
   bool isRegularGame() =>
@@ -75,6 +85,7 @@ extension GameListExtensions on List<Game> {
   Set<String> getPlayersList(int seasonId) {
     final all = expand((g) => g.players).toSet();
     return all.where((p) {
+      if (p.startsWith('_blank_')) return false;
       switch (seasonId) {
         case 0:
           return p != 'Рауль';

@@ -1,3 +1,5 @@
+import 'package:family_mafia_app/models/season_config.dart';
+
 enum Season {
   season0(id: 0, title: 'Season 0', jsonFile: 'season0.json', gameLimit: 17, gamesMultiplier: 0.25),
   season1(id: 1, title: 'Season 1', jsonFile: 'season1.json', gameLimit: 30, gamesMultiplier: 0.25),
@@ -51,4 +53,15 @@ enum Season {
   }
 
   String get assetPath => 'assets/raw/$jsonFile';
+
+  SeasonConfig toConfig() => SeasonConfig(
+        id: id,
+        title: title,
+        gameLimit: gameLimit,
+        gamesMultiplier: gamesMultiplier,
+        source: BundledSource(jsonFile: jsonFile),
+      );
+
+  static List<SeasonConfig> allConfigs() =>
+      Season.values.map((s) => s.toConfig()).toList();
 }

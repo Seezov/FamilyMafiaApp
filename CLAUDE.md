@@ -9,9 +9,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Build Commands
 
 ```bash
-flutter run                      # Run on connected device/emulator
+flutter run                      # Run on connected device/emulator (bundled seasons only)
+flutter run --dart-define=SHEETS_API_KEY=AIzaSy... --dart-define=REMOTE_CONFIG_URL=https://raw.githubusercontent.com/...   # With remote seasons
 flutter build apk --debug        # Debug APK
-flutter build apk --release      # Release APK
+flutter build apk --release --dart-define=SHEETS_API_KEY=AIzaSy... --dart-define=REMOTE_CONFIG_URL=https://raw.githubusercontent.com/...  # Release APK with remote
 flutter analyze                  # Static analysis
 flutter test                     # Unit tests
 dart run build_runner build      # Regenerate freezed / json_serializable code
@@ -29,22 +30,27 @@ Riverpod + Dart, Jetpack-style layering.
   - `dashboard/` — `DashboardScreen` (placeholder)
 - `lib/repositories/` — Riverpod `StateNotifierProvider` singletons:
   `GamesRepository`, `PlayersRepository`, `RatingRepository`, `SeasonRepository`
-- `lib/services/season_loader.dart` — loads all 29 seasons from `assets/raw/`, computes ratings, populates repositories
-- `lib/providers/app_providers.dart` — `appDataProvider` (FutureProvider) triggers full load on first watch
+- `lib/services/season_loader.dart` — computes ratings in background isolate, populates repositories
+- `lib/services/season_data_service.dart` — orchestrates bundled vs remote season loading
+- `lib/services/sheets_service.dart` — Dio-based Google Sheets API v4 wrapper
+- `lib/services/season_cache_service.dart` — caches remote season data + remote config locally
+- `lib/providers/app_providers.dart` — `appDataProvider` (3-phase: fetch configs → load JSONs → compute), `loadedSeasonConfigsProvider`
 - `lib/models/` — Dart models (freezed + json_serializable):
-  `Game`, `Player`, `RatingPlayerStats`, `SeasonStats`, `YearStats`, `PlayerPlacements`, `SlotStats`, `Stats`, `BestMoves`
-- `lib/enums/` — `Role`, `Season` (0–28), `GameValues`
+  `Game`, `Player`, `RatingPlayerStats`, `SeasonStats`, `SeasonConfig`, `YearStats`, `PlayerPlacements`, `SlotStats`, `Stats`, `BestMoves`
+- `lib/enums/` — `Role`, `Season` (0–28, with `toConfig()` extension), `GameValues`
 - `lib/extensions/` — `double_extensions.dart`, `list_extensions.dart`
 
-No local database — all data loaded from `assets/raw/*.json` (one per season + `players.json`).
+Bundled seasons from `assets/raw/*.json`. Remote seasons from Google Sheets API (cached locally via `path_provider`).
 
 ## Flutter Data Flow
 
-1. `appDataProvider` is watched by each screen; shows a spinner until resolved
-2. `SeasonLoaderService.loadAll()` reads every season JSON → parses → populates all four repositories
-3. `RatingRepository` / `SeasonRepository` hold pre-computed `RatingPlayerStats` / `SeasonStats`
-4. Screen-level providers (e.g. `selectedSeasonProvider`, `seasonGamesProvider`) derive view data from repositories
-5. Screens are `ConsumerWidget`s that `ref.watch` their providers
+1. `seasonConfigsProvider` fetches remote config (GitHub raw JSON) → fallback: cached → bundled-only
+2. `appDataProvider` watches configs, loads each season JSON via `SeasonDataService` (bundled or remote+cached)
+3. `SeasonLoaderService.loadAll()` runs CPU work in a background isolate → populates all repositories
+4. `RatingRepository` / `SeasonRepository` hold pre-computed `RatingPlayerStats` / `SeasonStats`
+5. `loadedSeasonConfigsProvider` holds the list of successfully loaded `SeasonConfig`s for UI
+6. Screen-level providers (e.g. `selectedSeasonProvider`, `seasonGamesProvider`) derive view data from repositories
+7. Screens are `ConsumerWidget`s that `ref.watch` their providers
 
 ## Navigation
 
@@ -55,16 +61,27 @@ No local database — all data loaded from `assets/raw/*.json` (one per season +
 
 > **"Players screen"** always refers to `PlayersScreen` (`lib/screens/players/players_screen.dart`), not `HomeScreen`.
 
-## Adding a New Season (Flutter)
+## Adding a New Season
 
+**Bundled (offline):**
 1. Add the season JSON to `assets/raw/`
 2. Add a new entry to `lib/enums/season.dart` with correct `id`, `title`, `jsonFile`, `gameLimit`, and `gamesMultiplier`
+
+**Remote (Google Sheets, no app update needed):**
+1. Create a Google Sheet with game data in the expected column format
+2. Add the season entry to the remote config JSON hosted on GitHub:
+   ```json
+   {"id": 29, "title": "Season 29", "gameLimit": 60, "gamesMultiplier": 0.0,
+    "source": "remote", "spreadsheetId": "1aBcD...", "sheetName": "Sheet1", "range": "A:J"}
+   ```
+3. The app fetches the updated config on launch and loads the new season from Sheets
 
 ## Key Stack
 
 - Dart / Flutter 3.x, Material 3
 - Riverpod 2.6.1, freezed + json_serializable (KSP-equivalent via build_runner)
-- Dio 5.x (HTTP), go_router 14.8.1 (wired up later)
+- Dio 5.x (HTTP + Google Sheets API), go_router 14.8.1 (wired up later)
+- path_provider (local caching of remote seasons)
 - minSdk 29
 
 ---

@@ -28,6 +28,9 @@ mixin _$Game {
   List<double>? get additionalPoints => throw _privateConstructorUsedError;
   List<double>? get penaltyPoints => throw _privateConstructorUsedError;
   List<double>? get autoAdditionalPoints => throw _privateConstructorUsedError;
+  List<double>? get protocolAdditionalPoints =>
+      throw _privateConstructorUsedError;
+  List<double>? get protocolPenaltyPoints => throw _privateConstructorUsedError;
   List<String>? get wonByPlayer => throw _privateConstructorUsedError;
 
   /// Create a copy of Game
@@ -52,6 +55,8 @@ abstract class $GameCopyWith<$Res> {
     List<double>? additionalPoints,
     List<double>? penaltyPoints,
     List<double>? autoAdditionalPoints,
+    List<double>? protocolAdditionalPoints,
+    List<double>? protocolPenaltyPoints,
     List<String>? wonByPlayer,
   });
 }
@@ -81,6 +86,8 @@ class _$GameCopyWithImpl<$Res, $Val extends Game>
     Object? additionalPoints = freezed,
     Object? penaltyPoints = freezed,
     Object? autoAdditionalPoints = freezed,
+    Object? protocolAdditionalPoints = freezed,
+    Object? protocolPenaltyPoints = freezed,
     Object? wonByPlayer = freezed,
   }) {
     return _then(
@@ -125,6 +132,14 @@ class _$GameCopyWithImpl<$Res, $Val extends Game>
                 ? _value.autoAdditionalPoints
                 : autoAdditionalPoints // ignore: cast_nullable_to_non_nullable
                       as List<double>?,
+            protocolAdditionalPoints: freezed == protocolAdditionalPoints
+                ? _value.protocolAdditionalPoints
+                : protocolAdditionalPoints // ignore: cast_nullable_to_non_nullable
+                      as List<double>?,
+            protocolPenaltyPoints: freezed == protocolPenaltyPoints
+                ? _value.protocolPenaltyPoints
+                : protocolPenaltyPoints // ignore: cast_nullable_to_non_nullable
+                      as List<double>?,
             wonByPlayer: freezed == wonByPlayer
                 ? _value.wonByPlayer
                 : wonByPlayer // ignore: cast_nullable_to_non_nullable
@@ -154,6 +169,8 @@ abstract class _$$GameImplCopyWith<$Res> implements $GameCopyWith<$Res> {
     List<double>? additionalPoints,
     List<double>? penaltyPoints,
     List<double>? autoAdditionalPoints,
+    List<double>? protocolAdditionalPoints,
+    List<double>? protocolPenaltyPoints,
     List<String>? wonByPlayer,
   });
 }
@@ -180,6 +197,8 @@ class __$$GameImplCopyWithImpl<$Res>
     Object? additionalPoints = freezed,
     Object? penaltyPoints = freezed,
     Object? autoAdditionalPoints = freezed,
+    Object? protocolAdditionalPoints = freezed,
+    Object? protocolPenaltyPoints = freezed,
     Object? wonByPlayer = freezed,
   }) {
     return _then(
@@ -224,6 +243,14 @@ class __$$GameImplCopyWithImpl<$Res>
             ? _value._autoAdditionalPoints
             : autoAdditionalPoints // ignore: cast_nullable_to_non_nullable
                   as List<double>?,
+        protocolAdditionalPoints: freezed == protocolAdditionalPoints
+            ? _value._protocolAdditionalPoints
+            : protocolAdditionalPoints // ignore: cast_nullable_to_non_nullable
+                  as List<double>?,
+        protocolPenaltyPoints: freezed == protocolPenaltyPoints
+            ? _value._protocolPenaltyPoints
+            : protocolPenaltyPoints // ignore: cast_nullable_to_non_nullable
+                  as List<double>?,
         wonByPlayer: freezed == wonByPlayer
             ? _value._wonByPlayer
             : wonByPlayer // ignore: cast_nullable_to_non_nullable
@@ -247,6 +274,8 @@ class _$GameImpl extends _Game {
     final List<double>? additionalPoints,
     final List<double>? penaltyPoints,
     final List<double>? autoAdditionalPoints,
+    final List<double>? protocolAdditionalPoints,
+    final List<double>? protocolPenaltyPoints,
     final List<String>? wonByPlayer,
   }) : _players = players,
        _roles = roles,
@@ -254,6 +283,8 @@ class _$GameImpl extends _Game {
        _additionalPoints = additionalPoints,
        _penaltyPoints = penaltyPoints,
        _autoAdditionalPoints = autoAdditionalPoints,
+       _protocolAdditionalPoints = protocolAdditionalPoints,
+       _protocolPenaltyPoints = protocolPenaltyPoints,
        _wonByPlayer = wonByPlayer,
        super._();
 
@@ -322,6 +353,28 @@ class _$GameImpl extends _Game {
     return EqualUnmodifiableListView(value);
   }
 
+  final List<double>? _protocolAdditionalPoints;
+  @override
+  List<double>? get protocolAdditionalPoints {
+    final value = _protocolAdditionalPoints;
+    if (value == null) return null;
+    if (_protocolAdditionalPoints is EqualUnmodifiableListView)
+      return _protocolAdditionalPoints;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  final List<double>? _protocolPenaltyPoints;
+  @override
+  List<double>? get protocolPenaltyPoints {
+    final value = _protocolPenaltyPoints;
+    if (value == null) return null;
+    if (_protocolPenaltyPoints is EqualUnmodifiableListView)
+      return _protocolPenaltyPoints;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
   final List<String>? _wonByPlayer;
   @override
   List<String>? get wonByPlayer {
@@ -334,7 +387,7 @@ class _$GameImpl extends _Game {
 
   @override
   String toString() {
-    return 'Game(seasonId: $seasonId, players: $players, roles: $roles, cityWon: $cityWon, firstKilled: $firstKilled, bestMovePoints: $bestMovePoints, bestMove: $bestMove, additionalPoints: $additionalPoints, penaltyPoints: $penaltyPoints, autoAdditionalPoints: $autoAdditionalPoints, wonByPlayer: $wonByPlayer)';
+    return 'Game(seasonId: $seasonId, players: $players, roles: $roles, cityWon: $cityWon, firstKilled: $firstKilled, bestMovePoints: $bestMovePoints, bestMove: $bestMove, additionalPoints: $additionalPoints, penaltyPoints: $penaltyPoints, autoAdditionalPoints: $autoAdditionalPoints, protocolAdditionalPoints: $protocolAdditionalPoints, protocolPenaltyPoints: $protocolPenaltyPoints, wonByPlayer: $wonByPlayer)';
   }
 
   @override
@@ -365,6 +418,14 @@ class _$GameImpl extends _Game {
               _autoAdditionalPoints,
             ) &&
             const DeepCollectionEquality().equals(
+              other._protocolAdditionalPoints,
+              _protocolAdditionalPoints,
+            ) &&
+            const DeepCollectionEquality().equals(
+              other._protocolPenaltyPoints,
+              _protocolPenaltyPoints,
+            ) &&
+            const DeepCollectionEquality().equals(
               other._wonByPlayer,
               _wonByPlayer,
             ));
@@ -383,6 +444,8 @@ class _$GameImpl extends _Game {
     const DeepCollectionEquality().hash(_additionalPoints),
     const DeepCollectionEquality().hash(_penaltyPoints),
     const DeepCollectionEquality().hash(_autoAdditionalPoints),
+    const DeepCollectionEquality().hash(_protocolAdditionalPoints),
+    const DeepCollectionEquality().hash(_protocolPenaltyPoints),
     const DeepCollectionEquality().hash(_wonByPlayer),
   );
 
@@ -407,6 +470,8 @@ abstract class _Game extends Game {
     final List<double>? additionalPoints,
     final List<double>? penaltyPoints,
     final List<double>? autoAdditionalPoints,
+    final List<double>? protocolAdditionalPoints,
+    final List<double>? protocolPenaltyPoints,
     final List<String>? wonByPlayer,
   }) = _$GameImpl;
   const _Game._() : super._();
@@ -431,6 +496,10 @@ abstract class _Game extends Game {
   List<double>? get penaltyPoints;
   @override
   List<double>? get autoAdditionalPoints;
+  @override
+  List<double>? get protocolAdditionalPoints;
+  @override
+  List<double>? get protocolPenaltyPoints;
   @override
   List<String>? get wonByPlayer;
 
