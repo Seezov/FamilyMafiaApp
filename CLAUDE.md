@@ -76,6 +76,12 @@ Bundled seasons from `assets/raw/*.json`. Remote seasons from Google Sheets API 
    ```
 3. The app fetches the updated config on launch and loads the new season from Sheets
 
+## Game Rules
+
+The game is Mafia (10-player social deduction). Official tournament rules reference: `.claude/projects/C--Users-user-AndroidStudioProjects-FamilyMafiaApp/memory/game_rules.md`
+
+This app is for **club play**, not tournaments. The core game mechanics (roles, phases, voting, night actions) are the same, but **rating calculations differ** from the official tournament system. See `lib/services/season_loader.dart` for the actual club rating formulas used in the app.
+
 ## Key Stack
 
 - Dart / Flutter 3.x, Material 3
