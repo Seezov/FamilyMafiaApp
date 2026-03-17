@@ -20,6 +20,20 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 const _dartDefineApiKey = String.fromEnvironment('SHEETS_API_KEY');
 const _dartDefineConfigUrl = String.fromEnvironment('REMOTE_CONFIG_URL');
 
+// ── Local .env.json (gitignored, never shipped in release) ───────────────
+
+/// Loads `.env.json` from project root (bundled as asset in debug builds).
+/// Returns an empty map if the file doesn't exist or fails to parse.
+Future<Map<String, String>> _loadEnvJson() async {
+  try {
+    final json = await rootBundle.loadString('assets/.env.json');
+    final map = jsonDecode(json) as Map<String, dynamic>;
+    return map.map((k, v) => MapEntry(k, v.toString()));
+  } catch (_) {
+    return {};
+  }
+}
+
 // ── Singletons ────────────────────────────────────────────────────────────
 
 final dioProvider = Provider<Dio>((ref) => Dio());
@@ -32,22 +46,24 @@ final seasonCacheServiceProvider = Provider<SeasonCacheService>(
 
 class _ParsedConfig {
   final List<SeasonConfig> seasons;
-  final String? sheetsApiKey;
 
-  const _ParsedConfig(this.seasons, this.sheetsApiKey);
+  const _ParsedConfig(this.seasons);
 }
 
 _ParsedConfig _parseConfig(String json) {
   final map = jsonDecode(json) as Map<String, dynamic>;
   final seasons = (map['seasons'] as List).cast<Map<String, dynamic>>();
-  final apiKey = map['sheetsApiKey'] as String?;
   return _ParsedConfig(
     seasons.map((e) => SeasonConfig.fromJson(e)).toList(),
-    apiKey,
   );
 }
 
-/// Loads season configs + API key. Priority:
+/// Loads .env.json once and caches the result.
+final _envJsonProvider = FutureProvider<Map<String, String>>(
+  (ref) => _loadEnvJson(),
+);
+
+/// Loads season configs. Priority:
 /// 1. Remote URL (if REMOTE_CONFIG_URL is set) → cache it
 /// 2. Cached remote config (if remote fetch fails)
 /// 3. Bundled asset `assets/raw/season_config.json`
@@ -55,10 +71,15 @@ _ParsedConfig _parseConfig(String json) {
 final parsedConfigProvider = FutureProvider<_ParsedConfig>((ref) async {
   final cacheService = ref.read(seasonCacheServiceProvider);
   final dio = ref.read(dioProvider);
+  final env = await ref.watch(_envJsonProvider.future);
 
-  if (_dartDefineConfigUrl.isNotEmpty) {
+  final configUrl = _dartDefineConfigUrl.isNotEmpty
+      ? _dartDefineConfigUrl
+      : (env['REMOTE_CONFIG_URL'] ?? '');
+
+  if (configUrl.isNotEmpty) {
     try {
-      final response = await dio.get<String>(_dartDefineConfigUrl);
+      final response = await dio.get<String>(configUrl);
       final json = response.data!;
       await cacheService.cacheRemoteConfig(json);
       return _parseConfig(json);
@@ -83,13 +104,15 @@ final parsedConfigProvider = FutureProvider<_ParsedConfig>((ref) async {
     debugPrint('Bundled season_config.json load failed: $e');
   }
 
-  return _ParsedConfig(Season.allConfigs(), null);
+  return _ParsedConfig(Season.allConfigs());
 });
 
-/// The resolved API key: --dart-define wins, then config file, then null.
+/// The resolved API key. Priority: --dart-define → .env.json → null.
 final sheetsApiKeyProvider = Provider<String?>((ref) {
   if (_dartDefineApiKey.isNotEmpty) return _dartDefineApiKey;
-  return ref.watch(parsedConfigProvider).valueOrNull?.sheetsApiKey;
+  final env = ref.watch(_envJsonProvider).valueOrNull ?? {};
+  final envKey = env['SHEETS_API_KEY'] ?? '';
+  return envKey.isNotEmpty ? envKey : null;
 });
 
 final seasonConfigsProvider = Provider<List<SeasonConfig>>((ref) {
@@ -103,9 +126,7 @@ final appDataProvider = FutureProvider<void>((ref) async {
   // Phase 1: get configs + API key
   final parsed = await ref.watch(parsedConfigProvider.future);
   final configs = parsed.seasons;
-  final apiKey = _dartDefineApiKey.isNotEmpty
-      ? _dartDefineApiKey
-      : parsed.sheetsApiKey;
+  final apiKey = ref.read(sheetsApiKeyProvider);
 
   // Phase 2: create sheets service (needs API key from config)
   final dio = ref.read(dioProvider);

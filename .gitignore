@@ -78,6 +78,7 @@ app/release/output.json
 # Environment / secrets
 .env.json
 .env
+assets/.env.json
 
 # Flutter/Dart
 .dart_tool/
