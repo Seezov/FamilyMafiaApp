@@ -1,3 +1,4 @@
+import 'package:family_mafia_app/constants/season_constants.dart';
 import 'package:family_mafia_app/enums/role.dart';
 import 'package:family_mafia_app/models/player.dart';
 import 'package:family_mafia_app/repositories/games_repository.dart';
@@ -6,9 +7,6 @@ import 'package:family_mafia_app/repositories/rating_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 typedef RoleLeaderEntry = ({Player player, int games, int wins, double wr});
-
-const minRatingGames = 140;
-const _topN = 10;
 
 /// For each role, the top [_topN] players by all-time win rate.
 /// Only players with at least [minRatingGames] total rating games qualify.
@@ -50,7 +48,7 @@ final topPlayersByRoleProvider =
   for (final role in Role.values) {
     final entries = <RoleLeaderEntry>[];
     for (final (player, totalGames, roleData) in perPlayer.values) {
-      if (totalGames < minRatingGames) continue;
+      if (totalGames < kDashboardMinRatingGames) continue;
       final rd = roleData[role];
       if (rd == null || rd.games == 0) continue;
       entries.add((
@@ -61,7 +59,7 @@ final topPlayersByRoleProvider =
       ));
     }
     entries.sort((a, b) => b.wr.compareTo(a.wr));
-    result[role] = entries.take(_topN).toList();
+    result[role] = entries.take(kDashboardTopN).toList();
   }
 
   return result;
@@ -127,5 +125,5 @@ final protocolGuessLeaderboardProvider =
       return cmp != 0 ? cmp : b.total.compareTo(a.total);
     });
 
-  return entries.take(_topN).toList();
+  return entries.take(kDashboardTopN).toList();
 });

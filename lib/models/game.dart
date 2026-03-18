@@ -1,3 +1,4 @@
+import 'package:family_mafia_app/constants/season_constants.dart';
 import 'package:family_mafia_app/enums/game_values.dart';
 import 'package:family_mafia_app/enums/role.dart';
 import 'package:family_mafia_app/models/protocol_entry.dart';
@@ -75,7 +76,7 @@ class Game with _$Game {
 
   // Validates game has correct role composition (seasons 2+)
   bool isNormalGame() {
-    if (seasonId <= 1) return true;
+    if (seasonId <= kOldFormatMaxSeason) return true;
     // Ignore placeholder names when checking uniqueness
     final real = players.where((p) => !p.startsWith('_blank_')).toList();
     return roles.where((r) => Role.mafia.sheetValues.contains(r)).length == 2 &&
@@ -96,18 +97,11 @@ extension GameListExtensions on List<Game> {
 
   Set<String> getPlayersList(int seasonId) {
     final all = expand((g) => g.players).toSet();
+    final excluded = kExcludedPlayers[seasonId];
     return all.where((p) {
       if (p.startsWith('_blank_')) return false;
-      switch (seasonId) {
-        case 0:
-          return p != 'Рауль';
-        case 8:
-          return p != 'Рауль' && p != 'Остин';
-        case 9:
-          return p != 'Рауль';
-        default:
-          return true;
-      }
+      if (excluded != null && excluded.contains(p)) return false;
+      return true;
     }).toSet();
   }
 }

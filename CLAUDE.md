@@ -24,19 +24,21 @@ dart run build_runner watch      # Watch mode for code generation
 Riverpod + Dart, Jetpack-style layering.
 
 **Layers:**
+- `lib/constants/` — `season_constants.dart` (all season boundaries, formula thresholds, player exclusions with doc comments)
 - `lib/screens/` — Flutter screens, each with a `_providers.dart` sidecar
-  - `home/` — `HomeScreen` (season selector + per-season player rating list)
-  - `players/` — `PlayersScreen` (grid of all players, tap → `PlayerProfileScreen`); `players_providers.dart` owns `playersListProvider`, `filteredPlayersProvider`, `playerSearchQueryProvider`, `playerAccomplishmentsProvider`
+  - `home/` — `HomeScreen` (season selector + per-season player rating list); split into `src/` parts: `loading_indicator`, `background_loading_banner`, `season_chips`, `game_limit_picker`, `season_header_card`, `player_card`
+  - `players/` — `PlayersScreen` (grid of all players, tap → `PlayerProfileScreen`); `PlayerProfileScreen` split into `src/` parts: `accomplishments_section`, `season_chart`, `player_utilities`, `role_distribution_section`, `first_kill_section`, `best_moves_section`; `players_providers.dart` owns `playersListProvider`, `filteredPlayersProvider`, `playerSearchQueryProvider`, `playerAccomplishmentsProvider`
   - `dashboard/` — `DashboardScreen` (placeholder)
 - `lib/repositories/` — Riverpod `StateNotifierProvider` singletons:
   `GamesRepository`, `PlayersRepository`, `RatingRepository`, `SeasonRepository`
-- `lib/services/season_loader.dart` — computes ratings in background isolate, populates repositories
+- `lib/services/season_loader.dart` — computes ratings in background isolate, populates repositories; split into `src/` parts: `isolate_io`, `isolate_functions`, `data_filtering`, `game_parsing`, `player_rating`, `season_stats`, `percentiles`
+- `lib/services/rating_formulas.dart` — pure public functions for all rating calculations (testable independently)
 - `lib/services/season_data_service.dart` — orchestrates bundled vs remote season loading
-- `lib/services/sheets_service.dart` — Dio-based Google Sheets API v4 wrapper
+- `lib/services/sheets_service.dart` — Dio-based Google Sheets API v4 wrapper (with `SheetsException` validation)
 - `lib/services/season_cache_service.dart` — caches remote season data + remote config locally
 - `lib/providers/app_providers.dart` — `appDataProvider` (3-phase: fetch configs → load JSONs → compute), `loadedSeasonConfigsProvider`
 - `lib/models/` — Dart models (freezed + json_serializable):
-  `Game`, `Player`, `RatingPlayerStats`, `SeasonStats`, `SeasonConfig`, `YearStats`, `PlayerPlacements`, `SlotStats`, `Stats`, `BestMoves`
+  `Game`, `Player`, `RatingPlayerStats` (@freezed), `SeasonStats`, `SeasonConfig`, `YearStats`, `PlayerPlacements`, `SlotStats`, `Stats`, `BestMoves`
 - `lib/enums/` — `Role`, `Season` (0–28, with `toConfig()` extension), `GameValues`
 - `lib/extensions/` — `double_extensions.dart`, `list_extensions.dart`
 
@@ -80,15 +82,28 @@ Bundled seasons from `assets/raw/*.json`. Remote seasons from Google Sheets API 
 
 The game is Mafia (10-player social deduction). Official tournament rules reference: `.claude/projects/C--Users-user-AndroidStudioProjects-FamilyMafiaApp/memory/game_rules.md`
 
-This app is for **club play**, not tournaments. The core game mechanics (roles, phases, voting, night actions) are the same, but **rating calculations differ** from the official tournament system. See `lib/services/season_loader.dart` for the actual club rating formulas used in the app.
+This app is for **club play**, not tournaments. The core game mechanics (roles, phases, voting, night actions) are the same, but **rating calculations differ** from the official tournament system. See `lib/services/rating_formulas.dart` for the actual club rating formulas used in the app.
 
 ## Key Stack
 
 - Dart / Flutter 3.x, Material 3
 - Riverpod 2.6.1, freezed + json_serializable (KSP-equivalent via build_runner)
-- Dio 5.x (HTTP + Google Sheets API), go_router 14.8.1 (wired up later)
+- Dio 5.x (HTTP + Google Sheets API)
 - path_provider (local caching of remote seasons)
 - minSdk 29
+
+## Testing
+
+```bash
+flutter test                                        # All tests
+flutter test test/services/rating_formulas_test.dart # Rating formula unit tests
+```
+
+## Conventions
+
+- Magic numbers live in `lib/constants/season_constants.dart` with doc comments
+- Large files use `part`/`part of` with parts in a `src/` subdirectory
+- Rating formulas are standalone public functions in `rating_formulas.dart` (not private, for testability)
 
 ---
 

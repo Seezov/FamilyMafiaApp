@@ -4,6 +4,13 @@ import 'package:dio/dio.dart';
 import 'package:family_mafia_app/models/season_config.dart';
 import 'package:flutter/foundation.dart';
 
+class SheetsException implements Exception {
+  final String message;
+  const SheetsException(this.message);
+  @override
+  String toString() => 'SheetsException: $message';
+}
+
 class SheetsService {
   final Dio _dio;
   final String _apiKey;
@@ -40,6 +47,9 @@ class SheetsService {
     final uri = _buildUri(source.spreadsheetId, range, {});
     debugPrint('SheetsService.getDataRowCount: $uri');
     final response = await _dio.getUri<Map<String, dynamic>>(uri);
+    if (response.data == null) {
+      throw SheetsException('getDataRowCount: response data is null for sheet "${source.sheetName}"');
+    }
     final values = response.data?['values'] as List?;
     if (values == null || values.isEmpty) return 0;
     return values.length;
@@ -54,6 +64,12 @@ class SheetsService {
     });
     debugPrint('SheetsService.fetchSeasonData: $uri');
     final response = await _dio.getUri<Map<String, dynamic>>(uri);
+    if (response.data == null) {
+      throw SheetsException('fetchSeasonData: response data is null for sheet "${source.sheetName}"');
+    }
+    if (!response.data!.containsKey('values')) {
+      throw SheetsException('fetchSeasonData: response missing "values" key for sheet "${source.sheetName}" — possible API error');
+    }
     final rows = (response.data?['values'] as List?)?.cast<List>() ?? [];
 
     // Convert 2D array to list of {A, B, C, ...} maps (column letters as keys)
