@@ -10,7 +10,7 @@ class PlayersScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final dataState = ref.watch(appDataProvider);
+    final dataState = ref.watch(initialLoadProvider);
 
     return dataState.when(
       loading: () => const Scaffold(
@@ -30,12 +30,16 @@ class _PlayersContent extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final players = ref.watch(filteredPlayersProvider);
+    final phase = ref.watch(loadingPhaseProvider);
+    final isBackgroundLoading = phase != LoadingPhase.allLoaded;
 
     return Scaffold(
       body: SafeArea(
         child: Column(
           children: [
             const _SearchBar(),
+            if (isBackgroundLoading)
+              const _BackgroundLoadingIndicator(),
             Expanded(
               child: players.isEmpty
                   ? const Center(child: Text('No players found'))
@@ -56,6 +60,34 @@ class _PlayersContent extends ConsumerWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _BackgroundLoadingIndicator extends StatelessWidget {
+  const _BackgroundLoadingIndicator();
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        LinearProgressIndicator(
+          minHeight: 2,
+          backgroundColor: cs.surfaceContainerHighest,
+          color: cs.primary,
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4),
+          child: Text(
+            'Loading all seasons\u2026',
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: cs.onSurfaceVariant,
+                ),
+          ),
+        ),
+      ],
     );
   }
 }

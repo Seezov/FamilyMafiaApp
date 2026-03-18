@@ -2,8 +2,10 @@ import 'package:family_mafia_app/enums/role.dart';
 import 'package:family_mafia_app/models/best_moves.dart';
 import 'package:family_mafia_app/models/player.dart';
 import 'package:family_mafia_app/models/player_accomplishments.dart';
+import 'package:family_mafia_app/providers/app_providers.dart';
 import 'package:family_mafia_app/screens/players/players_providers.dart';
 import 'package:family_mafia_app/screens/players/season_chart_painter.dart';
+import 'package:family_mafia_app/widgets/skeleton_shimmer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -21,6 +23,7 @@ class PlayerProfileScreen extends ConsumerWidget {
     final rolePercentiles = ref.watch(roleWinRatePercentilesProvider(player));
     final firstKill = ref.watch(playerFirstKillProvider(player));
     final bestMoves = ref.watch(playerBestMovesProvider(player));
+    final phase = ref.watch(loadingPhaseProvider);
 
     SeasonGamesEntry? entry;
     for (final e in entries) {
@@ -30,12 +33,19 @@ class PlayerProfileScreen extends ConsumerWidget {
       }
     }
 
-    final gamesBySeason = List<int?>.generate(29, (i) {
+    // Determine max season id from loaded configs
+    final loadedConfigs = ref.watch(loadedSeasonConfigsProvider);
+    final maxSeasonId = loadedConfigs.isNotEmpty
+        ? loadedConfigs.map((c) => c.id).reduce((a, b) => a > b ? a : b) + 1
+        : 29;
+
+    final gamesBySeason = List<int?>.generate(maxSeasonId, (i) {
       final match = entry?.seasonData.where((e) => e.seasonId == i);
       return (match == null || match.isEmpty) ? null : match.first.games;
     });
 
     final total = entry?.seasonData.fold(0, (s, e) => s + e.games) ?? 0;
+    final isFullyLoaded = phase == LoadingPhase.allLoaded;
 
     return Scaffold(
       appBar: AppBar(title: Text(player.displayName)),
@@ -74,8 +84,8 @@ class PlayerProfileScreen extends ConsumerWidget {
                           ?.copyWith(color: Colors.grey),
                     ),
                     const SizedBox(height: 24),
-                    if (acc.sumOfNominations() > 0) ...[
-                      _AccomplishmentsSection(acc: acc),
+                    if (acc.sumOfNominations() > 0 || !isFullyLoaded) ...[
+                      _AccomplishmentsSection(acc: acc, isFullyLoaded: isFullyLoaded),
                       const SizedBox(height: 24),
                     ],
                     Text(
@@ -130,8 +140,9 @@ class PlayerProfileScreen extends ConsumerWidget {
 
 class _AccomplishmentsSection extends StatelessWidget {
   final PlayerAccomplishments acc;
+  final bool isFullyLoaded;
 
-  const _AccomplishmentsSection({required this.acc});
+  const _AccomplishmentsSection({required this.acc, required this.isFullyLoaded});
 
   @override
   Widget build(BuildContext context) {
@@ -178,18 +189,38 @@ class _AccomplishmentsSection extends StatelessWidget {
                 ),
               ),
             ),
+            if (!isFullyLoaded) ...[
+              const SizedBox(width: 6),
+              SizedBox(
+                width: 12,
+                height: 12,
+                child: CircularProgressIndicator(
+                  strokeWidth: 1.5,
+                  color: cs.onSurfaceVariant,
+                ),
+              ),
+            ],
           ],
         ),
         const SizedBox(height: 10),
-        GridView.count(
-          crossAxisCount: 4,
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          crossAxisSpacing: 8,
-          mainAxisSpacing: 8,
-          childAspectRatio: 0.9,
-          children: badges,
-        ),
+        if (badges.isNotEmpty)
+          GridView.count(
+            crossAxisCount: 4,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            crossAxisSpacing: 8,
+            mainAxisSpacing: 8,
+            childAspectRatio: 0.9,
+            children: badges,
+          )
+        else if (!isFullyLoaded)
+          Padding(
+            padding: const EdgeInsets.only(top: 4),
+            child: Text(
+              'Loading all seasons\u2026',
+              style: tt.bodySmall?.copyWith(color: cs.onSurfaceVariant),
+            ),
+          ),
       ],
     );
   }
@@ -456,7 +487,7 @@ class _RoleDistributionSection extends StatelessWidget {
   }
 }
 
-class _RoleBar extends StatelessWidget {
+class _RoleBar extends ConsumerWidget {
   final String label;
   final int count;
   final int wins;
@@ -474,9 +505,10 @@ class _RoleBar extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final tt = Theme.of(context).textTheme;
     final cs = Theme.of(context).colorScheme;
+    final phase = ref.watch(loadingPhaseProvider);
     final pct = total > 0 ? (count / total * 100).round() : 0;
     final winPct = count > 0 ? (wins / count * 100).round() : 0;
 
@@ -531,7 +563,9 @@ class _RoleBar extends StatelessWidget {
                   style: tt.bodySmall?.copyWith(
                       color: const Color(0xFF66BB6A),
                       fontWeight: FontWeight.w600),
-                ),
+                )
+              else if (phase != LoadingPhase.allLoaded)
+                SkeletonShimmer.text(width: 48, height: 12),
             ],
           ),
         ),

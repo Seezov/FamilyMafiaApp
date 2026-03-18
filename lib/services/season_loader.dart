@@ -53,6 +53,119 @@ class _LoadOutput {
   });
 }
 
+/// Like _LoadOutput but without percentiles (used for incremental loading).
+class _PartialLoadOutput {
+  final List<Player> players;
+  final List<Game> allGames;
+  final Map<int, List<RatingPlayerStats>> ratingsBySeason;
+  final Map<int, SeasonStats> statsBySeason;
+
+  const _PartialLoadOutput({
+    required this.players,
+    required this.allGames,
+    required this.ratingsBySeason,
+    required this.statsBySeason,
+  });
+}
+
+class _PercentilesInput {
+  final String playersJson;
+  final List<String> seasonJsons;
+  final List<SeasonMeta> seasonMetas;
+
+  const _PercentilesInput(this.playersJson, this.seasonJsons, this.seasonMetas);
+}
+
+// Top-level function: partial load (no percentiles)
+_PartialLoadOutput _computePartialData(_LoadInput input) {
+  final rawPlayers =
+      (jsonDecode(input.playersJson) as List).cast<Map<String, dynamic>>();
+  final players = rawPlayers
+      .asMap()
+      .entries
+      .map((e) => Player.fromJson(e.value).copyWith(id: e.key))
+      .toList();
+
+  final allGames = <Game>[];
+  final ratingsBySeason = <int, List<RatingPlayerStats>>{};
+  final statsBySeason = <int, SeasonStats>{};
+
+  for (int si = 0; si < input.seasonMetas.length; si++) {
+    final meta = input.seasonMetas[si];
+    final json = input.seasonJsons[si];
+
+    final raw = (jsonDecode(json) as List).cast<Map<String, dynamic>>();
+    final rawData = raw
+        .map((e) => GamesDataSeason.fromJson(e))
+        .where((d) => SeasonLoaderService._filterRawData(d, meta.id))
+        .toList();
+
+    final gamesData =
+        SeasonLoaderService._getGamesDataSeason(meta.id, rawData)
+            .where((g) => g.isRatingGame())
+            .toList();
+
+    for (var i = 0; i < gamesData.length; i++) {
+      if (!gamesData[i].isNormalGame()) {
+        throw Exception('Not a normal game #$i: ${gamesData[i].players}');
+      }
+    }
+
+    allGames.addAll(gamesData);
+
+    final playerNames = gamesData.getPlayersList(meta.id);
+    final ratings = playerNames
+        .map((name) => SeasonLoaderService._computePlayerRating(
+            name, gamesData, meta, players))
+        .toList();
+
+    ratingsBySeason[meta.id] = ratings;
+
+    final sorted = ratings.sortedByDescending((r) => r.ratingCoefficient);
+    statsBySeason[meta.id] =
+        SeasonLoaderService._generateSeasonStats(sorted, meta.gameLimit);
+  }
+
+  return _PartialLoadOutput(
+    players: players,
+    allGames: allGames,
+    ratingsBySeason: ratingsBySeason,
+    statsBySeason: statsBySeason,
+  );
+}
+
+// Top-level function: re-parse all seasons and compute only percentiles
+Map<int, Map<Role, double?>> _computePercentilesOnly(_PercentilesInput input) {
+  final rawPlayers =
+      (jsonDecode(input.playersJson) as List).cast<Map<String, dynamic>>();
+  final players = rawPlayers
+      .asMap()
+      .entries
+      .map((e) => Player.fromJson(e.value).copyWith(id: e.key))
+      .toList();
+
+  final allGames = <Game>[];
+  for (int si = 0; si < input.seasonMetas.length; si++) {
+    final meta = input.seasonMetas[si];
+    final json = input.seasonJsons[si];
+
+    final raw = (jsonDecode(json) as List).cast<Map<String, dynamic>>();
+    final rawData = raw
+        .map((e) => GamesDataSeason.fromJson(e))
+        .where((d) => SeasonLoaderService._filterRawData(d, meta.id))
+        .toList();
+
+    final gamesData =
+        SeasonLoaderService._getGamesDataSeason(meta.id, rawData)
+            .where((g) => g.isRatingGame())
+            .toList();
+
+    allGames.addAll(gamesData);
+  }
+
+  return SeasonLoaderService._computeRolePercentiles(players, allGames);
+}
+
 // Top-level function required by compute()
 _LoadOutput _computeAllData(_LoadInput input) {
   final rawPlayers =
@@ -156,6 +269,43 @@ class SeasonLoaderService {
       _seasonRepo.addSeason(entry.key, entry.value);
     }
     _rolePercRepo.setPercentiles(out.percentiles);
+  }
+
+  /// Incremental load: computes ratings for the given seasons without percentiles.
+  /// Can be called multiple times to add more seasons to the repositories.
+  Future<List<Game>> loadSeasons({
+    required List<SeasonMeta> metas,
+    required String playersJson,
+    required List<String> seasonJsons,
+  }) async {
+    final out = await compute(
+      _computePartialData,
+      _LoadInput(playersJson, seasonJsons, metas),
+    );
+
+    _playersRepo.addPlayers(out.players);
+    _gamesRepo.addGames(out.allGames);
+    for (final entry in out.ratingsBySeason.entries) {
+      _ratingRepo.addRatings(entry.key, entry.value);
+    }
+    for (final entry in out.statsBySeason.entries) {
+      _seasonRepo.addSeason(entry.key, entry.value);
+    }
+    return out.allGames;
+  }
+
+  /// Recomputes role percentiles from raw season data.
+  /// Call after all seasons are loaded.
+  Future<void> recomputePercentiles({
+    required String playersJson,
+    required List<String> allSeasonJsons,
+    required List<SeasonMeta> allMetas,
+  }) async {
+    final percentiles = await compute(
+      _computePercentilesOnly,
+      _PercentilesInput(playersJson, allSeasonJsons, allMetas),
+    );
+    _rolePercRepo.setPercentiles(percentiles);
   }
 
   // ─── Raw data filtering ────────────────────────────────────────────────────

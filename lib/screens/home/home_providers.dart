@@ -1,9 +1,7 @@
-import 'package:family_mafia_app/models/season_config.dart';
 import 'package:family_mafia_app/models/season_stats.dart';
+import 'package:family_mafia_app/providers/app_providers.dart';
 import 'package:family_mafia_app/repositories/season_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-final selectedSeasonProvider = StateProvider<SeasonConfig?>((ref) => null);
 
 /// When non-null, overrides the season's gameLimit for filtering.
 final gameLimitOverrideProvider = StateProvider<int?>((ref) => null);

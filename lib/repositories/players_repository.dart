@@ -5,8 +5,11 @@ class PlayersRepository extends StateNotifier<List<Player>> {
   PlayersRepository() : super(const []);
 
   void addPlayers(List<Player> players) {
+    if (state.isNotEmpty) return;
     state = [...state, ...players];
   }
+
+  void clear() => state = const [];
 
   // Finds a player by displayName or any nickname. Creates a placeholder if not found.
   Player findPlayer(String name) {

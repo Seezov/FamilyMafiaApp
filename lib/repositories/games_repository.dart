@@ -7,6 +7,8 @@ class GamesRepository extends StateNotifier<List<Game>> {
   void addGames(List<Game> games) {
     state = [...state, ...games];
   }
+
+  void clear() => state = const [];
 }
 
 final gamesRepositoryProvider =

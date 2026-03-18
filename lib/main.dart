@@ -45,7 +45,9 @@ class _RootNavState extends ConsumerState<_RootNav> {
 
   @override
   Widget build(BuildContext context) {
-    final isLoading = ref.watch(appDataProvider).isLoading;
+    final isLoading = ref.watch(initialLoadProvider).isLoading;
+    // Kick off background loading of remaining seasons
+    ref.watch(backgroundLoadProvider);
 
     return Scaffold(
       extendBody: !isLoading,

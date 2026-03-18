@@ -39,6 +39,14 @@ class SeasonCacheService {
     );
   }
 
+  Future<void> invalidateSeasonCache(int seasonId) async {
+    final dir = await _getCacheDir();
+    final data = File('$dir/season$seasonId.json');
+    final meta = File('$dir/season$seasonId.meta.json');
+    if (await data.exists()) await data.delete();
+    if (await meta.exists()) await meta.delete();
+  }
+
   // ── Remote config cache ─────────────────────────────────────────────────
 
   Future<String?> getCachedRemoteConfig() async {

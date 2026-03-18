@@ -16,7 +16,7 @@ class HomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final dataState = ref.watch(appDataProvider);
+    final dataState = ref.watch(initialLoadProvider);
 
     return dataState.when(
       loading: () => const Scaffold(
@@ -60,7 +60,7 @@ class _LoadingDotsState extends State<_LoadingDots> {
     final tt = Theme.of(context).textTheme;
     final cs = Theme.of(context).colorScheme;
     return Text(
-      'Loading games${'.' * _dots}',
+      'Loading latest season${'.' * _dots}',
       style: tt.titleMedium?.copyWith(color: cs.onSurfaceVariant),
     );
   }
@@ -75,9 +75,17 @@ class _HomeContent extends ConsumerWidget {
     final seasonStats = ref.watch(currentSeasonStatsProvider);
     final hasQualifying = ref.watch(hasQualifyingPlayersProvider);
     final effectiveLimit = ref.watch(effectiveGameLimitProvider);
+    final phase = ref.watch(loadingPhaseProvider);
+    final isBackgroundLoading = phase != LoadingPhase.allLoaded;
 
     return Scaffold(
-      body: CustomScrollView(
+      body: RefreshIndicator(
+        onRefresh: () async {
+          final season = ref.read(selectedSeasonProvider);
+          if (season == null) return;
+          await refreshSeason(ref, season);
+        },
+        child: CustomScrollView(
         slivers: [
           SliverAppBar(
             pinned: true,
@@ -98,6 +106,10 @@ class _HomeContent extends ConsumerWidget {
               child: _SeasonChips(selectedSeason: selectedSeason),
             ),
           ),
+          if (isBackgroundLoading)
+            const SliverToBoxAdapter(
+              child: _BackgroundLoadingBanner(),
+            ),
           if (seasonStats != null && selectedSeason != null) ...[
             SliverToBoxAdapter(
               child: _SeasonHeaderCard(
@@ -134,6 +146,49 @@ class _HomeContent extends ConsumerWidget {
               child: Center(child: Text('Select a season')),
             ),
         ],
+      ),
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Background loading banner
+// ---------------------------------------------------------------------------
+
+class _BackgroundLoadingBanner extends StatelessWidget {
+  const _BackgroundLoadingBanner();
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: cs.secondaryContainer.withValues(alpha: 0.5),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Row(
+          children: [
+            SizedBox(
+              width: 14,
+              height: 14,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: cs.onSecondaryContainer,
+              ),
+            ),
+            const SizedBox(width: 10),
+            Text(
+              'Loading previous seasons\u2026',
+              style: tt.bodySmall?.copyWith(color: cs.onSecondaryContainer),
+            ),
+          ],
+        ),
       ),
     );
   }

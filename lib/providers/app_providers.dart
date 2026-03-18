@@ -119,16 +119,56 @@ final seasonConfigsProvider = Provider<List<SeasonConfig>>((ref) {
   return ref.watch(parsedConfigProvider).valueOrNull?.seasons ?? [];
 });
 
+// ── Loading phase ─────────────────────────────────────────────────────────
+
+enum LoadingPhase { initial, latestLoaded, allLoaded }
+
+final loadingPhaseProvider = StateProvider<LoadingPhase>(
+  (ref) => LoadingPhase.initial,
+);
+
+// ── Shared state between initial and background load ─────────────────────
+
+class _InitialLoadResult {
+  final String playersJson;
+  final SeasonDataService dataService;
+  final List<SeasonConfig> allConfigs;
+  final List<SeasonConfig> loadedConfigs;
+  final List<String> loadedSeasonJsons;
+  final List<SeasonMeta> loadedMetas;
+
+  const _InitialLoadResult({
+    required this.playersJson,
+    required this.dataService,
+    required this.allConfigs,
+    required this.loadedConfigs,
+    required this.loadedSeasonJsons,
+    required this.loadedMetas,
+  });
+}
+
+final _initialLoadResultProvider = StateProvider<_InitialLoadResult?>(
+  (ref) => null,
+);
+
 // ── App data ──────────────────────────────────────────────────────────────
 
-/// Loads all season data. Watch this provider to know when the app data is ready.
-final appDataProvider = FutureProvider<void>((ref) async {
+SeasonLoaderService _createLoader(Ref ref) => SeasonLoaderService(
+      ref.read(playersRepositoryProvider.notifier),
+      ref.read(gamesRepositoryProvider.notifier),
+      ref.read(ratingRepositoryProvider.notifier),
+      ref.read(seasonRepositoryProvider.notifier),
+      ref.read(rolePercentilesRepositoryProvider.notifier),
+    );
+
+/// Loads the latest season only, making the HomeScreen usable quickly.
+final initialLoadProvider = FutureProvider<void>((ref) async {
   // Phase 1: get configs + API key
   final parsed = await ref.watch(parsedConfigProvider.future);
   final configs = parsed.seasons;
   final apiKey = ref.read(sheetsApiKeyProvider);
 
-  // Phase 2: create sheets service (needs API key from config)
+  // Phase 2: create sheets service
   final dio = ref.read(dioProvider);
   final cacheService = ref.read(seasonCacheServiceProvider);
   final sheetsService = apiKey != null && apiKey.isNotEmpty
@@ -139,40 +179,132 @@ final appDataProvider = FutureProvider<void>((ref) async {
     cacheService: cacheService,
   );
 
-  // Phase 3: load all season JSONs (bundled or remote)
+  // Phase 3: load players + latest season only
   final playersJson = await rootBundle.loadString('assets/raw/players.json');
+  final latestConfig = configs.last;
+  final latestJson = await dataService.loadSeasonJson(latestConfig);
 
-  final seasonJsons = <String>[];
-  final loadedConfigs = <SeasonConfig>[];
-  for (final config in configs) {
-    final json = await dataService.loadSeasonJson(config);
-    if (json != null) {
-      seasonJsons.add(json);
-      loadedConfigs.add(config);
+  if (latestJson == null) {
+    throw Exception('Failed to load latest season: ${latestConfig.title}');
+  }
+
+  final loader = _createLoader(ref);
+  await loader.loadSeasons(
+    metas: [SeasonMeta(latestConfig.id, latestConfig.gameLimit, latestConfig.gamesMultiplier)],
+    playersJson: playersJson,
+    seasonJsons: [latestJson],
+  );
+
+  ref.read(loadedSeasonConfigsProvider.notifier).state = [latestConfig];
+  ref.read(selectedSeasonProvider.notifier).state = latestConfig;
+  ref.read(loadingPhaseProvider.notifier).state = LoadingPhase.latestLoaded;
+
+  // Store shared resources for background load
+  ref.read(_initialLoadResultProvider.notifier).state = _InitialLoadResult(
+    playersJson: playersJson,
+    dataService: dataService,
+    allConfigs: configs,
+    loadedConfigs: [latestConfig],
+    loadedSeasonJsons: [latestJson],
+    loadedMetas: [SeasonMeta(latestConfig.id, latestConfig.gameLimit, latestConfig.gamesMultiplier)],
+  );
+});
+
+/// Loads remaining seasons in the background after the initial load completes.
+final backgroundLoadProvider = FutureProvider<void>((ref) async {
+  // Wait for initial load
+  await ref.watch(initialLoadProvider.future);
+
+  final shared = ref.read(_initialLoadResultProvider);
+  if (shared == null) return;
+
+  // Load remaining season JSONs (all except the latest)
+  final remainingConfigs = shared.allConfigs
+      .where((c) => c.id != shared.loadedConfigs.first.id)
+      .toList();
+
+  final remainingJsons = <String>[];
+  final loadedRemainingConfigs = <SeasonConfig>[];
+
+  // Load bundled seasons in parallel, remote sequentially
+  final bundled = remainingConfigs.where((c) => c.source is BundledSource).toList();
+  final remote = remainingConfigs.where((c) => c.source is RemoteSource).toList();
+
+  final bundledResults = await Future.wait(
+    bundled.map((c) => shared.dataService.loadSeasonJson(c)),
+  );
+  for (var i = 0; i < bundled.length; i++) {
+    if (bundledResults[i] != null) {
+      remainingJsons.add(bundledResults[i]!);
+      loadedRemainingConfigs.add(bundled[i]);
     }
   }
 
-  // Phase 4: compute ratings in background isolate + populate repos
-  final loader = SeasonLoaderService(
-    ref.read(playersRepositoryProvider.notifier),
-    ref.read(gamesRepositoryProvider.notifier),
-    ref.read(ratingRepositoryProvider.notifier),
-    ref.read(seasonRepositoryProvider.notifier),
-    ref.read(rolePercentilesRepositoryProvider.notifier),
-  );
+  for (final config in remote) {
+    final json = await shared.dataService.loadSeasonJson(config);
+    if (json != null) {
+      remainingJsons.add(json);
+      loadedRemainingConfigs.add(config);
+    }
+  }
 
-  await loader.loadAll(
-    metas: loadedConfigs
-        .map((c) => SeasonMeta(c.id, c.gameLimit, c.gamesMultiplier))
-        .toList(),
-    playersJson: playersJson,
-    seasonJsons: seasonJsons,
-  );
+  if (remainingJsons.isNotEmpty) {
+    final loader = _createLoader(ref);
+    await loader.loadSeasons(
+      metas: loadedRemainingConfigs
+          .map((c) => SeasonMeta(c.id, c.gameLimit, c.gamesMultiplier))
+          .toList(),
+      playersJson: shared.playersJson,
+      seasonJsons: remainingJsons,
+    );
 
-  ref.read(loadedSeasonConfigsProvider.notifier).state = loadedConfigs;
+    // Recompute percentiles with ALL seasons
+    final allJsons = [...shared.loadedSeasonJsons, ...remainingJsons];
+    final allMetas = [
+      ...shared.loadedMetas,
+      ...loadedRemainingConfigs
+          .map((c) => SeasonMeta(c.id, c.gameLimit, c.gamesMultiplier)),
+    ];
+    await loader.recomputePercentiles(
+      playersJson: shared.playersJson,
+      allSeasonJsons: allJsons,
+      allMetas: allMetas,
+    );
+
+    // Update loaded configs (sorted by id)
+    final allLoaded = [...shared.loadedConfigs, ...loadedRemainingConfigs]
+      ..sort((a, b) => a.id.compareTo(b.id));
+    ref.read(loadedSeasonConfigsProvider.notifier).state = allLoaded;
+  }
+
+  ref.read(loadingPhaseProvider.notifier).state = LoadingPhase.allLoaded;
 });
 
-/// Holds the list of successfully loaded season configs after appDataProvider resolves.
+/// Backward-compat wrapper: resolves when both phases are complete.
+final appDataProvider = FutureProvider<void>((ref) async {
+  await ref.watch(backgroundLoadProvider.future);
+});
+
+/// Holds the list of successfully loaded season configs.
 final loadedSeasonConfigsProvider = StateProvider<List<SeasonConfig>>(
   (ref) => [],
 );
+
+/// Provider for the selected season (set by initial load, user can change).
+final selectedSeasonProvider = StateProvider<SeasonConfig?>((ref) => null);
+
+/// Invalidates cache for a remote season and reloads all data.
+Future<void> refreshSeason(WidgetRef ref, SeasonConfig config) async {
+  if (config.source is RemoteSource) {
+    final cacheService = ref.read(seasonCacheServiceProvider);
+    await cacheService.invalidateSeasonCache(config.id);
+  }
+  // Clear repos before reload
+  ref.read(gamesRepositoryProvider.notifier).clear();
+  ref.read(playersRepositoryProvider.notifier).clear();
+  ref.read(loadingPhaseProvider.notifier).state = LoadingPhase.initial;
+  ref.read(_initialLoadResultProvider.notifier).state = null;
+  ref.invalidate(initialLoadProvider);
+  ref.invalidate(backgroundLoadProvider);
+  await ref.read(backgroundLoadProvider.future);
+}
