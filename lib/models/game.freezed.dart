@@ -32,6 +32,9 @@ mixin _$Game {
       throw _privateConstructorUsedError;
   List<double>? get protocolPenaltyPoints => throw _privateConstructorUsedError;
   List<String>? get wonByPlayer => throw _privateConstructorUsedError;
+  List<ProtocolEntry>? get protocol =>
+      throw _privateConstructorUsedError; // ordered by kill order (index 0 = first killed)
+  List<int>? get supportFive => throw _privateConstructorUsedError;
 
   /// Create a copy of Game
   /// with the given fields replaced by the non-null parameter values.
@@ -58,6 +61,8 @@ abstract class $GameCopyWith<$Res> {
     List<double>? protocolAdditionalPoints,
     List<double>? protocolPenaltyPoints,
     List<String>? wonByPlayer,
+    List<ProtocolEntry>? protocol,
+    List<int>? supportFive,
   });
 }
 
@@ -89,6 +94,8 @@ class _$GameCopyWithImpl<$Res, $Val extends Game>
     Object? protocolAdditionalPoints = freezed,
     Object? protocolPenaltyPoints = freezed,
     Object? wonByPlayer = freezed,
+    Object? protocol = freezed,
+    Object? supportFive = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -144,6 +151,14 @@ class _$GameCopyWithImpl<$Res, $Val extends Game>
                 ? _value.wonByPlayer
                 : wonByPlayer // ignore: cast_nullable_to_non_nullable
                       as List<String>?,
+            protocol: freezed == protocol
+                ? _value.protocol
+                : protocol // ignore: cast_nullable_to_non_nullable
+                      as List<ProtocolEntry>?,
+            supportFive: freezed == supportFive
+                ? _value.supportFive
+                : supportFive // ignore: cast_nullable_to_non_nullable
+                      as List<int>?,
           )
           as $Val,
     );
@@ -172,6 +187,8 @@ abstract class _$$GameImplCopyWith<$Res> implements $GameCopyWith<$Res> {
     List<double>? protocolAdditionalPoints,
     List<double>? protocolPenaltyPoints,
     List<String>? wonByPlayer,
+    List<ProtocolEntry>? protocol,
+    List<int>? supportFive,
   });
 }
 
@@ -200,6 +217,8 @@ class __$$GameImplCopyWithImpl<$Res>
     Object? protocolAdditionalPoints = freezed,
     Object? protocolPenaltyPoints = freezed,
     Object? wonByPlayer = freezed,
+    Object? protocol = freezed,
+    Object? supportFive = freezed,
   }) {
     return _then(
       _$GameImpl(
@@ -255,6 +274,14 @@ class __$$GameImplCopyWithImpl<$Res>
             ? _value._wonByPlayer
             : wonByPlayer // ignore: cast_nullable_to_non_nullable
                   as List<String>?,
+        protocol: freezed == protocol
+            ? _value._protocol
+            : protocol // ignore: cast_nullable_to_non_nullable
+                  as List<ProtocolEntry>?,
+        supportFive: freezed == supportFive
+            ? _value._supportFive
+            : supportFive // ignore: cast_nullable_to_non_nullable
+                  as List<int>?,
       ),
     );
   }
@@ -277,6 +304,8 @@ class _$GameImpl extends _Game {
     final List<double>? protocolAdditionalPoints,
     final List<double>? protocolPenaltyPoints,
     final List<String>? wonByPlayer,
+    final List<ProtocolEntry>? protocol,
+    final List<int>? supportFive,
   }) : _players = players,
        _roles = roles,
        _bestMove = bestMove,
@@ -286,6 +315,8 @@ class _$GameImpl extends _Game {
        _protocolAdditionalPoints = protocolAdditionalPoints,
        _protocolPenaltyPoints = protocolPenaltyPoints,
        _wonByPlayer = wonByPlayer,
+       _protocol = protocol,
+       _supportFive = supportFive,
        super._();
 
   @override
@@ -385,9 +416,31 @@ class _$GameImpl extends _Game {
     return EqualUnmodifiableListView(value);
   }
 
+  final List<ProtocolEntry>? _protocol;
+  @override
+  List<ProtocolEntry>? get protocol {
+    final value = _protocol;
+    if (value == null) return null;
+    if (_protocol is EqualUnmodifiableListView) return _protocol;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  // ordered by kill order (index 0 = first killed)
+  final List<int>? _supportFive;
+  // ordered by kill order (index 0 = first killed)
+  @override
+  List<int>? get supportFive {
+    final value = _supportFive;
+    if (value == null) return null;
+    if (_supportFive is EqualUnmodifiableListView) return _supportFive;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
   @override
   String toString() {
-    return 'Game(seasonId: $seasonId, players: $players, roles: $roles, cityWon: $cityWon, firstKilled: $firstKilled, bestMovePoints: $bestMovePoints, bestMove: $bestMove, additionalPoints: $additionalPoints, penaltyPoints: $penaltyPoints, autoAdditionalPoints: $autoAdditionalPoints, protocolAdditionalPoints: $protocolAdditionalPoints, protocolPenaltyPoints: $protocolPenaltyPoints, wonByPlayer: $wonByPlayer)';
+    return 'Game(seasonId: $seasonId, players: $players, roles: $roles, cityWon: $cityWon, firstKilled: $firstKilled, bestMovePoints: $bestMovePoints, bestMove: $bestMove, additionalPoints: $additionalPoints, penaltyPoints: $penaltyPoints, autoAdditionalPoints: $autoAdditionalPoints, protocolAdditionalPoints: $protocolAdditionalPoints, protocolPenaltyPoints: $protocolPenaltyPoints, wonByPlayer: $wonByPlayer, protocol: $protocol, supportFive: $supportFive)';
   }
 
   @override
@@ -428,6 +481,11 @@ class _$GameImpl extends _Game {
             const DeepCollectionEquality().equals(
               other._wonByPlayer,
               _wonByPlayer,
+            ) &&
+            const DeepCollectionEquality().equals(other._protocol, _protocol) &&
+            const DeepCollectionEquality().equals(
+              other._supportFive,
+              _supportFive,
             ));
   }
 
@@ -447,6 +505,8 @@ class _$GameImpl extends _Game {
     const DeepCollectionEquality().hash(_protocolAdditionalPoints),
     const DeepCollectionEquality().hash(_protocolPenaltyPoints),
     const DeepCollectionEquality().hash(_wonByPlayer),
+    const DeepCollectionEquality().hash(_protocol),
+    const DeepCollectionEquality().hash(_supportFive),
   );
 
   /// Create a copy of Game
@@ -473,6 +533,8 @@ abstract class _Game extends Game {
     final List<double>? protocolAdditionalPoints,
     final List<double>? protocolPenaltyPoints,
     final List<String>? wonByPlayer,
+    final List<ProtocolEntry>? protocol,
+    final List<int>? supportFive,
   }) = _$GameImpl;
   const _Game._() : super._();
 
@@ -502,6 +564,10 @@ abstract class _Game extends Game {
   List<double>? get protocolPenaltyPoints;
   @override
   List<String>? get wonByPlayer;
+  @override
+  List<ProtocolEntry>? get protocol; // ordered by kill order (index 0 = first killed)
+  @override
+  List<int>? get supportFive;
 
   /// Create a copy of Game
   /// with the given fields replaced by the non-null parameter values.

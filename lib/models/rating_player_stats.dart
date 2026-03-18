@@ -22,6 +22,9 @@ class RatingPlayerStats {
   final List<(String, double)> bestMoveAndAdditionalPointsByRole;
   final List<(String, double)> penaltyPointsByRole;
   final int seasonGameLimit;
+  final double protocolPoints;
+  final int protocolCorrectGuesses;
+  final int protocolTotalGuesses;
 
   const RatingPlayerStats({
     required this.seasonId,
@@ -44,6 +47,9 @@ class RatingPlayerStats {
     this.bestMoveAndAdditionalPointsByRole = const [],
     this.penaltyPointsByRole = const [],
     this.seasonGameLimit = 0,
+    this.protocolPoints = 0.0,
+    this.protocolCorrectGuesses = 0,
+    this.protocolTotalGuesses = 0,
   });
 
   RatingPlayerStats copyWith({
@@ -67,6 +73,9 @@ class RatingPlayerStats {
     List<(String, double)>? bestMoveAndAdditionalPointsByRole,
     List<(String, double)>? penaltyPointsByRole,
     int? seasonGameLimit,
+    double? protocolPoints,
+    int? protocolCorrectGuesses,
+    int? protocolTotalGuesses,
   }) {
     return RatingPlayerStats(
       seasonId: seasonId ?? this.seasonId,
@@ -90,6 +99,9 @@ class RatingPlayerStats {
           this.bestMoveAndAdditionalPointsByRole,
       penaltyPointsByRole: penaltyPointsByRole ?? this.penaltyPointsByRole,
       seasonGameLimit: seasonGameLimit ?? this.seasonGameLimit,
+      protocolPoints: protocolPoints ?? this.protocolPoints,
+      protocolCorrectGuesses: protocolCorrectGuesses ?? this.protocolCorrectGuesses,
+      protocolTotalGuesses: protocolTotalGuesses ?? this.protocolTotalGuesses,
     );
   }
 }

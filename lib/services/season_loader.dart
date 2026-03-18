@@ -7,6 +7,7 @@ import 'package:family_mafia_app/extensions/double_extensions.dart';
 import 'package:family_mafia_app/extensions/list_extensions.dart';
 import 'package:family_mafia_app/models/game.dart';
 import 'package:family_mafia_app/models/games_data_season.dart';
+import 'package:family_mafia_app/models/protocol_entry.dart';
 import 'package:family_mafia_app/models/player.dart';
 import 'package:family_mafia_app/models/rating_player_stats.dart';
 import 'package:family_mafia_app/models/season_stats.dart';
@@ -280,6 +281,30 @@ class SeasonLoaderService {
     }
 
     // Season 29+: same 14-row chunk layout + extra columns K–Q
+    // Parse protocol entries from rows p[2]..p[6] (up to 5 night kills)
+    final protocolEntries = <ProtocolEntry>[];
+    for (int pi = 0; pi < 5; pi++) {
+      final row = p[2 + pi];
+      final killedSlot = int.tryParse(row.n);
+      if (killedSlot == null || killedSlot == 0) continue;
+      final guesses = [row.o, row.p, row.q]
+          .map((s) => int.tryParse(s))
+          .whereType<int>()
+          .where((v) => v != 0)
+          .toList();
+      protocolEntries.add(ProtocolEntry(
+        killedSlot: killedSlot,
+        colorGuesses: guesses,
+      ));
+    }
+
+    // Parse support five from p[12] columns d–h
+    final supportFive = [p[12].d, p[12].e, p[12].f, p[12].g, p[12].h]
+        .map((s) => int.tryParse(s))
+        .whereType<int>()
+        .where((v) => v != 0)
+        .toList();
+
     return Game(
       seasonId: seasonId,
       players: _fillBlanks(playerRows.map((r) => r.b).toList()),
@@ -289,11 +314,7 @@ class SeasonLoaderService {
       bestMovePoints: firstKilled == 0
           ? 0.0
           : _tryParseDouble(p.map((r) => r.i).toList(), firstKilled + 1),
-      bestMove: [
-        int.tryParse(p[12].d) ?? 0,
-        int.tryParse(p[12].e) ?? 0,
-        int.tryParse(p[12].f) ?? 0,
-      ],
+      bestMove: const [],
       additionalPoints:
           playerRows.map((r) => double.tryParse(r.j) ?? 0.0).toList(),
       penaltyPoints:
@@ -302,6 +323,8 @@ class SeasonLoaderService {
           playerRows.map((r) => double.tryParse(r.k) ?? 0.0).toList(),
       protocolPenaltyPoints:
           playerRows.map((r) => double.tryParse(r.l) ?? 0.0).toList(),
+      protocol: protocolEntries.isEmpty ? null : protocolEntries,
+      supportFive: supportFive.isEmpty ? null : supportFive,
     );
   }
 
@@ -363,6 +386,9 @@ class SeasonLoaderService {
     int firstKilled = 0;
     int firstKilledCityLost = 0;
     double autoAdditionalPointsByRoleSum = 0.0;
+    double protocolPointsSum = 0.0;
+    int protocolCorrectGuesses = 0;
+    int protocolTotalGuesses = 0;
 
     for (final g in gamesForPlayer) {
       final rawRole = g.getPlayerRole(name);
@@ -387,6 +413,24 @@ class SeasonLoaderService {
         if (!won) firstKilledCityLost++;
       }
       autoAdditionalPointsByRoleSum += g.getPlayerAutoAdditionalPoints(name);
+
+      // Protocol stats (season 29+)
+      protocolPointsSum += g.getPlayerProtocolAdditionalPoints(name)
+          + g.getPlayerProtocolPenaltyPoints(name);
+
+      final slot = g.players.indexOf(name) + 1;
+      final entry = g.getProtocolEntryForSlot(slot);
+      if (entry != null) {
+        for (final guess in entry.colorGuesses) {
+          protocolTotalGuesses++;
+          final guessedSlot = guess.abs();
+          if (guessedSlot < 1 || guessedSlot > g.roles.length) continue;
+          final actualRole = Role.findByValue(g.roles[guessedSlot - 1]);
+          if (actualRole == null) continue;
+          final guessedBlack = guess < 0;
+          if (guessedBlack == actualRole.isBlack) protocolCorrectGuesses++;
+        }
+      }
     }
 
     // Derive per-role lists from accumulator (O(4 roles)).
@@ -493,6 +537,9 @@ class SeasonLoaderService {
       bestMoveAndAdditionalPointsByRole: bestMoveAndAdditionalPointsByRole,
       penaltyPointsByRole: penaltyPointsByRole,
       seasonGameLimit: season.gameLimit,
+      protocolPoints: protocolPointsSum,
+      protocolCorrectGuesses: protocolCorrectGuesses,
+      protocolTotalGuesses: protocolTotalGuesses,
     );
   }
 

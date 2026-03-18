@@ -1,5 +1,6 @@
 import 'package:family_mafia_app/enums/game_values.dart';
 import 'package:family_mafia_app/enums/role.dart';
+import 'package:family_mafia_app/models/protocol_entry.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'game.freezed.dart';
@@ -23,6 +24,8 @@ class Game with _$Game {
     List<double>? protocolAdditionalPoints,
     List<double>? protocolPenaltyPoints,
     List<String>? wonByPlayer,
+    List<ProtocolEntry>? protocol, // ordered by kill order (index 0 = first killed)
+    List<int>? supportFive, // up to 5 signed ints: abs=slot, positive=red, negative=black
   }) = _Game;
 
   int getPlayerSlot(String player) => players.indexOf(player);
@@ -40,6 +43,15 @@ class Game with _$Game {
     if (role == null) return false;
     return role.isBlack ? !won : won;
   }
+
+  ProtocolEntry? getProtocolEntryForSlot(int slot) =>
+      protocol?.cast<ProtocolEntry?>().firstWhere(
+            (e) => e!.killedSlot == slot,
+            orElse: () => null,
+          );
+
+  List<int> getPlayerProtocolColors(int slot) =>
+      getProtocolEntryForSlot(slot)?.colorGuesses ?? [];
 
   bool isFirstKilled(String player) =>
       players.indexOf(player) + 1 == firstKilled;

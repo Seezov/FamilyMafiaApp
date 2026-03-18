@@ -1,5 +1,7 @@
 import 'package:family_mafia_app/enums/role.dart';
 import 'package:family_mafia_app/models/player.dart';
+import 'package:family_mafia_app/repositories/games_repository.dart';
+import 'package:family_mafia_app/repositories/players_repository.dart';
 import 'package:family_mafia_app/repositories/rating_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -63,4 +65,67 @@ final topPlayersByRoleProvider =
   }
 
   return result;
+});
+
+// ---------------------------------------------------------------------------
+// Protocol guesses leaderboard
+// ---------------------------------------------------------------------------
+
+typedef ProtocolLeaderEntry = ({
+  Player player,
+  int correct,
+  int total,
+  double accuracy,
+});
+
+/// Top players by protocol guess accuracy.
+/// Aggregates correct/total guesses from all games with protocol data.
+final protocolGuessLeaderboardProvider =
+    Provider<List<ProtocolLeaderEntry>>((ref) {
+  final games = ref.watch(gamesRepositoryProvider);
+  final playersRepo = ref.read(playersRepositoryProvider.notifier);
+
+  // playerName → (correct, total)
+  final acc = <String, ({int correct, int total})>{};
+
+  for (final game in games) {
+    if (game.protocol == null) continue;
+    for (final entry in game.protocol!) {
+      if (entry.colorGuesses.isEmpty) continue;
+      final slot = entry.killedSlot;
+      if (slot < 1 || slot > game.players.length) continue;
+      final name = game.players[slot - 1];
+
+      final prev = acc[name] ?? (correct: 0, total: 0);
+      int correct = prev.correct;
+      int total = prev.total;
+
+      for (final guess in entry.colorGuesses) {
+        final guessedSlot = guess.abs();
+        if (guessedSlot < 1 || guessedSlot > game.roles.length) continue;
+        total++;
+        final role = Role.findByValue(game.roles[guessedSlot - 1]);
+        if (role == null) continue;
+        if ((guess < 0) == role.isBlack) correct++;
+      }
+
+      acc[name] = (correct: correct, total: total);
+    }
+  }
+
+  final entries = acc.entries
+      .where((e) => e.value.total > 0)
+      .map((e) => (
+            player: playersRepo.findPlayer(e.key),
+            correct: e.value.correct,
+            total: e.value.total,
+            accuracy: e.value.correct / e.value.total,
+          ))
+      .toList()
+    ..sort((a, b) {
+      final cmp = b.accuracy.compareTo(a.accuracy);
+      return cmp != 0 ? cmp : b.total.compareTo(a.total);
+    });
+
+  return entries.take(_topN).toList();
 });

@@ -532,7 +532,7 @@ class _ExpandedStats extends StatelessWidget {
           _StatTile(label: 'Games', value: '${rating.wins}/${rating.gamesPlayed}'),
           _StatTile(label: 'Add. Pts', value: rating.additionalPoints.roundTo(2).toString(), accent: _Accent.positive),
           _StatTile(label: 'Penalty', value: rating.penaltyPoints.roundTo(2).toString(), accent: _Accent.negative),
-          _StatTile(label: 'Best Move', value: rating.bestMovePoints.roundTo(2).toString(), accent: _Accent.positive),
+          _StatTile(label: rating.seasonId >= 29 ? 'Support 5' : 'Best Move', value: rating.bestMovePoints.roundTo(2).toString(), accent: _Accent.positive),
         ]),
         const SizedBox(height: 6),
         _row([
@@ -550,6 +550,22 @@ class _ExpandedStats extends StatelessWidget {
             const Spacer(flex: 2),
           ],
         ),
+        if (rating.seasonId >= 29) ...[
+          const SizedBox(height: 6),
+          _row([
+            _StatTile(
+              label: 'Protocol Pts',
+              value: rating.protocolPoints.roundTo(2).toString(),
+              accent: rating.protocolPoints >= 0 ? _Accent.positive : _Accent.negative,
+            ),
+            _StatTile(
+              label: 'Guesses',
+              value: '${rating.protocolCorrectGuesses}/${rating.protocolTotalGuesses}',
+            ),
+            const SizedBox.shrink(),
+            const SizedBox.shrink(),
+          ]),
+        ],
         const SizedBox(height: 12),
         _RoleBreakdown(rating: rating),
       ],

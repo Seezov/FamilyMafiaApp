@@ -75,10 +75,12 @@ class _DashboardContent extends ConsumerWidget {
               ),
               const SizedBox(height: 4),
               Text(
-                'All-time win rate by role · 140+ rating games',
+                'Protocol guesses · All-time win rate by role · 140+ games',
                 style: tt.bodySmall?.copyWith(color: cs.onSurfaceVariant),
               ),
               const SizedBox(height: 20),
+              const _ProtocolGuessLeaderboardCard(),
+              const SizedBox(height: 16),
               for (final role in _roleOrder) ...[
                 _RoleLeaderboardCard(
                   role: role,
@@ -263,6 +265,155 @@ class _LeaderRow extends StatelessWidget {
             width: 40,
             child: Text(
               '${entry.games}',
+              textAlign: TextAlign.end,
+              style: tt.bodySmall?.copyWith(color: cs.onSurfaceVariant),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Protocol guess leaderboard card
+// ---------------------------------------------------------------------------
+
+class _ProtocolGuessLeaderboardCard extends ConsumerWidget {
+  const _ProtocolGuessLeaderboardCard();
+
+  static const _color = Color(0xFF7B1FA2); // purple
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final entries = ref.watch(protocolGuessLeaderboardProvider);
+    final tt = Theme.of(context).textTheme;
+    final cs = Theme.of(context).colorScheme;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: cs.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: _color.withValues(alpha: 0.35), width: 1.5),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: _color.withValues(alpha: 0.08),
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(14)),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.visibility, color: _color, size: 20),
+                const SizedBox(width: 8),
+                Text(
+                  'Protocol Guesses',
+                  style: tt.titleMedium?.copyWith(
+                    color: _color,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const Spacer(),
+                Text(
+                  'Acc',
+                  style: tt.labelSmall?.copyWith(color: cs.onSurfaceVariant),
+                ),
+                const SizedBox(width: 24),
+                Text(
+                  'G',
+                  style: tt.labelSmall?.copyWith(color: cs.onSurfaceVariant),
+                ),
+              ],
+            ),
+          ),
+          // Rows
+          if (entries.isEmpty)
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Text(
+                'No protocol data yet',
+                style: tt.bodySmall?.copyWith(color: cs.onSurfaceVariant),
+              ),
+            )
+          else
+            for (var i = 0; i < entries.length; i++) ...[
+              if (i > 0)
+                Divider(
+                  height: 1,
+                  indent: 16,
+                  endIndent: 16,
+                  color: cs.outlineVariant.withValues(alpha: 0.5),
+                ),
+              _ProtocolRow(rank: i + 1, entry: entries[i]),
+            ],
+        ],
+      ),
+    );
+  }
+}
+
+class _ProtocolRow extends StatelessWidget {
+  final int rank;
+  final ProtocolLeaderEntry entry;
+
+  const _ProtocolRow({required this.rank, required this.entry});
+
+  static const _rankColors = [
+    Color(0xFFFFD700),
+    Color(0xFFB0BEC5),
+    Color(0xFFBF8970),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final tt = Theme.of(context).textTheme;
+    final cs = Theme.of(context).colorScheme;
+    final rankColor =
+        rank <= 3 ? _rankColors[rank - 1] : cs.onSurfaceVariant;
+    final accPct = (entry.accuracy * 100).toStringAsFixed(1);
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 24,
+            child: Text(
+              '$rank',
+              style: tt.labelLarge?.copyWith(
+                color: rankColor,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              entry.player.displayName,
+              style: tt.bodyMedium,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          SizedBox(
+            width: 52,
+            child: Text(
+              '$accPct%',
+              textAlign: TextAlign.end,
+              style: tt.bodyMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: rank == 1 ? const Color(0xFF7B1FA2) : cs.onSurface,
+              ),
+            ),
+          ),
+          SizedBox(
+            width: 40,
+            child: Text(
+              '${entry.correct}/${entry.total}',
               textAlign: TextAlign.end,
               style: tt.bodySmall?.copyWith(color: cs.onSurfaceVariant),
             ),
