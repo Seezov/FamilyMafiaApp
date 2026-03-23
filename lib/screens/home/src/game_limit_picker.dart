@@ -10,49 +10,35 @@ class _GameLimitPicker extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final cs = Theme.of(context).colorScheme;
-    final tt = Theme.of(context).textTheme;
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-      child: Card(
-        elevation: 0,
-        color: cs.tertiaryContainer.withValues(alpha: 0.5),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'No players with $defaultLimit+ games yet',
-                style: tt.bodySmall?.copyWith(color: cs.onTertiaryContainer),
-              ),
-              const SizedBox(height: 8),
-              SizedBox(
-                height: 36,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  children: _steps.map((limit) {
-                    final isSelected = limit == currentLimit;
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 6),
-                      child: ChoiceChip(
-                        label: Text('$limit+'),
-                        selected: isSelected,
-                        labelStyle: tt.labelSmall,
-                        visualDensity: VisualDensity.compact,
-                        onSelected: (_) => ref
-                            .read(gameLimitOverrideProvider.notifier)
-                            .state = limit,
-                      ),
-                    );
-                  }).toList(),
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: _steps.map((limit) {
+          final isSelected = limit == currentLimit;
+          return Padding(
+            padding: const EdgeInsets.only(left: 4),
+            child: GestureDetector(
+              onTap: () => ref.read(gameLimitOverrideProvider.notifier).state = limit,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
+                decoration: BoxDecoration(
+                  color: isSelected
+                      ? const Color(0xFFE53935)
+                      : const Color(0xFFFFEBEE),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  '$limit+',
+                  style: TextStyle(
+                    fontSize: 8,
+                    fontWeight: FontWeight.w600,
+                    color: isSelected ? Colors.white : const Color(0xFFE53935),
+                  ),
                 ),
               ),
-            ],
-          ),
-        ),
+            ),
+          );
+        }).toList(),
       ),
     );
   }

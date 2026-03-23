@@ -26,7 +26,7 @@ class _PlayerCardState extends State<_PlayerCard> {
       1 => (const Color(0xFFFFD700), Colors.black87),
       2 => (const Color(0xFFB0BEC5), Colors.black87),
       3 => (const Color(0xFFBF8970), Colors.white),
-      _ => (cs.surfaceContainerHighest, cs.onSurfaceVariant),
+      _ => (const Color(0xFFEEEEEE), const Color(0xFF999999)),
     };
 
     final winRatePct = rating.winRate * 100;
@@ -36,18 +36,16 @@ class _PlayerCardState extends State<_PlayerCard> {
             ? (Colors.amber.shade800, Colors.amber.shade50)
             : (Colors.red.shade700, Colors.red.shade50);
 
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: cs.outlineVariant),
+    return Container(
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(color: const Color(0xFFF5F5F5), width: 1),
+        ),
       ),
       child: InkWell(
         onTap: () => setState(() => _expanded = !_expanded),
-        borderRadius: BorderRadius.circular(12),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
           child: Column(
             children: [
               // Collapsed header row
@@ -99,7 +97,7 @@ class _PlayerCardState extends State<_PlayerCard> {
                     rating.ratingCoefficient.roundTo(2).toString(),
                     style: tt.titleSmall?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: cs.primary,
+                      color: const Color(0xFFE53935),
                     ),
                   ),
                   const SizedBox(width: 4),
@@ -241,13 +239,12 @@ class _RoleBreakdown extends StatelessWidget {
 
   const _RoleBreakdown({required this.rating});
 
-  static Color _roleColor(String roleName) => switch (roleName) {
-        'sheriff' => const Color(0xFF1565C0),
-        'don' => const Color(0xFFC62828),
-        'civilian' => const Color(0xFF2E7D32),
-        'mafia' => const Color(0xFF6A1B9A),
-        _ => Colors.grey,
-      };
+  static Color _roleColor(String roleName) {
+    final role = Role.values
+        .where((r) => r.name.toLowerCase() == roleName.toLowerCase())
+        .firstOrNull;
+    return role?.color ?? Colors.grey;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -348,7 +345,7 @@ class _RoleBreakdown extends StatelessWidget {
                 Text(
                   add >= 0 ? '+${add.roundTo(2)}' : add.roundTo(2).toString(),
                   style: tt.bodySmall?.copyWith(
-                    color: add >= 0 ? cs.primary : Colors.red.shade600,
+                    color: add >= 0 ? const Color(0xFFE53935) : Colors.red.shade600,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
