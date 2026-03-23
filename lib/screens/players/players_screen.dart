@@ -1,3 +1,5 @@
+import 'dart:ui' show ImageFilter;
+
 import 'package:family_mafia_app/models/player.dart';
 import 'package:family_mafia_app/providers/app_providers.dart';
 import 'package:family_mafia_app/screens/players/player_profile_screen.dart';
@@ -34,31 +36,60 @@ class _PlayersContent extends ConsumerWidget {
     final isBackgroundLoading = phase != LoadingPhase.allLoaded;
 
     return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            const _SearchBar(),
-            if (isBackgroundLoading)
-              const _BackgroundLoadingIndicator(),
-            Expanded(
-              child: players.isEmpty
-                  ? const Center(child: Text('No players found'))
-                  : GridView.builder(
-                      padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3,
-                        crossAxisSpacing: 8,
-                        mainAxisSpacing: 8,
-                        childAspectRatio: 0.85,
-                      ),
-                      itemCount: players.length,
-                      itemBuilder: (context, i) =>
-                          _PlayerCard(player: players[i]),
-                    ),
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            pinned: true,
+            toolbarHeight: 0,
+            backgroundColor: Colors.transparent,
+            surfaceTintColor: Colors.transparent,
+            elevation: 0,
+            flexibleSpace: ClipRect(
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+                child: Container(
+                  color: Theme.of(context)
+                      .colorScheme
+                      .surface
+                      .withValues(alpha: 0.82),
+                ),
+              ),
             ),
-          ],
-        ),
+            bottom: const PreferredSize(
+              preferredSize: Size.fromHeight(0),
+              child: SizedBox.shrink(),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: SafeArea(
+              bottom: false,
+              child: const _SearchBar(),
+            ),
+          ),
+          if (isBackgroundLoading)
+            const SliverToBoxAdapter(child: _BackgroundLoadingIndicator()),
+          if (players.isEmpty)
+            const SliverFillRemaining(
+              child: Center(child: Text('No players found')),
+            )
+          else
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+              sliver: SliverGrid(
+                delegate: SliverChildBuilderDelegate(
+                  (context, i) => _PlayerCard(player: players[i]),
+                  childCount: players.length,
+                ),
+                gridDelegate:
+                    const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  crossAxisSpacing: 8,
+                  mainAxisSpacing: 8,
+                  childAspectRatio: 0.75,
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }
@@ -110,7 +141,6 @@ class _SearchBarState extends ConsumerState<_SearchBar> {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
     final query = ref.watch(playerSearchQueryProvider);
 
     return Padding(
@@ -134,7 +164,7 @@ class _SearchBarState extends ConsumerState<_SearchBar> {
           isDense: true,
           contentPadding: const EdgeInsets.symmetric(vertical: 10),
           filled: true,
-          fillColor: cs.surfaceContainerHighest.withValues(alpha: 0.7),
+          fillColor: const Color(0xFFF5F5F5),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(30),
             borderSide: BorderSide.none,
@@ -145,41 +175,54 @@ class _SearchBarState extends ConsumerState<_SearchBar> {
   }
 }
 
-class _PlayerCard extends StatelessWidget {
+class _PlayerCard extends ConsumerWidget {
   final Player player;
 
   const _PlayerCard({required this.player});
 
   @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(12),
+  Widget build(BuildContext context, WidgetRef ref) {
+    final statsMap = ref.watch(playerStatsMapProvider);
+    final stats = statsMap[player.displayName];
+    final games = stats?.games ?? 0;
+    final winRate = stats?.winRate ?? 0.0;
+
+    return GestureDetector(
       onTap: () => Navigator.of(context).push(
         MaterialPageRoute(
           builder: (_) => PlayerProfileScreen(player: player),
         ),
       ),
-      child: Card(
-        elevation: 2,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               CircleAvatar(
-                radius: 28,
+                radius: 22,
                 backgroundColor: _avatarColor(player.displayName),
                 child: Text(
                   _initials(player.displayName),
                   style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
-                    fontSize: 16,
+                    fontSize: 14,
                   ),
                 ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 6),
               Text(
                 player.displayName,
                 textAlign: TextAlign.center,
@@ -187,6 +230,13 @@ class _PlayerCard extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.bodySmall,
               ),
+              const SizedBox(height: 4),
+              Text(
+                '$games games',
+                style: const TextStyle(fontSize: 10, color: Colors.black54),
+              ),
+              const SizedBox(height: 4),
+              _WinRatePill(winRate: winRate),
             ],
           ),
         ),
@@ -195,8 +245,49 @@ class _PlayerCard extends StatelessWidget {
   }
 }
 
+class _WinRatePill extends StatelessWidget {
+  final double winRate;
+
+  const _WinRatePill({required this.winRate});
+
+  @override
+  Widget build(BuildContext context) {
+    final Color bg;
+    final Color fg;
+    if (winRate >= 0.50) {
+      bg = const Color(0xFF4CAF50).withValues(alpha: 0.15);
+      fg = const Color(0xFF2E7D32);
+    } else if (winRate >= 0.40) {
+      bg = const Color(0xFFFFC107).withValues(alpha: 0.20);
+      fg = const Color(0xFFE65100);
+    } else {
+      bg = const Color(0xFFF44336).withValues(alpha: 0.12);
+      fg = const Color(0xFFC62828);
+    }
+
+    final pct = (winRate * 100).round();
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Text(
+        '$pct%',
+        style: TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.bold,
+          color: fg,
+        ),
+      ),
+    );
+  }
+}
+
 String _initials(String name) {
-  final parts = name.trim().split(RegExp(r'\s+')).where((p) => p.isNotEmpty).toList();
+  final parts =
+      name.trim().split(RegExp(r'\s+')).where((p) => p.isNotEmpty).toList();
   if (parts.isEmpty) return '?';
   if (parts.length == 1) return parts[0][0].toUpperCase();
   return (parts[0][0] + parts[1][0]).toUpperCase();

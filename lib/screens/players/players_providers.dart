@@ -12,6 +12,30 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final playerSearchQueryProvider = StateProvider<String>((ref) => '');
 
+/// All-time game count + win rate per player for PlayersScreen grid cards.
+final playerStatsMapProvider = Provider<Map<String, ({int games, double winRate})>>((ref) {
+  final allStats = ref.watch(ratingRepositoryProvider);
+  final aggregated = <String, ({int totalGames, int totalWins})>{};
+
+  for (final seasonStats in allStats.values) {
+    for (final ps in seasonStats) {
+      final prev = aggregated[ps.player.displayName];
+      final games = ps.gamesPlayed;
+      final wins = ps.wins;
+      if (prev != null) {
+        aggregated[ps.player.displayName] = (totalGames: prev.totalGames + games, totalWins: prev.totalWins + wins);
+      } else {
+        aggregated[ps.player.displayName] = (totalGames: games, totalWins: wins);
+      }
+    }
+  }
+
+  return aggregated.map((name, v) => MapEntry(
+    name,
+    (games: v.totalGames, winRate: v.totalGames > 0 ? v.totalWins / v.totalGames : 0.0),
+  ));
+});
+
 typedef SeasonEntry = ({int seasonId, int games});
 typedef SeasonGamesEntry = ({String name, List<SeasonEntry> seasonData});
 
