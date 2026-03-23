@@ -1,6 +1,7 @@
 import 'package:family_mafia_app/constants/season_constants.dart';
 import 'package:family_mafia_app/enums/role.dart';
 import 'package:family_mafia_app/models/player.dart';
+import 'package:family_mafia_app/providers/app_providers.dart';
 import 'package:family_mafia_app/repositories/games_repository.dart';
 import 'package:family_mafia_app/repositories/players_repository.dart';
 import 'package:family_mafia_app/repositories/rating_repository.dart';
@@ -63,6 +64,68 @@ final topPlayersByRoleProvider =
   }
 
   return result;
+});
+
+// ---------------------------------------------------------------------------
+// Club overview (hero card)
+// ---------------------------------------------------------------------------
+
+/// All-time club stats for the dashboard hero card.
+final clubOverviewProvider =
+    Provider<({int seasons, int games, int players, double cityWR})>((ref) {
+  final configs = ref.watch(loadedSeasonConfigsProvider);
+  final allGames = ref.watch(gamesRepositoryProvider);
+
+  int cityWins = 0;
+  int decided = 0;
+  final uniquePlayers = <String>{};
+
+  for (final g in allGames) {
+    if (g.cityWon == true) {
+      cityWins++;
+      decided++;
+    } else if (g.cityWon == false) {
+      decided++;
+    }
+    uniquePlayers.addAll(g.players.where((p) => p.isNotEmpty));
+  }
+
+  return (
+    seasons: configs.length,
+    games: allGames.length,
+    players: uniquePlayers.length,
+    cityWR: decided > 0 ? cityWins / decided : 0.0,
+  );
+});
+
+// ---------------------------------------------------------------------------
+// Role win rates (circular rings)
+// ---------------------------------------------------------------------------
+
+/// All-time win rate per role for the circular rings.
+final roleWinRateProvider = Provider<Map<Role, double>>((ref) {
+  final allGames = ref.watch(gamesRepositoryProvider);
+  final winsPerRole = <Role, int>{};
+  final gamesPerRole = <Role, int>{};
+
+  for (final g in allGames) {
+    if (g.cityWon == null) continue;
+    for (int i = 0; i < g.players.length; i++) {
+      if (i >= g.roles.length) continue;
+      final role = Role.findByValue(g.roles[i]);
+      if (role == null) continue;
+      gamesPerRole[role] = (gamesPerRole[role] ?? 0) + 1;
+      final won = role.isBlack ? !g.cityWon! : g.cityWon!;
+      if (won) winsPerRole[role] = (winsPerRole[role] ?? 0) + 1;
+    }
+  }
+
+  return {
+    for (final role in Role.values)
+      role: gamesPerRole[role] != null && gamesPerRole[role]! > 0
+          ? (winsPerRole[role] ?? 0) / gamesPerRole[role]!
+          : 0.0,
+  };
 });
 
 // ---------------------------------------------------------------------------

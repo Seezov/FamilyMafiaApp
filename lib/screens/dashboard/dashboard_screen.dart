@@ -1,6 +1,10 @@
+import 'dart:ui' show ImageFilter;
+
 import 'package:family_mafia_app/enums/role.dart';
 import 'package:family_mafia_app/providers/app_providers.dart';
 import 'package:family_mafia_app/screens/dashboard/dashboard_providers.dart';
+import 'package:family_mafia_app/widgets/hero_card.dart';
+import 'package:family_mafia_app/widgets/section_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -11,7 +15,8 @@ class DashboardScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final dataState = ref.watch(appDataProvider);
     return dataState.when(
-      loading: () => const Scaffold(body: Center(child: CircularProgressIndicator())),
+      loading: () =>
+          const Scaffold(body: Center(child: CircularProgressIndicator())),
       error: (e, _) => Scaffold(body: Center(child: Text('Error: $e'))),
       data: (_) => const _DashboardContent(),
     );
@@ -25,79 +30,237 @@ class DashboardScreen extends ConsumerWidget {
 class _DashboardContent extends ConsumerWidget {
   const _DashboardContent();
 
-  static const _roleOrder = [Role.civilian, Role.mafia, Role.sheriff, Role.don];
+  static const _leaderboardOrder = [
+    _LeaderboardSpec.protocol,
+    _LeaderboardSpec.civilian,
+    _LeaderboardSpec.sheriff,
+    _LeaderboardSpec.mafia,
+    _LeaderboardSpec.don,
+  ];
 
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final topByRole = ref.watch(topPlayersByRoleProvider);
-    final tt = Theme.of(context).textTheme;
-    final cs = Theme.of(context).colorScheme;
-
-    return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(16, 20, 16, 24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Text(
-                    'Leaderboards',
-                    style: tt.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(width: 6),
-                  GestureDetector(
-                    onTap: () => showDialog<void>(
-                      context: context,
-                      builder: (_) => AlertDialog(
-                        title: const Text('Leaderboard Rules'),
-                        content: const Text(
-                          'Only players with 140 or more total rating games '
-                          'appear on these leaderboards.\n\n'
-                          'Win rate is calculated across all seasons.',
-                        ),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.of(context).pop(),
-                            child: const Text('OK'),
-                          ),
-                        ],
-                      ),
-                    ),
-                    child: Icon(
-                      Icons.info_outline,
-                      size: 18,
-                      color: cs.onSurfaceVariant,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 4),
-              Text(
-                'Protocol guesses · All-time win rate by role · 140+ games',
-                style: tt.bodySmall?.copyWith(color: cs.onSurfaceVariant),
-              ),
-              const SizedBox(height: 20),
-              const _ProtocolGuessLeaderboardCard(),
-              const SizedBox(height: 16),
-              for (final role in _roleOrder) ...[
-                _RoleLeaderboardCard(
-                  role: role,
-                  entries: topByRole[role] ?? [],
-                ),
-                const SizedBox(height: 16),
-              ],
-            ],
-          ),
+  void _showRulesDialog(BuildContext context) {
+    showDialog<void>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Leaderboard Rules'),
+        content: const Text(
+          'Only players with 140 or more total rating games '
+          'appear on these leaderboards.\n\n'
+          'Win rate is calculated across all seasons.',
         ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('OK'),
+          ),
+        ],
       ),
     );
   }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final overview = ref.watch(clubOverviewProvider);
+    final roleWinRates = ref.watch(roleWinRateProvider);
+    final topByRole = ref.watch(topPlayersByRoleProvider);
+    final protocolEntries = ref.watch(protocolGuessLeaderboardProvider);
+    final cs = Theme.of(context).colorScheme;
+
+    String formatGames(int count) {
+      if (count >= 1000) {
+        final k = count / 1000;
+        return '${k.toStringAsFixed(k.truncateToDouble() == k ? 0 : 1)}k';
+      }
+      return '$count';
+    }
+
+    return Scaffold(
+      backgroundColor: const Color(0xFFF5F7FA),
+      body: CustomScrollView(
+        slivers: [
+          // Frosted SliverAppBar
+          SliverAppBar(
+            pinned: true,
+            toolbarHeight: 0,
+            backgroundColor: Colors.transparent,
+            surfaceTintColor: Colors.transparent,
+            elevation: 0,
+            flexibleSpace: ClipRect(
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+                child: Container(
+                  color: cs.surface.withValues(alpha: 0.82),
+                ),
+              ),
+            ),
+            bottom: PreferredSize(
+              preferredSize: const Size.fromHeight(52),
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+                child: Row(
+                  children: [
+                    const Text(
+                      'Dashboard',
+                      style: TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xDD000000),
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    GestureDetector(
+                      onTap: () => _showRulesDialog(context),
+                      child: Icon(
+                        Icons.info_outline,
+                        size: 18,
+                        color: cs.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+
+          SliverList(
+            delegate: SliverChildListDelegate([
+              const SizedBox(height: 16),
+
+              // ── Hero card: Club Overview ───────────────────────────────
+              HeroCard(
+                label: 'All Time',
+                title: 'Club Overview',
+                gradientStart: const Color(0xFF00897B),
+                gradientEnd: const Color(0xFF004D40),
+                statTiles: [
+                  HeroStatTile(
+                    value: '${overview.seasons}',
+                    label: 'Seasons',
+                  ),
+                  HeroStatTile(
+                    value: formatGames(overview.games),
+                    label: 'Games',
+                  ),
+                  HeroStatTile(
+                    value: '${overview.players}',
+                    label: 'Players',
+                  ),
+                  HeroStatTile(
+                    value: '${(overview.cityWR * 100).toStringAsFixed(1)}%',
+                    label: 'City WR',
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 20),
+
+              // ── Win Rate by Role ───────────────────────────────────────
+              SectionCard(
+                title: 'Win Rate by Role',
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: Role.values.map((role) {
+                    final wr = roleWinRates[role] ?? 0.0;
+                    final pct = (wr * 100).toStringAsFixed(0);
+                    return Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SizedBox(
+                          width: 52,
+                          height: 52,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              // Background circle
+                              Container(
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: role.lightColor,
+                                ),
+                              ),
+                              // Progress ring
+                              CircularProgressIndicator(
+                                value: wr,
+                                strokeWidth: 4,
+                                backgroundColor:
+                                    role.lightColor,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                    role.color),
+                              ),
+                              // Percentage text
+                              Text(
+                                '$pct%',
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w700,
+                                  color: role.color,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          _roleName(role),
+                          style: const TextStyle(
+                            fontSize: 11,
+                            color: Color(0xFF757575),
+                          ),
+                        ),
+                      ],
+                    );
+                  }).toList(),
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
+              // ── Leaderboard cards ──────────────────────────────────────
+              for (final spec in _leaderboardOrder) ...[
+                if (spec == _LeaderboardSpec.protocol)
+                  _ProtocolLeaderboardCard(entries: protocolEntries)
+                else
+                  _RoleLeaderboardCard(
+                    role: spec.role!,
+                    entries: topByRole[spec.role!] ?? [],
+                  ),
+                const SizedBox(height: 16),
+              ],
+
+              const SizedBox(height: 8),
+            ]),
+          ),
+        ],
+      ),
+    );
+  }
+
+  static String _roleName(Role role) => switch (role) {
+        Role.civilian => 'Civilian',
+        Role.mafia => 'Mafia',
+        Role.sheriff => 'Sheriff',
+        Role.don => 'Don',
+      };
 }
 
 // ---------------------------------------------------------------------------
-// Role card
+// Leaderboard spec helper
+// ---------------------------------------------------------------------------
+
+enum _LeaderboardSpec {
+  protocol(null),
+  civilian(Role.civilian),
+  sheriff(Role.sheriff),
+  mafia(Role.mafia),
+  don(Role.don);
+
+  const _LeaderboardSpec(this.role);
+  final Role? role;
+}
+
+// ---------------------------------------------------------------------------
+// Role leaderboard card
 // ---------------------------------------------------------------------------
 
 class _RoleLeaderboardCard extends StatelessWidget {
@@ -115,7 +278,7 @@ class _RoleLeaderboardCard extends StatelessWidget {
 
   static IconData _roleIcon(Role role) => switch (role) {
         Role.civilian => Icons.person,
-        Role.mafia => Icons.thumb_down,
+        Role.mafia => Icons.theater_comedy,
         Role.sheriff => Icons.local_police,
         Role.don => Icons.gps_fixed,
       };
@@ -134,21 +297,26 @@ class _RoleLeaderboardCard extends StatelessWidget {
     final color = _roleColor(role);
 
     return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
-        color: cs.surface,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: color.withValues(alpha: 0.35), width: 1.5),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
+      clipBehavior: Clip.antiAlias,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header
+          // Header with role-tinted background
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.08),
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(14)),
-            ),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+            color: color.withValues(alpha: 0.08),
             child: Row(
               children: [
                 Icon(_roleIcon(role), color: color, size: 20),
@@ -215,8 +383,8 @@ class _LeaderRow extends StatelessWidget {
   });
 
   static const _rankColors = [
-    Color(0xFFFFD700), // gold
-    Color(0xFFB0BEC5), // silver
+    Color(0xFFF9A825), // gold
+    Color(0xFF90A4AE), // silver
     Color(0xFFBF8970), // bronze
   ];
 
@@ -257,7 +425,7 @@ class _LeaderRow extends StatelessWidget {
               textAlign: TextAlign.end,
               style: tt.bodyMedium?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: rank == 1 ? roleColor : cs.onSurface,
+                color: rank == 1 ? roleColor : Colors.black87,
               ),
             ),
           ),
@@ -279,37 +447,48 @@ class _LeaderRow extends StatelessWidget {
 // Protocol guess leaderboard card
 // ---------------------------------------------------------------------------
 
-class _ProtocolGuessLeaderboardCard extends ConsumerWidget {
-  const _ProtocolGuessLeaderboardCard();
+class _ProtocolLeaderboardCard extends StatelessWidget {
+  final List<ProtocolLeaderEntry> entries;
+
+  const _ProtocolLeaderboardCard({required this.entries});
 
   static const _color = Color(0xFF7B1FA2); // purple
 
+  static const _rankColors = [
+    Color(0xFFF9A825), // gold
+    Color(0xFF90A4AE), // silver
+    Color(0xFFBF8970), // bronze
+  ];
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final entries = ref.watch(protocolGuessLeaderboardProvider);
+  Widget build(BuildContext context) {
     final tt = Theme.of(context).textTheme;
     final cs = Theme.of(context).colorScheme;
 
     return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
-        color: cs.surface,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _color.withValues(alpha: 0.35), width: 1.5),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
+      clipBehavior: Clip.antiAlias,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Header
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              color: _color.withValues(alpha: 0.08),
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(14)),
-            ),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+            color: _color.withValues(alpha: 0.08),
             child: Row(
               children: [
-                Icon(Icons.visibility, color: _color, size: 20),
+                const Icon(Icons.psychology, color: _color, size: 20),
                 const SizedBox(width: 8),
                 Text(
                   'Protocol Guesses',
@@ -349,7 +528,11 @@ class _ProtocolGuessLeaderboardCard extends ConsumerWidget {
                   endIndent: 16,
                   color: cs.outlineVariant.withValues(alpha: 0.5),
                 ),
-              _ProtocolRow(rank: i + 1, entry: entries[i]),
+              _ProtocolRow(
+                rank: i + 1,
+                entry: entries[i],
+                rankColors: _rankColors,
+              ),
             ],
         ],
       ),
@@ -360,21 +543,22 @@ class _ProtocolGuessLeaderboardCard extends ConsumerWidget {
 class _ProtocolRow extends StatelessWidget {
   final int rank;
   final ProtocolLeaderEntry entry;
+  final List<Color> rankColors;
 
-  const _ProtocolRow({required this.rank, required this.entry});
+  const _ProtocolRow({
+    required this.rank,
+    required this.entry,
+    required this.rankColors,
+  });
 
-  static const _rankColors = [
-    Color(0xFFFFD700),
-    Color(0xFFB0BEC5),
-    Color(0xFFBF8970),
-  ];
+  static const _protocolColor = Color(0xFF7B1FA2);
 
   @override
   Widget build(BuildContext context) {
     final tt = Theme.of(context).textTheme;
     final cs = Theme.of(context).colorScheme;
     final rankColor =
-        rank <= 3 ? _rankColors[rank - 1] : cs.onSurfaceVariant;
+        rank <= 3 ? rankColors[rank - 1] : cs.onSurfaceVariant;
     final accPct = (entry.accuracy * 100).toStringAsFixed(1);
 
     return Padding(
@@ -406,7 +590,7 @@ class _ProtocolRow extends StatelessWidget {
               textAlign: TextAlign.end,
               style: tt.bodyMedium?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: rank == 1 ? const Color(0xFF7B1FA2) : cs.onSurface,
+                color: rank == 1 ? _protocolColor : Colors.black87,
               ),
             ),
           ),
