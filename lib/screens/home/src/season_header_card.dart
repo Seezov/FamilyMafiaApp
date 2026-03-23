@@ -1,10 +1,37 @@
 part of '../home_screen.dart';
 
-class _SeasonHeaderCard extends StatelessWidget {
+class _SeasonHeroCard extends ConsumerWidget {
   final SeasonConfig season;
+
+  const _SeasonHeroCard({required this.season});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final summary = ref.watch(seasonSummaryProvider);
+    if (summary == null) return const SizedBox.shrink();
+
+    final cityWRStr = '${(summary.cityWR * 100).toStringAsFixed(0)}%';
+    final mafiaWRStr = '${(summary.mafiaWR * 100).toStringAsFixed(0)}%';
+
+    return HeroCard(
+      gradientStart: const Color(0xFFE53935),
+      gradientEnd: const Color(0xFFB71C1C),
+      label: season.title,
+      title: 'Season Summary',
+      statTiles: [
+        HeroStatTile(value: '${summary.games}', label: 'Games'),
+        HeroStatTile(value: '${summary.players}', label: 'Players'),
+        HeroStatTile(value: cityWRStr, label: 'City WR'),
+        HeroStatTile(value: mafiaWRStr, label: 'Mafia WR'),
+      ],
+    );
+  }
+}
+
+class _SeasonAwardsCard extends StatelessWidget {
   final SeasonStats stats;
 
-  const _SeasonHeaderCard({required this.season, required this.stats});
+  const _SeasonAwardsCard({required this.stats});
 
   String _name(int playerId) {
     if (playerId == -1 || stats.playerStats.isEmpty) return '—';
@@ -19,116 +46,130 @@ class _SeasonHeaderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-    final tt = Theme.of(context).textTheme;
+    final awards = [
+      _AwardConfig(
+        icon: Icons.star,
+        label: 'MVP',
+        iconColor: const Color(0xFFF9A825),
+        bgColor: const Color(0xFFFFF8E1),
+        winner: _name(stats.mvpPlayerId),
+      ),
+      _AwardConfig(
+        icon: Icons.local_police,
+        label: 'Sheriff',
+        iconColor: const Color(0xFF00BCD4),
+        bgColor: const Color(0xFFE0F7FA),
+        winner: _name(stats.bestSheriffPlayerId),
+      ),
+      _AwardConfig(
+        icon: Icons.person,
+        label: 'Civilian',
+        iconColor: const Color(0xFFE53935),
+        bgColor: const Color(0xFFFFEBEE),
+        winner: _name(stats.bestCivilianPlayerId),
+      ),
+      _AwardConfig(
+        icon: Icons.theater_comedy,
+        label: 'Mafia',
+        iconColor: const Color(0xFF616161),
+        bgColor: const Color(0xFFF5F5F5),
+        winner: _name(stats.bestMafiaPlayerId),
+      ),
+      _AwardConfig(
+        icon: Icons.gps_fixed,
+        label: 'Don',
+        iconColor: const Color(0xFF212121),
+        bgColor: const Color(0xFFEEEEEE),
+        winner: _name(stats.bestDonPlayerId),
+      ),
+      _AwardConfig(
+        icon: Icons.close,
+        label: 'Most Killed',
+        iconColor: const Color(0xFFFF9800),
+        bgColor: const Color(0xFFFFF3E0),
+        winner: _name(stats.mostKilledPlayerId),
+      ),
+    ];
 
-    return Card(
-      margin: const EdgeInsets.fromLTRB(12, 16, 12, 8),
-      elevation: 0,
-      color: cs.primaryContainer,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              season.title,
-              style: tt.headlineSmall?.copyWith(
-                color: cs.onPrimaryContainer,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 12),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                _AwardBadge(
-                  icon: Icons.star,
-                  label: 'MVP',
-                  value: _name(stats.mvpPlayerId),
-                  color: cs.onPrimaryContainer,
-                ),
-                _AwardBadge(
-                  icon: Icons.local_police,
-                  label: 'Sheriff',
-                  value: _name(stats.bestSheriffPlayerId),
-                  color: cs.onPrimaryContainer,
-                ),
-                _AwardBadge(
-                  icon: Icons.person,
-                  label: 'Civilian',
-                  value: _name(stats.bestCivilianPlayerId),
-                  color: cs.onPrimaryContainer,
-                ),
-                _AwardBadge(
-                  icon: Icons.thumb_down,
-                  label: 'Mafia',
-                  value: _name(stats.bestMafiaPlayerId),
-                  color: cs.onPrimaryContainer,
-                ),
-                _AwardBadge(
-                  icon: Icons.gps_fixed,
-                  label: 'Don',
-                  value: _name(stats.bestDonPlayerId),
-                  color: cs.onPrimaryContainer,
-                ),
-                _AwardBadge(
-                  icon: Icons.close,
-                  label: 'Most Killed',
-                  value: _name(stats.mostKilledPlayerId),
-                  color: cs.onPrimaryContainer,
-                ),
-              ],
-            ),
-          ],
-        ),
+    return SectionCard(
+      title: 'Season Awards',
+      child: GridView.count(
+        crossAxisCount: 2,
+        crossAxisSpacing: 8,
+        mainAxisSpacing: 8,
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        childAspectRatio: 3.2,
+        children: awards.map((a) => _AwardBadge(config: a)).toList(),
       ),
     );
   }
 }
 
-class _AwardBadge extends StatelessWidget {
+class _AwardConfig {
   final IconData icon;
   final String label;
-  final String value;
-  final Color color;
+  final Color iconColor;
+  final Color bgColor;
+  final String winner;
 
-  const _AwardBadge({
+  const _AwardConfig({
     required this.icon,
     required this.label,
-    required this.value,
-    required this.color,
+    required this.iconColor,
+    required this.bgColor,
+    required this.winner,
   });
+}
+
+class _AwardBadge extends StatelessWidget {
+  final _AwardConfig config;
+
+  const _AwardBadge({required this.config});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
       decoration: BoxDecoration(
-        color: color.withAlpha(25),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: color.withAlpha(40)),
+        color: config.bgColor,
+        borderRadius: BorderRadius.circular(10),
       ),
       child: Row(
-        mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 13, color: color),
-          const SizedBox(width: 5),
-          Text(
-            '$label  ',
-            style: Theme.of(context)
-                .textTheme
-                .labelSmall
-                ?.copyWith(color: color.withAlpha(180), fontWeight: FontWeight.w400),
+          Container(
+            width: 32,
+            height: 32,
+            decoration: BoxDecoration(
+              color: config.bgColor,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(config.icon, size: 18, color: config.iconColor),
           ),
-          Text(
-            value,
-            style: Theme.of(context)
-                .textTheme
-                .labelSmall
-                ?.copyWith(color: color, fontWeight: FontWeight.w700),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  config.label,
+                  style: const TextStyle(
+                    fontSize: 9,
+                    color: Colors.grey,
+                  ),
+                ),
+                Text(
+                  config.winner,
+                  style: const TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xDD000000),
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
           ),
         ],
       ),

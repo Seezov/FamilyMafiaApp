@@ -8,6 +8,8 @@ import 'package:family_mafia_app/models/season_config.dart';
 import 'package:family_mafia_app/models/season_stats.dart';
 import 'package:family_mafia_app/providers/app_providers.dart';
 import 'package:family_mafia_app/screens/home/home_providers.dart';
+import 'package:family_mafia_app/widgets/hero_card.dart';
+import 'package:family_mafia_app/widgets/section_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -83,10 +85,11 @@ class _HomeContent extends ConsumerWidget {
             ),
           if (seasonStats != null && selectedSeason != null) ...[
             SliverToBoxAdapter(
-              child: _SeasonHeaderCard(
-                season: selectedSeason,
-                stats: seasonStats,
-              ),
+              child: _SeasonHeroCard(season: selectedSeason),
+            ),
+            const SliverToBoxAdapter(child: SizedBox(height: 10)),
+            SliverToBoxAdapter(
+              child: _SeasonAwardsCard(stats: seasonStats),
             ),
             if (!hasQualifying)
               SliverToBoxAdapter(

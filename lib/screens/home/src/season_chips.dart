@@ -19,8 +19,24 @@ class _SeasonChips extends ConsumerWidget {
           return Padding(
             padding: const EdgeInsets.only(right: 6),
             child: ChoiceChip(
-              label: Text(config.title),
+              label: Text(
+                config.title,
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight:
+                      isSelected ? FontWeight.w600 : FontWeight.w500,
+                  color: isSelected
+                      ? Colors.white
+                      : const Color(0xFFE53935),
+                ),
+              ),
               selected: isSelected,
+              selectedColor: const Color(0xFFE53935),
+              backgroundColor: const Color(0xFFFFEBEE),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              side: BorderSide.none,
               onSelected: (_) {
                 ref.read(gameLimitOverrideProvider.notifier).state = null;
                 ref.read(selectedSeasonProvider.notifier).state = config;
