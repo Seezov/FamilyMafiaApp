@@ -19,7 +19,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Family Mafia',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFFE53935)),
+        scaffoldBackgroundColor: Colors.white,
         useMaterial3: true,
       ),
       home: const _RootNav(),
