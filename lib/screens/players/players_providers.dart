@@ -205,6 +205,25 @@ final playerFirstKillProvider =
   return (total: total, cityLost: cityLost, civSherGames: civSherGames);
 });
 
+/// Rating coefficient for the player's most recent season (highest seasonId
+/// with data). Returns null if no season data is available.
+final latestSeasonRatingProvider =
+    Provider.family<double?, Player>((ref, player) {
+  final allRatings = ref.watch(ratingRepositoryProvider);
+  int? latestSeason;
+  double? latestRating;
+  for (final entry in allRatings.entries) {
+    final stats =
+        entry.value.where((r) => r.player.id == player.id).firstOrNull;
+    if (stats == null || stats.gamesPlayed == 0) continue;
+    if (latestSeason == null || entry.key > latestSeason) {
+      latestSeason = entry.key;
+      latestRating = stats.ratingCoefficient;
+    }
+  }
+  return latestRating;
+});
+
 /// Best-move breakdown for a player: how many times first-killed, and how many
 /// of those nominations found 0/1/2/3 black cards.
 final playerBestMovesProvider =

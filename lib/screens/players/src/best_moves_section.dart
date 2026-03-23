@@ -16,54 +16,52 @@ class _BestMovesSection extends StatelessWidget {
     final total =
         bm.zeroBlacks + bm.oneBlack + bm.twoBlacks + bm.threeBlacks;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Text('Best Moves', style: tt.titleMedium),
-            const SizedBox(width: 4),
-            GestureDetector(
-              onTap: () => showDialog<void>(
-                context: context,
-                builder: (_) => AlertDialog(
-                  title: const Text('Best Moves'),
-                  content: const Text(
-                    'Best moves are only tracked starting from Season 2. '
-                    'First kills in Season 0 and Season 1 are not included in this count.',
-                  ),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      child: const Text('OK'),
-                    ),
-                  ],
-                ),
-              ),
-              child: Icon(
-                Icons.info_outline,
-                size: 16,
-                color: cs.onSurfaceVariant,
-              ),
+    final infoTrailing = GestureDetector(
+      onTap: () => showDialog<void>(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: const Text('Best Moves'),
+          content: const Text(
+            'Best moves are only tracked starting from Season 2. '
+            'First kills in Season 0 and Season 1 are not included in this count.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('OK'),
             ),
           ],
         ),
-        const SizedBox(height: 2),
-        Text(
-          '$total best moves total',
-          style: tt.bodySmall?.copyWith(color: cs.onSurfaceVariant),
-        ),
-        const SizedBox(height: 12),
-        Row(children: [
-          Expanded(child: _BlackCard(blacks: 0, count: bm.zeroBlacks, total: total)),
-          const SizedBox(width: 8),
-          Expanded(child: _BlackCard(blacks: 1, count: bm.oneBlack, total: total)),
-          const SizedBox(width: 8),
-          Expanded(child: _BlackCard(blacks: 2, count: bm.twoBlacks, total: total)),
-          const SizedBox(width: 8),
-          Expanded(child: _BlackCard(blacks: 3, count: bm.threeBlacks, total: total)),
-        ]),
-      ],
+      ),
+      child: Icon(
+        Icons.info_outline,
+        size: 16,
+        color: cs.onSurfaceVariant,
+      ),
+    );
+
+    return SectionCard(
+      title: 'Best Moves',
+      trailing: infoTrailing,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '$total best moves total',
+            style: tt.bodySmall?.copyWith(color: cs.onSurfaceVariant),
+          ),
+          const SizedBox(height: 12),
+          Row(children: [
+            Expanded(child: _BlackCard(blacks: 0, count: bm.zeroBlacks, total: total)),
+            const SizedBox(width: 8),
+            Expanded(child: _BlackCard(blacks: 1, count: bm.oneBlack, total: total)),
+            const SizedBox(width: 8),
+            Expanded(child: _BlackCard(blacks: 2, count: bm.twoBlacks, total: total)),
+            const SizedBox(width: 8),
+            Expanded(child: _BlackCard(blacks: 3, count: bm.threeBlacks, total: total)),
+          ]),
+        ],
+      ),
     );
   }
 }
@@ -95,7 +93,7 @@ class _BlackCard extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 6),
       decoration: BoxDecoration(
         color: cs.surface,
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(color: color.withValues(alpha: 0.6), width: 1.5),
       ),
       child: Column(

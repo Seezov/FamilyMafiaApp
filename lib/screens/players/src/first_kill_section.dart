@@ -17,38 +17,33 @@ class _FirstKillSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tt = Theme.of(context).textTheme;
     final cityLostPct = total > 0 ? (cityLost / total * 100).round() : 0;
     final firstKillPct =
         totalGames > 0 ? (total / totalGames * 100).round() : 0;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('First Kill', style: tt.titleMedium),
-        const SizedBox(height: 12),
-        Row(children: [
-          Expanded(
-            child: _StatCard(
-              value: '$total',
-              label: 'first-killed',
-              sub: '$firstKillPct% of games',
-              color: const Color(0xFFFB8C00),
-              icon: Icons.flash_on,
-            ),
+    return SectionCard(
+      title: 'First Kill',
+      child: Row(children: [
+        Expanded(
+          child: _StatCard(
+            value: '$total',
+            label: 'first-killed',
+            sub: '$firstKillPct% of games',
+            color: const Color(0xFFFB8C00),
+            icon: Icons.flash_on,
           ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: _StatCard(
-              value: '$cityLost',
-              label: 'city lost',
-              sub: '$cityLostPct% of first kills',
-              color: const Color(0xFFE53935),
-              icon: Icons.trending_down,
-            ),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: _StatCard(
+            value: '$cityLost',
+            label: 'city lost',
+            sub: '$cityLostPct% of first kills',
+            color: const Color(0xFFE53935),
+            icon: Icons.trending_down,
           ),
-        ]),
-      ],
+        ),
+      ]),
     );
   }
 }
@@ -77,7 +72,7 @@ class _StatCard extends StatelessWidget {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: cs.surface,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(color: color.withValues(alpha: 0.4), width: 1.5),
       ),
       child: Column(

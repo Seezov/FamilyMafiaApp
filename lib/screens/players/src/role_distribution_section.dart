@@ -17,13 +17,6 @@ class _RoleDistributionSection extends StatelessWidget {
 
   static const _order = [Role.civilian, Role.mafia, Role.sheriff, Role.don];
 
-  static Color _roleColor(Role role) => switch (role) {
-        Role.civilian => const Color(0xFFE53935),
-        Role.mafia => const Color(0xFF616161),
-        Role.sheriff => const Color(0xFF00BCD4),
-        Role.don => const Color(0xFF212121),
-      };
-
   static String _roleName(Role role) => switch (role) {
         Role.civilian => 'Civilian',
         Role.mafia => 'Mafia',
@@ -33,8 +26,6 @@ class _RoleDistributionSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tt = Theme.of(context).textTheme;
-
     final summary = <Role, int>{};
     for (final entry in roleGames.entries) {
       final role = Role.findByValue(entry.key);
@@ -50,25 +41,25 @@ class _RoleDistributionSection extends StatelessWidget {
 
     final total = summary.values.fold(0, (a, b) => a + b);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('Role Distribution', style: tt.titleMedium),
-        const SizedBox(height: 12),
-        for (final role in _order)
-          if ((summary[role] ?? 0) > 0)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: _RoleBar(
-                label: _roleName(role),
-                count: summary[role]!,
-                wins: wins[role] ?? 0,
-                total: total,
-                color: _roleColor(role),
-                topPct: rolePercentiles[role],
+    return SectionCard(
+      title: 'Role Distribution',
+      child: Column(
+        children: [
+          for (final role in _order)
+            if ((summary[role] ?? 0) > 0)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: _RoleBar(
+                  label: _roleName(role),
+                  count: summary[role]!,
+                  wins: wins[role] ?? 0,
+                  total: total,
+                  role: role,
+                  topPct: rolePercentiles[role],
+                ),
               ),
-            ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -78,7 +69,7 @@ class _RoleBar extends ConsumerWidget {
   final int count;
   final int wins;
   final int total;
-  final Color color;
+  final Role role;
   final double? topPct;
 
   const _RoleBar({
@@ -86,7 +77,7 @@ class _RoleBar extends ConsumerWidget {
     required this.count,
     required this.wins,
     required this.total,
-    required this.color,
+    required this.role,
     this.topPct,
   });
 
@@ -102,8 +93,23 @@ class _RoleBar extends ConsumerWidget {
       children: [
         SizedBox(
           width: 64,
-          child: Text(label,
-              style: tt.bodySmall?.copyWith(color: cs.onSurfaceVariant)),
+          child: Row(
+            children: [
+              Container(
+                width: 8,
+                height: 8,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: role.color,
+                ),
+              ),
+              const SizedBox(width: 4),
+              Expanded(
+                child: Text(label,
+                    style: tt.bodySmall?.copyWith(color: cs.onSurfaceVariant)),
+              ),
+            ],
+          ),
         ),
         Expanded(
           child: LayoutBuilder(builder: (ctx, constraints) {
@@ -113,7 +119,7 @@ class _RoleBar extends ConsumerWidget {
               Container(
                 height: 20,
                 decoration: BoxDecoration(
-                  color: cs.surfaceContainerHighest,
+                  color: role.lightColor,
                   borderRadius: BorderRadius.circular(4),
                 ),
               ),
@@ -121,7 +127,7 @@ class _RoleBar extends ConsumerWidget {
                 height: 20,
                 width: barW,
                 decoration: BoxDecoration(
-                  color: color,
+                  color: role.color,
                   borderRadius: BorderRadius.circular(4),
                 ),
               ),

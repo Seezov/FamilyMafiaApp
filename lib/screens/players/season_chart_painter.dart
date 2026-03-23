@@ -28,11 +28,11 @@ class SeasonChartPainter extends CustomPainter {
       ..strokeWidth = 2;
 
     final linePaint = Paint()
-      ..color = Colors.blue
+      ..color = const Color(0xFFE53935)
       ..strokeWidth = 3
       ..style = PaintingStyle.stroke;
 
-    final dotPaint = Paint()..color = Colors.red;
+    final dotPaint = Paint()..color = const Color(0xFFE53935);
 
     const ySteps = [0, 50, 100, 150, 200, 250];
 
@@ -78,7 +78,7 @@ class SeasonChartPainter extends CustomPainter {
         Offset(selX, 0),
         Offset(selX, chartHeight),
         Paint()
-          ..color = Colors.blue.withValues(alpha: 0.25)
+          ..color = const Color(0xFFE53935).withValues(alpha: 0.25)
           ..strokeWidth = 1.5,
       );
     }
@@ -91,7 +91,10 @@ class SeasonChartPainter extends CustomPainter {
       canvas.drawCircle(
         pt,
         isSelected ? 6 : 4,
-        dotPaint..color = isSelected ? Colors.blue : Colors.red,
+        dotPaint
+          ..color = isSelected
+              ? const Color(0xFFB71C1C)
+              : const Color(0xFFFFCDD2),
       );
     }
 

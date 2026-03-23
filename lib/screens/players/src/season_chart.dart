@@ -4,6 +4,21 @@ part of '../player_profile_screen.dart';
 // Interactive season chart
 // ---------------------------------------------------------------------------
 
+/// Thin wrapper that places _SeasonChart inside a SectionCard.
+class _SeasonChartSection extends StatelessWidget {
+  final List<int?> gamesBySeason;
+
+  const _SeasonChartSection({required this.gamesBySeason});
+
+  @override
+  Widget build(BuildContext context) {
+    return SectionCard(
+      title: 'Games by Season',
+      child: _SeasonChart(gamesBySeason: gamesBySeason),
+    );
+  }
+}
+
 class _SeasonChart extends StatefulWidget {
   final List<int?> gamesBySeason;
 
