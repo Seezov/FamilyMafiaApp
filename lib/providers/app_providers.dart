@@ -59,7 +59,7 @@ _ParsedConfig _parseConfig(String json) {
 }
 
 /// Loads .env.json once and caches the result.
-final _envJsonProvider = FutureProvider<Map<String, String>>(
+final envJsonProvider = FutureProvider<Map<String, String>>(
   (ref) => _loadEnvJson(),
 );
 
@@ -71,7 +71,7 @@ final _envJsonProvider = FutureProvider<Map<String, String>>(
 final parsedConfigProvider = FutureProvider<_ParsedConfig>((ref) async {
   final cacheService = ref.read(seasonCacheServiceProvider);
   final dio = ref.read(dioProvider);
-  final env = await ref.watch(_envJsonProvider.future);
+  final env = await ref.watch(envJsonProvider.future);
 
   final configUrl = _dartDefineConfigUrl.isNotEmpty
       ? _dartDefineConfigUrl
@@ -110,7 +110,7 @@ final parsedConfigProvider = FutureProvider<_ParsedConfig>((ref) async {
 /// The resolved API key. Priority: --dart-define → .env.json → null.
 final sheetsApiKeyProvider = Provider<String?>((ref) {
   if (_dartDefineApiKey.isNotEmpty) return _dartDefineApiKey;
-  final env = ref.watch(_envJsonProvider).valueOrNull ?? {};
+  final env = ref.watch(envJsonProvider).valueOrNull ?? {};
   final envKey = env['SHEETS_API_KEY'] ?? '';
   return envKey.isNotEmpty ? envKey : null;
 });

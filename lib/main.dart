@@ -1,6 +1,7 @@
 import 'dart:ui' show ImageFilter;
 
 import 'package:family_mafia_app/providers/app_providers.dart';
+import 'package:family_mafia_app/screens/chat/chat_screen.dart';
 import 'package:family_mafia_app/screens/dashboard/dashboard_screen.dart';
 import 'package:family_mafia_app/screens/home/home_screen.dart';
 import 'package:family_mafia_app/screens/players/players_screen.dart';
@@ -42,6 +43,7 @@ class _RootNavState extends ConsumerState<_RootNav> {
     HomeScreen(),
     PlayersScreen(),
     DashboardScreen(),
+    ChatScreen(),
   ];
 
   @override
@@ -77,6 +79,11 @@ class _RootNavState extends ConsumerState<_RootNav> {
                 icon: Icon(Icons.dashboard_outlined),
                 selectedIcon: Icon(Icons.dashboard),
                 label: 'Dashboard',
+              ),
+              NavigationDestination(
+                icon: Icon(Icons.chat_bubble_outline),
+                selectedIcon: Icon(Icons.chat_bubble),
+                label: 'Chat',
               ),
             ],
           ),
