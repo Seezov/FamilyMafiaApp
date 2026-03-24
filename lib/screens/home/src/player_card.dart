@@ -97,7 +97,7 @@ class _PlayerCardState extends State<_PlayerCard> {
                     rating.ratingCoefficient.roundTo(2).toString(),
                     style: tt.titleSmall?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: const Color(0xFFE53935),
+                      color: Colors.black87,
                     ),
                   ),
                   const SizedBox(width: 4),
@@ -148,9 +148,9 @@ class _ExpandedStats extends StatelessWidget {
       children: [
         _row([
           _StatTile(label: 'Games', value: '${rating.wins}/${rating.gamesPlayed}'),
-          _StatTile(label: 'Add. Pts', value: rating.additionalPoints.roundTo(2).toString(), accent: _Accent.positive),
-          _StatTile(label: 'Penalty', value: rating.penaltyPoints.roundTo(2).toString(), accent: _Accent.negative),
-          _StatTile(label: rating.seasonId >= 29 ? 'Support 5' : 'Best Move', value: rating.bestMovePoints.roundTo(2).toString(), accent: _Accent.positive),
+          _StatTile(label: 'Add. Pts', value: rating.additionalPoints.roundTo(2).toString(), accent: rating.additionalPoints > 0 ? _Accent.positive : null),
+          _StatTile(label: 'Penalty', value: rating.penaltyPoints.roundTo(2).toString(), accent: rating.penaltyPoints > 0 ? _Accent.negative : null),
+          _StatTile(label: rating.seasonId >= 29 ? 'Support 5' : 'Best Move', value: rating.bestMovePoints.roundTo(2).toString(), accent: rating.bestMovePoints > 0 ? _Accent.positive : null),
         ]),
         const SizedBox(height: 6),
         _row([
@@ -206,7 +206,7 @@ class _StatTile extends StatelessWidget {
     final bg = switch (accent) {
       _Accent.positive => Colors.green.withValues(alpha: 0.09),
       _Accent.negative => Colors.red.withValues(alpha: 0.09),
-      null => cs.surfaceContainerLow,
+      null => const Color(0xFFF5F5F5),
     };
 
     return Container(
@@ -345,7 +345,11 @@ class _RoleBreakdown extends StatelessWidget {
                 Text(
                   add >= 0 ? '+${add.roundTo(2)}' : add.roundTo(2).toString(),
                   style: tt.bodySmall?.copyWith(
-                    color: add >= 0 ? const Color(0xFFE53935) : Colors.red.shade600,
+                    color: add > 0
+                        ? Colors.green.shade700
+                        : add < 0
+                            ? Colors.red.shade700
+                            : cs.onSurfaceVariant,
                     fontWeight: FontWeight.w500,
                   ),
                 ),

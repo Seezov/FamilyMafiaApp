@@ -28,7 +28,7 @@ class SeasonChartPainter extends CustomPainter {
       ..strokeWidth = 2;
 
     final linePaint = Paint()
-      ..color = const Color(0xFFE53935)
+      ..color = const Color(0xFFFFCDD2)
       ..strokeWidth = 3
       ..style = PaintingStyle.stroke;
 
@@ -94,7 +94,7 @@ class SeasonChartPainter extends CustomPainter {
         dotPaint
           ..color = isSelected
               ? const Color(0xFFB71C1C)
-              : const Color(0xFFFFCDD2),
+              : const Color(0xFFE53935),
       );
     }
 

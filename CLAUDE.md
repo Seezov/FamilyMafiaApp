@@ -8,11 +8,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Build Commands
 
+API keys for remote seasons live in `assets/.env.json` (gitignored). Pass them via `--dart-define`:
+
 ```bash
 flutter run                      # Run on connected device/emulator (bundled seasons only)
-flutter run --dart-define=SHEETS_API_KEY=AIzaSy... --dart-define=REMOTE_CONFIG_URL=https://raw.githubusercontent.com/...   # With remote seasons
+flutter run --dart-define=SHEETS_API_KEY=... --dart-define=REMOTE_CONFIG_URL=...   # With remote seasons
 flutter build apk --debug        # Debug APK
-flutter build apk --release --dart-define=SHEETS_API_KEY=AIzaSy... --dart-define=REMOTE_CONFIG_URL=https://raw.githubusercontent.com/...  # Release APK with remote
+flutter build apk --release --dart-define=SHEETS_API_KEY=... --dart-define=REMOTE_CONFIG_URL=...  # Release APK with remote
 flutter analyze                  # Static analysis
 flutter test                     # Unit tests
 dart run build_runner build      # Regenerate freezed / json_serializable code

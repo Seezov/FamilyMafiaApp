@@ -27,12 +27,12 @@ class _SeasonChips extends ConsumerWidget {
                       isSelected ? FontWeight.w600 : FontWeight.w500,
                   color: isSelected
                       ? Colors.white
-                      : const Color(0xFFE53935),
+                      : const Color(0xFF00897B),
                 ),
               ),
               selected: isSelected,
-              selectedColor: const Color(0xFFE53935),
-              backgroundColor: const Color(0xFFFFEBEE),
+              selectedColor: const Color(0xFF00897B),
+              backgroundColor: const Color(0xFFE0F2F1),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),

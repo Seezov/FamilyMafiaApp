@@ -228,7 +228,7 @@ class _DashboardContent extends ConsumerWidget {
                 const SizedBox(height: 16),
               ],
 
-              const SizedBox(height: 8),
+              SizedBox(height: MediaQuery.paddingOf(context).bottom + 80),
             ]),
           ),
         ],

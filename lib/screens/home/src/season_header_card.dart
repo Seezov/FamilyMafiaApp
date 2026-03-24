@@ -14,8 +14,8 @@ class _SeasonHeroCard extends ConsumerWidget {
     final mafiaWRStr = '${(summary.mafiaWR * 100).toStringAsFixed(0)}%';
 
     return HeroCard(
-      gradientStart: const Color(0xFFE53935),
-      gradientEnd: const Color(0xFFB71C1C),
+      gradientStart: const Color(0xFF00897B),
+      gradientEnd: const Color(0xFF004D40),
       label: season.title,
       title: 'Season Summary',
       statTiles: [
@@ -98,6 +98,7 @@ class _SeasonAwardsCard extends StatelessWidget {
         crossAxisSpacing: 8,
         mainAxisSpacing: 8,
         shrinkWrap: true,
+        padding: EdgeInsets.zero,
         physics: const NeverScrollableScrollPhysics(),
         childAspectRatio: 3.2,
         children: awards.map((a) => _AwardBadge(config: a)).toList(),

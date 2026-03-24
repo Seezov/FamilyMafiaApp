@@ -74,7 +74,7 @@ class _PlayersContent extends ConsumerWidget {
             )
           else
             SliverPadding(
-              padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+              padding: EdgeInsets.fromLTRB(12, 0, 12, MediaQuery.paddingOf(context).bottom + 80),
               sliver: SliverGrid(
                 delegate: SliverChildBuilderDelegate(
                   (context, i) => _PlayerCard(player: players[i]),

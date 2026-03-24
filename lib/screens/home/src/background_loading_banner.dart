@@ -9,11 +9,11 @@ class _BackgroundLoadingBanner extends StatelessWidget {
     final tt = Theme.of(context).textTheme;
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
+      padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
-          color: cs.secondaryContainer.withValues(alpha: 0.5),
+          color: const Color(0xFFE0F2F1),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Row(
@@ -23,7 +23,7 @@ class _BackgroundLoadingBanner extends StatelessWidget {
               height: 14,
               child: CircularProgressIndicator(
                 strokeWidth: 2,
-                color: cs.onSecondaryContainer,
+                color: const Color(0xFF004D40),
               ),
             ),
             const SizedBox(width: 10),

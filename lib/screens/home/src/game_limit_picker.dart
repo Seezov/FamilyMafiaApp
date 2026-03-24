@@ -23,8 +23,8 @@ class _GameLimitPicker extends ConsumerWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? const Color(0xFFE53935)
-                      : const Color(0xFFFFEBEE),
+                      ? const Color(0xFF00897B)
+                      : const Color(0xFFE0F2F1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
@@ -32,7 +32,7 @@ class _GameLimitPicker extends ConsumerWidget {
                   style: TextStyle(
                     fontSize: 8,
                     fontWeight: FontWeight.w600,
-                    color: isSelected ? Colors.white : const Color(0xFFE53935),
+                    color: isSelected ? Colors.white : const Color(0xFF00897B),
                   ),
                 ),
               ),
