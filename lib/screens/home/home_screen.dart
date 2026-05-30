@@ -16,7 +16,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 part 'src/loading_indicator.dart';
 part 'src/background_loading_banner.dart';
 part 'src/season_chips.dart';
-part 'src/game_limit_picker.dart';
 part 'src/season_header_card.dart';
 part 'src/player_card.dart';
 
@@ -46,7 +45,6 @@ class _HomeContent extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedSeason = ref.watch(selectedSeasonProvider);
     final seasonStats = ref.watch(currentSeasonStatsProvider);
-    final effectiveLimit = ref.watch(effectiveGameLimitProvider);
     final phase = ref.watch(loadingPhaseProvider);
     final isBackgroundLoading = phase != LoadingPhase.allLoaded;
 
@@ -94,10 +92,6 @@ class _HomeContent extends ConsumerWidget {
             SliverToBoxAdapter(
               child: SectionCard(
                 title: 'Player Ratings',
-                trailing: _GameLimitPicker(
-                  currentLimit: effectiveLimit,
-                  defaultLimit: selectedSeason.gameLimit,
-                ),
                 child: Column(
                   children: [
                     if (seasonStats.playerStats.isEmpty)
