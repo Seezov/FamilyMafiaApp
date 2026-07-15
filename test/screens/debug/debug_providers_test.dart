@@ -91,5 +91,20 @@ void main() {
         expect(s.played, 0);
       }
     });
+
+    test('counts a mafia (black-role) win when city loses', () {
+      // Seezov in slot index 0, mafia; city lost => mafia won.
+      final games = [
+        _game(
+          players: ['Seezov', 'B', 'C'],
+          roles: [_maf, _civ, _civ],
+          cityWon: false,
+        ),
+      ];
+      final result = winRateBySlot(games, 'Seezov');
+      expect(result[0].played, 1);
+      expect(result[0].wins, 1);
+      expect(result[0].winRate, 1.0);
+    });
   });
 }
