@@ -21,14 +21,14 @@ List<SlotWinRate> _toSlots(List<int> played, List<int> wins) {
   ];
 }
 
-/// Per-slot win rate across ALL players over rating games. For each seat
-/// index 0..9 with a non-empty name, counts the seat as played and a win
-/// if that seat won.
+/// Per-slot win rate across ALL players over rating, normal games. For each
+/// seat index 0..9 with a non-empty name, counts the seat as played and a
+/// win if that seat won.
 List<SlotWinRate> winRateBySlotGlobal(List<Game> games) {
   final played = List<int>.filled(10, 0);
   final wins = List<int>.filled(10, 0);
   for (final game in games) {
-    if (!game.isRatingGame()) continue;
+    if (!game.isRatingGame() || !game.isNormalGame()) continue;
     for (var i = 0; i < game.players.length && i < 10; i++) {
       final name = game.players[i];
       if (name.isEmpty) continue;
@@ -40,13 +40,13 @@ List<SlotWinRate> winRateBySlotGlobal(List<Game> games) {
 }
 
 /// Per-slot win rate for [player], matching any of the player's nicknames
-/// (falling back to displayName) over the rating games in [games].
+/// (falling back to displayName) over the rating, normal games in [games].
 List<SlotWinRate> winRateBySlotForPlayer(List<Game> games, Player player) {
   final names = player.nicknames ?? [player.displayName];
   final played = List<int>.filled(10, 0);
   final wins = List<int>.filled(10, 0);
   for (final game in games) {
-    if (!game.isRatingGame()) continue;
+    if (!game.isRatingGame() || !game.isNormalGame()) continue;
     String? matched;
     for (final n in names) {
       if (game.players.contains(n)) {

@@ -4,14 +4,17 @@ import 'package:family_mafia_app/screens/debug/debug_providers.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// Builds a minimal rating game. `players` are slot 0..n names, `roles`
-/// parallel to players. `cityWon` null => non-rating game.
+/// parallel to players. `cityWon` null => non-rating game. `seasonId`
+/// defaults to 0 (old format), which is always a "normal" game regardless
+/// of role composition; use a season > 1 to exercise composition checks.
 Game _game({
   required List<String> players,
   required List<String> roles,
   required bool? cityWon,
+  int seasonId = 0,
 }) {
   return Game(
-    seasonId: 5,
+    seasonId: seasonId,
     players: players,
     roles: roles,
     cityWon: cityWon,
@@ -24,6 +27,22 @@ Game _game({
 // Roles used by Game.hasPlayerWon via Role.findByValue.
 const _civ = 'Мирный';
 const _maf = 'Мафия';
+const _sheriff = 'Шериф';
+const _don = 'Дон';
+
+/// A valid normal 10-player game in a post-old-format season (5 > 1):
+/// 2 mafia + 1 don + 1 sheriff + 6 civilians, unique names.
+Game _normalGame({required bool cityWon, List<String>? players}) {
+  return _game(
+    players: players ??
+        const ['P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7', 'P8', 'P9', 'P10'],
+    roles: const [
+      _don, _maf, _maf, _sheriff, _civ, _civ, _civ, _civ, _civ, _civ,
+    ],
+    cityWon: cityWon,
+    seasonId: 5,
+  );
+}
 
 void main() {
   group('winRateBySlotForPlayer', () {
@@ -96,6 +115,35 @@ void main() {
       expect(result[1].played, 1);
       expect(result[1].wins, 1);
     });
+
+    test('excludes rating games that are not normal (bad composition)', () {
+      // Season 5 (> 1) rating game with invalid role composition.
+      final games = [
+        _game(
+          players: ['Seezov', 'B', 'C'],
+          roles: [_civ, _maf, _civ],
+          cityWon: true,
+          seasonId: 5,
+        ),
+      ];
+      final result = winRateBySlotForPlayer(games, seezov);
+      expect(result[0].played, 0);
+    });
+
+    test('counts a valid normal game in a post-old-format season', () {
+      // Seezov in slot 1 as don (black); city won => don loses.
+      final games = [
+        _normalGame(
+          cityWon: true,
+          players: const [
+            'Seezov', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7', 'P8', 'P9', 'P10',
+          ],
+        ),
+      ];
+      final result = winRateBySlotForPlayer(games, seezov);
+      expect(result[0].played, 1);
+      expect(result[0].wins, 0);
+    });
   });
 
   group('winRateBySlotGlobal', () {
@@ -134,6 +182,30 @@ void main() {
       final result = winRateBySlotGlobal(games);
       for (final s in result) {
         expect(s.played, 0);
+      }
+    });
+
+    test('excludes rating games that are not normal (bad composition)', () {
+      final games = [
+        _game(
+          players: ['A', 'B', 'C'],
+          roles: [_civ, _maf, _civ],
+          cityWon: true,
+          seasonId: 5,
+        ),
+      ];
+      final result = winRateBySlotGlobal(games);
+      for (final s in result) {
+        expect(s.played, 0);
+      }
+    });
+
+    test('counts a valid normal game in a post-old-format season', () {
+      final games = [_normalGame(cityWon: true)];
+      final result = winRateBySlotGlobal(games);
+      // All 10 seats played once.
+      for (final s in result) {
+        expect(s.played, 1);
       }
     });
   });
