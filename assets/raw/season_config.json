@@ -30,6 +30,7 @@
     {"id": 26, "title": "Season 26", "gameLimit": 60, "gamesMultiplier": 0.0, "source": "bundled", "jsonFile": "season26.json"},
     {"id": 27, "title": "Season 27", "gameLimit": 60, "gamesMultiplier": 0.0, "source": "bundled", "jsonFile": "season27.json"},
     {"id": 28, "title": "Season 28", "gameLimit": 55, "gamesMultiplier": 0.0, "source": "bundled", "jsonFile": "season28.json"},
-    {"id": 29, "title": "Season 29", "gameLimit": 60, "gamesMultiplier": 0.0, "source": "remote", "spreadsheetId": "1gHRCyYMzFSrq3t20wDRlKPzUHX4BTc7HQDepp64-jNM", "sheetName": "Ігри", "range": "A2:Q"}
+    {"id": 29, "title": "Season 29", "gameLimit": 60, "gamesMultiplier": 0.0, "source": "remote", "spreadsheetId": "1gHRCyYMzFSrq3t20wDRlKPzUHX4BTc7HQDepp64-jNM", "sheetName": "Ігри", "range": "A2:Q"},
+    {"id": 30, "title": "Season 30", "gameLimit": 20, "gamesMultiplier": 0.0, "source": "remote", "spreadsheetId": "1bhqOF5wU-ddyDZkE12kaBSQFFhSDSVcyXuWwvwq2hzc", "sheetName": "Ігри", "range": "A2:Q"}
   ]
 }
