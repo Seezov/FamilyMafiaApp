@@ -1,5 +1,7 @@
+import 'package:family_mafia_app/models/player.dart';
 import 'package:family_mafia_app/providers/app_providers.dart';
 import 'package:family_mafia_app/screens/debug/debug_providers.dart';
+import 'package:family_mafia_app/screens/players/players_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -24,6 +26,7 @@ class _DebugContent extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final slots = ref.watch(debugSlotWinRateProvider);
+    final selected = ref.watch(selectedPlayerProvider);
     final tt = Theme.of(context).textTheme;
     final cs = Theme.of(context).colorScheme;
 
@@ -32,7 +35,7 @@ class _DebugContent extends ConsumerWidget {
     final overallWr = totalPlayed == 0 ? 0.0 : totalWins / totalPlayed;
 
     return Scaffold(
-      appBar: AppBar(title: Text('Debug · $kDebugPlayer')),
+      appBar: AppBar(title: Text(selected?.displayName ?? 'Statistics')),
       body: ListView(
         padding: EdgeInsets.fromLTRB(
           16,
@@ -41,11 +44,13 @@ class _DebugContent extends ConsumerWidget {
           MediaQuery.paddingOf(context).bottom + 80,
         ),
         children: [
+          const _PlayerSearchField(),
+          const SizedBox(height: 16),
           Text('Win rate by slot', style: tt.titleMedium),
           const SizedBox(height: 4),
           Text(
             totalPlayed == 0
-                ? 'No rating games found for $kDebugPlayer.'
+                ? 'No rating games found.'
                 : 'Overall: $totalWins/$totalPlayed · '
                     '${(overallWr * 100).toStringAsFixed(1)}%',
             style: tt.bodySmall?.copyWith(color: cs.onSurfaceVariant),
@@ -57,6 +62,49 @@ class _DebugContent extends ConsumerWidget {
           ],
         ],
       ),
+    );
+  }
+}
+
+class _PlayerSearchField extends ConsumerWidget {
+  const _PlayerSearchField();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final players = ref.watch(playersListProvider);
+    final selected = ref.watch(selectedPlayerProvider);
+
+    return Autocomplete<Player>(
+      displayStringForOption: (p) => p.displayName,
+      optionsBuilder: (TextEditingValue value) {
+        final q = value.text.toLowerCase().trim();
+        if (q.isEmpty) return const Iterable<Player>.empty();
+        return players
+            .where((p) => p.displayName.toLowerCase().contains(q));
+      },
+      onSelected: (p) =>
+          ref.read(selectedPlayerProvider.notifier).state = p,
+      fieldViewBuilder:
+          (context, controller, focusNode, onFieldSubmitted) {
+        return TextField(
+          controller: controller,
+          focusNode: focusNode,
+          decoration: InputDecoration(
+            hintText: 'Search player…',
+            prefixIcon: const Icon(Icons.search),
+            suffixIcon: selected != null
+                ? IconButton(
+                    icon: const Icon(Icons.clear),
+                    onPressed: () {
+                      controller.clear();
+                      ref.read(selectedPlayerProvider.notifier).state = null;
+                    },
+                  )
+                : null,
+            border: const OutlineInputBorder(),
+          ),
+        );
+      },
     );
   }
 }
