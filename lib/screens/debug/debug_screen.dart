@@ -89,6 +89,7 @@ class _PlayerSearchField extends ConsumerWidget {
         return TextField(
           controller: controller,
           focusNode: focusNode,
+          onSubmitted: (_) => onFieldSubmitted(),
           decoration: InputDecoration(
             hintText: 'Search player…',
             prefixIcon: const Icon(Icons.search),
