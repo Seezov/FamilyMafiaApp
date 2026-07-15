@@ -4,6 +4,7 @@ import 'package:family_mafia_app/providers/app_providers.dart';
 import 'package:family_mafia_app/screens/chat/chat_screen.dart';
 import 'package:family_mafia_app/screens/dashboard/dashboard_screen.dart';
 import 'package:family_mafia_app/screens/home/home_screen.dart';
+import 'package:family_mafia_app/screens/debug/debug_screen.dart';
 import 'package:family_mafia_app/screens/players/players_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -24,6 +25,16 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: Colors.white,
         useMaterial3: true,
       ),
+      builder: (context, child) {
+        final mediaQuery = MediaQuery.of(context);
+        final scale = mediaQuery.textScaler.clamp(
+          minScaleFactor: 1.15,
+        );
+        return MediaQuery(
+          data: mediaQuery.copyWith(textScaler: scale),
+          child: child!,
+        );
+      },
       home: const _RootNav(),
     );
   }
@@ -44,6 +55,7 @@ class _RootNavState extends ConsumerState<_RootNav> {
     PlayersScreen(),
     DashboardScreen(),
     ChatScreen(),
+    DebugScreen(),
   ];
 
   @override
@@ -84,6 +96,11 @@ class _RootNavState extends ConsumerState<_RootNav> {
                 icon: Icon(Icons.chat_bubble_outline),
                 selectedIcon: Icon(Icons.chat_bubble),
                 label: 'Chat',
+              ),
+              NavigationDestination(
+                icon: Icon(Icons.bug_report_outlined),
+                selectedIcon: Icon(Icons.bug_report),
+                label: 'Debug',
               ),
             ],
           ),
