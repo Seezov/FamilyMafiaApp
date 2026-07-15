@@ -79,6 +79,7 @@ class _SlotRow extends StatelessWidget {
           width: 56,
           child: Text(
             'Slot ${slot.slot}',
+            overflow: TextOverflow.ellipsis,
             style: tt.bodyMedium?.copyWith(
               fontWeight: FontWeight.w600,
               color: hasGames ? null : cs.onSurfaceVariant,
