@@ -33,6 +33,10 @@ RatingPlayerStats _computePlayerRating(
       roleAcc = {};
   int firstKilled = 0;
   int firstKilledCityLost = 0;
+  // Season 30+ CI inputs: points scored in red games the player survived the
+  // first night of, and points scored in each first-kill game they lost.
+  final redGamePoints = <double>[];
+  final firstKilledLossPoints = <double>[];
   double autoAdditionalPointsByRoleSum = 0.0;
   double protocolPointsSum = 0.0;
   int protocolCorrectGuesses = 0;
@@ -59,6 +63,18 @@ RatingPlayerStats _computePlayerRating(
     if (isFK) {
       firstKilled++;
       if (!won) firstKilledCityLost++;
+    }
+
+    final gamePoints = g.getPlayerAdditionalPoints(name) +
+        g.getPlayerProtocolAdditionalPoints(name) +
+        g.getPlayerPenaltyPoints(name) +
+        g.getPlayerProtocolPenaltyPoints(name);
+    final role = Role.findByValue(rawRole);
+    if (!isFK && (role == Role.civilian || role == Role.sheriff)) {
+      redGamePoints.add(gamePoints);
+    }
+    if (isFK && !won) {
+      firstKilledLossPoints.add(gamePoints);
     }
     autoAdditionalPointsByRoleSum += g.getPlayerAutoAdditionalPoints(name);
 
@@ -123,9 +139,16 @@ RatingPlayerStats _computePlayerRating(
   final loseByRoleSum = loseByRole.sumOfInt((e) =>
       isDonOrSheriff(e.$1) ? e.$2 : 0);
 
-  final ciForGame = calculateCiForGame(
-      firstKilledCityLost, firstKilled, gamesPlayed, season.id);
-  final ci = ciForGame * firstKilledCityLost;
+  // Season 30+ redefined CI: ciForGame holds the player's average red-game
+  // value ("CI/I") and ci is the sum of per-game top-ups ("СІ").
+  final isTopUpCi = season.id >= kNewCiStartSeason;
+  final ciForGame = isTopUpCi
+      ? calculateAvgRedGamePoints(redGamePoints)
+      : calculateCiForGame(
+          firstKilledCityLost, firstKilled, gamesPlayed, season.id);
+  final ci = isTopUpCi
+      ? calculateCiTopUp(ciForGame, firstKilledLossPoints)
+      : ciForGame * firstKilledCityLost;
 
   final percentOfDeath =
       gamesAsRed > 0 ? firstKilled / gamesAsRed : 0.0;

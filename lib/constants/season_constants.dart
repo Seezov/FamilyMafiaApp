@@ -26,6 +26,12 @@ const kNewRatingStartSeason = 17;
 /// points x 0.3. Season 17 is excluded because it had a different formula.
 const kAutoPointsMaxSeason = 20;
 
+/// Season 30+: CI (compensation index) was redefined. Instead of a flat bonus
+/// scaled by how often a player is killed first, each first-kill loss is topped
+/// up to that player's own average point value in a red-role game
+/// ("CI/I" in the club spreadsheet). Seasons 17-29 keep the old formula.
+const kNewCiStartSeason = 30;
+
 /// Seasons up to 28: No protocol data. Season 29+ added protocol entries
 /// (night kill guesses) as a new data column in the spreadsheet.
 const kPreProtocolMaxSeason = 28;

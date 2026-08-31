@@ -106,6 +106,78 @@ void main() {
     });
   });
 
+  // ── calculateAvgRedGamePoints (season 30+, "CI/I" in the spreadsheet) ─────
+
+  group('calculateAvgRedGamePoints', () {
+    test('no red games returns 0', () {
+      expect(calculateAvgRedGamePoints(const []), 0.0);
+    });
+
+    test('averages the points scored in red games', () {
+      // (0.3 + 0.0 + 0.6) / 3 = 0.3
+      expect(calculateAvgRedGamePoints(const [0.3, 0.0, 0.6]),
+          closeTo(0.3, 1e-9));
+    });
+
+    test('includes negative games in the average', () {
+      // (0.4 + (-0.2)) / 2 = 0.1
+      expect(calculateAvgRedGamePoints(const [0.4, -0.2]), closeTo(0.1, 1e-9));
+    });
+  });
+
+  // ── calculateCiTopUp (season 30+, "СІ" in the spreadsheet) ───────────────
+
+  group('calculateCiTopUp', () {
+    test('no first-kill losses returns 0', () {
+      expect(calculateCiTopUp(0.26, const []), 0.0);
+    });
+
+    test('tops a scoreless first-kill loss up to the average', () {
+      expect(calculateCiTopUp(0.26, const [0.0]), closeTo(0.26, 1e-9));
+    });
+
+    test('pays nothing when the player already beat their average', () {
+      expect(calculateCiTopUp(0.26, const [0.4]), 0.0);
+    });
+
+    test('never returns a negative top-up for a single game', () {
+      // 0.09 - 0.4 is negative for the first game but must not cancel the second
+      expect(calculateCiTopUp(0.09, const [0.4, 0.0]), closeTo(0.09, 1e-9));
+    });
+
+    test('treats a negative game score as zero, not as a bonus', () {
+      // sheet uses (S > 0) * S, so a penalty game still tops up by the full avg
+      expect(calculateCiTopUp(0.26, const [-0.3]), closeTo(0.26, 1e-9));
+    });
+
+    test('rounds the average to 2 decimals before topping up', () {
+      // 0.2592 → 0.26, so two scoreless losses pay 0.52 (not 0.5184)
+      expect(calculateCiTopUp(0.25918367346938775, const [0.0, 0.0]),
+          closeTo(0.52, 1e-9));
+    });
+
+    test('rounds a binary-noisy .xx5 average half away from zero', () {
+      // Seezov's clubmate Залізний: avg 0.07499999999999998 → 0.08, not 0.07
+      expect(calculateCiTopUp(0.07499999999999998, const [0.0, 0.0, 0.4, 0.4]),
+          closeTo(0.16, 1e-9));
+    });
+
+    test('reproduces Seezov season 30', () {
+      const s = [0.3, 0.0, 0.3, 0.4, 0.3, 0.3, 0.0, 0.4, 0.0, 0.0, 0.4, 0.0];
+      expect(calculateCiTopUp(0.25918367346938775, s), closeTo(1.30, 1e-9));
+    });
+
+    test('reproduces Braun season 30', () {
+      const s = [0.4, 0.3, 0.0, 0.3, 0.0, 0.0];
+      expect(calculateCiTopUp(0.09285714285714285, s), closeTo(0.27, 1e-9));
+    });
+
+    test('reproduces Хоттабич season 30', () {
+      expect(calculateCiTopUp(0.28529411764705875, const [0.0, 0.0, 0.0]),
+          closeTo(0.87, 1e-9));
+    });
+  });
+
   // ── calculateMvp ─────────────────────────────────────────────────────────
 
   group('calculateMvp', () {
@@ -257,6 +329,42 @@ void main() {
         season: meta(25),
       );
       expect(result, closeTo(65.0, 1e-3));
+    });
+    test('season 30+: rounds winRate to 2 decimals and result to 4', () {
+      // Seezov season 30: 48/93 wins, ДБ 27.1, штраф -3.4, ОП 4.0, СІ 1.30
+      // winPoints = 27.1 - 3.4 + 4.0 + 1.30 = 29.0
+      // ROUND(48/93*100, 2) = 51.61  (not 51.612903...)
+      // 51.61 + 29.0/93 + 1.30 + 4.0 + 27.1 - 3.4 = 80.92182795...
+      final result = calculateRatingCoefficient(
+        player: 'Seezov',
+        winPoints: 29.0,
+        gamesPlayed: 93,
+        winRate: 48 / 93,
+        ci: 1.30,
+        bestMovePoints: 4.0,
+        additionalPoints: 27.1,
+        penaltyPoints: -3.4,
+        autoAdditionalPoints: 0.0,
+        season: meta(30),
+      );
+      expect(result, 80.9218);
+    });
+
+    test('season 29 keeps full-precision winRate and 3-decimal rounding', () {
+      // same inputs on season 29: 51.612903... + 29/93 + 29.0 = 80.924731...
+      final result = calculateRatingCoefficient(
+        player: 'Seezov',
+        winPoints: 29.0,
+        gamesPlayed: 93,
+        winRate: 48 / 93,
+        ci: 1.30,
+        bestMovePoints: 4.0,
+        additionalPoints: 27.1,
+        penaltyPoints: -3.4,
+        autoAdditionalPoints: 0.0,
+        season: meta(29),
+      );
+      expect(result, 80.925);
     });
   });
 }
