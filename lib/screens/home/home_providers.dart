@@ -75,7 +75,7 @@ final seasonSummaryProvider =
 });
 
 /// Returns the SeasonStats for the selected season, with players filtered
-/// by the effective game limit.
+/// by the effective game limit and by the selected league (main vs. small).
 final currentSeasonStatsProvider = Provider<SeasonStats?>((ref) {
   final season = ref.watch(selectedSeasonProvider);
   if (season == null) return null;
