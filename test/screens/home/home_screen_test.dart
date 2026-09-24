@@ -1,8 +1,10 @@
+import 'package:family_mafia_app/models/game.dart';
 import 'package:family_mafia_app/models/player.dart';
 import 'package:family_mafia_app/models/rating_player_stats.dart';
 import 'package:family_mafia_app/models/season_config.dart';
 import 'package:family_mafia_app/models/season_stats.dart';
 import 'package:family_mafia_app/providers/app_providers.dart';
+import 'package:family_mafia_app/repositories/games_repository.dart';
 import 'package:family_mafia_app/repositories/season_repository.dart';
 import 'package:family_mafia_app/screens/home/home_providers.dart';
 import 'package:family_mafia_app/screens/home/home_screen.dart';
@@ -55,6 +57,7 @@ Future<void> _pumpHome(
   List<int> gameCounts = _allGames,
   SeasonConfig? season = _season,
   int? gameLimitOverride,
+  List<Override> extraOverrides = const [],
 }) async {
   tester.view.physicalSize = const Size(1000, 2400);
   tester.view.devicePixelRatio = 1.0;
@@ -78,6 +81,7 @@ Future<void> _pumpHome(
           if (season != null) repo.addSeason(season.id, _statsFor(gameCounts));
           return repo;
         }),
+        ...extraOverrides,
       ],
       child: const MaterialApp(home: HomeScreen()),
     ),
@@ -162,6 +166,30 @@ void main() {
       await _selectSmallLeague(tester);
 
       expect(find.text('Season Awards'), findsNothing);
+    });
+  });
+
+  group('HomeScreen Season Stats card', () {
+    Game hostedGame({String? host}) => Game(
+          seasonId: _season.id,
+          players: List.generate(10, (i) => 'x$i'),
+          roles: List.filled(10, 'Мирный'),
+          cityWon: true, firstKilled: 0, bestMovePoints: 0, bestMove: const [],
+          host: host,
+        );
+
+    testWidgets("Most Hosted badge includes the host's share of season games",
+        (tester) async {
+      await _pumpHome(tester, extraOverrides: [
+        gamesRepositoryProvider.overrideWith((ref) => GamesRepository()
+          ..addGames([
+            hostedGame(host: 'H'), hostedGame(host: 'H'),
+            hostedGame(host: null), hostedGame(host: null),
+          ])),
+      ]);
+
+      // H hosted 2 of the 4 season games => 50%.
+      expect(find.textContaining('H · 2 (50%)'), findsOneWidget);
     });
   });
 

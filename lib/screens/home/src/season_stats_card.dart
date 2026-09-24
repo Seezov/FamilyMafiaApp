@@ -74,7 +74,8 @@ class _SeasonStatsCardState extends ConsumerState<_SeasonStatsCard> {
         _StatItem(
           icon: Icons.mic, label: 'Most Hosted',
           iconColor: const Color(0xFF00897B), bgColor: const Color(0xFFE0F2F1),
-          winner: first(s.mostHosted, (h) => '${h.host.displayName} · ${h.hosted}'),
+          winner: first(s.mostHosted, (h) =>
+              '${h.host.displayName} · ${h.hosted} (${s.seasonGames == 0 ? '—' : _pct(h.hosted / s.seasonGames)})'),
           pointsLabel: 'Share', metricLabel: 'Games',
           emptyText: 'No host data for this season.',
           entries: [
