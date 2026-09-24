@@ -6,8 +6,11 @@ import 'package:family_mafia_app/extensions/double_extensions.dart';
 import 'package:family_mafia_app/models/rating_player_stats.dart';
 import 'package:family_mafia_app/models/season_config.dart';
 import 'package:family_mafia_app/models/season_stats.dart';
+import 'package:family_mafia_app/models/tournament.dart';
 import 'package:family_mafia_app/providers/app_providers.dart';
 import 'package:family_mafia_app/screens/home/home_providers.dart';
+import 'package:family_mafia_app/services/stats/host_stats.dart';
+import 'package:family_mafia_app/services/stats/season_extra_stats.dart';
 import 'package:family_mafia_app/widgets/hero_card.dart';
 import 'package:family_mafia_app/widgets/section_card.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +21,7 @@ part 'src/background_loading_banner.dart';
 part 'src/season_chips.dart';
 part 'src/league_toggle.dart';
 part 'src/season_header_card.dart';
+part 'src/season_stats_card.dart';
 part 'src/player_card.dart';
 
 class HomeScreen extends ConsumerWidget {
@@ -101,6 +105,10 @@ class _HomeContent extends ConsumerWidget {
               ),
               const SliverToBoxAdapter(child: SizedBox(height: 10)),
             ],
+            SliverToBoxAdapter(
+              child: _SeasonStatsCard(showHosts: league == League.main),
+            ),
+            const SliverToBoxAdapter(child: SizedBox(height: 10)),
             SliverToBoxAdapter(
               child: SectionCard(
                 title: 'Player Ratings',

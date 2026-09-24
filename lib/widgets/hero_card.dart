@@ -8,6 +8,7 @@ class HeroCard extends StatelessWidget {
     required this.gradientStart,
     required this.gradientEnd,
     required this.statTiles,
+    this.secondaryStatTiles,
   });
 
   final String label;
@@ -15,6 +16,7 @@ class HeroCard extends StatelessWidget {
   final Color gradientStart;
   final Color gradientEnd;
   final List<HeroStatTile> statTiles;
+  final List<HeroStatTile>? secondaryStatTiles;
 
   @override
   Widget build(BuildContext context) {
@@ -60,19 +62,25 @@ class HeroCard extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 14),
-            Row(
-              children: statTiles
-                  .expand((tile) => [
-                        Expanded(child: tile),
-                        if (tile != statTiles.last) const SizedBox(width: 8),
-                      ])
-                  .toList(),
-            ),
+            _row(statTiles),
+            if (secondaryStatTiles != null) ...[
+              const SizedBox(height: 8),
+              _row(secondaryStatTiles!),
+            ],
           ],
         ),
       ),
     );
   }
+
+  Widget _row(List<HeroStatTile> tiles) => Row(
+        children: tiles
+            .expand((tile) => [
+                  Expanded(child: tile),
+                  if (tile != tiles.last) const SizedBox(width: 8),
+                ])
+            .toList(),
+      );
 }
 
 class HeroStatTile extends StatelessWidget {

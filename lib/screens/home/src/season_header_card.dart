@@ -1,5 +1,7 @@
 part of '../home_screen.dart';
 
+typedef _RankingEntry = ({String name, String points, String detail});
+
 class _SeasonHeroCard extends ConsumerWidget {
   final SeasonConfig season;
 
@@ -13,6 +15,12 @@ class _SeasonHeroCard extends ConsumerWidget {
     final cityWRStr = '${(summary.cityWR * 100).toStringAsFixed(0)}%';
     final mafiaWRStr = '${(summary.mafiaWR * 100).toStringAsFixed(0)}%';
 
+    final leagues = ref.watch(seasonLeagueCountsProvider);
+    final tournamentsCount = ref
+        .watch(tournamentsProvider)
+        .where((t) => t.seasonId == season.id)
+        .length;
+
     return HeroCard(
       gradientStart: const Color(0xFF00897B),
       gradientEnd: const Color(0xFF004D40),
@@ -23,6 +31,11 @@ class _SeasonHeroCard extends ConsumerWidget {
         HeroStatTile(value: '${summary.players}', label: 'Players'),
         HeroStatTile(value: cityWRStr, label: 'City WR'),
         HeroStatTile(value: mafiaWRStr, label: 'Mafia WR'),
+      ],
+      secondaryStatTiles: [
+        HeroStatTile(value: '${leagues?.main ?? 0}', label: 'Main league'),
+        HeroStatTile(value: '${leagues?.small ?? 0}', label: 'Small league'),
+        HeroStatTile(value: '$tournamentsCount', label: 'Tournaments'),
       ],
     );
   }
@@ -173,8 +186,11 @@ class _SeasonAwardsCardState extends State<_SeasonAwardsCard> {
             physics: const NeverScrollableScrollPhysics(),
             childAspectRatio: 3.2,
             children: awards
-                .map((a) => _AwardBadge(
-                      config: a,
+                .map((a) => _StatBadge(
+                      icon: a.icon,
+                      label: a.label,
+                      iconColor: a.iconColor,
+                      bgColor: a.bgColor,
                       winner: _winnerName(a.ranking),
                       isOpen: a.label == _openAward,
                       onTap: () => _toggle(a),
@@ -189,12 +205,24 @@ class _SeasonAwardsCardState extends State<_SeasonAwardsCard> {
                 ? const SizedBox(width: double.infinity, height: 0)
                 : Padding(
                     padding: const EdgeInsets.only(top: 12),
-                    child: _AwardRanking(
-                      config: open,
-                      entries: open.ranking
-                          .map(_statsFor)
-                          .whereType<RatingPlayerStats>()
-                          .toList(),
+                    child: _StatRanking(
+                      icon: open.icon,
+                      label: open.label,
+                      iconColor: open.iconColor,
+                      bgColor: open.bgColor,
+                      pointsLabel: 'Avg pts',
+                      metricLabel: open.metricLabel,
+                      emptyText: 'Nobody played enough games for this award.',
+                      entries: [
+                        for (final p in open.ranking
+                            .map(_statsFor)
+                            .whereType<RatingPlayerStats>())
+                          (
+                            name: p.player.displayName,
+                            points: open.points(p),
+                            detail: open.detail(p),
+                          ),
+                      ],
                     ),
                   ),
           ),
@@ -234,14 +262,20 @@ class _AwardConfig {
   });
 }
 
-class _AwardBadge extends StatelessWidget {
-  final _AwardConfig config;
+class _StatBadge extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final Color iconColor;
+  final Color bgColor;
   final String winner;
   final bool isOpen;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
-  const _AwardBadge({
-    required this.config,
+  const _StatBadge({
+    required this.icon,
+    required this.label,
+    required this.iconColor,
+    required this.bgColor,
     required this.winner,
     required this.isOpen,
     required this.onTap,
@@ -250,7 +284,7 @@ class _AwardBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: config.bgColor,
+      color: bgColor,
       borderRadius: BorderRadius.circular(10),
       child: InkWell(
         onTap: onTap,
@@ -260,7 +294,7 @@ class _AwardBadge extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
             border: Border.all(
-              color: isOpen ? config.iconColor : Colors.transparent,
+              color: isOpen ? iconColor : Colors.transparent,
               width: 1.5,
             ),
           ),
@@ -269,7 +303,7 @@ class _AwardBadge extends StatelessWidget {
               SizedBox(
                 width: 32,
                 height: 32,
-                child: Icon(config.icon, size: 18, color: config.iconColor),
+                child: Icon(icon, size: 18, color: iconColor),
               ),
               const SizedBox(width: 8),
               Expanded(
@@ -278,7 +312,7 @@ class _AwardBadge extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      config.label,
+                      label,
                       style: const TextStyle(fontSize: 9, color: Colors.grey),
                     ),
                     Text(
@@ -293,15 +327,16 @@ class _AwardBadge extends StatelessWidget {
                   ],
                 ),
               ),
-              AnimatedRotation(
-                turns: isOpen ? 0.5 : 0,
-                duration: const Duration(milliseconds: 180),
-                child: Icon(
-                  Icons.expand_more,
-                  size: 16,
-                  color: config.iconColor.withValues(alpha: 0.7),
+              if (onTap != null)
+                AnimatedRotation(
+                  turns: isOpen ? 0.5 : 0,
+                  duration: const Duration(milliseconds: 180),
+                  child: Icon(
+                    Icons.expand_more,
+                    size: 16,
+                    color: iconColor.withValues(alpha: 0.7),
+                  ),
                 ),
-              ),
             ],
           ),
         ),
@@ -310,19 +345,34 @@ class _AwardBadge extends StatelessWidget {
   }
 }
 
-/// The open award's full ranking: winner first, then the runners-up.
-class _AwardRanking extends StatelessWidget {
-  final _AwardConfig config;
-  final List<RatingPlayerStats> entries;
+/// The open stat's full ranking: winner first, then the runners-up.
+class _StatRanking extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final Color iconColor;
+  final Color bgColor;
+  final String pointsLabel;
+  final String metricLabel;
+  final String emptyText;
+  final List<_RankingEntry> entries;
 
-  const _AwardRanking({required this.config, required this.entries});
+  const _StatRanking({
+    required this.icon,
+    required this.label,
+    required this.iconColor,
+    required this.bgColor,
+    required this.pointsLabel,
+    required this.metricLabel,
+    required this.emptyText,
+    required this.entries,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
-        color: config.bgColor,
+        color: bgColor,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -330,37 +380,37 @@ class _AwardRanking extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(config.icon, size: 14, color: config.iconColor),
+              Icon(icon, size: 14, color: iconColor),
               const SizedBox(width: 6),
               Text(
-                config.label.toUpperCase(),
+                label.toUpperCase(),
                 style: TextStyle(
                   fontSize: 10,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 0.8,
-                  color: config.iconColor,
+                  color: iconColor,
                 ),
               ),
             ],
           ),
           const SizedBox(height: 8),
           if (entries.isEmpty)
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 4),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4),
               child: Text(
-                'Nobody played enough games for this award.',
-                style: TextStyle(fontSize: 11, color: Colors.grey),
+                emptyText,
+                style: const TextStyle(fontSize: 11, color: Colors.grey),
               ),
             )
           else ...[
-            _RankingHeader(metricLabel: config.metricLabel),
+            _RankingHeader(pointsLabel: pointsLabel, metricLabel: metricLabel),
             for (var i = 0; i < entries.length; i++)
               _RankingRow(
                 rank: i + 1,
-                name: entries[i].player.displayName,
-                points: config.points(entries[i]),
-                detail: config.detail(entries[i]),
-                accent: config.iconColor,
+                name: entries[i].name,
+                points: entries[i].points,
+                detail: entries[i].detail,
+                accent: iconColor,
               ),
           ],
         ],
@@ -371,9 +421,10 @@ class _AwardRanking extends StatelessWidget {
 
 /// Column headers for the ranking, so the two trailing figures are unambiguous.
 class _RankingHeader extends StatelessWidget {
+  final String pointsLabel;
   final String metricLabel;
 
-  const _RankingHeader({required this.metricLabel});
+  const _RankingHeader({required this.pointsLabel, required this.metricLabel});
 
   @override
   Widget build(BuildContext context) {
@@ -388,9 +439,9 @@ class _RankingHeader extends StatelessWidget {
       child: Row(
         children: [
           const Expanded(child: Text('Player', style: style)),
-          const SizedBox(
+          SizedBox(
             width: _RankingRow.pointsWidth,
-            child: Text('Avg pts', style: style, textAlign: TextAlign.right),
+            child: Text(pointsLabel, style: style, textAlign: TextAlign.right),
           ),
           SizedBox(
             width: _RankingRow.detailWidth,

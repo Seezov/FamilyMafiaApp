@@ -6,6 +6,7 @@ import 'package:family_mafia_app/providers/app_providers.dart';
 import 'package:family_mafia_app/repositories/season_repository.dart';
 import 'package:family_mafia_app/screens/home/home_providers.dart';
 import 'package:family_mafia_app/screens/home/home_screen.dart';
+import 'package:family_mafia_app/widgets/section_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -69,6 +70,9 @@ Future<void> _pumpHome(
           (ref) => season == null ? <SeasonConfig>[] : [season],
         ),
         gameLimitOverrideProvider.overrideWith((ref) => gameLimitOverride),
+        // Keeps the widget tree from triggering a real network fetch: the
+        // season header and stats card both read this provider now.
+        tournamentsProvider.overrideWith((ref) => const []),
         seasonRepositoryProvider.overrideWith((ref) {
           final repo = SeasonRepository();
           if (season != null) repo.addSeason(season.id, _statsFor(gameCounts));
@@ -140,7 +144,12 @@ void main() {
       expect(find.text('Season Awards'), findsOneWidget);
       // The MVP winner resolves to a real name, not an em-dash.
       expect(find.text('p41'), findsWidgets);
-      expect(find.text('—'), findsNothing);
+      final awardsCard = find.ancestor(
+        of: find.text('Season Awards'),
+        matching: find.byType(SectionCard),
+      );
+      expect(find.descendant(of: awardsCard, matching: find.text('—')),
+          findsNothing);
     });
 
     testWidgets('the awards card is hidden in the small league',
@@ -153,7 +162,6 @@ void main() {
       await _selectSmallLeague(tester);
 
       expect(find.text('Season Awards'), findsNothing);
-      expect(find.text('—'), findsNothing);
     });
   });
 
