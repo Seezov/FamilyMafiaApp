@@ -4,6 +4,17 @@ import 'package:family_mafia_app/repositories/games_repository.dart';
 import 'package:family_mafia_app/repositories/season_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+/// Which standing the season screen shows.
+///
+/// Main league: players who reached the season's `gameLimit`.
+/// Small league: players between `smallLeagueMinGames` (inclusive) and
+/// `gameLimit` (exclusive) — so a player on exactly `gameLimit` is main
+/// league only and the two never overlap.
+enum League { main, small }
+
+/// The league currently shown on the season screen.
+final selectedLeagueProvider = StateProvider<League>((ref) => League.main);
+
 /// When non-null, overrides the season's gameLimit for filtering.
 final gameLimitOverrideProvider = StateProvider<int?>((ref) => null);
 
@@ -74,10 +85,25 @@ final currentSeasonStatsProvider = Provider<SeasonStats?>((ref) {
   if (full == null) return null;
 
   final limit = ref.watch(effectiveGameLimitProvider);
+  final league = ref.watch(selectedLeagueProvider);
 
-  return full.copyWith(
-    playerStats: full.playerStats
-        .where((p) => p.gamesPlayed >= limit)
-        .toList(),
-  );
+  final filtered = switch (league) {
+    League.main => full.playerStats.where((p) => p.gamesPlayed >= limit),
+    League.small => full.playerStats.where((p) =>
+        p.gamesPlayed >= season.smallLeagueMinGames && p.gamesPlayed < limit),
+  };
+
+  return full.copyWith(playerStats: filtered.toList());
+});
+
+/// Keeps the manual game-limit override from contradicting the league toggle.
+///
+/// Both control the same threshold, so the override only makes sense while the
+/// main league is selected. Watched by [HomeScreen].
+final leagueOverrideResetProvider = Provider<void>((ref) {
+  ref.listen<League>(selectedLeagueProvider, (previous, next) {
+    if (next == League.small) {
+      ref.read(gameLimitOverrideProvider.notifier).state = null;
+    }
+  });
 });
