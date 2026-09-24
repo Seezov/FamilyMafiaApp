@@ -1,8 +1,11 @@
+import 'package:family_mafia_app/constants/season_constants.dart';
+
 /// Describes a season and where its data comes from (bundled asset or Google Sheets).
 class SeasonConfig {
   final int id;
   final String title;
   final int gameLimit;
+  final int smallLeagueMinGames;
   final double gamesMultiplier;
   final SeasonSource source;
 
@@ -10,6 +13,7 @@ class SeasonConfig {
     required this.id,
     required this.title,
     required this.gameLimit,
+    required this.smallLeagueMinGames,
     required this.gamesMultiplier,
     required this.source,
   });
@@ -31,6 +35,8 @@ class SeasonConfig {
       id: json['id'] as int,
       title: json['title'] as String,
       gameLimit: json['gameLimit'] as int,
+      smallLeagueMinGames: json['smallLeagueMinGames'] as int? ??
+          kDefaultSmallLeagueMinGames,
       gamesMultiplier: (json['gamesMultiplier'] as num).toDouble(),
       source: source,
     );
@@ -41,6 +47,7 @@ class SeasonConfig {
       'id': id,
       'title': title,
       'gameLimit': gameLimit,
+      'smallLeagueMinGames': smallLeagueMinGames,
       'gamesMultiplier': gamesMultiplier,
     };
     switch (source) {

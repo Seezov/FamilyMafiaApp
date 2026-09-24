@@ -128,3 +128,12 @@ const kDashboardTopN = 10;
 /// where they met certain criteria. Games WITHOUT auto points are penalized
 /// by deducting 0.3 per such game from the final rating.
 const kAutoPointsPenaltyFactor = 0.3;
+
+/// ── Small league bounds ────────────────────────────────────────────────────
+/// Default lower bound (inclusive) on games played for the small league.
+///
+/// The upper bound is always the season's own [SeasonConfig.gameLimit], so it
+/// is never stored separately. Four seasons override this default: season 0
+/// uses 8 (short first season, gameLimit 17), season 6 uses 30 (doubled
+/// season), and seasons 12, 14 and 15 use 20.
+const kDefaultSmallLeagueMinGames = 15;
