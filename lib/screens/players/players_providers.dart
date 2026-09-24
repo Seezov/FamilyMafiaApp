@@ -8,6 +8,7 @@ import 'package:family_mafia_app/repositories/players_repository.dart';
 import 'package:family_mafia_app/repositories/rating_repository.dart';
 import 'package:family_mafia_app/repositories/role_percentiles_repository.dart';
 import 'package:family_mafia_app/repositories/season_repository.dart';
+import 'package:family_mafia_app/services/stats/player_leagues.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final playerSearchQueryProvider = StateProvider<String>((ref) => '');
@@ -278,3 +279,12 @@ final playerBestMovesProvider =
     threeBlacks: three,
   );
 });
+
+/// Per-season league classification for a player, one entry per loaded
+/// season config.
+final playerLeaguesProvider =
+    Provider.family<Map<int, SeasonLeague>, Player>((ref, player) => leaguesForPlayer(
+          player,
+          ref.watch(ratingRepositoryProvider),
+          [...ref.watch(loadedSeasonConfigsProvider)]..sort((a, b) => a.id.compareTo(b.id)),
+        ));

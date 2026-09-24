@@ -5,6 +5,7 @@ import 'package:family_mafia_app/models/player_accomplishments.dart';
 import 'package:family_mafia_app/providers/app_providers.dart';
 import 'package:family_mafia_app/screens/players/players_providers.dart';
 import 'package:family_mafia_app/screens/players/season_chart_painter.dart';
+import 'package:family_mafia_app/services/stats/player_leagues.dart';
 import 'package:family_mafia_app/widgets/hero_card.dart';
 import 'package:family_mafia_app/widgets/section_card.dart';
 import 'package:family_mafia_app/widgets/skeleton_shimmer.dart';
@@ -17,6 +18,7 @@ part 'src/player_utilities.dart';
 part 'src/role_distribution_section.dart';
 part 'src/first_kill_section.dart';
 part 'src/best_moves_section.dart';
+part 'src/leagues_section.dart';
 
 class PlayerProfileScreen extends ConsumerWidget {
   final Player player;
@@ -189,6 +191,8 @@ class PlayerProfileScreen extends ConsumerWidget {
                 _AccomplishmentsSection(acc: acc, isFullyLoaded: isFullyLoaded),
                 const SizedBox(height: 16),
               ],
+              _LeaguesSection(player: player),
+              const SizedBox(height: 16),
               _SeasonChartSection(gamesBySeason: gamesBySeason),
               const SizedBox(height: 16),
               if (roleGames.isNotEmpty) ...[
