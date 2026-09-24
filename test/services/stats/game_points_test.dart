@@ -4,8 +4,8 @@ import 'package:family_mafia_app/services/stats/game_points.dart';
 import 'package:family_mafia_app/services/stats/points_period.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-Game _g({List<double>? add, List<double>? pen, List<double>? auto}) => Game(
-      seasonId: 10,
+Game _g({List<double>? add, List<double>? pen, List<double>? auto, int season = 10}) => Game(
+      seasonId: season,
       players: List.generate(10, (i) => 'p$i'),
       roles: List.filled(10, 'Мирный'),
       cityWon: true,
@@ -48,6 +48,12 @@ void main() {
     final g = _g();
     expect(g.hostPlus, 0.0);
     expect(g.hostMinus, 0.0);
+  });
+
+  test('season 2-3 minus is fouls only (ignores negative доп)', () {
+    final g = _g(season: 3, add: _row({0: -0.5}), pen: _row({0: -1.0}));
+    expect(g.slotMinus(0), closeTo(-1.0, 1e-9));
+    expect(g.hostMinus, closeTo(-1.0, 1e-9));
   });
 
   test('periods split seasons 2-3 from 4+ and skip 0-1', () {

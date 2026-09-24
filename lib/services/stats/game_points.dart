@@ -1,10 +1,11 @@
 // lib/services/stats/game_points.dart
 import 'dart:math';
 
+import 'package:family_mafia_app/constants/season_constants.dart';
 import 'package:family_mafia_app/models/game.dart';
 
-/// A доп of exactly -2 marks a disqualification (seasons 4-5), not a minus
-/// the host handed out.
+/// A доп of exactly -2 marks a disqualification wherever it appears in the
+/// доп column (seen in seasons 4-5), not a minus the host handed out.
 const kDisqualificationPoints = -2.0;
 
 /// Points the host handed out in a game. ЛИ (2-3) and доп (4+) share the
@@ -16,8 +17,12 @@ extension GamePoints on Game {
 
   double slotMinus(int slot) {
     var minus = 0.0;
-    final add = additionalPoints?[slot] ?? 0.0;
-    if (add < 0 && add != kDisqualificationPoints) minus += add;
+    // In seasons 4+, count negative additional points (except disqualification)
+    if (seasonId > kMidFormatMaxSeason) {
+      final add = additionalPoints?[slot] ?? 0.0;
+      if (add < 0 && add != kDisqualificationPoints) minus += add;
+    }
+    // Penalty column always counts as minus when negative
     final pen = penaltyPoints?[slot] ?? 0.0;
     if (pen < 0) minus += pen;
     return minus;
