@@ -67,16 +67,31 @@ Iterable<RatingPlayerStats> _mainLeague(RecordsInput i, {PointsPeriod? period}) 
 }
 
 /// Per (season, player key): max single plus, max single minus, total minus,
-/// total plus.
-Map<(int, String), (double, double, double, double)> _perGamePoints(RecordsInput i) {
-  final out = <(int, String), (double, double, double, double)>{};
+/// total plus, and the running max of the club MVP "game points" (доп +
+/// протокол-доп + штраф + протокол-штраф, plus the кращий хід in the game
+/// the player was first-killed). The last is `null` until the player's
+/// first game, so a genuinely negative best game is never clamped to 0.
+Map<(int, String), (double, double, double, double, double?)> _perGamePoints(RecordsInput i) {
+  final out = <(int, String), (double, double, double, double, double?)>{};
   for (final g in i.games) {
     for (var s = 0; s < g.players.length; s++) {
       final key = (g.seasonId, personKey(i.resolver.resolve(g.players[s])));
-      final (maxPlus, maxMinus, totalMinus, totalPlus) = out[key] ?? (0.0, 0.0, 0.0, 0.0);
+      final (maxPlus, maxMinus, totalMinus, totalPlus, mvpMax) =
+          out[key] ?? (0.0, 0.0, 0.0, 0.0, null);
       final minus = g.slotMinus(s);
       final plus = g.slotPlus(s);
-      out[key] = (max(maxPlus, plus), min(maxMinus, minus), totalMinus + minus, totalPlus + plus);
+      final mvpGamePoints = (g.additionalPoints?[s] ?? 0.0) +
+          (g.protocolAdditionalPoints?[s] ?? 0.0) +
+          (g.penaltyPoints?[s] ?? 0.0) +
+          (g.protocolPenaltyPoints?[s] ?? 0.0) +
+          (g.firstKilled == s + 1 ? g.bestMovePoints : 0.0);
+      out[key] = (
+        max(maxPlus, plus),
+        min(maxMinus, minus),
+        totalMinus + minus,
+        totalPlus + plus,
+        mvpMax == null ? mvpGamePoints : max(mvpMax, mvpGamePoints),
+      );
     }
   }
   return out;
@@ -97,17 +112,21 @@ List<T> _sorted<T>(List<T> l, double Function(T) v, Player Function(T) p,
       return sa.compareTo(sb);
     });
 
-/// Uses positive доп summed from games (no protocol points, no minuses) —
-/// this differs from the Season Awards MVP score input, which uses the
-/// rating's net `additionalPoints`.
+/// Follows the club MVP formula (доп + протокол + кращий хід + мінуси), the
+/// same as `calculateMvp` in rating_formulas.dart for seasons 2+:
+/// `(additionalPoints + bestMovePoints + penaltyPoints) / gamesPlayed`.
+/// `RatingPlayerStats.additionalPoints`/`penaltyPoints` already fold in the
+/// protocol additional/penalty points (see `_computePlayerRating`), so they
+/// aren't added again here. `maxSingleAdd` is the same components' best
+/// single game, computed directly from the games.
 List<MvpRecord> mvpRecords(RecordsInput i, PointsPeriod period) {
   final pts = _perGamePoints(i);
   final rows = [
     for (final p in _mainLeague(i, period: period))
       () {
-        final (maxPlus, _, _, totalPlus) =
-            pts[(p.seasonId, personKey(p.player))] ?? (0.0, 0.0, 0.0, 0.0);
-        return MvpRecord(p.player, p.seasonId, totalPlus / p.gamesPlayed, maxPlus, totalPlus, p.winRate);
+        final totalAdd = p.additionalPoints + p.bestMovePoints + p.penaltyPoints;
+        final maxSingleAdd = pts[(p.seasonId, personKey(p.player))]?.$5 ?? 0.0;
+        return MvpRecord(p.player, p.seasonId, totalAdd / p.gamesPlayed, maxSingleAdd, totalAdd, p.winRate);
       }(),
   ];
   return _sorted(rows, (r) => r.addPerGame, (r) => r.player, season: (r) => r.seasonId);
@@ -162,8 +181,8 @@ List<PenaltyRecord> penaltyRecords(RecordsInput i, PointsPeriod period) {
   final rows = [
     for (final p in _mainLeague(i, period: period))
       () {
-        final (_, maxMinus, total, _) =
-            pts[(p.seasonId, personKey(p.player))] ?? (0.0, 0.0, 0.0, 0.0);
+        final (_, maxMinus, total, _, _) =
+            pts[(p.seasonId, personKey(p.player))] ?? (0.0, 0.0, 0.0, 0.0, null);
         return PenaltyRecord(p.player, p.seasonId, total / p.gamesPlayed, maxMinus, total, p.winRate);
       }(),
   ];

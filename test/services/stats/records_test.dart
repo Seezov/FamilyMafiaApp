@@ -46,13 +46,38 @@ void main() {
     expect(r.single.totalAdd, closeTo(0.6, 1e-9));
   });
 
-  test('MVP uses positive доп from games, not the rating\'s net additionalPoints', () {
-    // additionalPoints: 5.0 is a bogus/protocol-inflated rating field value;
-    // the games only ever gave P1 0.5 + 0.1, so the record must ignore it.
-    final input = _input(ratings: {10: [_r(10, 1, add: 5.0)]});
+  test('MVP addPerGame follows the club MVP formula', () {
+    // (additionalPoints + bestMovePoints + penaltyPoints) / gamesPlayed,
+    // same as calculateMvp for seasons 2+: (1.0 + 0.4 - 0.4) / 2 = 0.5.
+    final input = _input(ratings: {10: [
+      RatingPlayerStats(
+        seasonId: 10, player: const Player(id: 1, displayName: 'P1'),
+        gamesPlayed: 2, wins: 1, winRate: 0.5,
+        additionalPoints: 1.0, bestMovePoints: 0.4, penaltyPoints: -0.4,
+      ),
+    ]});
     final r = mvpRecords(input, PointsPeriod.modern);
-    expect(r.single.addPerGame, closeTo(0.3, 1e-9));
-    expect(r.single.totalAdd, closeTo(0.6, 1e-9));
+    expect(r.single.addPerGame, closeTo(0.5, 1e-9));
+    expect(r.single.totalAdd, closeTo(1.0, 1e-9));
+  });
+
+  test('MVP maxSingleAdd includes the first-killed best move and subtracts that game\'s penalty', () {
+    final gameWithBestMove = Game(
+      seasonId: 10,
+      players: ['P1', 'P2', ...List.generate(8, (i) => 'x$i')],
+      roles: List.filled(10, 'Мирный'),
+      cityWon: true,
+      firstKilled: 1, // slot 0 = P1
+      bestMovePoints: 0.8,
+      bestMove: const [],
+      additionalPoints: [0.2, 0, ...List.filled(8, 0.0)],
+      penaltyPoints: [-0.3, 0, ...List.filled(8, 0.0)],
+    );
+    final otherGame = _g(10, add0: 0.5); // no best move, no penalty: gp = 0.5
+    final input = _input(ratings: {10: [_r(10, 1)]}, games: [gameWithBestMove, otherGame]);
+    final r = mvpRecords(input, PointsPeriod.modern);
+    // 0.2 (доп) - 0.3 (штраф) + 0.8 (кращий хід) = 0.7, beats the other game's 0.5.
+    expect(r.single.maxSingleAdd, closeTo(0.7, 1e-9));
   });
 
   test('periods keep seasons 2-3 apart from 4+', () {
