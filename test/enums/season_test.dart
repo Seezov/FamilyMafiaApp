@@ -1,5 +1,19 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:family_mafia_app/enums/season.dart';
+import 'package:family_mafia_app/models/season_config.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+/// Parses a season-config JSON file (same shape as `remote_config.json` and
+/// `assets/raw/season_config.json`) into `SeasonConfig`s, applying the same
+/// defaulting logic the app uses at runtime (`SeasonConfig.fromJson`).
+List<SeasonConfig> _loadConfigFile(String path) {
+  final json = File(path).readAsStringSync();
+  final map = jsonDecode(json) as Map<String, dynamic>;
+  final seasons = (map['seasons'] as List).cast<Map<String, dynamic>>();
+  return seasons.map((e) => SeasonConfig.fromJson(e)).toList();
+}
 
 void main() {
   group('Season.smallLeagueMinGames', () {
@@ -35,6 +49,23 @@ void main() {
 
     test('toConfig carries the lower bound through', () {
       expect(Season.findById(6)!.toConfig().smallLeagueMinGames, 30);
+    });
+
+    test(
+        'remote_config.json and assets/raw/season_config.json agree with '
+        'the Season enum for every season they share', () {
+      for (final path in [
+        'remote_config.json',
+        'assets/raw/season_config.json',
+      ]) {
+        final configs = _loadConfigFile(path);
+        for (final config in configs) {
+          final season = Season.findById(config.id);
+          if (season == null) continue; // e.g. remote-only seasons 29, 30
+          expect(config.smallLeagueMinGames, season.smallLeagueMinGames,
+              reason: 'season ${config.id} in $path');
+        }
+      }
     });
   });
 }
