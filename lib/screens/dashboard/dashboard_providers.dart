@@ -5,6 +5,9 @@ import 'package:family_mafia_app/providers/app_providers.dart';
 import 'package:family_mafia_app/repositories/games_repository.dart';
 import 'package:family_mafia_app/repositories/players_repository.dart';
 import 'package:family_mafia_app/repositories/rating_repository.dart';
+import 'package:family_mafia_app/repositories/season_repository.dart';
+import 'package:family_mafia_app/screens/home/home_providers.dart';
+import 'package:family_mafia_app/services/stats/season_rows.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 typedef RoleLeaderEntry = ({Player player, int games, int wins, double wr});
@@ -193,3 +196,16 @@ final protocolGuessLeaderboardProvider =
 
   return entries.take(kDashboardTopN).toList();
 });
+
+// ---------------------------------------------------------------------------
+// Seasons comparison table
+// ---------------------------------------------------------------------------
+
+/// One row per loaded season for the dashboard comparison table.
+final seasonRowsProvider = Provider<List<SeasonRow>>((ref) => buildSeasonRows(
+      configs: ref.watch(loadedSeasonConfigsProvider),
+      seasons: ref.watch(seasonRepositoryProvider),
+      games: ref.watch(gamesRepositoryProvider),
+      tournaments: ref.watch(tournamentsProvider),
+      resolver: ref.watch(playerResolverProvider),
+    ));

@@ -3,6 +3,7 @@ import 'dart:ui' show ImageFilter;
 import 'package:family_mafia_app/enums/role.dart';
 import 'package:family_mafia_app/providers/app_providers.dart';
 import 'package:family_mafia_app/screens/dashboard/dashboard_providers.dart';
+import 'package:family_mafia_app/screens/dashboard/seasons_table.dart';
 import 'package:family_mafia_app/widgets/hero_card.dart';
 import 'package:family_mafia_app/widgets/section_card.dart';
 import 'package:flutter/material.dart';
@@ -152,6 +153,9 @@ class _DashboardContent extends ConsumerWidget {
                   ),
                 ],
               ),
+
+              const SizedBox(height: 16),
+              const SeasonsTableCard(),
 
               const SizedBox(height: 20),
 
