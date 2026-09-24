@@ -52,13 +52,42 @@ class _ParsedConfig {
   const _ParsedConfig(this.seasons, [this.tournaments = const []]);
 }
 
-_ParsedConfig _parseConfig(String json) {
+/// The remote/cached config only carries tournaments when it explicitly has
+/// a "tournaments" key; when it's missing entirely, fall back to the
+/// tournaments bundled in [bundledJson] (parsed lazily so callers that don't
+/// need it never pay for the asset read). Any parse failure of [bundledJson]
+/// is swallowed, same as the other bundled-asset fallbacks in this file.
+List<Tournament> tournamentsWithBundledFallback(
+    Map<String, dynamic> remoteMap, String? bundledJson) {
+  if (remoteMap.containsKey('tournaments')) return parseTournaments(remoteMap);
+  if (bundledJson == null) return const [];
+  try {
+    return parseTournaments(jsonDecode(bundledJson) as Map<String, dynamic>);
+  } catch (_) {
+    return const [];
+  }
+}
+
+_ParsedConfig _parseConfig(String json, {String? bundledJsonForTournamentsFallback}) {
   final map = jsonDecode(json) as Map<String, dynamic>;
   final seasons = (map['seasons'] as List).cast<Map<String, dynamic>>();
+  final tournaments = bundledJsonForTournamentsFallback == null
+      ? parseTournaments(map)
+      : tournamentsWithBundledFallback(map, bundledJsonForTournamentsFallback);
   return _ParsedConfig(
     seasons.map((e) => SeasonConfig.fromJson(e)).toList(),
-    parseTournaments(map),
+    tournaments,
   );
+}
+
+/// Best-effort read of the bundled season config, for the tournaments
+/// fallback only. Never throws.
+Future<String?> _tryLoadBundledConfigJson() async {
+  try {
+    return await rootBundle.loadString('assets/raw/season_config.json');
+  } catch (_) {
+    return null;
+  }
 }
 
 /// Loads .env.json once and caches the result.
@@ -85,7 +114,7 @@ final parsedConfigProvider = FutureProvider<_ParsedConfig>((ref) async {
       final response = await dio.get<String>(configUrl);
       final json = response.data!;
       await cacheService.cacheRemoteConfig(json);
-      return _parseConfig(json);
+      return _parseConfig(json, bundledJsonForTournamentsFallback: await _tryLoadBundledConfigJson());
     } catch (e) {
       debugPrint('Remote config fetch failed: $e');
     }
@@ -93,7 +122,7 @@ final parsedConfigProvider = FutureProvider<_ParsedConfig>((ref) async {
     final cached = await cacheService.getCachedRemoteConfig();
     if (cached != null) {
       try {
-        return _parseConfig(cached);
+        return _parseConfig(cached, bundledJsonForTournamentsFallback: await _tryLoadBundledConfigJson());
       } catch (e) {
         debugPrint('Cached remote config parse failed: $e');
       }
