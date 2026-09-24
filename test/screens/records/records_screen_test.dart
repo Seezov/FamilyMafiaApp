@@ -32,5 +32,9 @@ void main() {
     await t.pump();
     expect(find.text('Braun'), findsOneWidget);
     expect(find.text('50'), findsWidgets);
+
+    await t.tap(find.text('Hosts'));
+    await t.pump();
+    expect(find.text('All hosts'), findsOneWidget);
   });
 }

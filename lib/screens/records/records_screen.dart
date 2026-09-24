@@ -145,9 +145,14 @@ class RecordsScreen extends ConsumerWidget {
           SectionCard(
             title: category.label,
             trailing: Text(
-              category == RecordCategory.streaks || (category.hasAllTime && allTime)
-                  ? 'All players'
-                  : 'Main league only',
+              // Hosts aren't players, so hostRecords() applies no league
+              // filter regardless of the Per season / All time toggle.
+              category == RecordCategory.hosts
+                  ? 'All hosts'
+                  : category == RecordCategory.streaks ||
+                          (category == RecordCategory.games && allTime)
+                      ? 'All players'
+                      : 'Main league only',
               style: const TextStyle(fontSize: 11, color: Colors.grey),
             ),
             child: table,
