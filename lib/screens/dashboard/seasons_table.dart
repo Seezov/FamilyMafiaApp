@@ -57,6 +57,9 @@ class SeasonsTableCard extends ConsumerWidget {
         rows: rows,
         initialSortIndex: 0,
         collapsedRowCount: 5,
+        // The card's own "Expand" button (above) already opens the full
+        // table, so the inline "Show all" toggle would just duplicate it.
+        showExpandToggle: false,
       ),
     );
   }

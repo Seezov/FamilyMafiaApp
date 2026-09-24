@@ -4,7 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 typedef _Row = ({String name, int games});
 
-Widget _app(List<_Row> rows, {int? collapsed}) => MaterialApp(
+Widget _app(List<_Row> rows, {int? collapsed, bool showExpandToggle = true}) => MaterialApp(
       home: Scaffold(
         body: SortableTable<_Row>(
           columns: [
@@ -14,6 +14,7 @@ Widget _app(List<_Row> rows, {int? collapsed}) => MaterialApp(
           rows: rows,
           initialSortIndex: 1,
           collapsedRowCount: collapsed,
+          showExpandToggle: showExpandToggle,
         ),
       ),
     );
@@ -58,6 +59,12 @@ void main() {
     await t.tap(find.text('Show all (3)'));
     await t.pump();
     expect(find.text('A'), findsOneWidget);
+  });
+
+  testWidgets('showExpandToggle: false collapses rows with no Show all button', (t) async {
+    await t.pumpWidget(_app(rows, collapsed: 2, showExpandToggle: false));
+    expect(find.text('A'), findsNothing);
+    expect(find.textContaining('Show all'), findsNothing);
   });
 
   testWidgets('resets sort when columns list changes on the same state', (t) async {

@@ -19,6 +19,11 @@ class SortableTable<T> extends StatefulWidget {
   final int? collapsedRowCount;
   final bool showRank;
 
+  /// Whether the collapsed table shows its own "Show all (N)" toggle. False
+  /// when a surrounding screen already offers its own way to see every row
+  /// (e.g. an "Expand" button), so the two controls don't duplicate.
+  final bool showExpandToggle;
+
   const SortableTable({
     super.key,
     required this.columns,
@@ -27,6 +32,7 @@ class SortableTable<T> extends StatefulWidget {
     this.initialDescending = true,
     this.collapsedRowCount,
     this.showRank = false,
+    this.showExpandToggle = true,
   });
 
   @override
@@ -172,7 +178,7 @@ class _SortableTableState<T> extends State<SortableTable<T>> {
             ),
           ],
         ),
-        if (limit != null && all.length > limit)
+        if (limit != null && all.length > limit && widget.showExpandToggle)
           TextButton(
             onPressed: () => setState(() => _expanded = !_expanded),
             child: Text(_expanded ? 'Show less' : 'Show all (${all.length})'),
