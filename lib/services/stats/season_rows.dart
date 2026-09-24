@@ -1,3 +1,4 @@
+import 'package:family_mafia_app/constants/season_constants.dart';
 import 'package:family_mafia_app/enums/role.dart';
 import 'package:family_mafia_app/models/game.dart';
 import 'package:family_mafia_app/models/rating_player_stats.dart';
@@ -69,7 +70,9 @@ List<SeasonRow> buildSeasonRows({
       mafiaWR: decided == 0 ? 0 : (decided - city) / decided,
       tournaments: extra.tournaments,
       mostGames: extra.mostGames.isEmpty ? null : named(extra.mostGames.first, (p) => p.gamesPlayed),
-      mvp: named(winner(stats.mvpRanking), (p) => p.mvp),
+      // Seasons 0-1 (kOldFormatMaxSeason) scored MVP on a different scale
+      // (win points), so it isn't comparable and is shown/sorted as missing.
+      mvp: c.id <= kOldFormatMaxSeason ? null : named(winner(stats.mvpRanking), (p) => p.mvp),
       mostKilled: named(winner(stats.mostKilledRanking), (p) => p.firstKilled),
       topKilledPct: extra.topFirstKilledPct.isEmpty ? null : named(extra.topFirstKilledPct.first, (p) => p.percentOfDeath),
       mostHosted: extra.mostHosted.isEmpty ? null : (name: extra.mostHosted.first.host.displayName, value: extra.mostHosted.first.hosted),

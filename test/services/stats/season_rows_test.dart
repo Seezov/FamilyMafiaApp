@@ -58,4 +58,22 @@ void main() {
     );
     expect(rows.single.mvp, isNull);
   });
+
+  test('MVP is null for old-format seasons (id <= kOldFormatMaxSeason)', () {
+    final a = RatingPlayerStats(seasonId: 1, player: const Player(id: 1, displayName: 'A'), gamesPlayed: 3, mvp: 0.4);
+    final rows = buildSeasonRows(
+      configs: const [
+        SeasonConfig(id: 1, title: 'S1', gameLimit: 2, smallLeagueMinGames: 1, gamesMultiplier: 0, source: BundledSource(jsonFile: 'x')),
+      ],
+      seasons: {
+        1: SeasonStats(playerStats: [a], mvpRanking: const [1], bestSheriffRanking: const [], bestDonRanking: const [],
+            bestCivilianRanking: const [], bestMafiaRanking: const [], mostKilledRanking: const []),
+      },
+      games: [Game(seasonId: 1, players: ['A', 'B', ...List.generate(8, (i) => 'x$i')],
+          roles: List.filled(10, 'Мирный'), cityWon: true, firstKilled: 0, bestMovePoints: 0, bestMove: const [])],
+      tournaments: const [],
+      resolver: PlayerResolver(const []),
+    );
+    expect(rows.single.mvp, isNull);
+  });
 }
