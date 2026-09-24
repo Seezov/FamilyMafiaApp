@@ -136,5 +136,12 @@ void main() {
       // Seasons 29-30 live only in the JSON sources; that asymmetry is allowed.
       expect(Season.findById(29), isNull);
     });
+
+    test('both config files list the same tournaments', () {
+      String tournamentsOf(String path) => jsonEncode(
+          (jsonDecode(File(path).readAsStringSync()) as Map)['tournaments']);
+      expect(tournamentsOf('remote_config.json'),
+          tournamentsOf('assets/raw/season_config.json'));
+    });
   });
 }

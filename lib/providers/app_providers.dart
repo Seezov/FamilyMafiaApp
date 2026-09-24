@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:family_mafia_app/enums/season.dart';
 import 'package:family_mafia_app/models/season_config.dart';
+import 'package:family_mafia_app/models/tournament.dart';
 import 'package:family_mafia_app/repositories/games_repository.dart';
 import 'package:family_mafia_app/repositories/players_repository.dart';
 import 'package:family_mafia_app/repositories/rating_repository.dart';
@@ -46,8 +47,9 @@ final seasonCacheServiceProvider = Provider<SeasonCacheService>(
 
 class _ParsedConfig {
   final List<SeasonConfig> seasons;
+  final List<Tournament> tournaments;
 
-  const _ParsedConfig(this.seasons);
+  const _ParsedConfig(this.seasons, [this.tournaments = const []]);
 }
 
 _ParsedConfig _parseConfig(String json) {
@@ -55,6 +57,7 @@ _ParsedConfig _parseConfig(String json) {
   final seasons = (map['seasons'] as List).cast<Map<String, dynamic>>();
   return _ParsedConfig(
     seasons.map((e) => SeasonConfig.fromJson(e)).toList(),
+    parseTournaments(map),
   );
 }
 
@@ -117,6 +120,11 @@ final sheetsApiKeyProvider = Provider<String?>((ref) {
 
 final seasonConfigsProvider = Provider<List<SeasonConfig>>((ref) {
   return ref.watch(parsedConfigProvider).valueOrNull?.seasons ?? [];
+});
+
+/// Every tournament held in any season, from the season config JSON.
+final tournamentsProvider = Provider<List<Tournament>>((ref) {
+  return ref.watch(parsedConfigProvider).valueOrNull?.tournaments ?? const [];
 });
 
 // ── Loading phase ─────────────────────────────────────────────────────────
