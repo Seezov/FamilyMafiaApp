@@ -106,11 +106,10 @@ League.main  => p.gamesPlayed >= limit
 League.small => p.gamesPlayed >= season.smallLeagueMinGames && p.gamesPlayed < limit
 ```
 
-`hasQualifyingPlayersProvider` becomes league-aware: it applies the same
-predicate as the selected league (against the season's *default* `gameLimit`,
-as it does today, not the override). Otherwise an empty small league renders
-the existing "No players meet this game limit" message, which states the wrong
-reason.
+`hasQualifyingPlayersProvider` is left untouched: it is declared here but has
+no callers anywhere in `lib/` or `test/`, so making it league-aware would be
+speculative. The empty-league message is handled in the widget instead (see
+below).
 
 **Interaction with `gameLimitOverrideProvider`:** the league toggle and the
 manual game-limit override both control the same threshold, and together they
@@ -122,13 +121,17 @@ to `null`, mirroring what `season_chips.dart:41` already does on season change.
 A `SegmentedButton<League>` below the season chips, with two segments:
 **Основна** / **Мала**.
 
-### `lib/screens/home/src/season_header_card.dart`
-
-Show the active band (e.g. `15–39 ігор`) so the selection criterion is visible.
-
 When the small league is empty for a season, the segment stays selectable and
-the list shows an explanation naming the actual bounds, rather than the
-generic game-limit message.
+the list shows an explanation naming the actual bounds, rather than the generic
+game-limit message. This lives in `home_screen.dart` at the existing
+`'No players meet this game limit'` branch.
+
+### Deferred: the band in the season header
+
+Showing the active band (e.g. `15–39 ігор`) in
+`lib/screens/home/src/season_header_card.dart` is deferred, not dropped. That
+file currently carries ~500 lines of unrelated uncommitted work, and editing it
+now would collide. Revisit once that work lands.
 
 ## Testing
 
@@ -140,6 +143,8 @@ generic game-limit message.
 - The main league result is unchanged from current behaviour.
 - Selecting the small league clears `gameLimitOverrideProvider`.
 - `SeasonConfig.fromJson` without `smallLeagueMinGames` yields `15`.
+- Every `Season` enum value carries the lower bound from the table above
+  (guards the four hand-set exceptions against a careless edit).
 
 ## Out of scope
 
