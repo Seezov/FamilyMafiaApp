@@ -27,6 +27,8 @@ class Game with _$Game {
     List<String>? wonByPlayer,
     List<ProtocolEntry>? protocol, // ordered by kill order (index 0 = first killed)
     List<int>? supportFive, // up to 5 signed ints: abs=slot, positive=red, negative=black
+    String? host, // who hosted (ведучий); null for seasons 0-1 or when blank
+    DateTime? date, // game day (UTC midnight); null when unknown
   }) = _Game;
 
   int getPlayerSlot(String player) => players.indexOf(player);

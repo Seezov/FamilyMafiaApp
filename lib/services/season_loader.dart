@@ -27,6 +27,18 @@ part 'src/player_rating.dart';
 part 'src/season_stats.dart';
 part 'src/percentiles.dart';
 
+/// Parses one season's raw JSON rows into games, including non-rating ones.
+@visibleForTesting
+List<Game> parseSeasonGamesForTest(
+        int seasonId, List<Map<String, dynamic>> raw) =>
+    _getGamesDataSeason(
+      seasonId,
+      raw
+          .map(GamesDataSeason.fromJson)
+          .where((d) => _filterRawData(d, seasonId))
+          .toList(),
+    );
+
 // ── Service ─────────────────────────────────────────────────────────────────
 
 class SeasonLoaderService {

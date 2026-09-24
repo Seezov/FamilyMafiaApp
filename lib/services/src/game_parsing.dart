@@ -56,6 +56,8 @@ Game _buildGame(int seasonId, List<GamesDataSeason> p) {
       ],
       additionalPoints:
           p.map((r) => double.tryParse(r.i) ?? 0.0).toList(),
+      host: _parseHost(p[8].c),
+      date: p[9].b.trim() == 'Дата' ? _parseSheetDate(p[9].c) : null,
     );
   }
 
@@ -75,6 +77,8 @@ Game _buildGame(int seasonId, List<GamesDataSeason> p) {
       ],
       additionalPoints:
           p.map((r) => double.tryParse(r.i) ?? 0.0).toList(),
+      host: _parseHost(p[8].c),
+      date: p[9].b.trim() == 'Дата' ? _parseSheetDate(p[9].c) : null,
     );
   }
 
@@ -105,6 +109,8 @@ Game _buildGame(int seasonId, List<GamesDataSeason> p) {
       penaltyPoints: seasonId > kAutoPointsMaxSeason
           ? playerRows.map((r) => double.tryParse(r.h) ?? 0.0).toList()
           : null,
+      host: _hostLabels.contains(p[0].c.trim()) ? _parseHost(p[0].d) : null,
+      date: p[0].a.trim() == 'Дата' ? _parseSheetDate(p[0].b) : null,
     );
   }
 
@@ -153,6 +159,8 @@ Game _buildGame(int seasonId, List<GamesDataSeason> p) {
         playerRows.map((r) => double.tryParse(r.l) ?? 0.0).toList(),
     protocol: protocolEntries.isEmpty ? null : protocolEntries,
     supportFive: supportFive.isEmpty ? null : supportFive,
+    host: _hostLabels.contains(p[0].c.trim()) ? _parseHost(p[0].d) : null,
+    date: p[0].a.trim() == 'Дата' ? _parseSheetDate(p[0].b) : null,
   );
 }
 
@@ -178,4 +186,39 @@ bool? _getVictoryTeam(String s) {
   if (GameValues.mafiaWon.sheetValues.contains(s)) return false;
   if (GameValues.cityWon.sheetValues.contains(s)) return true;
   return null;
+}
+
+const _hostLabels = {'Ведущий', 'Ведучий'};
+
+String? _parseHost(String s) {
+  final v = s.trim();
+  if (v.isEmpty || _hostLabels.contains(v)) return null;
+  return v;
+}
+
+/// Sheet dates arrive as an ISO timestamp (local midnight exported as UTC,
+/// e.g. 2019-03-04T22:00:00.000Z), a plain `YYYY-MM-DD`, `M/D/YYYY`, or a
+/// Sheets serial day number. Returns UTC midnight of the game day.
+DateTime? _parseSheetDate(String s) {
+  final v = s.trim();
+  if (v.isEmpty) return null;
+  final serial = int.tryParse(v);
+  if (serial != null) {
+    final d = DateTime.utc(1899, 12, 30).add(Duration(days: serial));
+    return DateTime.utc(d.year, d.month, d.day);
+  }
+  if (v.contains('/')) {
+    final parts = v.split('/');
+    if (parts.length != 3) return null;
+    final m = int.tryParse(parts[0]);
+    final d = int.tryParse(parts[1]);
+    final y = int.tryParse(parts[2]);
+    if (m == null || d == null || y == null) return null;
+    return DateTime.utc(y, m, d);
+  }
+  final parsed = DateTime.tryParse(v);
+  if (parsed == null) return null;
+  // Shift by 12h so a local-midnight timestamp lands on the right day.
+  final shifted = v.contains('T') ? parsed.toUtc().add(const Duration(hours: 12)) : parsed;
+  return DateTime.utc(shifted.year, shifted.month, shifted.day);
 }
