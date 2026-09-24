@@ -111,11 +111,11 @@ class _HomeContent extends ConsumerWidget {
                         padding: const EdgeInsets.all(16),
                         child: Text(
                           league == League.small
-                              ? 'Немає гравців у діапазоні '
+                              ? 'No players in the '
                                   '${selectedSeason.smallLeagueMinGames}–'
-                                  '${gameLimit - 1} ігор'
-                              : 'Немає гравців, які зіграли '
-                                  'щонайменше $gameLimit ігор',
+                                  '${gameLimit - 1} game range'
+                              : 'No players have played '
+                                  'at least $gameLimit games',
                         ),
                       )
                     else

@@ -11,8 +11,8 @@ class _LeagueToggle extends ConsumerWidget {
       padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
       child: SegmentedButton<League>(
         segments: const [
-          ButtonSegment(value: League.main, label: Text('Основна')),
-          ButtonSegment(value: League.small, label: Text('Мала')),
+          ButtonSegment(value: League.main, label: Text('Main')),
+          ButtonSegment(value: League.small, label: Text('Small')),
         ],
         selected: {league},
         showSelectedIcon: false,

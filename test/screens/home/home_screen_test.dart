@@ -82,7 +82,7 @@ Future<void> _pumpHome(
 }
 
 Future<void> _selectSmallLeague(WidgetTester tester) async {
-  await tester.tap(find.text('Мала'));
+  await tester.tap(find.text('Small'));
   await tester.pump();
 }
 
@@ -96,7 +96,7 @@ void main() {
         (tester) async {
       await _pumpHome(tester);
 
-      expect(find.text('Основна'), findsOneWidget);
+      expect(find.text('Main'), findsOneWidget);
       expect(_listedPlayers(), [41, 40]);
     });
 
@@ -110,7 +110,7 @@ void main() {
       expect(_listedPlayers(), [39, 15]);
     });
 
-    testWidgets('tapping Мала changes which players are listed',
+    testWidgets('tapping Small changes which players are listed',
         (tester) async {
       await _pumpHome(tester);
       final before = _listedPlayers();
@@ -127,8 +127,8 @@ void main() {
       await _pumpHome(tester, season: null);
 
       expect(find.text('Select a season'), findsOneWidget);
-      expect(find.text('Основна'), findsNothing);
-      expect(find.text('Мала'), findsNothing);
+      expect(find.text('Main'), findsNothing);
+      expect(find.text('Small'), findsNothing);
     });
   });
 
@@ -158,15 +158,15 @@ void main() {
   });
 
   group('HomeScreen empty states', () {
-    testWidgets('the small league names its band in Ukrainian',
+    testWidgets('the small league names its band',
         (tester) async {
       await _pumpHome(tester, gameCounts: _mainOnlyGames);
       await _selectSmallLeague(tester);
 
-      expect(find.text('Немає гравців у діапазоні 15–39 ігор'), findsOneWidget);
+      expect(find.text('No players in the 15–39 game range'), findsOneWidget);
     });
 
-    testWidgets('the main league names the effective limit in Ukrainian',
+    testWidgets('the main league names the effective limit',
         (tester) async {
       // The override, not the season's own gameLimit, is what the filter uses:
       // the message has to print the same number.
@@ -174,7 +174,7 @@ void main() {
 
       expect(_listedPlayers(), isEmpty);
       expect(
-        find.text('Немає гравців, які зіграли щонайменше 100 ігор'),
+        find.text('No players have played at least 100 games'),
         findsOneWidget,
       );
       expect(find.text('No players meet this game limit'), findsNothing);
