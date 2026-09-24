@@ -60,12 +60,7 @@ class _PlayersContent extends ConsumerWidget {
               child: SizedBox.shrink(),
             ),
           ),
-          SliverToBoxAdapter(
-            child: SafeArea(
-              bottom: false,
-              child: const _SearchBar(),
-            ),
-          ),
+          const SliverToBoxAdapter(child: _SearchBar()),
           if (isBackgroundLoading)
             const SliverToBoxAdapter(child: _BackgroundLoadingIndicator()),
           if (players.isEmpty)

@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:ui' show ImageFilter;
+import 'dart:ui' show FontFeature, ImageFilter;
 
 import 'package:family_mafia_app/enums/role.dart';
 import 'package:family_mafia_app/extensions/double_extensions.dart';

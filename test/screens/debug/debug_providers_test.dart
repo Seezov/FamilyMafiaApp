@@ -1,3 +1,4 @@
+import 'package:family_mafia_app/enums/role.dart';
 import 'package:family_mafia_app/models/game.dart';
 import 'package:family_mafia_app/models/player.dart';
 import 'package:family_mafia_app/screens/debug/debug_providers.dart';
@@ -206,6 +207,127 @@ void main() {
       // All 10 seats played once.
       for (final s in result) {
         expect(s.played, 1);
+      }
+    });
+  });
+
+  group('winRateBySlotRoleForPlayer', () {
+    final seezov = const Player(id: 1, displayName: 'Seezov');
+
+    test('returns 10 slot rows each with all four role cells', () {
+      final result = winRateBySlotRoleForPlayer(const [], seezov);
+      expect(result.length, 10);
+      expect(result.map((r) => r.slot).toList(),
+          [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+      for (final row in result) {
+        expect(row.cells.keys.toSet(), kMatrixRoles.toSet());
+      }
+    });
+
+    test('empty games => every cell is zero', () {
+      final result = winRateBySlotRoleForPlayer(const [], seezov);
+      for (final row in result) {
+        for (final cell in row.cells.values) {
+          expect(cell.played, 0);
+          expect(cell.wins, 0);
+          expect(cell.winRate, 0.0);
+        }
+      }
+    });
+
+    test('buckets played/wins into the correct slot and role', () {
+      final games = [
+        // Slot 1 as civilian, city won => win.
+        _game(players: ['Seezov', 'B', 'C'], roles: [_civ, _maf, _civ], cityWon: true),
+        // Slot 1 as civilian, city lost => loss.
+        _game(players: ['Seezov', 'B', 'C'], roles: [_civ, _maf, _civ], cityWon: false),
+        // Slot 1 as mafia, city lost => win.
+        _game(players: ['Seezov', 'B', 'C'], roles: [_maf, _civ, _civ], cityWon: false),
+      ];
+      final result = winRateBySlotRoleForPlayer(games, seezov);
+      final civ = result[0].cells[Role.civilian]!;
+      expect(civ.played, 2);
+      expect(civ.wins, 1);
+      expect(civ.winRate, 0.5);
+      final maf = result[0].cells[Role.mafia]!;
+      expect(maf.played, 1);
+      expect(maf.wins, 1);
+      // Untouched cells stay zero.
+      expect(result[0].cells[Role.sheriff]!.played, 0);
+      expect(result[1].cells[Role.civilian]!.played, 0);
+    });
+
+    test('ignores non-rating games', () {
+      final games = [
+        _game(players: ['Seezov'], roles: [_civ], cityWon: null),
+      ];
+      final result = winRateBySlotRoleForPlayer(games, seezov);
+      expect(result[0].cells[Role.civilian]!.played, 0);
+    });
+
+    test('excludes rating games that are not normal (bad composition)', () {
+      final games = [
+        _game(
+          players: ['Seezov', 'B', 'C'],
+          roles: [_civ, _maf, _civ],
+          cityWon: true,
+          seasonId: 5,
+        ),
+      ];
+      final result = winRateBySlotRoleForPlayer(games, seezov);
+      expect(result[0].cells[Role.civilian]!.played, 0);
+    });
+  });
+
+  group('winRateBySlotRoleGlobal', () {
+    test('returns 10 slot rows each with all four role cells', () {
+      final result = winRateBySlotRoleGlobal(const []);
+      expect(result.length, 10);
+      for (final row in result) {
+        expect(row.cells.keys.toSet(), kMatrixRoles.toSet());
+      }
+    });
+
+    test('buckets every seat by its role', () {
+      final games = [
+        _normalGame(cityWon: true),
+      ];
+      final result = winRateBySlotRoleGlobal(games);
+      // _normalGame: slot1 don, slot2/3 mafia, slot4 sheriff, 5..10 civ.
+      expect(result[0].cells[Role.don]!.played, 1);
+      expect(result[0].cells[Role.don]!.wins, 0); // black loses when city wins
+      expect(result[1].cells[Role.mafia]!.played, 1);
+      expect(result[3].cells[Role.sheriff]!.played, 1);
+      expect(result[3].cells[Role.sheriff]!.wins, 1); // red wins when city wins
+      expect(result[4].cells[Role.civilian]!.played, 1);
+    });
+
+    test('ignores non-rating games', () {
+      final games = [
+        _game(players: ['A', 'B'], roles: [_civ, _maf], cityWon: null),
+      ];
+      final result = winRateBySlotRoleGlobal(games);
+      for (final row in result) {
+        for (final cell in row.cells.values) {
+          expect(cell.played, 0);
+        }
+      }
+    });
+
+    test('excludes rating games that are not normal (bad composition)', () {
+      final games = [
+        _game(
+          players: ['A', 'B', 'C'],
+          roles: [_civ, _maf, _civ],
+          cityWon: true,
+          seasonId: 5,
+        ),
+      ];
+      final result = winRateBySlotRoleGlobal(games);
+      for (final row in result) {
+        for (final cell in row.cells.values) {
+          expect(cell.played, 0);
+        }
       }
     });
   });

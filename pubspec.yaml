@@ -43,6 +43,9 @@ dependencies:
   # Local storage
   path_provider: ^2.1.5
 
+  # Sharing exported files
+  share_plus: ^10.1.4
+
   # JSON serialization
   freezed_annotation: ^2.4.4
   json_annotation: ^4.9.0

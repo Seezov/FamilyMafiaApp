@@ -2,26 +2,59 @@ part of '../season_loader.dart';
 
 // ── Season stats ─────────────────────────────────────────────────────────
 
+/// How many players each season award lists: the winner plus three runners-up.
+const kAwardRankingSize = 4;
+
 SeasonStats _generateSeasonStats(List<RatingPlayerStats> sorted, int gameLimit) {
   final withLimit = sorted.where((p) {
     return p.gamesPlayed >= gameLimit;
   }).toList();
 
+  List<int> byRole(Role role) =>
+      rankPlayersForRole(withLimit, role).map((p) => p.player.id).toList();
+
   return SeasonStats(
     playerStats: sorted,
-    mvpPlayerId:
-        withLimit.maxByOrNull((p) => p.mvp)?.player.id ?? -1,
-    mostKilledPlayerId:
-        withLimit.maxByOrNull((p) => p.firstKilled.toDouble())?.player.id ?? -1,
-    bestSheriffPlayerId:
-        findBestPlayerForRole(withLimit, Role.sheriff)?.player.id ?? -1,
-    bestDonPlayerId:
-        findBestPlayerForRole(withLimit, Role.don)?.player.id ?? -1,
-    bestCivilianPlayerId:
-        findBestPlayerForRole(withLimit, Role.civilian)?.player.id ?? -1,
-    bestMafiaPlayerId:
-        findBestPlayerForRole(withLimit, Role.mafia)?.player.id ?? -1,
+    mvpRanking: _rankBy(withLimit, (p) => p.mvp),
+    mostKilledRanking: _rankBy(withLimit, (p) => p.firstKilled.toDouble()),
+    bestSheriffRanking: byRole(Role.sheriff),
+    bestDonRanking: byRole(Role.don),
+    bestCivilianRanking: byRole(Role.civilian),
+    bestMafiaRanking: byRole(Role.mafia),
   );
+}
+
+/// Ranks [players] by [score], highest first, and returns their ids.
+List<int> _rankBy(
+  List<RatingPlayerStats> players,
+  double Function(RatingPlayerStats) score,
+) {
+  final ordered = [...players]
+    ..sort((a, b) => score(b).compareTo(score(a)));
+  return ordered.take(kAwardRankingSize).map((p) => p.player.id).toList();
+}
+
+/// The best [take] players for [role], best first.
+///
+/// Applies [findBestPlayerForRole] repeatedly, dropping each pick, so the first
+/// entry is always the player that function would have chosen on its own and
+/// the runners-up follow the same rule rather than a second, competing one.
+List<RatingPlayerStats> rankPlayersForRole(
+  List<RatingPlayerStats> players,
+  Role role, {
+  int take = kAwardRankingSize,
+}) {
+  final remaining = [...players];
+  final ranking = <RatingPlayerStats>[];
+
+  while (ranking.length < take) {
+    final next = findBestPlayerForRole(remaining, role);
+    if (next == null) break;
+    ranking.add(next);
+    remaining.removeWhere((p) => p.player.id == next.player.id);
+  }
+
+  return ranking;
 }
 
 RatingPlayerStats? findBestPlayerForRole(

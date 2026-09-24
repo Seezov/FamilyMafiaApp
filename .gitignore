@@ -88,3 +88,8 @@ assets/.env.json
 .pub-cache/
 .pub/
 family_mafia_app.iml
+
+# Agent scratch / local settings
+.superpowers/
+.claude/settings.local.json
+*.stackdump

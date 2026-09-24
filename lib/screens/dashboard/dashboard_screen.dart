@@ -584,7 +584,7 @@ class _ProtocolRow extends StatelessWidget {
             ),
           ),
           SizedBox(
-            width: 52,
+            width: 64,
             child: Text(
               '$accPct%',
               textAlign: TextAlign.end,
