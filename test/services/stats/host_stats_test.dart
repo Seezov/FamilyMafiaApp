@@ -54,6 +54,17 @@ void main() {
     expect(gamesWithoutHost([_g('A'), _g(null)]), 1);
   });
 
+  test('avg ties break by fewer hosted games, then name', () {
+    // Same avgPlus for both; 'Zed' hosted fewer games than 'Amy' but sorts
+    // after it by name, so the games tie-break must win over the name one.
+    final games = [
+      for (var i = 0; i < 20; i++) _g('Zed', plus: 0.5),
+      for (var i = 0; i < 25; i++) _g('Amy', plus: 0.5),
+    ];
+    final ranked = rankHostsByAvgPlus(hostStats(games, _resolver));
+    expect(ranked.map((h) => h.host.displayName), ['Zed', 'Amy']);
+  });
+
   test('minus ranking puts the most negative first', () {
     final games = [
       for (var i = 0; i < 20; i++) _g('Soft', minus: -0.1),

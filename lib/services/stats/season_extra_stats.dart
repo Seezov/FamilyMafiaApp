@@ -66,7 +66,11 @@ SeasonExtraStats buildSeasonExtraStats({
       leaguePlayers.where((p) => redGames(p) > 0).toList(),
       (a, b) {
         final c = b.percentOfDeath.compareTo(a.percentOfDeath);
-        return c != 0 ? c : byName(a, b);
+        if (c != 0) return c;
+        // Product-owner decision: a tied % favors fewer red games (the more
+        // impressive number), before falling back to name.
+        final r = redGames(a).compareTo(redGames(b));
+        return r != 0 ? r : byName(a, b);
       },
     ),
     mostHosted: hosts.take(kSeasonStatsRankingSize).toList(),

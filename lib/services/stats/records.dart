@@ -24,7 +24,8 @@ class RecordsInput {
 class MvpRecord {
   final Player player; final int seasonId;
   final double addPerGame, maxSingleAdd, totalAdd, winRate;
-  const MvpRecord(this.player, this.seasonId, this.addPerGame, this.maxSingleAdd, this.totalAdd, this.winRate);
+  final int games;
+  const MvpRecord(this.player, this.seasonId, this.addPerGame, this.maxSingleAdd, this.totalAdd, this.winRate, this.games);
 }
 
 class RoleRecord {
@@ -47,12 +48,18 @@ class FirstKillRecord {
 class PenaltyRecord {
   final Player player; final int seasonId;
   final double minusPerGame, maxSingleMinus, totalMinus, winRate;
-  const PenaltyRecord(this.player, this.seasonId, this.minusPerGame, this.maxSingleMinus, this.totalMinus, this.winRate);
+  final int games;
+  const PenaltyRecord(this.player, this.seasonId, this.minusPerGame, this.maxSingleMinus, this.totalMinus, this.winRate, this.games);
 }
 
 class HostRecord {
   final Player host; final int? seasonId; final int hosted; final double avgPlus, avgMinus;
-  const HostRecord(this.host, this.seasonId, this.hosted, this.avgPlus, this.avgMinus);
+  /// Hosted games within the selected points period (0 when [period] wasn't
+  /// requested or the host has none in it). Drives the Avg +/Avg − "—"
+  /// eligibility threshold, independent of [hosted] which always counts
+  /// every game the host ran.
+  final int periodGames;
+  const HostRecord(this.host, this.seasonId, this.hosted, this.avgPlus, this.avgMinus, this.periodGames);
 }
 
 /// Main-league rows (player reached the season's gameLimit) in [period].
@@ -99,11 +106,17 @@ Map<(int, String), (double, double, double, double, double?)> _perGamePoints(Rec
 
 int _byName(Player a, Player b) => a.displayName.compareTo(b.displayName);
 
+/// Sorts by [v] (direction per [desc]), then by fewer [games] first, then by
+/// name, then by [season] (when given). Product-owner decision: a value tie
+/// favors the player/host who reached it in fewer games, since that's the
+/// more impressive number, before falling back to name.
 List<T> _sorted<T>(List<T> l, double Function(T) v, Player Function(T) p,
-        {bool desc = true, int? Function(T)? season}) =>
+        {bool desc = true, int? Function(T)? season, required int Function(T) games}) =>
     l..sort((a, b) {
       final c = desc ? v(b).compareTo(v(a)) : v(a).compareTo(v(b));
       if (c != 0) return c;
+      final g = games(a).compareTo(games(b));
+      if (g != 0) return g;
       final n = _byName(p(a), p(b));
       if (n != 0) return n;
       if (season == null) return 0;
@@ -126,10 +139,10 @@ List<MvpRecord> mvpRecords(RecordsInput i, PointsPeriod period) {
       () {
         final totalAdd = p.additionalPoints + p.bestMovePoints + p.penaltyPoints;
         final maxSingleAdd = pts[(p.seasonId, personKey(p.player))]?.$5 ?? 0.0;
-        return MvpRecord(p.player, p.seasonId, totalAdd / p.gamesPlayed, maxSingleAdd, totalAdd, p.winRate);
+        return MvpRecord(p.player, p.seasonId, totalAdd / p.gamesPlayed, maxSingleAdd, totalAdd, p.winRate, p.gamesPlayed);
       }(),
   ];
-  return _sorted(rows, (r) => r.addPerGame, (r) => r.player, season: (r) => r.seasonId);
+  return _sorted(rows, (r) => r.addPerGame, (r) => r.player, season: (r) => r.seasonId, games: (r) => r.games);
 }
 
 (int, int, double) _role(RatingPlayerStats p, Role role) {
@@ -148,14 +161,14 @@ List<RoleRecord> roleRecords(RecordsInput i, Role role, PointsPeriod period) {
     if (games == 0 || games < (limits[p.seasonId] ?? 0) * role.chanceToDraw) continue;
     rows.add(RoleRecord(p.player, p.seasonId, role, points / games, games, wins / games));
   }
-  return _sorted(rows, (r) => r.pointsPerGame, (r) => r.player, season: (r) => r.seasonId);
+  return _sorted(rows, (r) => r.pointsPerGame, (r) => r.player, season: (r) => r.seasonId, games: (r) => r.games);
 }
 
 List<GamesRecord> gamesRecords(RecordsInput i, {required bool allTime}) {
   if (!allTime) {
     return _sorted([
       for (final p in _mainLeague(i)) GamesRecord(p.player, p.seasonId, p.gamesPlayed, p.winRate),
-    ], (r) => r.games.toDouble(), (r) => r.player, season: (r) => r.seasonId);
+    ], (r) => r.games.toDouble(), (r) => r.player, season: (r) => r.seasonId, games: (r) => r.games);
   }
   final acc = <String, (Player, int, int)>{};
   for (final list in i.ratings.values) {
@@ -167,14 +180,14 @@ List<GamesRecord> gamesRecords(RecordsInput i, {required bool allTime}) {
   }
   return _sorted([
     for (final (p, g, w) in acc.values) GamesRecord(p, null, g, g == 0 ? 0 : w / g),
-  ], (r) => r.games.toDouble(), (r) => r.player);
+  ], (r) => r.games.toDouble(), (r) => r.player, games: (r) => r.games);
 }
 
 List<FirstKillRecord> firstKillRecords(RecordsInput i) => _sorted([
       for (final p in _mainLeague(i))
         if (redGames(p) > 0)
           FirstKillRecord(p.player, p.seasonId, p.firstKilled, redGames(p), p.percentOfDeath),
-    ], (r) => r.count.toDouble(), (r) => r.player, season: (r) => r.seasonId);
+    ], (r) => r.count.toDouble(), (r) => r.player, season: (r) => r.seasonId, games: (r) => r.redGames);
 
 List<PenaltyRecord> penaltyRecords(RecordsInput i, PointsPeriod period) {
   final pts = _perGamePoints(i);
@@ -183,28 +196,41 @@ List<PenaltyRecord> penaltyRecords(RecordsInput i, PointsPeriod period) {
       () {
         final (_, maxMinus, total, _, _) =
             pts[(p.seasonId, personKey(p.player))] ?? (0.0, 0.0, 0.0, 0.0, null);
-        return PenaltyRecord(p.player, p.seasonId, total / p.gamesPlayed, maxMinus, total, p.winRate);
+        return PenaltyRecord(p.player, p.seasonId, total / p.gamesPlayed, maxMinus, total, p.winRate, p.gamesPlayed);
       }(),
   ];
-  return _sorted(rows, (r) => r.minusPerGame, (r) => r.player, desc: false, season: (r) => r.seasonId);
+  return _sorted(rows, (r) => r.minusPerGame, (r) => r.player, desc: false, season: (r) => r.seasonId, games: (r) => r.games);
 }
 
+/// [hosted] always counts every game the host ran in scope (the season for
+/// per-season rows, all seasons for all-time); [period] only narrows the
+/// games behind avgPlus/avgMinus (and [HostRecord.periodGames]), so the
+/// points period never hides a host's hosted count.
 List<HostRecord> hostRecords(RecordsInput i, {required bool allTime, PointsPeriod? period}) {
   Iterable<Game> inPeriod(Iterable<Game> g) =>
       period == null ? g : g.where((x) => period.contains(x.seasonId));
+
+  List<HostRecord> forGames(Iterable<Game> games, int? seasonId) {
+    final periodStats = {
+      for (final h in hostStats(inPeriod(games), i.resolver)) personKey(h.host): h,
+    };
+    return [
+      for (final h in hostStats(games, i.resolver))
+        () {
+          final p = periodStats[personKey(h.host)];
+          return HostRecord(h.host, seasonId, h.hosted, p?.avgPlus ?? 0, p?.avgMinus ?? 0, p?.hosted ?? 0);
+        }(),
+    ];
+  }
+
   final rows = <HostRecord>[];
   if (allTime) {
-    for (final h in hostStats(inPeriod(i.games), i.resolver)) {
-      rows.add(HostRecord(h.host, null, h.hosted, h.avgPlus, h.avgMinus));
-    }
+    rows.addAll(forGames(i.games, null));
   } else {
     final seasons = i.games.map((g) => g.seasonId).toSet();
     for (final s in seasons) {
-      if (period != null && !period.contains(s)) continue;
-      for (final h in hostStats(i.games.where((g) => g.seasonId == s), i.resolver)) {
-        rows.add(HostRecord(h.host, s, h.hosted, h.avgPlus, h.avgMinus));
-      }
+      rows.addAll(forGames(i.games.where((g) => g.seasonId == s), s));
     }
   }
-  return _sorted(rows, (r) => r.hosted.toDouble(), (r) => r.host, season: (r) => r.seasonId);
+  return _sorted(rows, (r) => r.hosted.toDouble(), (r) => r.host, season: (r) => r.seasonId, games: (r) => r.hosted);
 }

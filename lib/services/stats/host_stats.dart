@@ -57,7 +57,11 @@ List<HostStat> _rankAvg(List<HostStat> stats, double Function(HostStat) v,
       stats.where((h) => h.hosted >= kHostMinGamesForAverage).toList();
   eligible.sort((a, b) {
     final c = descending ? v(b).compareTo(v(a)) : v(a).compareTo(v(b));
-    return c != 0 ? c : a.host.displayName.compareTo(b.host.displayName);
+    if (c != 0) return c;
+    // Product-owner decision: a tied average favors the host who reached it
+    // in fewer hosted games, before falling back to name.
+    final h = a.hosted.compareTo(b.hosted);
+    return h != 0 ? h : a.host.displayName.compareTo(b.host.displayName);
   });
   return eligible;
 }

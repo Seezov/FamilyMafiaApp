@@ -32,6 +32,7 @@ List<WinStreak> bestWinStreaks(List<Game> games, PlayerResolver resolver) {
 
   final current = <String, (Player, int, int)>{}; // key → (player, len, fromSeason)
   final best = <String, WinStreak>{};
+  final totalGames = <String, int>{}; // key → all-time rating games (for tie-breaks)
 
   void close(String key, int toSeason) {
     final cur = current.remove(key);
@@ -49,6 +50,7 @@ List<WinStreak> bestWinStreaks(List<Game> games, PlayerResolver resolver) {
       if (raw.startsWith('_blank_') || excluded.contains(raw)) continue;
       final player = resolver.resolve(raw);
       final key = personKey(player);
+      totalGames[key] = (totalGames[key] ?? 0) + 1;
       if (g.hasPlayerWon(raw)) {
         final cur = current[key];
         current[key] = cur == null ? (player, 1, g.seasonId) : (cur.$1, cur.$2 + 1, cur.$3);
@@ -62,9 +64,16 @@ List<WinStreak> bestWinStreaks(List<Game> games, PlayerResolver resolver) {
     close(key, lastSeason[key]!);
   }
 
-  return best.values.toList()
+  final entries = best.entries.toList()
     ..sort((a, b) {
-      final c = b.length.compareTo(a.length);
-      return c != 0 ? c : a.player.displayName.compareTo(b.player.displayName);
+      final c = b.value.length.compareTo(a.value.length);
+      if (c != 0) return c;
+      // Product-owner decision: a tied streak length favors the player with
+      // fewer all-time rating games (the more impressive streak), before
+      // falling back to name.
+      final g = (totalGames[a.key] ?? 0).compareTo(totalGames[b.key] ?? 0);
+      if (g != 0) return g;
+      return a.value.player.displayName.compareTo(b.value.player.displayName);
     });
+  return [for (final e in entries) e.value];
 }

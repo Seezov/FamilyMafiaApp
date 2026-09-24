@@ -37,6 +37,15 @@ RecordsInput _input({Map<int, List<RatingPlayerStats>>? ratings, List<Game>? gam
       resolver: PlayerResolver(const [Player(id: 1, displayName: 'P1'), Player(id: 2, displayName: 'P2')]),
     );
 
+Game _hostGame(int season, {double plus = 0}) => Game(
+      seasonId: season,
+      players: List.generate(10, (i) => 'x$i'),
+      roles: List.filled(10, 'Мирный'),
+      cityWon: true, firstKilled: 0, bestMovePoints: 0, bestMove: const [],
+      additionalPoints: [plus, ...List.filled(9, 0.0)],
+      host: 'H',
+    );
+
 void main() {
   test('MVP: main league only, per game and max single доп', () {
     final r = mvpRecords(_input(), PointsPeriod.modern);
@@ -125,5 +134,82 @@ void main() {
   test('ties sort by name', () {
     final input = _input(ratings: {10: [_r(10, 2), _r(10, 1)]});
     expect(mvpRecords(input, PointsPeriod.modern).map((e) => e.player.id), [1, 2]);
+  });
+
+  test('MVP ties break by fewer games first, then name', () {
+    // Both addPerGame = 0.3, but P2 played fewer games than P1.
+    final input = _input(ratings: {10: [
+      _r(10, 1, games: 4, add: 1.2),
+      _r(10, 2, games: 2, add: 0.6),
+    ]});
+    expect(mvpRecords(input, PointsPeriod.modern).map((e) => e.player.id), [2, 1]);
+  });
+
+  test('penalty ties break by fewer games first, then name', () {
+    // Both minusPerGame = -0.3; 'Zed' (id 1) played fewer games than 'Amy'
+    // (id 2), but 'Amy' sorts first by name — the games tie-break must win.
+    final input = _input(
+      ratings: {10: [
+        RatingPlayerStats(seasonId: 10, player: const Player(id: 1, displayName: 'Zed'), gamesPlayed: 2),
+        RatingPlayerStats(seasonId: 10, player: const Player(id: 2, displayName: 'Amy'), gamesPlayed: 4),
+      ]},
+      games: [_g(10, add0: -0.6), _g(10, add1: -1.2)],
+    );
+    final r = penaltyRecords(input, PointsPeriod.modern);
+    expect(r.map((e) => e.player.displayName), ['Zed', 'Amy']);
+  });
+
+  test('roles: ties break by fewer role games first, then name', () {
+    RatingPlayerStats stats(int id, String name, int games, double points) => RatingPlayerStats(
+          seasonId: 10, player: Player(id: id, displayName: name),
+          gamesPlayed: games, wins: 1, winRate: 0.5,
+          gamesForRole: [('Мирний', games)], winByRole: [('Мирний', 1)],
+          bestMoveAndAdditionalPointsByRole: [('Мирний', points)],
+        );
+    // Both pointsPerGame = 0.3; 'Zed' has fewer role games than 'Amy', but
+    // 'Amy' sorts first by name — the games tie-break must win.
+    final input = _input(ratings: {10: [stats(1, 'Zed', 2, 0.6), stats(2, 'Amy', 4, 1.2)]});
+    final r = roleRecords(input, Role.civilian, PointsPeriod.modern);
+    expect(r.map((e) => e.player.displayName), ['Zed', 'Amy']);
+  });
+
+  test('hostRecords all-time: hosted counts every season, averages use only the period games', () {
+    final games = [
+      for (var i = 0; i < 5; i++) _hostGame(2, plus: 1.0), // li period
+      for (var i = 0; i < 5; i++) _hostGame(10, plus: 2.0), // modern period
+    ];
+    final input = RecordsInput(ratings: const {}, configs: [_cfg(2), _cfg(10)], games: games, resolver: PlayerResolver(const []));
+    final r = hostRecords(input, allTime: true, period: PointsPeriod.modern);
+    expect(r.single.hosted, 10);
+    expect(r.single.periodGames, 5);
+    expect(r.single.avgPlus, closeTo(2.0, 1e-9));
+  });
+
+  test('hostRecords per season: every season with hosts appears, even outside the period', () {
+    final games = [
+      for (var i = 0; i < 3; i++) _hostGame(2, plus: 1.0), // li period
+      for (var i = 0; i < 3; i++) _hostGame(10, plus: 2.0), // modern period
+    ];
+    final input = RecordsInput(ratings: const {}, configs: [_cfg(2), _cfg(10)], games: games, resolver: PlayerResolver(const []));
+    final r = hostRecords(input, allTime: false, period: PointsPeriod.modern);
+    final bySeason = {for (final row in r) row.seasonId: row};
+    expect(bySeason.keys, containsAll([2, 10]));
+    expect(bySeason[2]!.hosted, 3);
+    expect(bySeason[2]!.periodGames, 0); // season 2 is outside 'modern'
+    expect(bySeason[10]!.hosted, 3);
+    expect(bySeason[10]!.periodGames, 3);
+  });
+
+  test('first kill: ties break by fewer red games first, then name', () {
+    RatingPlayerStats fk(int id, String name, int games, int redG) => RatingPlayerStats(
+          seasonId: 10, player: Player(id: id, displayName: name),
+          gamesPlayed: games, firstKilled: 1, percentOfDeath: 0.5,
+          gamesForRole: [('Мирний', redG)],
+        );
+    // Both count = 1, percentOfDeath = 0.5; 'Zed' has fewer red games than
+    // 'Amy', but 'Amy' sorts first by name — the games tie-break must win.
+    final input = _input(ratings: {10: [fk(1, 'Zed', 2, 2), fk(2, 'Amy', 4, 4)]});
+    final r = firstKillRecords(input);
+    expect(r.map((e) => e.player.displayName), ['Zed', 'Amy']);
   });
 }

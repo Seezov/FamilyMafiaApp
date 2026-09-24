@@ -47,4 +47,19 @@ void main() {
     final s = bestWinStreaks([_g(18, '_blank_0', true)], _r);
     expect(s.where((w) => w.player.displayName.startsWith('_blank_')), isEmpty);
   });
+
+  test('ties on streak length break by fewer all-time rating games, then name', () {
+    // A: streak of 2, then 1 more rating game (loss) => 3 total games.
+    // B: streak of 2 only => 2 total games. Both tie at length 2.
+    final games = [
+      _g(18, 'A', true), _g(18, 'A', true), _g(18, 'A', false),
+      _g(18, 'B', true), _g(18, 'B', true),
+    ];
+    final s = bestWinStreaks(games, _r);
+    final byName = {for (final w in s) w.player.displayName: w};
+    expect(byName['A']!.length, 2);
+    expect(byName['B']!.length, 2);
+    final order = s.map((w) => w.player.displayName).toList();
+    expect(order.indexOf('B'), lessThan(order.indexOf('A')));
+  });
 }

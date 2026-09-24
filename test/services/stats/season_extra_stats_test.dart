@@ -40,6 +40,16 @@ void main() {
     expect(s.topFirstKilledPct.map((p) => p.player.id), [1]);
   });
 
+  test('top ПУ % ties break by fewer red games, then name', () {
+    // Both percentOfDeath = 0.5; P9 has fewer red games than P1, but 'P1'
+    // sorts first by name — the fewer-red-games tie-break must win.
+    final s = buildSeasonExtraStats(
+      leaguePlayers: [_p(1, 40, killed: 2, civ: 4), _p(9, 40, killed: 1, civ: 2)],
+      seasonGames: const [], seasonTournaments: const [], resolver: resolver,
+    );
+    expect(s.topFirstKilledPct.map((p) => p.player.id), [9, 1]);
+  });
+
   test('tournaments are counted by type', () {
     final s = buildSeasonExtraStats(
       leaguePlayers: const [], seasonGames: const [], resolver: resolver,
