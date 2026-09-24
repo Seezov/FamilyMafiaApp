@@ -18,6 +18,23 @@ Widget _app(List<_Row> rows, {int? collapsed}) => MaterialApp(
       ),
     );
 
+typedef _WideRow = ({String name, int x, int y});
+
+Widget _wideApp(List<_WideRow> rows, {required int columnCount, required int initialSortIndex}) => MaterialApp(
+      home: Scaffold(
+        body: SortableTable<_WideRow>(
+          key: const ValueKey('wide-table'),
+          columns: [
+            SortableColumn(label: 'Name', width: 90, text: (r) => r.name),
+            SortableColumn(label: 'X', width: 60, text: (r) => '${r.x}', sortValue: (r) => r.x),
+            if (columnCount == 3) SortableColumn(label: 'Y', width: 60, text: (r) => '${r.y}', sortValue: (r) => r.y),
+          ],
+          rows: rows,
+          initialSortIndex: initialSortIndex,
+        ),
+      ),
+    );
+
 void main() {
   const rows = [(name: 'A', games: 1), (name: 'B', games: 3), (name: 'C', games: 2)];
 
@@ -41,5 +58,24 @@ void main() {
     await t.tap(find.text('Show all (3)'));
     await t.pump();
     expect(find.text('A'), findsOneWidget);
+  });
+
+  testWidgets('resets sort when columns list changes on the same state', (t) async {
+    const wideRows = [
+      (name: 'A', x: 1, y: 30),
+      (name: 'B', x: 3, y: 10),
+      (name: 'C', x: 2, y: 20),
+    ];
+
+    await t.pumpWidget(_wideApp(wideRows, columnCount: 3, initialSortIndex: 2));
+    var names = t.widgetList<Text>(find.textContaining(RegExp(r'^[ABC]$'))).map((w) => w.data).toList();
+    expect(names, ['A', 'C', 'B']); // descending by y: 30, 20, 10
+
+    await t.pumpWidget(_wideApp(wideRows, columnCount: 2, initialSortIndex: 1));
+    await t.pump();
+
+    expect(t.takeException(), isNull);
+    names = t.widgetList<Text>(find.textContaining(RegExp(r'^[ABC]$'))).map((w) => w.data).toList();
+    expect(names, ['B', 'C', 'A']); // descending by x: 3, 2, 1
   });
 }

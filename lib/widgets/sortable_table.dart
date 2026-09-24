@@ -42,6 +42,20 @@ class _SortableTableState<T> extends State<SortableTable<T>> {
   late bool _desc = widget.initialDescending;
   bool _expanded = false;
 
+  @override
+  void didUpdateWidget(covariant SortableTable<T> oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.columns.length != oldWidget.columns.length ||
+        widget.initialSortIndex != oldWidget.initialSortIndex) {
+      _sortIndex = widget.initialSortIndex;
+      _desc = widget.initialDescending;
+      _expanded = false;
+    }
+    if (_sortIndex >= widget.columns.length) {
+      _sortIndex = widget.initialSortIndex.clamp(0, widget.columns.length - 1);
+    }
+  }
+
   List<T> get _sorted {
     final value = widget.columns[_sortIndex].sortValue;
     if (value == null) return widget.rows;
