@@ -37,4 +37,25 @@ void main() {
     expect(rows.single.mostHosted?.name, 'H');
     expect(rows.single.tournaments[TournamentType.minicap], 1);
   });
+
+  test('a ranking of [-1] (unknown player) is treated as no winner', () {
+    // Both a real player and an "unknown" placeholder with id -1 exist in
+    // playerStats, so byId[-1] would resolve to the placeholder unless
+    // winner() explicitly guards against -1.
+    final a = RatingPlayerStats(seasonId: 26, player: const Player(id: 1, displayName: 'A'), gamesPlayed: 3, mvp: 0.4);
+    final unknown = RatingPlayerStats(seasonId: 26, player: const Player(id: -1, displayName: '?'), gamesPlayed: 3, mvp: 0.9);
+    final rows = buildSeasonRows(
+      configs: const [
+        SeasonConfig(id: 26, title: 'S26', gameLimit: 2, smallLeagueMinGames: 1, gamesMultiplier: 0, source: BundledSource(jsonFile: 'x')),
+      ],
+      seasons: {
+        26: SeasonStats(playerStats: [a, unknown], mvpRanking: const [-1], bestSheriffRanking: const [], bestDonRanking: const [],
+            bestCivilianRanking: const [], bestMafiaRanking: const [], mostKilledRanking: const []),
+      },
+      games: [_g(true)],
+      tournaments: const [],
+      resolver: PlayerResolver(const []),
+    );
+    expect(rows.single.mvp, isNull);
+  });
 }

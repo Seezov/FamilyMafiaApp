@@ -44,7 +44,9 @@ List<SeasonRow> buildSeasonRows({
     if (stats == null) continue;
     final seasonGames = games.where((g) => g.seasonId == c.id).toList();
     final byId = {for (final p in stats.playerStats) p.player.id: p};
-    RatingPlayerStats? winner(List<int> r) => r.isEmpty ? null : byId[r.first];
+    // id -1 means "unknown player" and is never a unique winner.
+    RatingPlayerStats? winner(List<int> r) =>
+        r.isEmpty || r.first == -1 ? null : byId[r.first];
     NamedValue? named(RatingPlayerStats? p, num Function(RatingPlayerStats) v) =>
         p == null ? null : (name: p.player.displayName, value: v(p));
 
