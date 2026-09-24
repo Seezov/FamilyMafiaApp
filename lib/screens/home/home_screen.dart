@@ -46,6 +46,10 @@ class _HomeContent extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedSeason = ref.watch(selectedSeasonProvider);
     final seasonStats = ref.watch(currentSeasonStatsProvider);
+    final league = ref.watch(selectedLeagueProvider);
+    // The same limit the league filter uses, so the empty-state message and
+    // the filter can never disagree.
+    final gameLimit = ref.watch(effectiveGameLimitProvider);
     ref.watch(leagueOverrideResetProvider);
     final phase = ref.watch(loadingPhaseProvider);
     final isBackgroundLoading = phase != LoadingPhase.allLoaded;
@@ -78,20 +82,25 @@ class _HomeContent extends ConsumerWidget {
               child: _SeasonChips(selectedSeason: selectedSeason),
             ),
           ),
-          const SliverToBoxAdapter(child: _LeagueToggle()),
           if (isBackgroundLoading)
             const SliverToBoxAdapter(
               child: _BackgroundLoadingBanner(),
             ),
           if (seasonStats != null && selectedSeason != null) ...[
+            const SliverToBoxAdapter(child: _LeagueToggle()),
             SliverToBoxAdapter(
               child: _SeasonHeroCard(season: selectedSeason),
             ),
             const SliverToBoxAdapter(child: SizedBox(height: 10)),
-            SliverToBoxAdapter(
-              child: _SeasonAwardsCard(stats: seasonStats),
-            ),
-            const SliverToBoxAdapter(child: SizedBox(height: 10)),
+            // Awards rank players who reached the game limit, so they belong to
+            // the main league only: in the small league every winner would be
+            // filtered out of `playerStats` and render as an em-dash.
+            if (league == League.main) ...[
+              SliverToBoxAdapter(
+                child: _SeasonAwardsCard(stats: seasonStats),
+              ),
+              const SliverToBoxAdapter(child: SizedBox(height: 10)),
+            ],
             SliverToBoxAdapter(
               child: SectionCard(
                 title: 'Player Ratings',
@@ -101,11 +110,12 @@ class _HomeContent extends ConsumerWidget {
                       Padding(
                         padding: const EdgeInsets.all(16),
                         child: Text(
-                          ref.watch(selectedLeagueProvider) == League.small
+                          league == League.small
                               ? 'Немає гравців у діапазоні '
                                   '${selectedSeason.smallLeagueMinGames}–'
-                                  '${selectedSeason.gameLimit - 1} ігор'
-                              : 'No players meet this game limit',
+                                  '${gameLimit - 1} ігор'
+                              : 'Немає гравців, які зіграли '
+                                  'щонайменше $gameLimit ігор',
                         ),
                       )
                     else

@@ -28,7 +28,7 @@ Riverpod + Dart, Jetpack-style layering.
 **Layers:**
 - `lib/constants/` — `season_constants.dart` (all season boundaries, formula thresholds, player exclusions with doc comments)
 - `lib/screens/` — Flutter screens, each with a `_providers.dart` sidecar
-  - `home/` — `HomeScreen` (season selector + per-season player rating list); split into `src/` parts: `loading_indicator`, `background_loading_banner`, `season_chips`, `game_limit_picker`, `season_header_card`, `player_card`
+  - `home/` — `HomeScreen` (season selector + per-season player rating list); split into `src/` parts: `loading_indicator`, `background_loading_banner`, `season_chips`, `season_header_card`, `player_card`
   - `players/` — `PlayersScreen` (grid of all players, tap → `PlayerProfileScreen`); `PlayerProfileScreen` split into `src/` parts: `accomplishments_section`, `season_chart`, `player_utilities`, `role_distribution_section`, `first_kill_section`, `best_moves_section`; `players_providers.dart` owns `playersListProvider`, `filteredPlayersProvider`, `playerSearchQueryProvider`, `playerAccomplishmentsProvider`
   - `dashboard/` — `DashboardScreen` (placeholder)
 - `lib/repositories/` — Riverpod `StateNotifierProvider` singletons:
