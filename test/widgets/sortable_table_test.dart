@@ -78,4 +78,33 @@ void main() {
     names = t.widgetList<Text>(find.textContaining(RegExp(r'^[ABC]$'))).map((w) => w.data).toList();
     expect(names, ['B', 'C', 'A']); // descending by x: 3, 2, 1
   });
+
+  testWidgets('tied values keep their input order (stable sort), even above 32 rows', (t) async {
+    // Dart's default List.sort switches from insertion sort (stable, <=32
+    // elements) to an unstable dual-pivot quicksort above 32 elements, so
+    // this needs more than 32 rows to actually exercise the bug.
+    final manyRows = [
+      for (var i = 0; i < 40; i++) (name: 'r${i.toString().padLeft(2, '0')}', games: i ~/ 8),
+    ];
+    // 5 tie groups of 8 rows each, sharing games = 0..4. Input order within
+    // each group is ascending index; a stable sort must preserve that after
+    // sorting descending by games.
+    final expected = [
+      for (var group = 4; group >= 0; group--)
+        for (var i = group * 8; i < group * 8 + 8; i++) 'r${i.toString().padLeft(2, '0')}',
+    ];
+
+    // 40 rows don't fit the default 600px test viewport; the table itself
+    // isn't scrollable, so grow the surface instead of asserting on layout.
+    t.view.physicalSize = const Size(800, 3000);
+    t.view.devicePixelRatio = 1.0;
+    addTearDown(t.view.reset);
+
+    await t.pumpWidget(_app(manyRows));
+    final names = t
+        .widgetList<Text>(find.textContaining(RegExp(r'^r\d\d$')))
+        .map((w) => w.data)
+        .toList();
+    expect(names, expected);
+  });
 }

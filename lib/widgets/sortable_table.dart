@@ -56,12 +56,19 @@ class _SortableTableState<T> extends State<SortableTable<T>> {
     }
   }
 
+  // List.sort is unstable above 32 elements (dual-pivot quicksort), which
+  // would drop the name/season tie-break the pure functions already applied
+  // to widget.rows. Sorting the (index, row) pairs and falling back to the
+  // original index keeps ties in input order regardless of list size.
   List<T> get _sorted {
     final value = widget.columns[_sortIndex].sortValue;
     if (value == null) return widget.rows;
-    final list = [...widget.rows];
-    list.sort((a, b) => _desc ? value(b).compareTo(value(a)) : value(a).compareTo(value(b)));
-    return list;
+    final indexed = widget.rows.indexed.toList()
+      ..sort((a, b) {
+        final c = _desc ? value(b.$2).compareTo(value(a.$2)) : value(a.$2).compareTo(value(b.$2));
+        return c != 0 ? c : a.$1.compareTo(b.$1);
+      });
+    return [for (final (_, row) in indexed) row];
   }
 
   void _tap(int i) {
