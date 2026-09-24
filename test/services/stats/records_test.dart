@@ -43,6 +43,16 @@ void main() {
     expect(r.map((e) => e.player.id), [1]); // P2 has 1 game < gameLimit 2
     expect(r.single.addPerGame, closeTo(0.3, 1e-9));
     expect(r.single.maxSingleAdd, closeTo(0.5, 1e-9));
+    expect(r.single.totalAdd, closeTo(0.6, 1e-9));
+  });
+
+  test('MVP uses positive доп from games, not the rating\'s net additionalPoints', () {
+    // additionalPoints: 5.0 is a bogus/protocol-inflated rating field value;
+    // the games only ever gave P1 0.5 + 0.1, so the record must ignore it.
+    final input = _input(ratings: {10: [_r(10, 1, add: 5.0)]});
+    final r = mvpRecords(input, PointsPeriod.modern);
+    expect(r.single.addPerGame, closeTo(0.3, 1e-9));
+    expect(r.single.totalAdd, closeTo(0.6, 1e-9));
   });
 
   test('periods keep seasons 2-3 apart from 4+', () {
@@ -56,6 +66,18 @@ void main() {
     final r = penaltyRecords(input, PointsPeriod.modern);
     expect(r.single.totalMinus, closeTo(-0.3, 1e-9));
     expect(r.single.maxSingleMinus, closeTo(-0.3, 1e-9));
+  });
+
+  test('a -2 доп (disqualification) is excluded from penalty totals', () {
+    final input = _input(
+      ratings: {10: [_r(10, 1), _r(10, 2)]},
+      games: [_g(10, add0: -0.3, add1: -2.0)],
+    );
+    final r = penaltyRecords(input, PointsPeriod.modern);
+    final p1 = r.firstWhere((e) => e.player.id == 1);
+    final p2 = r.firstWhere((e) => e.player.id == 2);
+    expect(p1.totalMinus, closeTo(-0.3, 1e-9));
+    expect(p2.totalMinus, closeTo(0, 1e-9));
   });
 
   test('all-time games include every player and sum seasons', () {
