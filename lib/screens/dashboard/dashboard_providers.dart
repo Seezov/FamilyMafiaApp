@@ -87,7 +87,10 @@ final clubOverviewProvider =
     } else if (g.cityWon == false) {
       decided++;
     }
-    uniquePlayers.addAll(g.players.where((p) => p.isNotEmpty));
+    uniquePlayers.addAll(g.players.where((p) =>
+        p.trim().isNotEmpty &&
+        !p.startsWith('_blank_') &&
+        !(kExcludedPlayers[g.seasonId]?.contains(p) ?? false)));
   }
 
   return (

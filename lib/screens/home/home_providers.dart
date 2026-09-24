@@ -1,7 +1,11 @@
+import 'package:family_mafia_app/models/game.dart';
 import 'package:family_mafia_app/models/season_stats.dart';
 import 'package:family_mafia_app/providers/app_providers.dart';
 import 'package:family_mafia_app/repositories/games_repository.dart';
+import 'package:family_mafia_app/repositories/players_repository.dart';
 import 'package:family_mafia_app/repositories/season_repository.dart';
+import 'package:family_mafia_app/services/stats/player_resolver.dart';
+import 'package:family_mafia_app/services/stats/season_extra_stats.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Which standing the season screen shows.
@@ -61,14 +65,9 @@ final seasonSummaryProvider =
     }
   }
 
-  final uniquePlayers = <String>{};
-  for (final g in allGames) {
-    uniquePlayers.addAll(g.players.where((p) => p.isNotEmpty));
-  }
-
   return (
     games: allGames.length,
-    players: uniquePlayers.length,
+    players: allGames.getPlayersList(season.id).length,
     cityWR: decided > 0 ? cityWins / decided : 0.0,
     mafiaWR: decided > 0 ? mafiaWins / decided : 0.0,
   );
@@ -106,4 +105,38 @@ final leagueOverrideResetProvider = Provider<void>((ref) {
       ref.read(gameLimitOverrideProvider.notifier).state = null;
     }
   });
+});
+
+/// Canonical-name lookup built once from players.json.
+final playerResolverProvider = Provider<PlayerResolver>(
+  (ref) => PlayerResolver(ref.watch(playersRepositoryProvider)),
+);
+
+/// Main / small league head-counts for the selected season (default limits).
+final seasonLeagueCountsProvider = Provider<({int main, int small})?>((ref) {
+  final season = ref.watch(selectedSeasonProvider);
+  if (season == null) return null;
+  final full = ref.watch(seasonRepositoryProvider)[season.id];
+  if (full == null) return null;
+  return leagueCounts(full.playerStats, season);
+});
+
+/// Data for the Season Stats card, following the league toggle.
+final seasonExtraStatsProvider = Provider<SeasonExtraStats?>((ref) {
+  final season = ref.watch(selectedSeasonProvider);
+  final stats = ref.watch(currentSeasonStatsProvider);
+  if (season == null || stats == null) return null;
+  final games = ref
+      .watch(gamesRepositoryProvider)
+      .where((g) => g.seasonId == season.id)
+      .toList();
+  return buildSeasonExtraStats(
+    leaguePlayers: stats.playerStats,
+    seasonGames: games,
+    seasonTournaments: ref
+        .watch(tournamentsProvider)
+        .where((t) => t.seasonId == season.id)
+        .toList(),
+    resolver: ref.watch(playerResolverProvider),
+  );
 });
