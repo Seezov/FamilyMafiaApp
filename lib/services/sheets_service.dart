@@ -1,8 +1,8 @@
 import 'dart:convert';
+import 'dart:developer' as developer;
 
 import 'package:dio/dio.dart';
 import 'package:family_mafia_app/models/season_config.dart';
-import 'package:flutter/foundation.dart';
 
 class SheetsException implements Exception {
   final String message;
@@ -45,7 +45,7 @@ class SheetsService {
   Future<int> getDataRowCount(RemoteSource source) async {
     final range = _a1Range(source.sheetName, 'A:A');
     final uri = _buildUri(source.spreadsheetId, range, {});
-    debugPrint('SheetsService.getDataRowCount: $uri');
+    developer.log('getDataRowCount: $uri', name: 'SheetsService');
     final response = await _dio.getUri<Map<String, dynamic>>(uri);
     if (response.data == null) {
       throw SheetsException('getDataRowCount: response data is null for sheet "${source.sheetName}"');
@@ -62,7 +62,7 @@ class SheetsService {
     final uri = _buildUri(source.spreadsheetId, range, {
       'valueRenderOption': 'UNFORMATTED_VALUE',
     });
-    debugPrint('SheetsService.fetchSeasonData: $uri');
+    developer.log('fetchSeasonData: $uri', name: 'SheetsService');
     final response = await _dio.getUri<Map<String, dynamic>>(uri);
     if (response.data == null) {
       throw SheetsException('fetchSeasonData: response data is null for sheet "${source.sheetName}"');
