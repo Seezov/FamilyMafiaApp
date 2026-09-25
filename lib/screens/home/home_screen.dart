@@ -13,6 +13,7 @@ import 'package:family_mafia_app/services/stats/host_stats.dart';
 import 'package:family_mafia_app/services/stats/season_extra_stats.dart';
 import 'package:family_mafia_app/widgets/hero_card.dart';
 import 'package:family_mafia_app/widgets/section_card.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -61,6 +62,9 @@ class _HomeContent extends ConsumerWidget {
     return Scaffold(
       body: RefreshIndicator(
         onRefresh: () async {
+          // The web reads a build-time snapshot that can't change, so a
+          // refresh would only rerun the whole load for the same data.
+          if (kIsWeb) return;
           final season = ref.read(selectedSeasonProvider);
           if (season == null) return;
           await refreshSeason(ref, season);
