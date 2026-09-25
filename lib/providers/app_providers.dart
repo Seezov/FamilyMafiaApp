@@ -27,7 +27,12 @@ const _dartDefineConfigUrl = String.fromEnvironment('REMOTE_CONFIG_URL');
 
 /// Loads `.env.json` from project root (bundled as asset in debug builds).
 /// Returns an empty map if the file doesn't exist or fails to parse.
+///
+/// Always empty on the web, so a local `flutter build web` made with a real
+/// `.env.json` still never uses keys. (That local build does still bundle the
+/// file as an asset; CI writes `{}` to it and its grep guard checks the output.)
 Future<Map<String, String>> _loadEnvJson() async {
+  if (kIsWeb) return {};
   try {
     final json = await rootBundle.loadString('assets/.env.json');
     final map = jsonDecode(json) as Map<String, dynamic>;
