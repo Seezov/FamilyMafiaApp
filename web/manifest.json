@@ -1,11 +1,11 @@
 {
-    "name": "family_mafia_app",
-    "short_name": "family_mafia_app",
+    "name": "Family Mafia — статистика",
+    "short_name": "Family Mafia",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#FFFFFF",
+    "theme_color": "#00897B",
+    "description": "Рейтинги, гравці та рекорди клубу Family Mafia.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

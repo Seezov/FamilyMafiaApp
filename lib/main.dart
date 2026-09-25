@@ -2,6 +2,7 @@ import 'dart:ui' show ImageFilter;
 
 import 'package:family_mafia_app/navigation/app_tabs.dart';
 import 'package:family_mafia_app/providers/app_providers.dart';
+import 'package:family_mafia_app/widgets/web_frame.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -29,7 +30,7 @@ class MyApp extends StatelessWidget {
         );
         return MediaQuery(
           data: mediaQuery.copyWith(textScaler: scale),
-          child: child!,
+          child: kIsWeb ? WebFrame(child: child!) : child!,
         );
       },
       home: const _RootNav(),

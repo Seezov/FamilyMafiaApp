@@ -4,3 +4,8 @@ flutter_launcher_icons:
   image_path: "assets/app_icon.png"
   # iOS-specific: remove alpha channel warning suppression
   remove_alpha_ios: true
+  web:
+    generate: true
+    image_path: "assets/app_icon.png"
+    background_color: "#00897B"
+    theme_color: "#00897B"
