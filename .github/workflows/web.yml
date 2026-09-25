@@ -9,8 +9,6 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
   group: pages
@@ -19,6 +17,7 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       # schedule / workflow_dispatch run from the default branch (master);
       # always build the live branch the app reads its config from.
@@ -49,7 +48,7 @@ jobs:
 
       - name: Guard - no Google API key in the build
         run: |
-          if grep -rIl 'AIza' build/web; then
+          if grep -rla 'AIza' build/web; then
             echo '::error::A Google API key ended up in build/web'
             exit 1
           fi
@@ -64,6 +63,9 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
