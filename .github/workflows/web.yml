@@ -1,0 +1,72 @@
+name: Web site
+
+on:
+  push:
+    branches: [feature/flutter_migration]
+  workflow_dispatch:
+  schedule:
+    - cron: '0 3 * * *' # nightly, so the site catches up with the sheets
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # schedule / workflow_dispatch run from the default branch (master);
+      # always build the live branch the app reads its config from.
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/flutter_migration
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.41.4'
+          channel: stable
+          cache: true
+
+      - name: Empty env file (the web build must carry no keys)
+        run: echo '{}' > assets/.env.json
+
+      - run: flutter pub get
+
+      - name: Snapshot remote seasons from Google Sheets
+        run: dart run tool/prefetch_seasons.dart
+        env:
+          SHEETS_API_KEY: ${{ secrets.SHEETS_API_KEY }}
+          REMOTE_CONFIG_URL: https://raw.githubusercontent.com/Seezov/FamilyMafiaApp/feature/flutter_migration/remote_config.json
+
+      - run: flutter test
+
+      - run: flutter build web --release --base-href /FamilyMafiaApp/
+
+      - name: Guard - no Google API key in the build
+        run: |
+          if grep -rIl 'AIza' build/web; then
+            echo '::error::A Google API key ended up in build/web'
+            exit 1
+          fi
+
+      - name: Guard - base href
+        run: grep -q '<base href="/FamilyMafiaApp/">' build/web/index.html
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: build/web
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

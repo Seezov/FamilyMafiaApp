@@ -19,6 +19,9 @@ flutter analyze                  # Static analysis
 flutter test                     # Unit tests
 dart run build_runner build      # Regenerate freezed / json_serializable code
 dart run build_runner watch      # Watch mode for code generation
+flutter run -d chrome            # Web (bundled seasons + prefetched snapshot, if any)
+flutter build web --release --base-href /FamilyMafiaApp/   # What CI deploys
+dart run tool/prefetch_seasons.dart   # Snapshot remote seasons into assets/prefetched/ (needs SHEETS_API_KEY, REMOTE_CONFIG_URL env)
 ```
 
 ## Flutter Architecture
@@ -64,6 +67,26 @@ Bundled seasons from `assets/raw/*.json`. Remote seasons from Google Sheets API 
 - **Dashboard** (`DashboardScreen`) — placeholder
 
 > **"Players screen"** always refers to `PlayersScreen` (`lib/screens/players/players_screen.dart`), not `HomeScreen`.
+
+## Web site
+
+Deployed to https://seezov.github.io/FamilyMafiaApp/ by `.github/workflows/web.yml`
+(push to `feature/flutter_migration`, nightly, or "Run workflow"). The workflow file
+must also be on `master` — GitHub only runs `schedule` / shows the button from the
+default branch.
+
+- Web shows Season, Players, Dashboard, Records only (`lib/navigation/app_tabs.dart`);
+  Chat (paid Gemini) and Debug are mobile-only.
+- The web build has **no API keys**: CI writes `{}` to `assets/.env.json` and a grep
+  guard fails the build if `AIza` appears in `build/web`.
+- Remote seasons + the remote config come from a build-time snapshot in
+  `assets/prefetched/` (gitignored), written by `tool/prefetch_seasons.dart` and read
+  through `AssetSeasonCacheService`. The web never fetches the live config, so the
+  config and the season snapshots always match.
+- Wide windows: `WebFrame` caps the app to a 600 px column.
+
+**Note on Windows:** Under Git Bash on Windows, prefix the web build with `MSYS_NO_PATHCONV=1`
+or the `--base-href /FamilyMafiaApp/` argument gets mangled into a Windows path.
 
 ## Adding a New Season
 
