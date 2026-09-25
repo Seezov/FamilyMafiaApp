@@ -30,6 +30,14 @@ Future<void> main() async {
     // Never print e itself: its message carries the request URL with the key.
     stderr.writeln('Prefetch failed: HTTP ${e.response?.statusCode} (${e.type.name})');
     exit(1);
+  } on SheetsException catch (e) {
+    // Built from sheet names only, never the key.
+    stderr.writeln('Prefetch failed: $e');
+    exit(1);
+  } on FormatException catch (e) {
+    // Bad JSON in the config or a sheet response; the key is only in URLs.
+    stderr.writeln('Prefetch failed: $e');
+    exit(1);
   } catch (e) {
     stderr.writeln('Prefetch failed: ${e.runtimeType}');
     exit(1);
