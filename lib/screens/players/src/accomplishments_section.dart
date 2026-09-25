@@ -14,34 +14,41 @@ class _AccomplishmentsSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final tt = Theme.of(context).textTheme;
 
-    final badges = <Widget>[
-      if (acc.firsts > 0)
-        _AccBadge(
-          label: '1st',
-          count: acc.firsts,
-          bgColor: const Color(0xFFFFF8E1),
-          borderColor: const Color(0xFFFFC107).withValues(alpha: 0.3),
-          iconColor: const Color(0xFFF9A825),
-          icon: Icons.emoji_events,
-        ),
-      if (acc.seconds > 0)
-        _AccBadge(
-          label: '2nd',
-          count: acc.seconds,
-          bgColor: const Color(0xFFECEFF1),
-          borderColor: const Color(0xFFB0BEC5).withValues(alpha: 0.3),
-          iconColor: const Color(0xFF78909C),
-          icon: Icons.emoji_events,
-        ),
-      if (acc.thirds > 0)
-        _AccBadge(
-          label: '3rd',
-          count: acc.thirds,
-          bgColor: const Color(0xFFEFEBE9),
-          borderColor: const Color(0xFFBF8970).withValues(alpha: 0.3),
-          iconColor: const Color(0xFFBF8970),
-          icon: Icons.emoji_events,
-        ),
+    List<Widget> podium(int first, int second, int third, String suffix) => [
+          if (first > 0)
+            _AccBadge(
+              label: '1st$suffix',
+              count: first,
+              bgColor: _gold.light,
+              borderColor: _gold.color.withValues(alpha: 0.3),
+              iconColor: _gold.icon,
+              icon: Icons.emoji_events,
+            ),
+          if (second > 0)
+            _AccBadge(
+              label: '2nd$suffix',
+              count: second,
+              bgColor: _silver.light,
+              borderColor: _silver.color.withValues(alpha: 0.3),
+              iconColor: _silver.icon,
+              icon: Icons.emoji_events,
+            ),
+          if (third > 0)
+            _AccBadge(
+              label: '3rd$suffix',
+              count: third,
+              bgColor: _bronze.light,
+              borderColor: _bronze.color.withValues(alpha: 0.3),
+              iconColor: _bronze.icon,
+              icon: Icons.emoji_events,
+            ),
+        ];
+
+    final mainLeague = podium(acc.firsts, acc.seconds, acc.thirds, '');
+    final smallLeague =
+        podium(acc.smallFirsts, acc.smallSeconds, acc.smallThirds, '');
+
+    final awards = <Widget>[
       if (acc.mvp > 0)
         _AccBadge(
           label: 'MVP',
@@ -89,6 +96,27 @@ class _AccomplishmentsSection extends StatelessWidget {
         ),
     ];
 
+    final tournaments = <Widget>[
+      for (final t in TournamentType.values)
+        if (acc.tournamentPodiums(t) > 0)
+          _AccBadge(
+            label: t.label,
+            count: acc.tournamentPodiums(t),
+            bgColor: t.lightColor,
+            borderColor: t.color.withValues(alpha: 0.3),
+            iconColor: t.color,
+            icon: Icons.military_tech,
+            places: acc.tournamentPlaces[t],
+          ),
+    ];
+
+    final groups = <(String, List<Widget>)>[
+      ('Main league', mainLeague),
+      ('Small league', smallLeague),
+      ('Season awards', awards),
+      ('Tournament prize places', tournaments),
+    ].where((g) => g.$2.isNotEmpty).toList();
+
     final trailing = Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(
@@ -123,15 +151,30 @@ class _AccomplishmentsSection extends StatelessWidget {
     return SectionCard(
       title: 'Accomplishments',
       trailing: trailing,
-      child: badges.isNotEmpty
-          ? GridView.count(
-              crossAxisCount: 4,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              crossAxisSpacing: 8,
-              mainAxisSpacing: 8,
-              childAspectRatio: 0.9,
-              children: badges,
+      child: groups.isNotEmpty
+          ? Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                for (final (i, (title, badges)) in groups.indexed) ...[
+                  if (i > 0) const SizedBox(height: 12),
+                  Text(
+                    title,
+                    style: tt.labelMedium?.copyWith(
+                      color: const Color(0x99000000),
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  GridView.count(
+                    crossAxisCount: 4,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    crossAxisSpacing: 8,
+                    mainAxisSpacing: 8,
+                    childAspectRatio: 0.9,
+                    children: badges,
+                  ),
+                ],
+              ],
             )
           : Padding(
               padding: const EdgeInsets.only(top: 4),
@@ -154,6 +197,9 @@ class _AccBadge extends StatelessWidget {
   final Color iconColor;
   final IconData icon;
 
+  /// `[1st, 2nd, 3rd]` breakdown shown under the label, for tournaments.
+  final List<int>? places;
+
   const _AccBadge({
     required this.label,
     required this.count,
@@ -161,6 +207,7 @@ class _AccBadge extends StatelessWidget {
     required this.borderColor,
     required this.iconColor,
     required this.icon,
+    this.places,
   });
 
   @override
@@ -187,12 +234,41 @@ class _AccBadge extends StatelessWidget {
           ),
           Text(
             label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
             style: tt.labelSmall?.copyWith(
               color: const Color(0x99000000),
             ),
           ),
+          if (places case final p?)
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                for (final (i, medal) in [_gold, _silver, _bronze].indexed)
+                  if (p[i] > 0)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 2),
+                      child: Text(
+                        '${p[i]}',
+                        style: tt.labelSmall?.copyWith(
+                          color: medal.icon,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+              ],
+            ),
         ],
       ),
     );
   }
 }
+
+typedef _Medal = ({Color light, Color color, Color icon});
+
+const _Medal _gold =
+    (light: Color(0xFFFFF8E1), color: Color(0xFFFFC107), icon: Color(0xFFF9A825));
+const _Medal _silver =
+    (light: Color(0xFFECEFF1), color: Color(0xFFB0BEC5), icon: Color(0xFF78909C));
+const _Medal _bronze =
+    (light: Color(0xFFEFEBE9), color: Color(0xFFBF8970), icon: Color(0xFFBF8970));

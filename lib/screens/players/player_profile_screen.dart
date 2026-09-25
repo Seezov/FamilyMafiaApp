@@ -2,6 +2,7 @@ import 'package:family_mafia_app/enums/role.dart';
 import 'package:family_mafia_app/models/best_moves.dart';
 import 'package:family_mafia_app/models/player.dart';
 import 'package:family_mafia_app/models/player_accomplishments.dart';
+import 'package:family_mafia_app/models/tournament.dart';
 import 'package:family_mafia_app/providers/app_providers.dart';
 import 'package:family_mafia_app/screens/players/players_providers.dart';
 import 'package:family_mafia_app/screens/players/season_chart_painter.dart';

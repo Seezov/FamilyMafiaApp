@@ -8,7 +8,9 @@ import 'package:family_mafia_app/repositories/players_repository.dart';
 import 'package:family_mafia_app/repositories/rating_repository.dart';
 import 'package:family_mafia_app/repositories/role_percentiles_repository.dart';
 import 'package:family_mafia_app/repositories/season_repository.dart';
+import 'package:family_mafia_app/services/stats/accomplishments.dart';
 import 'package:family_mafia_app/services/stats/player_leagues.dart';
+import 'package:family_mafia_app/services/stats/player_resolver.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final playerSearchQueryProvider = StateProvider<String>((ref) => '');
@@ -104,41 +106,13 @@ final filteredPlayersProvider = Provider<List<Player>>((ref) {
 /// Counts all-time accomplishments (placements + awards) for a given player.
 final playerAccomplishmentsProvider =
     Provider.family<PlayerAccomplishments, Player>((ref, player) {
-  final allSeasonStats = ref.watch(seasonRepositoryProvider);
-  final configs = ref.watch(loadedSeasonConfigsProvider);
-  final configById = {for (final c in configs) c.id: c};
-  final acc = PlayerAccomplishments(player);
-
-  for (final entry in allSeasonStats.entries) {
-    final config = configById[entry.key];
-    if (config == null) continue;
-    final stats = entry.value;
-
-    final qualifiers = stats.playerStats
-        .where((p) => p.gamesPlayed >= config.gameLimit)
-        .toList(); // already sorted by ratingCoefficient desc
-
-    for (var i = 0; i < qualifiers.length && i < 3; i++) {
-      if (qualifiers[i].player.id == player.id) {
-        if (i == 0) {
-          acc.firsts++;
-        } else if (i == 1) {
-          acc.seconds++;
-        } else {
-          acc.thirds++;
-        }
-        break;
-      }
-    }
-
-    if (stats.mvpPlayerId == player.id) acc.mvp++;
-    if (stats.bestSheriffPlayerId == player.id) acc.bestSheriff++;
-    if (stats.bestDonPlayerId == player.id) acc.bestDon++;
-    if (stats.bestCivilianPlayerId == player.id) acc.bestCivilian++;
-    if (stats.bestMafiaPlayerId == player.id) acc.bestMafia++;
-  }
-
-  return acc;
+  return computeAccomplishments(
+    player,
+    ref.watch(seasonRepositoryProvider),
+    ref.watch(loadedSeasonConfigsProvider),
+    ref.watch(tournamentsProvider),
+    PlayerResolver(ref.watch(playersRepositoryProvider)),
+  );
 });
 
 /// Games-played count per role for a player, aggregated from pre-computed
