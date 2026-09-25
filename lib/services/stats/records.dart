@@ -1,6 +1,7 @@
 // lib/services/stats/records.dart
 import 'dart:math';
 
+import 'package:family_mafia_app/constants/season_constants.dart';
 import 'package:family_mafia_app/enums/role.dart';
 import 'package:family_mafia_app/models/game.dart';
 import 'package:family_mafia_app/models/player.dart';
@@ -199,10 +200,12 @@ List<FirstKillRecord> firstKillRecords(RecordsInput i) => _sorted([
           FirstKillRecord(p.player, p.seasonId, p.firstKilled, redGames(p), p.percentOfDeath),
     ], (r) => r.count.toDouble(), (r) => r.player, season: (r) => r.seasonId, games: (r) => r.redGames);
 
-List<PenaltyRecord> penaltyRecords(RecordsInput i, PointsPeriod period) {
+/// Seasons [kPenaltyColumnFirstSeason]+ only: earlier seasons had no Штраф
+/// column, so their minuses aren't comparable.
+List<PenaltyRecord> penaltyRecords(RecordsInput i) {
   final pts = _perGamePoints(i);
   final rows = [
-    for (final p in _mainLeague(i, period: period))
+    for (final p in _mainLeague(i).where((p) => p.seasonId >= kPenaltyColumnFirstSeason))
       () {
         final (_, maxMinus, total, _, _) =
             pts[(p.seasonId, personKey(p.player))] ?? (0.0, 0.0, 0.0, 0.0, null);

@@ -1,3 +1,4 @@
+import 'package:family_mafia_app/constants/season_constants.dart';
 import 'package:family_mafia_app/enums/role.dart';
 import 'package:family_mafia_app/screens/records/records_providers.dart';
 import 'package:family_mafia_app/services/stats/host_stats.dart';
@@ -103,7 +104,7 @@ class RecordsScreen extends ConsumerWidget {
           ]),
       RecordCategory.penalties => SortableTable<PenaltyRecord>(
           showRank: true, collapsedRowCount: _topN, initialSortIndex: 1,
-          rows: penaltyRecords(input, period),
+          rows: penaltyRecords(input),
           columns: [
             SortableColumn(label: 'Player', width: 130, text: (r) => r.player.displayName),
             // Negated so "most minus" sorts first when descending.
@@ -152,7 +153,9 @@ class RecordsScreen extends ConsumerWidget {
                   : category == RecordCategory.streaks ||
                           (category == RecordCategory.games && allTime)
                       ? 'All players'
-                      : 'Main league only',
+                      : category == RecordCategory.penalties
+                          ? 'Main league · Seasons $kPenaltyColumnFirstSeason+'
+                          : 'Main league only',
               style: const TextStyle(fontSize: 11, color: Colors.grey),
             ),
             child: table,

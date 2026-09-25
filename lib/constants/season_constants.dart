@@ -26,6 +26,11 @@ const kNewRatingStartSeason = 17;
 /// points x 0.3. Season 17 is excluded because it had a different formula.
 const kAutoPointsMaxSeason = 20;
 
+/// Season 21+: the spreadsheet's Штраф column holds per-foul penalty points
+/// (mostly -0.3, also -0.6, -0.8, …). Before it, minuses were only negative
+/// доп (-0.4/-0.5), so the Penalties records compare seasons 21+ only.
+const kPenaltyColumnFirstSeason = kAutoPointsMaxSeason + 1;
+
 /// Season 30+: CI (compensation index) was redefined. Instead of a flat bonus
 /// scaled by how often a player is killed first, each first-kill loss is topped
 /// up to that player's own average point value in a red-role game

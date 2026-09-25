@@ -15,7 +15,7 @@ enum RecordCategory {
   const RecordCategory(this.label);
   final String label;
 
-  bool get hasPeriod => this == mvp || this == roles || this == penalties || this == hosts;
+  bool get hasPeriod => this == mvp || this == roles || this == hosts;
   bool get hasAllTime => this == games || this == hosts;
 }
 

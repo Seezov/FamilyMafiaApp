@@ -32,7 +32,7 @@ Game _g(int season, {double add0 = 0, double add1 = 0, String? host}) => Game(
 
 RecordsInput _input({Map<int, List<RatingPlayerStats>>? ratings, List<Game>? games}) => RecordsInput(
       ratings: ratings ?? {10: [_r(10, 1), _r(10, 2, games: 1)]},
-      configs: [_cfg(2), _cfg(10)],
+      configs: [_cfg(2), _cfg(10), _cfg(21)],
       games: games ?? [_g(10, add0: 0.5, add1: -0.3), _g(10, add0: 0.1)],
       resolver: PlayerResolver(const [Player(id: 1, displayName: 'P1'), Player(id: 2, displayName: 'P2')]),
     );
@@ -96,18 +96,27 @@ void main() {
   });
 
   test('penalties read the minus from games', () {
-    final input = _input(ratings: {10: [_r(10, 2)]});
-    final r = penaltyRecords(input, PointsPeriod.modern);
+    final input = _input(ratings: {21: [_r(21, 2)]}, games: [_g(21, add1: -0.3)]);
+    final r = penaltyRecords(input);
     expect(r.single.totalMinus, closeTo(-0.3, 1e-9));
     expect(r.single.maxSingleMinus, closeTo(-0.3, 1e-9));
   });
 
+  test('penalties only count seasons 21+, where the Штраф column exists', () {
+    final input = _input(
+      ratings: {10: [_r(10, 1)], 20: [_r(20, 1)], 21: [_r(21, 1)]},
+      games: [_g(10, add0: -0.5), _g(20, add0: -0.5), _g(21, add0: -0.3)],
+    );
+    final r = penaltyRecords(input);
+    expect(r.map((e) => e.seasonId), [21]);
+  });
+
   test('a -2 доп (disqualification) is excluded from penalty totals', () {
     final input = _input(
-      ratings: {10: [_r(10, 1), _r(10, 2)]},
-      games: [_g(10, add0: -0.3, add1: -2.0)],
+      ratings: {21: [_r(21, 1), _r(21, 2)]},
+      games: [_g(21, add0: -0.3, add1: -2.0)],
     );
-    final r = penaltyRecords(input, PointsPeriod.modern);
+    final r = penaltyRecords(input);
     final p1 = r.firstWhere((e) => e.player.id == 1);
     final p2 = r.firstWhere((e) => e.player.id == 2);
     expect(p1.totalMinus, closeTo(-0.3, 1e-9));
@@ -149,13 +158,13 @@ void main() {
     // Both minusPerGame = -0.3; 'Zed' (id 1) played fewer games than 'Amy'
     // (id 2), but 'Amy' sorts first by name — the games tie-break must win.
     final input = _input(
-      ratings: {10: [
-        RatingPlayerStats(seasonId: 10, player: const Player(id: 1, displayName: 'Zed'), gamesPlayed: 2),
-        RatingPlayerStats(seasonId: 10, player: const Player(id: 2, displayName: 'Amy'), gamesPlayed: 4),
+      ratings: {21: [
+        RatingPlayerStats(seasonId: 21, player: const Player(id: 1, displayName: 'Zed'), gamesPlayed: 2),
+        RatingPlayerStats(seasonId: 21, player: const Player(id: 2, displayName: 'Amy'), gamesPlayed: 4),
       ]},
-      games: [_g(10, add0: -0.6), _g(10, add1: -1.2)],
+      games: [_g(21, add0: -0.6), _g(21, add1: -1.2)],
     );
-    final r = penaltyRecords(input, PointsPeriod.modern);
+    final r = penaltyRecords(input);
     expect(r.map((e) => e.player.displayName), ['Zed', 'Amy']);
   });
 
