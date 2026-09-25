@@ -253,7 +253,14 @@ final initialLoadProvider = FutureProvider<void>((ref) async {
   );
 });
 
+/// Returns to the event loop so the browser can paint a frame between two
+/// pieces of heavy work.
+Future<void> _yieldToUi() => Future<void>.delayed(Duration.zero);
+
 /// Loads remaining seasons in the background after the initial load completes.
+/// On the web the seasons are loaded one by one (see
+/// [SeasonLoaderService.loadSeasonsOneByOne]); the last season is followed by
+/// a yield too, so the page also paints before the percentile pass.
 final backgroundLoadProvider = FutureProvider<void>((ref) async {
   // Wait for initial load
   await ref.watch(initialLoadProvider.future);
@@ -293,13 +300,26 @@ final backgroundLoadProvider = FutureProvider<void>((ref) async {
 
   if (remainingJsons.isNotEmpty) {
     final loader = _createLoader(ref);
-    await loader.loadSeasons(
-      metas: loadedRemainingConfigs
-          .map((c) => SeasonMeta(c.id, c.gameLimit, c.gamesMultiplier))
-          .toList(),
-      playersJson: shared.playersJson,
-      seasonJsons: remainingJsons,
-    );
+    if (kIsWeb) {
+      // compute() runs on the UI thread on the web: load one season at a
+      // time and let a frame through in between, so the page stays usable.
+      await loader.loadSeasonsOneByOne(
+        metas: loadedRemainingConfigs
+            .map((c) => SeasonMeta(c.id, c.gameLimit, c.gamesMultiplier))
+            .toList(),
+        playersJson: shared.playersJson,
+        seasonJsons: remainingJsons,
+        yieldBetween: _yieldToUi,
+      );
+    } else {
+      await loader.loadSeasons(
+        metas: loadedRemainingConfigs
+            .map((c) => SeasonMeta(c.id, c.gameLimit, c.gamesMultiplier))
+            .toList(),
+        playersJson: shared.playersJson,
+        seasonJsons: remainingJsons,
+      );
+    }
 
     // Recompute percentiles with ALL seasons
     final allJsons = [...shared.loadedSeasonJsons, ...remainingJsons];

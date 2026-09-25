@@ -114,6 +114,30 @@ class SeasonLoaderService {
     return out.allGames;
   }
 
+  /// Same result as one [loadSeasons] call with all of [metas], but one call
+  /// per season with [yieldBetween] awaited after each, so the UI can paint.
+  /// For the web, where `compute()` runs on the UI thread: one batched call
+  /// freezes the page until every season is parsed.
+  ///
+  /// Equivalent because every season is computed independently (the only
+  /// shared input is [playersJson]), games are appended in the same order,
+  /// ratings and stats are keyed by season id, and players are set once.
+  Future<void> loadSeasonsOneByOne({
+    required List<SeasonMeta> metas,
+    required String playersJson,
+    required List<String> seasonJsons,
+    required Future<void> Function() yieldBetween,
+  }) async {
+    for (var i = 0; i < metas.length; i++) {
+      await loadSeasons(
+        metas: [metas[i]],
+        playersJson: playersJson,
+        seasonJsons: [seasonJsons[i]],
+      );
+      await yieldBetween();
+    }
+  }
+
   /// Recomputes role percentiles from raw season data.
   /// Call after all seasons are loaded.
   Future<void> recomputePercentiles({
