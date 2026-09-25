@@ -61,10 +61,15 @@ Bundled seasons from `assets/raw/*.json`. Remote seasons from Google Sheets API 
 
 ## Navigation
 
-`main.dart` uses a `NavigationBar` + `IndexedStack` with three tabs:
+`main.dart` uses a `NavigationBar` + `IndexedStack`; the tabs come from
+`appTabsFor` in `lib/navigation/app_tabs.dart` — six on mobile, four on the web
+(Chat and Debug are mobile-only):
 - **Season** (`HomeScreen`) — per-season player rating list (season chips + expandable player cards)
 - **Players** (`PlayersScreen`) — full player roster grid with search and tap-through to `PlayerProfileScreen`
-- **Dashboard** (`DashboardScreen`) — placeholder
+- **Dashboard** (`DashboardScreen`)
+- **Records** (`RecordsScreen`)
+- **Chat** (`ChatScreen`, mobile only) — Gemini chat
+- **Debug** (`DebugScreen`, mobile only)
 
 > **"Players screen"** always refers to `PlayersScreen` (`lib/screens/players/players_screen.dart`), not `HomeScreen`.
 
@@ -84,6 +89,11 @@ default branch.
   through `AssetSeasonCacheService`. The web never fetches the live config, so the
   config and the season snapshots always match.
 - Wide windows: `WebFrame` caps the app to a 600 px column.
+- GitHub disables `schedule` workflows in public repos after 60 days without
+  repo activity; if the nightly build stops, re-enable it in the Actions tab.
+- Running the prefetch locally leaves a ~650 KB snapshot in `assets/prefetched/`
+  that also goes into local release APKs (no secrets, just data). Before a
+  release APK: `rm assets/prefetched/season*.json assets/prefetched/remote_config.json`.
 
 **Note on Windows:** Under Git Bash on Windows, prefix the web build with `MSYS_NO_PATHCONV=1`
 or the `--base-href /FamilyMafiaApp/` argument gets mangled into a Windows path.

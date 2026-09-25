@@ -139,9 +139,11 @@ fetch/парсингу в окремий файл без Flutter-імпорті�
      `build_runner` у CI не потрібен);
   4. `dart run tool/prefetch_seasons.dart` з `SHEETS_API_KEY` із Secrets;
   5. `flutter test`;
-  6. `flutter build web --release --base-href /FamilyMafiaApp/ --dart-define=REMOTE_CONFIG_URL=<raw url>`;
+  6. `flutter build web --release --base-href /FamilyMafiaApp/` (без
+     `REMOTE_CONFIG_URL`: веб читає конфіг лише зі знімка);
   7. `actions/upload-pages-artifact` (`build/web`) → `actions/deploy-pages`.
-- **Дозволи:** `pages: write`, `id-token: write`; `concurrency: pages`.
+- **Дозволи:** глобально `contents: read`; `pages: write` і `id-token: write`
+  лише в job `deploy`; `concurrency: pages`.
 - **Якщо будь-який крок падає,** деплою немає, і на Pages лишається
   попередня версія.
 
