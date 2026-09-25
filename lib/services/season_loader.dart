@@ -18,6 +18,7 @@ import 'package:family_mafia_app/repositories/role_percentiles_repository.dart';
 import 'package:family_mafia_app/repositories/season_repository.dart';
 import 'package:family_mafia_app/services/rating_formulas.dart';
 import 'package:family_mafia_app/services/stats/game_points.dart';
+import 'package:family_mafia_app/services/stats/player_resolver.dart';
 import 'package:flutter/foundation.dart';
 
 part 'src/isolate_io.dart';
@@ -39,6 +40,13 @@ List<Game> parseSeasonGamesForTest(
           .where((d) => _filterRawData(d, seasonId))
           .toList(),
     );
+
+/// Per-player rating rows of one season, computed the same way the app does.
+@visibleForTesting
+List<RatingPlayerStats> seasonRatingsForTest(
+        SeasonMeta meta, String playersJson, String seasonJson) =>
+    _computePartialData(_LoadInput(playersJson, [seasonJson], [meta]))
+        .ratingsBySeason[meta.id]!;
 
 // ── Service ─────────────────────────────────────────────────────────────────
 

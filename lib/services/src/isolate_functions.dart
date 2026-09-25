@@ -2,6 +2,17 @@ part of '../season_loader.dart';
 
 // ── Top-level isolate entry points ──────────────────────────────────────────
 
+/// Rewrites every slot to the player's display name, so a player who shows up
+/// under two nicknames in one season (Малишка / Малышка, Скай / Rathma) gets
+/// a single rating row. Names missing from players.json are kept as written.
+List<Game> _canonicalNames(List<Game> games, PlayerResolver resolver) => [
+      for (final g in games)
+        g.copyWith(players: [
+          for (final n in g.players)
+            resolver.resolve(n).id >= 0 ? resolver.resolve(n).displayName : n,
+        ]),
+    ];
+
 // Top-level function: partial load (no percentiles)
 _PartialLoadOutput _computePartialData(_LoadInput input) {
   final rawPlayers =
@@ -11,6 +22,7 @@ _PartialLoadOutput _computePartialData(_LoadInput input) {
       .entries
       .map((e) => Player.fromJson(e.value).copyWith(id: e.key))
       .toList();
+  final resolver = PlayerResolver(players);
 
   final allGames = <Game>[];
   final ratingsBySeason = <int, List<RatingPlayerStats>>{};
@@ -26,10 +38,11 @@ _PartialLoadOutput _computePartialData(_LoadInput input) {
         .where((d) => _filterRawData(d, meta.id))
         .toList();
 
-    final gamesData =
+    final gamesData = _canonicalNames(
         _getGamesDataSeason(meta.id, rawData)
             .where((g) => g.isRatingGame())
-            .toList();
+            .toList(),
+        resolver);
 
     for (var i = 0; i < gamesData.length; i++) {
       if (!gamesData[i].isNormalGame()) {
@@ -69,6 +82,7 @@ Map<int, Map<Role, double?>> _computePercentilesOnly(_PercentilesInput input) {
       .entries
       .map((e) => Player.fromJson(e.value).copyWith(id: e.key))
       .toList();
+  final resolver = PlayerResolver(players);
 
   final allGames = <Game>[];
   for (int si = 0; si < input.seasonMetas.length; si++) {
@@ -81,10 +95,11 @@ Map<int, Map<Role, double?>> _computePercentilesOnly(_PercentilesInput input) {
         .where((d) => _filterRawData(d, meta.id))
         .toList();
 
-    final gamesData =
+    final gamesData = _canonicalNames(
         _getGamesDataSeason(meta.id, rawData)
             .where((g) => g.isRatingGame())
-            .toList();
+            .toList(),
+        resolver);
 
     allGames.addAll(gamesData);
   }
@@ -101,6 +116,7 @@ _LoadOutput _computeAllData(_LoadInput input) {
       .entries
       .map((e) => Player.fromJson(e.value).copyWith(id: e.key))
       .toList();
+  final resolver = PlayerResolver(players);
 
   final allGames = <Game>[];
   final ratingsBySeason = <int, List<RatingPlayerStats>>{};
@@ -116,10 +132,11 @@ _LoadOutput _computeAllData(_LoadInput input) {
         .where((d) => _filterRawData(d, meta.id))
         .toList();
 
-    final gamesData =
+    final gamesData = _canonicalNames(
         _getGamesDataSeason(meta.id, rawData)
             .where((g) => g.isRatingGame())
-            .toList();
+            .toList(),
+        resolver);
 
     for (var i = 0; i < gamesData.length; i++) {
       if (!gamesData[i].isNormalGame()) {
