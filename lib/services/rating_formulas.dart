@@ -102,16 +102,21 @@ double calculateCiTopUp(
   return _sheetRound(total, 2);
 }
 
+/// [removalPoints] is the (negative) sum of removal deductions — 4 fouls or
+/// disqualification — already included in [additionalPoints]/[penaltyPoints].
+/// They count toward the rating but not toward MVP.
 double calculateMvp(
   int seasonId,
   int gamesPlayed,
   double additionalPoints,
   double bestMovePoints,
   double penaltyPoints,
-  double winPoints,
-) {
+  double winPoints, {
+  double removalPoints = 0.0,
+}) {
   if (seasonId <= kOldFormatMaxSeason) return (winPoints / gamesPlayed).roundTo(3);
-  return ((additionalPoints + bestMovePoints + penaltyPoints) / gamesPlayed)
+  return ((additionalPoints + bestMovePoints + penaltyPoints - removalPoints) /
+          gamesPlayed)
       .roundTo(4);
 }
 

@@ -17,6 +17,7 @@ import 'package:family_mafia_app/repositories/rating_repository.dart';
 import 'package:family_mafia_app/repositories/role_percentiles_repository.dart';
 import 'package:family_mafia_app/repositories/season_repository.dart';
 import 'package:family_mafia_app/services/rating_formulas.dart';
+import 'package:family_mafia_app/services/stats/game_points.dart';
 import 'package:flutter/foundation.dart';
 
 part 'src/isolate_io.dart';

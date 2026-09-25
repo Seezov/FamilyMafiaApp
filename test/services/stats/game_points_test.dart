@@ -50,10 +50,17 @@ void main() {
     expect(g.hostMinus, 0.0);
   });
 
-  test('season 2-3 minus is fouls only (ignores negative доп)', () {
+  test('season 2-3 has no host minus: negative доп and 4-foul removals are skipped', () {
     final g = _g(season: 3, add: _row({0: -0.5}), pen: _row({0: -1.0}));
-    expect(g.slotMinus(0), closeTo(-1.0, 1e-9));
-    expect(g.hostMinus, closeTo(-1.0, 1e-9));
+    expect(g.slotMinus(0), 0.0);
+    expect(g.hostMinus, 0.0);
+  });
+
+  test('removal is the 4-foul penalty in 2-3 and the -2 доп in 4+', () {
+    expect(_g(season: 3, pen: _row({0: -1.0})).slotRemoval(0), -1.0);
+    final modern = _g(season: 5, add: _row({0: -2.0, 1: -0.5}), pen: _row({1: -0.3}));
+    expect(modern.slotRemoval(0), -2.0);
+    expect(modern.slotRemoval(1), 0.0);
   });
 
   test('periods split seasons 2-3 from 4+ and skip 0-1', () {

@@ -38,6 +38,7 @@ RatingPlayerStats _computePlayerRating(
   final redGamePoints = <double>[];
   final firstKilledLossPoints = <double>[];
   double autoAdditionalPointsByRoleSum = 0.0;
+  double removalPointsSum = 0.0;
   double protocolPointsSum = 0.0;
   int protocolCorrectGuesses = 0;
   int protocolTotalGuesses = 0;
@@ -77,6 +78,7 @@ RatingPlayerStats _computePlayerRating(
       firstKilledLossPoints.add(gamePoints);
     }
     autoAdditionalPointsByRoleSum += g.getPlayerAutoAdditionalPoints(name);
+    removalPointsSum += g.slotRemoval(g.players.indexOf(name));
 
     // Protocol stats (season 29+)
     protocolPointsSum += g.getPlayerProtocolAdditionalPoints(name)
@@ -172,6 +174,7 @@ RatingPlayerStats _computePlayerRating(
     bestMovePointsByRoleSum,
     penaltyPointsByRoleSum,
     winPoints,
+    removalPoints: removalPointsSum,
   );
 
   final ratingCoefficient = calculateRatingCoefficient(

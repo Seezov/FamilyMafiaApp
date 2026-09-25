@@ -91,7 +91,8 @@ Map<(int, String), (double, double, double, double, double?)> _perGamePoints(Rec
           (g.protocolAdditionalPoints?[s] ?? 0.0) +
           (g.penaltyPoints?[s] ?? 0.0) +
           (g.protocolPenaltyPoints?[s] ?? 0.0) +
-          (g.firstKilled == s + 1 ? g.bestMovePoints : 0.0);
+          (g.firstKilled == s + 1 ? g.bestMovePoints : 0.0) -
+          g.slotRemoval(s);
       out[key] = (
         max(maxPlus, plus),
         min(maxMinus, minus),
@@ -125,7 +126,8 @@ List<T> _sorted<T>(List<T> l, double Function(T) v, Player Function(T) p,
       return sa.compareTo(sb);
     });
 
-/// Follows the club MVP formula (доп + протокол + кращий хід + мінуси), the
+/// Follows the club MVP formula (доп + протокол + кращий хід + мінуси, without
+/// removal deductions — see `slotRemoval`), the
 /// same as `calculateMvp` in rating_formulas.dart for seasons 2+:
 /// `(additionalPoints + bestMovePoints + penaltyPoints) / gamesPlayed`.
 /// `RatingPlayerStats.additionalPoints`/`penaltyPoints` already fold in the
@@ -134,10 +136,18 @@ List<T> _sorted<T>(List<T> l, double Function(T) v, Player Function(T) p,
 /// single game, computed directly from the games.
 List<MvpRecord> mvpRecords(RecordsInput i, PointsPeriod period) {
   final pts = _perGamePoints(i);
+  final removals = <(int, String), double>{};
+  for (final g in i.games) {
+    for (var s = 0; s < g.players.length; s++) {
+      final key = (g.seasonId, personKey(i.resolver.resolve(g.players[s])));
+      removals[key] = (removals[key] ?? 0.0) + g.slotRemoval(s);
+    }
+  }
   final rows = [
     for (final p in _mainLeague(i, period: period))
       () {
-        final totalAdd = p.additionalPoints + p.bestMovePoints + p.penaltyPoints;
+        final totalAdd = p.additionalPoints + p.bestMovePoints + p.penaltyPoints -
+            (removals[(p.seasonId, personKey(p.player))] ?? 0.0);
         final maxSingleAdd = pts[(p.seasonId, personKey(p.player))]?.$5 ?? 0.0;
         return MvpRecord(p.player, p.seasonId, totalAdd / p.gamesPlayed, maxSingleAdd, totalAdd, p.winRate, p.gamesPlayed);
       }(),

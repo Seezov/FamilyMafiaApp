@@ -192,6 +192,13 @@ void main() {
       final result = calculateMvp(5, 10, 2.0, 1.5, -0.3, 50.0);
       expect(result, closeTo(0.32, 1e-9));
     });
+
+    test('removal deductions (4 fouls, -2 disqualification) are left out', () {
+      // доп 0.0 includes a -2 disqualification, penalty -1 is a 4-foul removal:
+      // (0.0 + 1.5 + (-1.0) - (-3.0)) / 10 = 0.35
+      final result = calculateMvp(5, 10, 0.0, 1.5, -1.0, 50.0, removalPoints: -3.0);
+      expect(result, closeTo(0.35, 1e-9));
+    });
   });
 
   // ── calculateRatingCoefficient ───────────────────────────────────────────
