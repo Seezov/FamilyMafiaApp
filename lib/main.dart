@@ -1,12 +1,8 @@
 import 'dart:ui' show ImageFilter;
 
+import 'package:family_mafia_app/navigation/app_tabs.dart';
 import 'package:family_mafia_app/providers/app_providers.dart';
-import 'package:family_mafia_app/screens/chat/chat_screen.dart';
-import 'package:family_mafia_app/screens/dashboard/dashboard_screen.dart';
-import 'package:family_mafia_app/screens/debug/debug_screen.dart';
-import 'package:family_mafia_app/screens/home/home_screen.dart';
-import 'package:family_mafia_app/screens/players/players_screen.dart';
-import 'package:family_mafia_app/screens/records/records_screen.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -49,25 +45,17 @@ class _RootNav extends ConsumerStatefulWidget {
 }
 
 class _RootNavState extends ConsumerState<_RootNav> {
-  static const _screens = [
-    HomeScreen(),
-    PlayersScreen(),
-    DashboardScreen(),
-    RecordsScreen(),
-    ChatScreen(),
-    DebugScreen(),
-  ];
-
   @override
   Widget build(BuildContext context) {
     final isLoading = ref.watch(initialLoadProvider).isLoading;
     // Kick off background loading of remaining seasons
     ref.watch(backgroundLoadProvider);
-    final index = ref.watch(selectedTabProvider);
+    final tabs = appTabsFor(isWeb: kIsWeb);
+    final index = visibleTabIndex(ref.watch(selectedTabProvider), tabs.length);
 
     return Scaffold(
       extendBody: !isLoading,
-      body: IndexedStack(index: index, children: _screens),
+      body: IndexedStack(index: index, children: [for (final t in tabs) t.screen]),
       bottomNavigationBar: isLoading ? null : ClipRect(
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
@@ -77,37 +65,13 @@ class _RootNavState extends ConsumerState<_RootNav> {
             elevation: 0,
             selectedIndex: index,
             onDestinationSelected: (i) => ref.read(selectedTabProvider.notifier).state = i,
-            destinations: const [
-              NavigationDestination(
-                icon: Icon(Icons.home_outlined),
-                selectedIcon: Icon(Icons.home),
-                label: 'Season',
-              ),
-              NavigationDestination(
-                icon: Icon(Icons.people_outline),
-                selectedIcon: Icon(Icons.people),
-                label: 'Players',
-              ),
-              NavigationDestination(
-                icon: Icon(Icons.dashboard_outlined),
-                selectedIcon: Icon(Icons.dashboard),
-                label: 'Dashboard',
-              ),
-              NavigationDestination(
-                icon: Icon(Icons.emoji_events_outlined),
-                selectedIcon: Icon(Icons.emoji_events),
-                label: 'Records',
-              ),
-              NavigationDestination(
-                icon: Icon(Icons.chat_bubble_outline),
-                selectedIcon: Icon(Icons.chat_bubble),
-                label: 'Chat',
-              ),
-              NavigationDestination(
-                icon: Icon(Icons.bug_report_outlined),
-                selectedIcon: Icon(Icons.bug_report),
-                label: 'Debug',
-              ),
+            destinations: [
+              for (final t in tabs)
+                NavigationDestination(
+                  icon: Icon(t.icon),
+                  selectedIcon: Icon(t.selectedIcon),
+                  label: t.label,
+                ),
             ],
           ),
         ),

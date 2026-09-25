@@ -330,7 +330,7 @@ final loadedSeasonConfigsProvider = StateProvider<List<SeasonConfig>>(
 /// Provider for the selected season (set by initial load, user can change).
 final selectedSeasonProvider = StateProvider<SeasonConfig?>((ref) => null);
 
-/// Selected bottom-nav tab. 0 Season, 1 Players, 2 Dashboard, 3 Records, 4 Chat, 5 Debug.
+/// Selected bottom-nav tab, an index into [appTabsFor] (0 Season, 1 Players, 2 Dashboard, 3 Records; mobile adds 4 Chat, 5 Debug).
 final selectedTabProvider = StateProvider<int>((ref) => 0);
 
 /// Invalidates cache for a remote season and reloads all data.
