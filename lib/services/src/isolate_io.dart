@@ -50,10 +50,3 @@ class _PartialLoadOutput {
   });
 }
 
-class _PercentilesInput {
-  final String playersJson;
-  final List<String> seasonJsons;
-  final List<SeasonMeta> seasonMetas;
-
-  const _PercentilesInput(this.playersJson, this.seasonJsons, this.seasonMetas);
-}

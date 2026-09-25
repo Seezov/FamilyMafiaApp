@@ -138,16 +138,15 @@ class SeasonLoaderService {
     }
   }
 
-  /// Recomputes role percentiles from raw season data.
-  /// Call after all seasons are loaded.
+  /// Recomputes role percentiles from already-parsed [players] and [games]
+  /// (the repositories' contents). Call after all seasons are loaded.
   Future<void> recomputePercentiles({
-    required String playersJson,
-    required List<String> allSeasonJsons,
-    required List<SeasonMeta> allMetas,
+    required List<Player> players,
+    required List<Game> games,
   }) async {
     final percentiles = await compute(
       _computePercentilesOnly,
-      _PercentilesInput(playersJson, allSeasonJsons, allMetas),
+      (players, games),
     );
     _rolePercRepo.setPercentiles(percentiles);
   }

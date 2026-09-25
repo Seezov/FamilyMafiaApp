@@ -182,16 +182,12 @@ class _InitialLoadResult {
   final SeasonDataService dataService;
   final List<SeasonConfig> allConfigs;
   final List<SeasonConfig> loadedConfigs;
-  final List<String> loadedSeasonJsons;
-  final List<SeasonMeta> loadedMetas;
 
   const _InitialLoadResult({
     required this.playersJson,
     required this.dataService,
     required this.allConfigs,
     required this.loadedConfigs,
-    required this.loadedSeasonJsons,
-    required this.loadedMetas,
   });
 }
 
@@ -253,8 +249,6 @@ final initialLoadProvider = FutureProvider<void>((ref) async {
     dataService: dataService,
     allConfigs: configs,
     loadedConfigs: [latestConfig],
-    loadedSeasonJsons: [latestJson],
-    loadedMetas: [SeasonMeta(latestConfig.id, latestConfig.gameLimit, latestConfig.gamesMultiplier)],
   );
 });
 
@@ -326,17 +320,11 @@ final backgroundLoadProvider = FutureProvider<void>((ref) async {
       );
     }
 
-    // Recompute percentiles with ALL seasons
-    final allJsons = [...shared.loadedSeasonJsons, ...remainingJsons];
-    final allMetas = [
-      ...shared.loadedMetas,
-      ...loadedRemainingConfigs
-          .map((c) => SeasonMeta(c.id, c.gameLimit, c.gamesMultiplier)),
-    ];
+    // Recompute percentiles with ALL seasons, from the games already parsed
+    // into the repositories.
     await loader.recomputePercentiles(
-      playersJson: shared.playersJson,
-      allSeasonJsons: allJsons,
-      allMetas: allMetas,
+      players: ref.read(playersRepositoryProvider),
+      games: ref.read(gamesRepositoryProvider),
     );
 
     // Update loaded configs (sorted by id)

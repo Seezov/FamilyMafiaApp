@@ -73,39 +73,10 @@ _PartialLoadOutput _computePartialData(_LoadInput input) {
   );
 }
 
-// Top-level function: re-parse all seasons and compute only percentiles
-Map<int, Map<Role, double?>> _computePercentilesOnly(_PercentilesInput input) {
-  final rawPlayers =
-      (jsonDecode(input.playersJson) as List).cast<Map<String, dynamic>>();
-  final players = rawPlayers
-      .asMap()
-      .entries
-      .map((e) => Player.fromJson(e.value).copyWith(id: e.key))
-      .toList();
-  final resolver = PlayerResolver(players);
-
-  final allGames = <Game>[];
-  for (int si = 0; si < input.seasonMetas.length; si++) {
-    final meta = input.seasonMetas[si];
-    final json = input.seasonJsons[si];
-
-    final raw = (jsonDecode(json) as List).cast<Map<String, dynamic>>();
-    final rawData = raw
-        .map((e) => GamesDataSeason.fromJson(e))
-        .where((d) => _filterRawData(d, meta.id))
-        .toList();
-
-    final gamesData = _canonicalNames(
-        _getGamesDataSeason(meta.id, rawData)
-            .where((g) => g.isRatingGame())
-            .toList(),
-        resolver);
-
-    allGames.addAll(gamesData);
-  }
-
-  return _computeRolePercentiles(players, allGames);
-}
+// Top-level function: percentiles from already-parsed players and games
+Map<int, Map<Role, double?>> _computePercentilesOnly(
+        (List<Player>, List<Game>) input) =>
+    _computeRolePercentiles(input.$1, input.$2);
 
 // Top-level function required by compute()
 _LoadOutput _computeAllData(_LoadInput input) {
