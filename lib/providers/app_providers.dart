@@ -9,6 +9,8 @@ import 'package:family_mafia_app/repositories/players_repository.dart';
 import 'package:family_mafia_app/repositories/rating_repository.dart';
 import 'package:family_mafia_app/repositories/role_percentiles_repository.dart';
 import 'package:family_mafia_app/repositories/season_repository.dart';
+import 'package:family_mafia_app/services/asset_season_cache_service.dart';
+import 'package:family_mafia_app/services/io_season_cache_service.dart';
 import 'package:family_mafia_app/services/season_cache_service.dart';
 import 'package:family_mafia_app/services/season_data_service.dart';
 import 'package:family_mafia_app/services/season_loader.dart';
@@ -40,7 +42,7 @@ Future<Map<String, String>> _loadEnvJson() async {
 final dioProvider = Provider<Dio>((ref) => Dio());
 
 final seasonCacheServiceProvider = Provider<SeasonCacheService>(
-  (ref) => SeasonCacheService(),
+  (ref) => kIsWeb ? AssetSeasonCacheService(rootBundle) : IoSeasonCacheService(),
 );
 
 // ── Parsed config ─────────────────────────────────────────────────────────
@@ -97,7 +99,7 @@ final envJsonProvider = FutureProvider<Map<String, String>>(
 
 /// Loads season configs. Priority:
 /// 1. Remote URL (if REMOTE_CONFIG_URL is set) → cache it
-/// 2. Cached remote config (if remote fetch fails)
+/// 2. Cached remote config (mobile: last fetch; web: build-time snapshot)
 /// 3. Bundled asset `assets/raw/season_config.json`
 /// 4. Hardcoded `Season.allConfigs()` (ultimate fallback)
 final parsedConfigProvider = FutureProvider<_ParsedConfig>((ref) async {
@@ -118,15 +120,19 @@ final parsedConfigProvider = FutureProvider<_ParsedConfig>((ref) async {
     } catch (e) {
       debugPrint('Remote config fetch failed: $e');
     }
+  }
 
+  // The last fetched remote config on mobile; the build-time snapshot on the
+  // web (which has no config URL, so config and season snapshots always match).
+  // Guarded as a whole: this now also runs when no URL is set, and a cache
+  // that can't be read must fall through to the bundled config, not fail.
+  try {
     final cached = await cacheService.getCachedRemoteConfig();
     if (cached != null) {
-      try {
-        return _parseConfig(cached, bundledJsonForTournamentsFallback: await _tryLoadBundledConfigJson());
-      } catch (e) {
-        debugPrint('Cached remote config parse failed: $e');
-      }
+      return _parseConfig(cached, bundledJsonForTournamentsFallback: await _tryLoadBundledConfigJson());
     }
+  } catch (e) {
+    debugPrint('Cached remote config unavailable: $e');
   }
 
   try {

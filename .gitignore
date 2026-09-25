@@ -80,6 +80,10 @@ app/release/output.json
 .env
 assets/.env.json
 
+# Web build snapshot of remote seasons (written by tool/prefetch_seasons.dart in CI)
+assets/prefetched/*
+!assets/prefetched/.gitkeep
+
 # Flutter/Dart
 .dart_tool/
 .flutter-plugins

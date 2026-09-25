@@ -80,6 +80,7 @@ flutter:
 
   assets:
     - assets/raw/
+    - assets/prefetched/
     - assets/.env.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
