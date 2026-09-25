@@ -63,9 +63,16 @@ Flutter Web з того самого коду (варіант A). Альтерн
   `{}` і `sheetsApiKeyProvider` дає `null`. Пункт `assets/.env.json` у
   `pubspec.yaml` не повинен ламати збірку, коли файлу немає. Якщо Flutter
   падає на відсутньому асеті, CI створює порожній `{}` у цьому файлі.
-- **Remote config.** `REMOTE_CONFIG_URL` передається через `--dart-define` у
-  веб-збірку. Це публічний GitHub raw URL (гілка `feature/flutter_migration`),
-  без ключа. Fallback на бандлений `season_config.json` не змінюється.
+- **Remote config.** Веб **не** ходить за live-конфігом, а читає знімок
+  `assets/prefetched/remote_config.json`, зроблений у тій самій збірці, що й
+  знімки сезонів. Так конфіг і дані завжди збігаються. Якби веб брав live-конфіг,
+  а після збірки в ньому з'явився новий remote-сезон, цей сезон став би
+  «останнім» без даних, і `initialLoadProvider` падав би з «Failed to load
+  latest season», тобто сайт лежав би до наступної збірки. Для цього
+  `parsedConfigProvider` читає кешований remote config і тоді, коли
+  `REMOTE_CONFIG_URL` порожній (порядок: live URL, якщо задано → кеш/знімок →
+  бандлений `season_config.json` → `Season.allConfigs()`). У веб-збірку
+  `REMOTE_CONFIG_URL` не передається.
 - **Remote-сезони.** Коли `SheetsService` дорівнює `null`,
   `SeasonDataService` уже читає `getCachedSeasonData`. На вебі
   `SeasonCacheService` отримує реалізацію, яка:
@@ -75,8 +82,10 @@ Flutter Web з того самого коду (варіант A). Альтерн
   - `getCachedRowCount` → `null`;
   - запис / інвалідація → no-op.
   Мобільна реалізація (`dart:io` + `path_provider`) лишається як є.
-  Вибір реалізації: conditional import (`if (dart.library.html)` /
-  `dart.library.js_interop`).
+  `SeasonCacheService` стає інтерфейсом, а провайдер обирає реалізацію через
+  `kIsWeb`. Імпорт `dart:io` компілюється під веб, падає лише виклик, тому
+  conditional imports не потрібні. Задача 1 плану це перевіряє через
+  `flutter build web`.
 - **Тека `assets/prefetched/`.** У git лежить тільки `.gitkeep`, вміст
   ігнорується. Тека додається в `pubspec.yaml` assets. У мобільних збірках
   вона порожня, тож APK не росте.
@@ -118,6 +127,11 @@ fetch/парсингу в окремий файл без Flutter-імпорті�
 
 - **Тригери:** `push` у `feature/flutter_migration`, `workflow_dispatch`,
   `schedule` (щоночі, `cron: '0 3 * * *'` UTC).
+- **Гілка за замовчуванням у репо — `master`.** GitHub запускає `schedule` і
+  показує кнопку `workflow_dispatch` лише для workflow-файлу з `master`, тому
+  файл має бути на обох гілках (їх і так пушимо разом, fast-forward). Checkout
+  завжди бере `ref: feature/flutter_migration`, тобто нічна збірка будує живу
+  гілку.
 - **Кроки:**
   1. checkout;
   2. Flutter `3.41.4` stable (`subosito/flutter-action`), з кешем;
@@ -135,15 +149,18 @@ fetch/парсингу в окремий файл без Flutter-імпорті�
 
 1. Settings → Secrets and variables → Actions → додати `SHEETS_API_KEY`.
 2. Settings → Pages → Source: «GitHub Actions».
-3. Для ключа Sheets у Google Cloud обмеження по HTTP-referrer не потрібне,
+3. Settings → Environments → `github-pages` → Deployment branches: додати
+   `feature/flutter_migration`. За замовчуванням деплой дозволено лише з
+   `master`, тож без цього збірка після push у живу гілку буде відхилена.
+4. Для ключа Sheets у Google Cloud обмеження по HTTP-referrer не потрібне,
    бо він використовується тільки в CI.
 
 ## Обробка помилок
 
 | Ситуація | Поведінка |
 |---|---|
-| Remote config недоступний у браузері | знімок `assets/prefetched/remote_config.json` → бандлений `season_config.json` → `Season.allConfigs()` |
-| Remote-сезон є в live-конфігу, але немає в знімку (додано після збірки) | сезон пропускається (наявна поведінка «no API key, no cache»), з'явиться після наступної збірки |
+| Знімка конфігу немає (наприклад, локальний `flutter run -d chrome` без prefetch) | бандлений `season_config.json` → `Season.allConfigs()` |
+| Новий remote-сезон додано в live-конфіг після збірки | веб його не бачить (читає знімок), сезон з'явиться після наступної збірки (не пізніше, ніж за ніч) |
 | Sheets недоступні в CI | скрипт падає, деплою немає, лишається стара версія |
 | Тести падають | деплою немає |
 
