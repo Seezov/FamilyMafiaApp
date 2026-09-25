@@ -42,7 +42,7 @@
   {
     "id": 0,
     "displayName": "Anatolich",
-    "nicknames" : [
+    "nicknames": [
       "Anatolich",
       "Анатоліч"
     ]
@@ -225,7 +225,11 @@
   },
   {
     "id": 0,
-    "displayName": "Galant"
+    "displayName": "Galant",
+    "nicknames": [
+      "Galant",
+      "Галант"
+    ]
   },
   {
     "id": 0,
@@ -257,7 +261,11 @@
   },
   {
     "id": 0,
-    "displayName": "Joi"
+    "displayName": "Joi",
+    "nicknames": [
+      "Joi",
+      "Фантазер"
+    ]
   },
   {
     "id": 0,
@@ -1526,7 +1534,7 @@
   {
     "id": 0,
     "displayName": "Малишка",
-    "nicknames" : [
+    "nicknames": [
       "Малишка",
       "Малышка"
     ]
@@ -1798,7 +1806,7 @@
       "Премьер Министр",
       "Прим'єр-міністр",
       "Прем'єр-міністр"
-  ]
+    ]
   },
   {
     "id": 0,
@@ -2243,7 +2251,7 @@
   {
     "id": 0,
     "displayName": "Моргана",
-    "nicknames":[
+    "nicknames": [
       "Моргана",
       "Чилиганчик"
     ]
@@ -2463,5 +2471,13 @@
   {
     "id": 0,
     "displayName": "Атом"
+  },
+  {
+    "id": 0,
+    "displayName": "Zippo"
+  },
+  {
+    "id": 0,
+    "displayName": "Кудря"
   }
 ]
