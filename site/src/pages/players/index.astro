@@ -5,7 +5,7 @@ import Panel from '../../components/Panel.astro';
 import { loadPlayers } from '../../lib/data';
 const { players, table } = loadPlayers();
 ---
-<Base title="Players" description={`${players.length} Family Mafia players: games, win rate, seasons.`} active="players">
+<Base title="Players" description={`${players.length} Family Mafia Club players: games, win rate, seasons.`} active="players">
   <div class="pagehead">
     <h1 class="display">Players</h1>
     <input id="filter" type="search" placeholder="Filter by name…" aria-label="Filter players" />

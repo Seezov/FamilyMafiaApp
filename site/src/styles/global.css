@@ -1,8 +1,10 @@
 :root {
   color-scheme: dark;
-  --bg: #0B0D10; --panel: #12161B; --panel-2: #171C22; --border: #1F252D;
-  --text: #E6E8EB; --muted: #8B95A1;
-  --city: #E5484D; --mafia: #A3ADBA; --accent: #E5484D;
+  /* Chrome is black and white like the app icon; colour is kept for data
+     (roles, results, medals, tournament types). */
+  --bg: #0A0A0A; --panel: #121212; --panel-2: #181818; --border: #262626;
+  --text: #F2F2F2; --muted: #8C8C8C;
+  --city: #E5484D; --mafia: #A3ADBA; --accent: #FFFFFF;
   --civilian: #E5484D; --sheriff: #22C3DC; --don: #A78BFA;
   --good: #3FB950; --mid: #D29922; --low: var(--muted);
   --gold: #E3B341; --silver: #B4BCC8; --bronze: #C2410C;
@@ -45,5 +47,5 @@ h1.display { font-size: clamp(22px, 3vw, 32px); margin: 0; }
   white-space: nowrap; padding: 5px 12px; border: 1px solid var(--border);
   border-radius: 999px; color: var(--muted); font-size: 13px;
 }
-.pill[aria-current='true'] { color: var(--text); border-color: var(--accent); background: rgba(229, 72, 77, .12); }
+.pill[aria-current='true'] { color: var(--bg); border-color: var(--accent); background: var(--accent); }
 .pagehead { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; margin-bottom: 20px; }

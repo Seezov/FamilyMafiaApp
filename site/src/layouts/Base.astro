@@ -8,7 +8,7 @@ interface Props {
   description?: string;
   active?: 'season' | 'players' | 'overview' | 'records' | 'tournaments' | 'debug';
 }
-const { title, description = 'Family Mafia club statistics: seasons, players, records, tournaments.', active } = Astro.props;
+const { title, description = 'Family Mafia Club statistics: seasons, players, records, tournaments.', active } = Astro.props;
 const { latestSeasonId } = loadIndex();
 const nav = [
   { key: 'season', label: 'Season', url: href(`season/${latestSeasonId}/`) },
@@ -18,7 +18,8 @@ const nav = [
   { key: 'tournaments', label: 'Tournaments', url: href('tournaments/') },
   { key: 'debug', label: 'Debug', url: href('debug/') },
 ];
-const fullTitle = title === 'Family Mafia' ? title : `${title} · Family Mafia`;
+const site = 'Family Mafia Club';
+const fullTitle = title === site ? title : `${title} · ${site}`;
 ---
 <!doctype html>
 <html lang="en">
@@ -28,13 +29,13 @@ const fullTitle = title === 'Family Mafia' ? title : `${title} · Family Mafia`;
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="Family Mafia" />
+    <meta property="og:site_name" content={site} />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={absolute('og.png')} />
     <meta property="og:url" content={new URL(Astro.url.pathname, 'https://seezov.github.io').toString()} />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="theme-color" content="#0B0D10" />
+    <meta name="theme-color" content="#0A0A0A" />
     <link rel="icon" href={href('favicon.svg')} type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -46,7 +47,7 @@ const fullTitle = title === 'Family Mafia' ? title : `${title} · Family Mafia`;
   <body>
     <header class="top">
       <div class="wrap bar">
-        <a class="logo display" href={href(`season/${latestSeasonId}/`)}>FAMILY<span>MAFIA</span></a>
+        <a class="logo display" href={href(`season/${latestSeasonId}/`)}><img src={href('logo.svg')} alt="" width="22" height="30" />FAMILY MAFIA<span>CLUB</span></a>
         <nav class="tabs" aria-label="Sections">
           {nav.map((n) => (
             <a href={n.url} aria-current={n.key === active ? 'page' : undefined}>{n.label}</a>
@@ -58,16 +59,17 @@ const fullTitle = title === 'Family Mafia' ? title : `${title} · Family Mafia`;
       </div>
     </header>
     <main class="wrap"><slot /></main>
-    <footer class="wrap foot label">Family Mafia · club statistics · updated nightly</footer>
+    <footer class="wrap foot label">Family Mafia Club · statistics · updated nightly</footer>
   </body>
 </html>
 
 <style>
-  .top { position: sticky; top: 0; z-index: 10; background: rgba(11, 13, 16, .92);
+  .top { position: sticky; top: 0; z-index: 10; background: rgba(10, 10, 10, .92);
     backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); }
   .bar { display: flex; align-items: center; gap: 28px; height: 56px; }
-  .logo { font-size: 15px; letter-spacing: .04em; white-space: nowrap; }
-  .logo span { color: var(--accent); margin-left: 4px; }
+  .logo { display: flex; align-items: center; gap: 10px; font-size: 15px; letter-spacing: .04em; white-space: nowrap; }
+  .logo img { display: block; }
+  .logo span { color: var(--muted); }
   .tabs { display: flex; gap: 4px; height: 100%; }
   .tabs a { display: flex; align-items: center; padding: 0 12px; color: var(--muted);
     border-bottom: 2px solid transparent; font-weight: 500; white-space: nowrap; }
