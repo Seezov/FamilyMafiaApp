@@ -28,7 +28,6 @@ const fk = p.firstKill;
 
   <div class="kpis">
     <Kpi label="Win rate" value={pct(p.winRate, 1)} />
-    <Kpi label="Rating" value={p.latestRating === null ? '—' : p.latestRating.toFixed(2)} />
     <Kpi label="Seasons" value={String(p.seasons)} />
     <Kpi label="Accomplishments" value={String(a.total)} />
   </div>
@@ -73,8 +72,8 @@ const fk = p.firstKill;
     background: var(--panel-2); border: 1px solid var(--border); color: var(--accent); font-size: 22px; flex: none; }
   .who { min-width: 0; }
   .who h1 { overflow-wrap: anywhere; }
-  .kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 14px; }
-  @media (max-width: 899px) { .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .kpis { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 14px; }
+  @media (max-width: 599px) { .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } .kpis > :last-child { grid-column: span 2; } }
   .awards { margin-bottom: 16px; }
   .duo { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 8px; }
 </style>
