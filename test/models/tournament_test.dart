@@ -25,7 +25,8 @@ void main() {
     final all = parseTournaments(json as Map<String, dynamic>);
     expect(all.where((t) => t.seasonId == 25 && t.type == TournamentType.minicap).length, 5);
     expect(all.where((t) => t.seasonId == 25 && t.type == TournamentType.maxicap).length, 3);
-    expect(all.where((t) => t.seasonId == 30).single.name, 'Ліга №1');
+    expect(all.where((t) => t.seasonId == 30).map((t) => t.name),
+        ['Марафон 04.07.2026', 'Ліга №1', 'Марафон 30.08.2026']);
   });
 
   test('every bundled tournament has a top-3 podium', () {
