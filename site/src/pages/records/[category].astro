@@ -1,0 +1,95 @@
+---
+import Base from '../../layouts/Base.astro';
+import DataTable from '../../components/DataTable.astro';
+import Panel from '../../components/Panel.astro';
+import { loadRecords } from '../../lib/data';
+import { href } from '../../lib/url';
+import type { FilterName } from '../../lib/types';
+
+export function getStaticPaths() {
+  return loadRecords().categories.map((c) => ({ params: { category: c.slug } }));
+}
+const data = loadRecords();
+const cat = data.categories.find((c) => c.slug === Astro.params.category)!;
+const options: Record<FilterName, { key: string; label: string }[]> = {
+  role: data.roles, scope: data.scopes, period: data.periods,
+};
+const order: FilterName[] = ['role', 'scope', 'period'];
+const filters = order.filter((f) => cat.filters.includes(f));
+
+// Every combination of this category's filters → its table.
+const combos: Record<FilterName, string>[] = filters.reduce<Record<FilterName, string>[]>(
+  (acc, f) => acc.flatMap((c) => options[f].map((o) => ({ ...c, [f]: o.key }))),
+  [{ ...data.defaults }],
+);
+const keyOf = (c: Record<FilterName, string>) => [cat.slug, ...filters.map((f) => c[f])].join('/');
+const isDefault = (c: Record<FilterName, string>) => filters.every((f) => c[f] === data.defaults[f]);
+const pillHref = (f: FilterName, key: string) => {
+  const params = new URLSearchParams(filters.map((g) => [g, g === f ? key : data.defaults[g]]));
+  return `?${params}`;
+};
+---
+<Base title={`${cat.label} records`} description={`Family Mafia all-time ${cat.label} records.`} active="records">
+  <div class="pagehead"><h1 class="display">Records</h1></div>
+  <nav class="pills cats" aria-label="Category">
+    {data.categories.map((c) => (
+      <a class="pill" href={href(`records/${c.slug}/`)} aria-current={c.slug === cat.slug ? 'true' : undefined}>{c.label}</a>
+    ))}
+  </nav>
+  {filters.map((f) => (
+    <nav class="pills filter" data-filter={f} aria-label={f}>
+      {options[f].map((o) => (
+        <a class="pill" href={pillHref(f, o.key)} data-key={o.key} aria-current={o.key === data.defaults[f] ? 'true' : undefined}>{o.label}</a>
+      ))}
+    </nav>
+  ))}
+  {combos.map((c) => {
+    const entry = data.tables[keyOf(c)];
+    return (
+      <section data-combo={JSON.stringify(c)} hidden={!isDefault(c)}>
+        <Panel title={cat.label} note={entry.scope}><DataTable table={entry.table} /></Panel>
+      </section>
+    );
+  })}
+</Base>
+
+<script>
+  const filters = [...document.querySelectorAll<HTMLElement>('[data-filter]')];
+  const sections = [...document.querySelectorAll<HTMLElement>('[data-combo]')];
+  const defaults: Record<string, string> = {};
+  filters.forEach((nav) => {
+    defaults[nav.dataset.filter!] = nav.querySelector('[aria-current="true"]')?.getAttribute('data-key') ?? '';
+  });
+  const state: Record<string, string> = { ...defaults };
+  const params = new URLSearchParams(location.search);
+  filters.forEach((nav) => {
+    const f = nav.dataset.filter!;
+    const v = params.get(f);
+    if (v && nav.querySelector(`[data-key="${CSS.escape(v)}"]`)) state[f] = v;
+  });
+
+  function render() {
+    filters.forEach((nav) => nav.querySelectorAll('[data-key]').forEach((a) =>
+      a.setAttribute('aria-current', a.getAttribute('data-key') === state[nav.dataset.filter!] ? 'true' : 'false')));
+    sections.forEach((s) => {
+      const combo = JSON.parse(s.dataset.combo!) as Record<string, string>;
+      s.hidden = !Object.keys(state).every((f) => combo[f] === state[f]);
+    });
+    const qs = new URLSearchParams(state).toString();
+    history.replaceState(null, '', qs ? `?${qs}` : location.pathname);
+  }
+
+  filters.forEach((nav) => nav.addEventListener('click', (e) => {
+    const a = (e.target as HTMLElement).closest('[data-key]');
+    if (!a) return;
+    e.preventDefault();
+    state[nav.dataset.filter!] = a.getAttribute('data-key')!;
+    render();
+  }));
+  render();
+</script>
+
+<style>
+  .cats, .filter { margin-bottom: 10px; }
+  .filter .pill { font-size: 12px; padding: 3px 10px; }
+</style>
