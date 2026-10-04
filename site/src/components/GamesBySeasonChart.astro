@@ -1,0 +1,49 @@
+---
+import type { PlayerData } from '../lib/types';
+interface Props { timeline: PlayerData['timeline'] }
+const { timeline } = Astro.props;
+const W = 760, H = 220, padL = 32, padR = 12, padT = 12, band = 10, padB = 30;
+const max = Math.max(1, ...timeline.map((t) => t.games));
+const n = timeline.length;
+const x = (i: number) => padL + (n === 1 ? (W - padL - padR) / 2 : (i * (W - padL - padR)) / (n - 1));
+const y = (g: number) => padT + (1 - g / max) * (H - padT - padB - band - 6);
+const played = timeline.map((t, i) => ({ ...t, i })).filter((t) => t.games > 0);
+const path = played.map((t, k) => `${k ? 'L' : 'M'}${x(t.i).toFixed(1)},${y(t.games).toFixed(1)}`).join(' ');
+const step = n > 1 ? (W - padL - padR) / (n - 1) : W;
+const leagueColor = { main: 'var(--city)', small: 'var(--mid)', below: 'var(--border)', none: 'transparent' } as const;
+const ticks = [0, Math.round(max / 2), max];
+---
+<svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label="Games per season">
+  {ticks.map((t) => (
+    <g>
+      <line x1={padL} x2={W - padR} y1={y(t)} y2={y(t)} stroke="var(--border)" />
+      <text x={padL - 6} y={y(t) + 4} text-anchor="end">{t}</text>
+    </g>
+  ))}
+  {timeline.map((t, i) => (
+    <rect x={x(i) - step / 2 + 1} y={H - padB - band} width={Math.max(2, step - 2)} height={band} rx="2" fill={leagueColor[t.league]}>
+      <title>{`${t.title}: ${t.league === 'none' ? 'did not play' : t.league + ' league'}`}</title>
+    </rect>
+  ))}
+  <path d={path} fill="none" stroke="var(--text)" stroke-width="2" />
+  {played.map((t) => (
+    <circle cx={x(t.i)} cy={y(t.games)} r="3.5" fill="var(--bg)" stroke="var(--text)" stroke-width="2">
+      <title>{`${t.title}: ${t.games} games`}</title>
+    </circle>
+  ))}
+  {timeline.map((t, i) => (t.seasonId % 5 === 0 || i === n - 1) && (
+    <text x={x(i)} y={H - 8} text-anchor="middle">S{t.seasonId}</text>
+  ))}
+</svg>
+<div class="legend label">
+  <span><i style="background:var(--city)" />Main league</span>
+  <span><i style="background:var(--mid)" />Small league</span>
+  <span><i style="background:var(--border)" />Below threshold</span>
+</div>
+
+<style>
+  svg { width: 100%; height: auto; display: block; }
+  text { fill: var(--muted); font-size: 11px; font-family: var(--font-body); }
+  .legend { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 8px; }
+  .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+</style>

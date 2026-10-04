@@ -1,0 +1,27 @@
+---
+interface Item { label: string; value: number; text: string; color?: string; badge?: string | null }
+interface Props { items: Item[] }
+const { items } = Astro.props;
+---
+<ul class="bars">
+  {items.map((it) => (
+    <li>
+      <div class="row">
+        <span class="name" style={it.color ? `color:${it.color}` : undefined}>{it.label}</span>
+        {it.badge && <span class="badge">{it.badge}</span>}
+        <span class="text num">{it.text}</span>
+      </div>
+      <div class="track"><div class="fill" style={`width:${Math.max(0, Math.min(1, it.value)) * 100}%;${it.color ? `background:${it.color}` : ''}`} /></div>
+    </li>
+  ))}
+</ul>
+
+<style>
+  .bars { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+  .row { display: flex; align-items: baseline; gap: 8px; margin-bottom: 4px; }
+  .name { font-weight: 600; }
+  .text { margin-left: auto; color: var(--muted); }
+  .badge { font-size: 11px; padding: 1px 6px; border-radius: 999px; border: 1px solid var(--good); color: var(--good); }
+  .track { height: 6px; background: var(--panel-2); border-radius: 3px; overflow: hidden; }
+  .fill { height: 100%; background: var(--text); border-radius: 3px; }
+</style>

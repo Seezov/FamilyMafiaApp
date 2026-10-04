@@ -1,0 +1,43 @@
+---
+import Base from '../../layouts/Base.astro';
+import DataTable from '../../components/DataTable.astro';
+import Panel from '../../components/Panel.astro';
+import { loadPlayers } from '../../lib/data';
+const { players, table } = loadPlayers();
+---
+<Base title="Players" description={`${players.length} Family Mafia players: games, win rate, seasons.`} active="players">
+  <div class="pagehead">
+    <h1 class="display">Players</h1>
+    <input id="filter" type="search" placeholder="Filter by name…" aria-label="Filter players" />
+  </div>
+  <Panel>
+    <DataTable table={table} />
+    <p id="none" class="label" hidden>No player matches.</p>
+  </Panel>
+</Base>
+
+<script>
+  const input = document.getElementById('filter') as HTMLInputElement;
+  const none = document.getElementById('none')!;
+  const q = new URLSearchParams(location.search).get('q') ?? '';
+  input.value = q;
+  const apply = () => {
+    const needle = input.value.trim().toLowerCase();
+    let shown = 0;
+    document.querySelectorAll<HTMLTableSectionElement>('[data-table] tbody').forEach((tb) => {
+      const name = tb.querySelector('td:not([data-rank])')?.textContent?.toLowerCase() ?? '';
+      const match = !needle || name.includes(needle);
+      tb.style.display = match ? '' : 'none';
+      if (match) shown++;
+    });
+    document.querySelector('[data-table]')?.classList.toggle('open', needle !== '');
+    none.hidden = shown > 0;
+  };
+  input.addEventListener('input', apply);
+  apply();
+</script>
+
+<style>
+  #filter { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius);
+    color: var(--text); padding: 8px 12px; font: inherit; width: min(320px, 100%); }
+</style>

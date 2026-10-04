@@ -1,0 +1,86 @@
+---
+import Base from '../../layouts/Base.astro';
+import Bars from '../../components/Bars.astro';
+import GamesBySeasonChart from '../../components/GamesBySeasonChart.astro';
+import Kpi from '../../components/Kpi.astro';
+import Panel from '../../components/Panel.astro';
+import { loadPlayer, loadPlayers } from '../../lib/data';
+import { pct } from '../../lib/format';
+
+export function getStaticPaths() {
+  return loadPlayers().players.map((p) => ({ params: { slug: p.slug } }));
+}
+const p = loadPlayer(Astro.params.slug!);
+const a = p.accomplishments;
+const roleColor = { civilian: 'var(--civilian)', sheriff: 'var(--sheriff)', mafia: 'var(--mafia)', don: 'var(--don)' } as const;
+const badges = [
+  ...['1st', '2nd', '3rd'].map((l, i) => ({ label: `Main ${l}`, n: a.main[i] })),
+  ...['1st', '2nd', '3rd'].map((l, i) => ({ label: `Small ${l}`, n: a.small[i] })),
+  { label: 'MVP', n: a.awards.mvp }, { label: 'Best Sheriff', n: a.awards.sheriff },
+  { label: 'Best Civilian', n: a.awards.civilian }, { label: 'Best Mafia', n: a.awards.mafia },
+  { label: 'Best Don', n: a.awards.don },
+  ...a.tournaments.map((t) => ({ label: `${t.label} podium`, n: t.podiums })),
+].filter((b) => b.n > 0);
+const bm = p.bestMoves;
+const fk = p.firstKill;
+---
+<Base title={p.name} description={`${p.name}: ${pct(p.winRate)} WR · ${p.games} games · ${p.seasons} seasons`} active="players">
+  <div class="hero">
+    <div class="avatar display">{p.initials}</div>
+    <div class="who">
+      <h1 class="display">{p.name}</h1>
+      <div class="label">{p.games} games played</div>
+    </div>
+  </div>
+
+  <div class="kpis">
+    <Kpi label="Win rate" value={pct(p.winRate, 1)} />
+    <Kpi label="Rating" value={p.latestRating === null ? '—' : p.latestRating.toFixed(2)} />
+    <Kpi label="Seasons" value={String(p.seasons)} />
+    <Kpi label="Accomplishments" value={String(a.total)} />
+  </div>
+
+  {badges.length > 0 && (
+    <div class="pills badges">{badges.map((b) => <span class="pill">{b.label} <b>×{b.n}</b></span>)}</div>
+  )}
+
+  <div class="grid">
+    <Panel title="Games by season" class="span-8"><GamesBySeasonChart timeline={p.timeline} /></Panel>
+    <Panel title="Roles" class="span-4">
+      <Bars items={p.roles.map((r) => ({
+        label: r.label, value: r.share, color: roleColor[r.role], badge: r.top,
+        text: `${r.games} · ${pct(r.share)} · ${r.wins}/${r.games} won`,
+      }))} />
+    </Panel>
+    <Panel title="Killed first" note="Civilian and sheriff games" class="span-6">
+      <div class="duo">
+        <Kpi label="First killed" value={String(fk.total)} />
+        <Kpi label="City lost after" value={String(fk.cityLost)} />
+      </div>
+      <p class="label">{fk.civSherGames > 0 ? `${pct(fk.total / fk.civSherGames, 1)} of ${fk.civSherGames} red games` : 'No red games yet'}</p>
+    </Panel>
+    <Panel title="Best move" note="Black cards found when killed first" class="span-6">
+      {bm.firstKilled === 0 ? <p class="label">No best moves recorded.</p> : (
+        <Bars items={[
+          { label: '3 black', value: bm.three / bm.firstKilled, text: `${bm.three}`, color: 'var(--good)' },
+          { label: '2 black', value: bm.two / bm.firstKilled, text: `${bm.two}` },
+          { label: '1 black', value: bm.one / bm.firstKilled, text: `${bm.one}` },
+          { label: '0 black', value: bm.zero / bm.firstKilled, text: `${bm.zero}`, color: 'var(--muted)' },
+        ]} />
+      )}
+    </Panel>
+  </div>
+</Base>
+
+<style>
+  .hero { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
+  .avatar { width: 64px; height: 64px; border-radius: 12px; display: grid; place-items: center;
+    background: var(--panel-2); border: 1px solid var(--border); color: var(--accent); font-size: 22px; flex: none; }
+  .who { min-width: 0; }
+  .who h1 { overflow-wrap: anywhere; }
+  .kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 14px; }
+  @media (max-width: 899px) { .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .badges { margin-bottom: 16px; flex-wrap: wrap; }
+  .badges b { color: var(--text); }
+  .duo { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 8px; }
+</style>
