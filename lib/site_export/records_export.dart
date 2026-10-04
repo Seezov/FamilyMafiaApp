@@ -68,29 +68,47 @@ Map<String, Object?> recordsJson(ExportContext x) {
       ]));
     }
 
-    for (final allTime in [false, true]) {
-      add('hosts/${allTime ? 'alltime' : 'season'}/${period.name}', 'All hosts',
-          _table(const [
-        SiteColumn('Host', numeric: false),
-        SiteColumn('Hosted'),
-        SiteColumn('Avg +'),
-        SiteColumn('Avg −'),
-        SiteColumn('Season'),
-      ], [
-        for (final r in hostRecords(input, allTime: allTime, period: period))
-          [
-            x.name(r.host),
-            SiteCell('${r.hosted}', s: r.hosted),
-            r.periodGames >= kHostMinGamesForAverage
-                ? SiteCell(f2(r.avgPlus), s: r.avgPlus)
-                : const SiteCell('—', s: -99),
-            r.periodGames >= kHostMinGamesForAverage
-                ? SiteCell(f2(r.avgMinus), s: -r.avgMinus)
-                : const SiteCell('—', s: -99),
-            SiteCell(seasonLabel(r.seasonId), s: r.seasonId ?? -1),
-          ]
-      ]));
+  }
+
+  // Hosts: every season together — the points period doesn't change how many
+  // games someone hosted — plus a "Без ведучого" row for games with no host
+  // marked (only in seasons where hosts were recorded at all).
+  for (final allTime in [false, true]) {
+    final noHost = <int?, int>{};
+    for (final s in input.games.map((g) => g.seasonId).toSet()) {
+      final n = gamesWithoutHost(input.games.where((g) => g.seasonId == s)) ?? 0;
+      if (n == 0) continue;
+      final key = allTime ? null : s;
+      noHost[key] = (noHost[key] ?? 0) + n;
     }
+    add('hosts/${allTime ? 'alltime' : 'season'}', 'All hosts', _table(const [
+      SiteColumn('Host', numeric: false),
+      SiteColumn('Hosted'),
+      SiteColumn('Avg +'),
+      SiteColumn('Avg −'),
+      SiteColumn('Season'),
+    ], [
+      for (final r in hostRecords(input, allTime: allTime))
+        [
+          x.name(r.host),
+          SiteCell('${r.hosted}', s: r.hosted),
+          r.periodGames >= kHostMinGamesForAverage
+              ? SiteCell(f2(r.avgPlus), s: r.avgPlus)
+              : const SiteCell('—', s: -99),
+          r.periodGames >= kHostMinGamesForAverage
+              ? SiteCell(f2(r.avgMinus), s: -r.avgMinus)
+              : const SiteCell('—', s: -99),
+          SiteCell(seasonLabel(r.seasonId), s: r.seasonId ?? -1),
+        ],
+      for (final MapEntry(key: season, value: n) in noHost.entries)
+        [
+          const SiteCell('Без ведучого'),
+          SiteCell('$n', s: n),
+          const SiteCell('—', s: -99),
+          const SiteCell('—', s: -99),
+          SiteCell(seasonLabel(season), s: season ?? -1),
+        ],
+    ]));
   }
 
   for (final allTime in [false, true]) {
@@ -166,7 +184,7 @@ Map<String, Object?> recordsJson(ExportContext x) {
       {'slug': 'mvp', 'label': 'MVP', 'filters': ['period']},
       {'slug': 'roles', 'label': 'Roles', 'filters': ['role', 'period']},
       {'slug': 'games', 'label': 'Games', 'filters': ['scope']},
-      {'slug': 'hosts', 'label': 'Hosts', 'filters': ['scope', 'period']},
+      {'slug': 'hosts', 'label': 'Hosts', 'filters': ['scope']},
       {'slug': 'pu', 'label': 'ПУ', 'filters': <String>[]},
       {'slug': 'penalties', 'label': 'Penalties', 'filters': <String>[]},
       {'slug': 'streaks', 'label': 'Streaks', 'filters': <String>[]},
