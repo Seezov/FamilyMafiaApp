@@ -1,0 +1,120 @@
+---
+import Base from '../../layouts/Base.astro';
+import { loadDebug } from '../../lib/data';
+import { href } from '../../lib/url';
+
+const d = loadDebug();
+const json = JSON.stringify(d).replace(/</g, '\\u003c');
+const seasons = [...new Set([...d.tournaments.map((t) => t.season), ...d.candidates.map((c) => c.season)])].sort((a, b) => b - a);
+---
+<Base title="Debug" description="Review the club's tournament list: confirm, fix or add tournaments." active="debug">
+  <div class="pagehead">
+    <h1 class="display">Tournament review</h1>
+    <span class="label" id="live-state">Loading the live config…</span>
+  </div>
+
+  <details class="panel access" id="access">
+    <summary><span class="label">GitHub access</span> <span id="who" class="who">Read-only</span></summary>
+    <p class="hint">
+      Saving writes <code>remote_config.json</code> and <code>assets/raw/season_config.json</code> as one commit on
+      <code>{d.repo.branch}</code>; the site redeploys in about 3 minutes and the app picks it up on next launch.
+      It needs a <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">fine-grained token</a>
+      for <b>{d.repo.owner}/{d.repo.name}</b> only, with <b>Contents: read and write</b>. It stays in this browser.
+    </p>
+    <form id="token-form" class="row">
+      <input id="token" type="password" autocomplete="off" placeholder="github_pat_…" aria-label="GitHub token" />
+      <button type="submit" class="btn primary">Save token</button>
+      <button type="button" id="forget" class="btn">Forget</button>
+    </form>
+  </details>
+
+  <div class="toolbar">
+    <div class="pills" id="filters" role="tablist" aria-label="Show"></div>
+    <select id="season" aria-label="Season">
+      <option value="">All seasons</option>
+      {seasons.map((s) => <option value={s}>S{s}</option>)}
+    </select>
+    <input id="q" type="search" placeholder="Name or player…" aria-label="Search" />
+  </div>
+
+  <div id="list" class="list" aria-live="polite"></div>
+
+  <div class="pending" id="pending" hidden>
+    <span id="pending-text"></span>
+    <button type="button" class="btn" id="discard">Discard</button>
+    <button type="button" class="btn primary" id="commit">Save to GitHub</button>
+  </div>
+
+  <script type="application/json" id="debug-data" set:html={json} />
+  <div id="base" data-base={href('')} hidden></div>
+</Base>
+
+<script>
+  import '../../scripts/debug';
+</script>
+
+<style is:global>
+  .dbg-card { --c: var(--muted); background: var(--panel); border: 1px solid var(--border); border-left: 3px solid var(--c);
+    border-radius: var(--radius); padding: 12px 14px; display: grid; gap: 8px; }
+  .dbg-card.st-detected { --c: var(--mid); } .dbg-card.st-confirmed { --c: var(--good); }
+  .dbg-card.st-candidate { --c: var(--sheriff); } .dbg-card.st-sheet { --c: var(--border); }
+  .dbg-card.pending-op { box-shadow: 0 0 0 1px var(--accent) inset; }
+  .dbg-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 12px; }
+  .dbg-head .s { font-family: var(--font-display); font-weight: 700; }
+  .dbg-head .nm { font-weight: 600; }
+  .dbg-head .meta { color: var(--muted); font-size: 13px; }
+  .dbg-head .acts { margin-left: auto; display: flex; gap: 6px; flex-wrap: wrap; }
+  .chip { font-size: 11px; letter-spacing: .05em; text-transform: uppercase; padding: 2px 8px; border-radius: 999px;
+    color: var(--c, var(--muted)); background: color-mix(in srgb, var(--c, var(--muted)) 15%, transparent); }
+  .chip.t-minicap { --c: #5CC7B6; } .chip.t-maxicap { --c: #E9A948; } .chip.t-bigcap { --c: #E08795; }
+  .chip.t-marathon { --c: #9AA2EC; } .chip.t-tournament { --c: #B3ADB2; }
+  .chip.s-detected { --c: var(--mid); } .chip.s-confirmed { --c: var(--good); } .chip.s-sheet { --c: var(--muted); }
+  .chip.s-candidate { --c: var(--sheriff); } .chip.s-pending { --c: var(--accent); }
+  .flag { font-size: 12px; color: var(--mid); }
+  .flag.bad { color: var(--city); }
+  .pod { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 13px; }
+  .pod i { font-style: normal; font-weight: 700; margin-right: 4px; }
+  .pod .p1 i { color: var(--gold); } .pod .p2 i { color: var(--silver); } .pod .p3 i { color: #D08A57; }
+  .ev summary { cursor: pointer; color: var(--muted); font-size: 13px; }
+  .ev table { border-collapse: collapse; margin-top: 6px; font-size: 13px; }
+  .ev th, .ev td { padding: 3px 10px 3px 0; text-align: right; }
+  .ev th:nth-child(2), .ev td:nth-child(2) { text-align: left; }
+  .ev th { color: var(--muted); font-weight: 500; }
+  .ev a { text-decoration: underline; text-decoration-color: var(--border); }
+  .edit { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; align-items: end; }
+  .edit label { display: grid; gap: 3px; font-size: 12px; color: var(--muted); }
+  .edit .wide { grid-column: span 2; }
+  .dbg-input, .edit input, .edit select, #season, #q, #token {
+    background: var(--panel-2); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text);
+    padding: 6px 9px; font: inherit; min-width: 0; }
+  .btn { background: var(--panel-2); border: 1px solid var(--border); color: var(--text); border-radius: var(--radius);
+    padding: 5px 11px; font: inherit; font-size: 13px; cursor: pointer; white-space: nowrap; }
+  .btn:hover { border-color: var(--muted); }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .btn.danger { color: var(--city); }
+  .btn:disabled { opacity: .45; cursor: not-allowed; }
+  .empty-list { color: var(--muted); padding: 24px 0; }
+  button.pill { background: transparent; font: inherit; font-size: 13px; cursor: pointer; }
+  button.pill b { color: var(--text); font-weight: 600; margin-left: 2px; }
+</style>
+
+<style>
+  .access { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 10px 14px; margin-bottom: 14px; }
+  .access summary { cursor: pointer; display: flex; gap: 10px; align-items: baseline; }
+  .who { font-size: 13px; color: var(--muted); }
+  .hint { color: var(--muted); font-size: 13px; max-width: 90ch; }
+  .hint a { text-decoration: underline; }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; }
+  #token { flex: 1 1 260px; }
+  .toolbar { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; margin-bottom: 14px; }
+  .toolbar .pills { flex: 1 1 auto; }
+  #q { width: 200px; }
+  .list { display: grid; gap: 8px; padding-bottom: 80px; }
+  .pending { position: fixed; left: 50%; bottom: 16px; transform: translateX(-50%); z-index: 20;
+    display: flex; align-items: center; gap: 10px; background: var(--panel-2); border: 1px solid var(--accent);
+    border-radius: 10px; padding: 10px 14px; box-shadow: 0 8px 30px rgba(0, 0, 0, .5); max-width: calc(100vw - 32px); }
+  .pending[hidden] { display: none; }
+  #pending-text { font-size: 13px; }
+  @media (max-width: 599px) { #q { width: 100%; } }
+</style>

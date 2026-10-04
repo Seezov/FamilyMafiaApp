@@ -66,11 +66,29 @@ export interface TournamentsData {
   bySeason: SiteTable;
   seasons: {
     id: number; title: string;
-    events: { type: string; label: string; name: string; games: number; date: string | null; podium: SiteCell[] }[];
+    events: { type: string; label: string; name: string; games: number; date: string | null; unconfirmed?: boolean; podium: SiteCell[] }[];
   }[];
 }
 
 export interface AwardCard {
   label: string; icon: 'trophy' | 'star' | 'sheriff' | 'civilian' | 'mafia' | 'don' | 'medal';
   tone: string; kind?: string; kindType?: string; count: number; where: string[];
+}
+
+export interface DebugEvidence {
+  games: number; dates: string[]; hosts: Record<string, number>;
+  standings: (SiteCell & { pts: number; w: number; g: number })[];
+}
+export interface DebugData {
+  repo: { owner: string; name: string; branch: string; files: string[] };
+  types: { type: string; label: string }[];
+  tournaments: {
+    key: string; season: number; type: string; name: string; games: number; date: string | null;
+    podium: string[]; status: 'sheet' | 'detected' | 'confirmed'; evidence: DebugEvidence | null;
+    podiumMatches: boolean | null;
+  }[];
+  candidates: {
+    id: string; season: number; evidence: DebugEvidence;
+    suggested: { type: string; name: string; games: number; date: string | null; podium: string[] };
+  }[];
 }

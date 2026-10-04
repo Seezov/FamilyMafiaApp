@@ -51,6 +51,7 @@ Map<String, Object?> tournamentsJson(ExportContext x) {
                   'name': t.name,
                   'games': t.games,
                   'date': t.date,
+                  if (t.status == 'detected') 'unconfirmed': true,
                   'podium': [
                     for (final name in t.podium)
                       _podiumCell(x, resolver, name).toJson()

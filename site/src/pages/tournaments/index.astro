@@ -54,7 +54,7 @@ const places = ['1st', '2nd', '3rd'];
               {s.events.map((e) => (
                 <li class={`ev t-${e.type}`}>
                   <span class="kind">{e.label}</span>
-                  <span class="name">{e.name}</span>
+                  <span class="name">{e.name}{e.unconfirmed && <span class="auto" title="Found in the game list; not confirmed yet">auto</span>}</span>
                   <span class="meta num">{e.date ?? 'date unknown'} · {e.games} games</span>
                   <span class="podium">
                     {e.podium.length === 0 ? (
@@ -114,6 +114,8 @@ const places = ['1st', '2nd', '3rd'];
   .ev:last-child { border-bottom: 0; }
   .kind { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--c); font-weight: 600; }
   .name { font-weight: 500; }
+  .auto { margin-left: 6px; font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--mid);
+    border: 1px solid color-mix(in srgb, var(--mid) 40%, transparent); border-radius: 4px; padding: 0 4px; vertical-align: 2px; }
   .meta { color: var(--muted); font-size: 13px; }
   .podium { display: flex; flex-wrap: wrap; gap: 4px 14px; }
   .place { display: inline-flex; align-items: baseline; gap: 6px; white-space: nowrap; }

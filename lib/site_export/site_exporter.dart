@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:family_mafia_app/site_export/debug_export.dart';
 import 'package:family_mafia_app/site_export/export_context.dart';
 import 'package:family_mafia_app/site_export/overview_export.dart';
 import 'package:family_mafia_app/site_export/players_export.dart';
@@ -30,4 +31,5 @@ Future<void> writeSiteData(ProviderContainer container, Directory out) async {
   }
   write('records.json', recordsJson(x));
   write('tournaments.json', tournamentsJson(x));
+  write('debug.json', debugJson(x));
 }
