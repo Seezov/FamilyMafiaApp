@@ -1,0 +1,130 @@
+---
+import type { SiteCell, SiteTable } from '../lib/types';
+import { sortedIndices } from '../lib/sort';
+import { wrTone } from '../lib/format';
+import { playerHref } from '../lib/url';
+
+interface Props { table: SiteTable; compact?: boolean }
+const { table, compact = false } = Astro.props;
+const { columns, showRank } = table;
+const order = table.sortColumn === undefined
+  ? table.rows.map((_, i) => i)
+  : sortedIndices(table.rows, table.sortColumn, table.desc ? 'desc' : 'asc');
+const hasHidden = columns.some((c) => c.phone === false);
+const hasGroups = columns.some((c) => c.group);
+const groups: { label: string; span: number }[] = [];
+for (const c of columns) {
+  const last = groups.at(-1);
+  if (last && last.label === (c.group ?? '') && c.group) last.span++;
+  else groups.push({ label: c.group ?? '', span: 1 });
+}
+const toneClass = (c: SiteCell) =>
+  c.tone === 'wr' ? `tone-${wrTone(c.s) ?? 'low'}` : c.tone ? `tone-${c.tone}` : undefined;
+const collapsed = table.collapsed && table.rows.length > table.collapsed ? table.collapsed : undefined;
+const colCount = columns.length + (showRank ? 1 : 0);
+---
+{table.rows.length === 0 ? (
+  <p class="empty">{table.empty ?? 'No data.'}</p>
+) : (
+  <div class:list={['dt', { compact }]} data-table data-collapsed={collapsed}>
+    <div class="scroll">
+      <table>
+        <thead>
+          {hasGroups && (
+            <tr class="groups">
+              {showRank && <th />}
+              {groups.map((g) => (
+                <th colspan={g.span} class:list={[{ grp: g.label }, `role-${g.label.toLowerCase()}`]}>{g.label}</th>
+              ))}
+            </tr>
+          )}
+          <tr>
+            {showRank && <th class="rank num">#</th>}
+            {columns.map((c, i) => (
+              <th
+                class:list={[{ num: c.numeric, ph: c.phone === false, sorted: i === table.sortColumn }]}
+                title={c.tip}
+                data-col={i}
+                data-numeric={c.numeric ? '1' : undefined}
+                aria-sort={i === table.sortColumn ? (table.desc ? 'descending' : 'ascending') : undefined}
+              ><button type="button">{c.label}</button></th>
+            ))}
+          </tr>
+        </thead>
+        {order.map((r, pos) => (
+          <tbody class:list={{ extra: collapsed !== undefined && pos >= collapsed }}>
+            <tr class:list={['row', { tappable: hasHidden }]}>
+              {showRank && <td class="rank num" data-rank>{pos + 1}</td>}
+              {table.rows[r].map((cell, i) => (
+                <td
+                  class:list={[toneClass(cell), { num: columns[i].numeric, ph: columns[i].phone === false, sorted: i === table.sortColumn }]}
+                  data-s={cell.s}
+                >
+                  {cell.tone === 'wr' && cell.s !== undefined && <span class="bar" style={`--w:${Math.round(cell.s * 100)}%`} />}
+                  {cell.link ? <a href={playerHref(cell.link)}>{cell.t}</a> : cell.t}
+                </td>
+              ))}
+            </tr>
+            {hasHidden && (
+              <tr class="detail"><td colspan={colCount}>
+                <dl>
+                  {columns.map((c, i) => c.phone === false && (
+                    <div><dt>{c.group ? `${c.group} ${c.label}` : c.label}</dt><dd class={toneClass(table.rows[r][i])}>{table.rows[r][i].t}</dd></div>
+                  ))}
+                </dl>
+              </td></tr>
+            )}
+          </tbody>
+        ))}
+      </table>
+    </div>
+    {collapsed !== undefined && <button type="button" class="more" data-more>Show all {table.rows.length}</button>}
+  </div>
+)}
+
+<script>
+  import { enhanceTables } from './table';
+  enhanceTables();
+</script>
+
+<style>
+  .empty { color: var(--muted); margin: 8px 0; }
+  .scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+  th, td { padding: 0 10px; height: 32px; white-space: nowrap; text-align: left; border-bottom: 1px solid var(--border); }
+  .compact th, .compact td { height: 28px; padding: 0 8px; }
+  th { position: sticky; top: 0; background: var(--panel); font-weight: 500; color: var(--muted); font-size: 12px; }
+  th button { all: unset; cursor: pointer; }
+  th.sorted { color: var(--text); }
+  th[aria-sort='descending'] button::after { content: ' ↓'; }
+  th[aria-sort='ascending'] button::after { content: ' ↑'; }
+  tr.groups th { height: 22px; border-bottom: 0; font-size: 11px; text-transform: uppercase; letter-spacing: .06em; }
+  tr.groups th.grp { border-bottom: 1px solid currentColor; text-align: center; }
+  .num { text-align: right; }
+  td.sorted { background: rgba(255, 255, 255, .025); }
+  tbody:hover td { background: var(--panel-2); }
+  td:first-child, th:first-child { position: sticky; left: 0; background: var(--panel); z-index: 1; }
+  .rank + td { position: sticky; left: 36px; background: var(--panel); z-index: 1; }
+  .rank { width: 36px; color: var(--muted); }
+  .rank.r1 { color: var(--gold); } .rank.r2 { color: var(--silver); } .rank.r3 { color: var(--bronze); }
+  td a { font-weight: 500; }
+  td { position: relative; }
+  .bar { position: absolute; left: 10px; right: 10px; bottom: 4px; height: 2px; background: var(--border); }
+  .bar::after { content: ''; position: absolute; inset: 0 auto 0 0; width: var(--w); background: currentColor; opacity: .6; }
+  tbody.extra { display: none; }
+  .dt.open tbody.extra { display: table-row-group; }
+  .more { margin-top: 8px; background: none; border: 1px solid var(--border); border-radius: var(--radius);
+    color: var(--muted); padding: 6px 12px; font: inherit; cursor: pointer; }
+  .dt.open .more { display: none; }
+  tr.detail { display: none; }
+  dl { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 6px 16px; margin: 8px 0; }
+  dl div { display: flex; justify-content: space-between; gap: 8px; }
+  dt { color: var(--muted); } dd { margin: 0; }
+  @media (max-width: 899px) {
+    th, td { height: 40px; }
+    .ph { display: none; }
+    tr.tappable { cursor: pointer; }
+    tbody.expanded tr.detail { display: table-row; }
+    tr.detail td { white-space: normal; height: auto; }
+  }
+</style>
