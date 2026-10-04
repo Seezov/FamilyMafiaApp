@@ -11,7 +11,11 @@ const names = [...new Set(roster.flatMap((p) => [p.displayName, ...(p.nicknames 
 // Default season: the latest firestore season in the live config, else none.
 const config = JSON.parse(fs.readFileSync(path.join(root, 'remote_config.json'), 'utf8')) as { seasons: { id: number; source: string }[] };
 const defaultSeason = config.seasons.filter((s) => s.source === 'firestore').map((s) => s.id).sort((a, b) => b - a)[0] ?? null;
-const data = JSON.stringify({ names, defaultSeason }).replace(/</g, '\\u003c');
+// Lower-cased name or nickname → display name, so validation can catch one player
+// entered twice under different names.
+const aliases = roster.flatMap((p) => [p.displayName, ...(p.nicknames ?? [])].map((n) => [n.trim().toLowerCase(), p.displayName.trim()]))
+  .filter(([k]) => k.length >= 2);
+const data = JSON.stringify({ names, defaultSeason, aliases }).replace(/</g, '\\u003c');
 ---
 <Base title="Провести гру" description="Запис ігор клубу для ведучих." active="host">
   <div class="pagehead"><h1 class="display">Провести гру</h1><span class="label" id="who"></span></div>

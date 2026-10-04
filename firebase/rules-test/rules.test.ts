@@ -4,6 +4,8 @@ import { assertFails, assertSucceeds, initializeTestEnvironment, type RulesTestE
 import { deleteDoc, doc, getDoc, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore';
 
 let env: RulesTestEnvironment;
+// Firestore auto ids: 20 letters/digits. The rules accept nothing else.
+const G1 = 'AbCdEfGhIj0123456789';
 const HOST = { uid: 'u-host', email: 'host@x.com' };
 const OTHER = { uid: 'u-other', email: 'other@x.com' };
 const ADMIN = { uid: 'u-admin', email: 'admin@x.com' };
@@ -40,39 +42,53 @@ beforeEach(async () => {
 
 describe('games', () => {
   it('anyone can read', async () => {
-    await assertSucceeds(getDoc(doc(env.unauthenticatedContext().firestore(), 'games', 'g1')));
+    await assertSucceeds(getDoc(doc(env.unauthenticatedContext().firestore(), 'games', G1)));
   });
   it('a host can create a valid game', async () => {
-    await assertSucceeds(setDoc(doc(as(HOST), 'games', 'g1'), game(HOST)));
+    await assertSucceeds(setDoc(doc(as(HOST), 'games', G1), game(HOST)));
   });
   it('a signed-in non-host cannot create', async () => {
-    await assertFails(setDoc(doc(as(STRANGER), 'games', 'g1'), game(STRANGER)));
+    await assertFails(setDoc(doc(as(STRANGER), 'games', G1), game(STRANGER)));
   });
   it('a guest cannot create', async () => {
-    await assertFails(setDoc(doc(env.unauthenticatedContext().firestore(), 'games', 'g1'), game(HOST)));
+    await assertFails(setDoc(doc(env.unauthenticatedContext().firestore(), 'games', G1), game(HOST)));
   });
   it('rejects a game without a host', async () => {
-    await assertFails(setDoc(doc(as(HOST), 'games', 'g1'), game(HOST, { host: '' })));
+    await assertFails(setDoc(doc(as(HOST), 'games', G1), game(HOST, { host: '' })));
   });
   it('rejects 9 seats', async () => {
-    await assertFails(setDoc(doc(as(HOST), 'games', 'g1'), game(HOST, { seats: game(HOST).seats.slice(0, 9) })));
+    await assertFails(setDoc(doc(as(HOST), 'games', G1), game(HOST, { seats: game(HOST).seats.slice(0, 9) })));
+  });
+  it('rejects a custom document id (ids are rendered in the page)', async () => {
+    await assertFails(setDoc(doc(as(HOST), 'games', '"><img src=x onerror=alert(1)>'), game(HOST)));
+  });
+  it('rejects an unknown role', async () => {
+    const seats = game(HOST).seats.map((s, i) => (i === 0 ? { ...s, role: 'Шпигун' } : s));
+    await assertFails(setDoc(doc(as(HOST), 'games', G1), game(HOST, { seats })));
+  });
+  it('rejects a seat without a player', async () => {
+    const seats = game(HOST).seats.map((s, i) => (i === 9 ? { ...s, player: '' } : s));
+    await assertFails(setDoc(doc(as(HOST), 'games', G1), game(HOST, { seats })));
+  });
+  it('rejects unknown top-level fields', async () => {
+    await assertFails(setDoc(doc(as(HOST), 'games', G1), game(HOST, { extra: 1 })));
   });
   it('rejects createdBy of someone else', async () => {
-    await assertFails(setDoc(doc(as(HOST), 'games', 'g1'), game(HOST, { createdBy: OTHER.uid })));
+    await assertFails(setDoc(doc(as(HOST), 'games', G1), game(HOST, { createdBy: OTHER.uid })));
   });
 
   describe('existing game by HOST', () => {
-    beforeEach(async () => { await setDoc(doc(as(HOST), 'games', 'g1'), game(HOST)); });
-    const edit = (u: User) => updateDoc(doc(as(u), 'games', 'g1'), { result: 'mafia', updatedBy: u.uid, updatedAt: serverTimestamp() });
+    beforeEach(async () => { await setDoc(doc(as(HOST), 'games', G1), game(HOST)); });
+    const edit = (u: User) => updateDoc(doc(as(u), 'games', G1), { result: 'mafia', updatedBy: u.uid, updatedAt: serverTimestamp() });
 
     it('the author can edit', async () => { await assertSucceeds(edit(HOST)); });
     it('another host cannot edit', async () => { await assertFails(edit(OTHER)); });
     it('an admin can edit', async () => { await assertSucceeds(edit(ADMIN)); });
     it('nobody can rewrite createdBy', async () => {
-      await assertFails(updateDoc(doc(as(ADMIN), 'games', 'g1'), { createdBy: ADMIN.uid, updatedBy: ADMIN.uid, updatedAt: serverTimestamp() }));
+      await assertFails(updateDoc(doc(as(ADMIN), 'games', G1), { createdBy: ADMIN.uid, updatedBy: ADMIN.uid, updatedAt: serverTimestamp() }));
     });
-    it('the author cannot delete', async () => { await assertFails(deleteDoc(doc(as(HOST), 'games', 'g1'))); });
-    it('an admin can delete', async () => { await assertSucceeds(deleteDoc(doc(as(ADMIN), 'games', 'g1'))); });
+    it('the author cannot delete', async () => { await assertFails(deleteDoc(doc(as(HOST), 'games', G1))); });
+    it('an admin can delete', async () => { await assertSucceeds(deleteDoc(doc(as(ADMIN), 'games', G1))); });
   });
 });
 

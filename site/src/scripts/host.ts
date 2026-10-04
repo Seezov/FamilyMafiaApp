@@ -1,18 +1,19 @@
 // The /host/ page: sign-in, a host's games, and the protocol form.
-import { docToForm, draftKey, emptyForm, formToDoc, nextGameNumber } from '../lib/hosting/form';
+import { docToForm, draftKey, emptyForm, eveningDate, formToDoc, nextGameNumber, pickDraft, wrapDraft } from '../lib/hosting/form';
 import { supportFivePoints } from '../lib/hosting/points';
 import { explainError, listSeasonGames, millis, onUser, saveGame, signIn, signOutUser, type HostUser } from '../lib/hosting/store';
 import { ROLES, type FormState, type GameDoc, type Role } from '../lib/hosting/types';
 import { validate } from '../lib/hosting/validate';
 
-const page = JSON.parse(document.getElementById('host-data')!.textContent!) as { names: string[]; defaultSeason: number | null };
+const page = JSON.parse(document.getElementById('host-data')!.textContent!) as { names: string[]; defaultSeason: number | null; aliases: [string, string][] };
+const aliases = new Map(page.aliases);
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 const store = {
   get(k: string) { try { return localStorage.getItem(k); } catch { return null; } },
   set(k: string, v: string | null) { try { if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch { /* private mode */ } },
 };
-const today = () => new Date().toLocaleDateString('sv-SE'); // yyyy-mm-dd, local
-const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
+const today = () => eveningDate(); // the club evening: after midnight still counts as the day before
+const esc = (v: unknown) => String(v ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
 const ROLE_LETTER: Record<Role, string> = { 'Мирний': 'М', 'Мафія': 'Ч', 'Дон': 'Д', 'Шериф': 'Ш' };
 const nextRole = (r: Role) => ROLES[(ROLES.indexOf(r) + 1) % ROLES.length];
 const isNew = (name: string) => !!name.trim() && !page.names.includes(name.trim());
@@ -27,10 +28,8 @@ function show(view: 'signed-out' | 'not-host' | 'list-view' | 'game-form') {
 }
 
 // ── Draft (per game id) ───────────────────────────────────────────────────
-const saveDraft = () => store.set(draftKey(editing?.id ?? null), JSON.stringify(form));
-function loadDraft(id: string | null): FormState | null {
-  try { const s = store.get(draftKey(id)); return s ? (JSON.parse(s) as FormState) : null; } catch { return null; }
-}
+const saveDraft = () => store.set(draftKey(editing?.id ?? null), wrapDraft(form, editing?.updatedAtMillis ?? null));
+const loadDraft = (id: string | null, serverMillis: number | null) => pickDraft(store.get(draftKey(id)), serverMillis, today());
 
 // ── List ──────────────────────────────────────────────────────────────────
 async function refreshList() {
@@ -41,8 +40,8 @@ async function refreshList() {
     .sort((a, b) => b.date.localeCompare(a.date) || a.table - b.table || b.gameNumber - a.gameNumber);
   const label = { city: 'Місто', mafia: 'Мафія', unrated: 'Не рейтинг' } as const;
   $('games').innerHTML = visible.length
-    ? visible.map((g) => `<button class="box game-row" data-id="${g.id}" type="button">
-        <b>${g.date}</b> · стіл ${g.table} · гра ${g.gameNumber} · ${esc(g.host)} · ${label[g.result]}</button>`).join('')
+    ? visible.map((g) => `<button class="box game-row" data-id="${esc(g.id)}" type="button">
+        <b>${esc(g.date)}</b> · стіл ${esc(g.table)} · гра ${esc(g.gameNumber)} · ${esc(g.host)} · ${esc(label[g.result] ?? g.result)}</button>`).join('')
     : '<p class="label">Ігор ще немає.</p>';
 }
 
@@ -56,8 +55,8 @@ function renderSeats() {
       <td>${i + 1}</td>
       <td class="pl"><input data-k="player" class="${isNew(s.player) ? 'new' : ''}" list="names" autocomplete="off"
         value="${esc(s.player)}" aria-label="Гравець ${i + 1}" title="${isNew(s.player) ? 'новий гравець' : ''}" /></td>
-      <td><button type="button" class="role" data-role="${s.role}" title="${s.role}" aria-label="Роль: ${s.role}">${ROLE_LETTER[s.role]}</button></td>
-      <td><input data-k="fouls" type="number" min="0" max="4" inputmode="numeric" value="${s.fouls || ''}" aria-label="Фоли" /></td>
+      <td><button type="button" class="role" data-role="${esc(s.role)}" title="${esc(s.role)}" aria-label="Роль: ${esc(s.role)}">${esc(ROLE_LETTER[s.role] ?? '?')}</button></td>
+      <td><input data-k="fouls" type="number" min="0" max="4" inputmode="numeric" value="${esc(s.fouls || '')}" aria-label="Фоли" /></td>
       ${num('additional', s.additional)}${num('penalty', s.penalty)}${num('protocolAdditional', s.protocolAdditional)}${num('protocolPenalty', s.protocolPenalty)}
     </tr>`).join('');
 }
@@ -69,7 +68,7 @@ function renderSupport() {
   $('support').innerHTML = Array.from({ length: 5 }, (_, j) => {
     const g = form.supportFive[j] ?? 0;
     return `<span class="cell" data-j="${j}"><input data-k="slot" type="number" min="1" max="10" inputmode="numeric"
-      value="${g ? Math.abs(g) : ''}" aria-label="Опорна ${j + 1}" />${dot(g < 0)}</span>`;
+      value="${esc(g ? Math.abs(g) : '')}" aria-label="Опорна ${j + 1}" />${dot(g < 0)}</span>`;
   }).join('');
   renderOp();
 }
@@ -83,9 +82,9 @@ function renderOp() {
 function renderProtocol() {
   $('protocol').innerHTML = form.protocol.map((p, j) => `
     <div class="row" data-j="${j}">
-      <label>вбитий <input data-k="slot" type="number" min="1" max="10" inputmode="numeric" value="${p.slot || ''}" /></label>
-      <label>версія <input data-k="version" type="number" min="1" max="10" inputmode="numeric" value="${p.version ?? ''}" /></label>
-      <label>колір <input data-k="cslot" type="number" min="1" max="10" inputmode="numeric" value="${p.color?.slot ?? ''}" /></label>
+      <label>вбитий <input data-k="slot" type="number" min="1" max="10" inputmode="numeric" value="${esc(p.slot || '')}" /></label>
+      <label>версія <input data-k="version" type="number" min="1" max="10" inputmode="numeric" value="${esc(p.version ?? '')}" /></label>
+      <label>колір <input data-k="cslot" type="number" min="1" max="10" inputmode="numeric" value="${esc(p.color?.slot ?? '')}" /></label>
       ${dot(!!p.color?.black)}
       <button class="x" type="button" data-remove aria-label="Прибрати">✕</button>
     </div>`).join('');
@@ -94,7 +93,7 @@ function renderProtocol() {
 function renderComments() {
   $('comments').innerHTML = form.comments.map((c, j) => `
     <div class="row" data-j="${j}">
-      <input data-k="slot" type="number" min="1" max="10" inputmode="numeric" value="${c.slot || ''}" aria-label="Номер" placeholder="№" />
+      <input data-k="slot" type="number" min="1" max="10" inputmode="numeric" value="${esc(c.slot || '')}" aria-label="Номер" placeholder="№" />
       <input data-k="text" value="${esc(c.text)}" aria-label="Коментар" />
       <button class="x" type="button" data-remove aria-label="Прибрати">✕</button>
     </div>`).join('');
@@ -113,7 +112,7 @@ function renderAll() {
 }
 
 function showMessages(highlight: boolean) {
-  const r = validate(form);
+  const r = validate(form, aliases);
   document.querySelectorAll('.invalid').forEach((el) => el.classList.remove('invalid'));
   if (highlight) {
     const map: Record<string, string> = { host: 'f-host', result: 'f-result', season: 'f-season', gameNumber: 'f-number', date: 'f-date', protocol: 'protocol', supportFive: 'support', roles: 'seats' };
@@ -163,7 +162,10 @@ function onEdit(t: HTMLInputElement | HTMLSelectElement) {
   const row = t.closest<HTMLElement>('.row');
   const k = t.dataset.k;
   if (t.id === 'f-season') form.season = t.value ? Number(t.value) : null;
-  else if (t.id === 'f-date') form.date = t.value;
+  else if (t.id === 'f-date') {
+    form.date = t.value;
+    if (!editing) { form.gameNumber = nextGameNumber(games, form.date, form.table); $<HTMLInputElement>('f-number').value = String(form.gameNumber); }
+  }
   else if (t.id === 'f-number') form.gameNumber = t.value ? Number(t.value) : null;
   else if (t.id === 'f-host') form.host = t.value;
   else if (t.id === 'f-table') {
@@ -226,15 +228,16 @@ $('game-form').addEventListener('submit', async (e) => {
   const r = showMessages(true);
   if (r.errors.length || !user) return;
   const btn = $<HTMLButtonElement>('save');
+  if (btn.disabled) return;
   btn.disabled = true;
   try {
     await saveGame(formToDoc(form), editing, user);
     store.set(draftKey(editing?.id ?? null), null);
     $('messages').innerHTML = '<p>Гру збережено. У статистиці зʼявиться протягом години.</p>';
-    setTimeout(async () => { show('list-view'); await refreshList(); }, 1200);
+    // The button stays disabled until the list is back: a second tap must not save a copy.
+    setTimeout(async () => { show('list-view'); btn.disabled = false; await refreshList(); }, 1200);
   } catch (err) {
     $('messages').innerHTML = `<p class="msg-error">${esc(explainError(err))}</p>`;
-  } finally {
     btn.disabled = false;
   }
 });
@@ -242,15 +245,19 @@ $('game-form').addEventListener('submit', async (e) => {
 // ── Opening a game ────────────────────────────────────────────────────────
 function openNew() {
   editing = null;
-  form = loadDraft(null) ?? emptyForm(form.season ?? page.defaultSeason, today());
+  form = loadDraft(null, null) ?? emptyForm(form.season ?? page.defaultSeason, today());
   if (form.gameNumber === null) form.gameNumber = nextGameNumber(games, form.date, form.table);
   show('game-form'); renderAll();
 }
 
 function openExisting(g: GameDoc & { id: string }) {
   editing = { id: g.id, updatedAtMillis: millis(g.updatedAt) };
-  form = loadDraft(g.id) ?? docToForm(g);
+  const draft = loadDraft(g.id, editing.updatedAtMillis);
+  const stale = !draft && store.get(draftKey(g.id)) !== null;
+  if (stale) store.set(draftKey(g.id), null);
+  form = draft ?? docToForm(g);
   show('game-form'); renderAll();
+  if (stale) $('messages').innerHTML = '<p class="msg-warn">⚠ Гру змінили після твоєї чернетки — показано збережену версію.</p>';
 }
 
 $('new-game').addEventListener('click', openNew);

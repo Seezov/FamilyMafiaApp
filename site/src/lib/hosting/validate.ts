@@ -1,8 +1,12 @@
-import { parseNumber } from './form';
+import { normalizeName, parseNumber } from './form';
 import { supportFivePoints } from './points';
 import type { FormState } from './types';
 
-export function validate(f: FormState) {
+/**
+ * `aliases`: lower-cased name or nickname → the player's display name, so a player
+ * entered once by name and once by nickname is caught as a duplicate.
+ */
+export function validate(f: FormState, aliases: Map<string, string> = new Map()) {
   const errors: string[] = [];
   const warnings: string[] = [];
   const fields = new Set<string>();
@@ -19,10 +23,10 @@ export function validate(f: FormState) {
 
   const seen = new Map<string, number>();
   f.seats.forEach((s, i) => {
-    const name = s.player.trim();
+    const name = normalizeName(s.player);
     if (!name) { fail('Заповніть усіх 10 гравців', `seat-${i + 1}-player`); return; }
-    const key = name.toLowerCase();
-    if (seen.has(key)) fail(`Гравець «${f.seats[seen.get(key)!].player.trim()}» записаний двічі`, `seat-${i + 1}-player`);
+    const key = (aliases.get(name.toLowerCase()) ?? name).toLowerCase();
+    if (seen.has(key)) fail(`Гравець «${normalizeName(f.seats[seen.get(key)!].player)}» записаний двічі`, `seat-${i + 1}-player`);
     else seen.set(key, i);
   });
 

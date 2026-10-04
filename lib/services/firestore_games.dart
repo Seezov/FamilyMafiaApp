@@ -1,3 +1,6 @@
+import 'dart:developer' as developer;
+
+import 'package:family_mafia_app/enums/role.dart';
 import 'package:family_mafia_app/models/game.dart';
 import 'package:family_mafia_app/models/protocol_entry.dart';
 import 'package:family_mafia_app/services/rating_formulas.dart';
@@ -66,5 +69,42 @@ List<Game> gamesFromFirestoreSnapshot(int seasonId, Map<String, dynamic> snapsho
       if (byTable != 0) return byTable;
       return (a['gameNumber'] as num).compareTo(b['gameNumber'] as num);
     });
-  return [for (final d in docs) gameFromFirestore(seasonId, d)];
+  final games = <Game>[];
+  for (final d in docs) {
+    // Firestore rules check only the outline of a game; one malformed document
+    // must not stop the whole season (and the app) from loading.
+    if (!_isWellFormed(d)) {
+      developer.log('skipping malformed game ${d['id']}', name: 'firestore_games');
+      continue;
+    }
+    games.add(gameFromFirestore(seasonId, d));
+  }
+  return games;
+}
+
+bool _isSlot(Object? v) => v is num && v == v.toInt() && v >= 1 && v <= 10;
+
+bool _isWellFormed(Map<String, dynamic> d) {
+  final seats = d['seats'];
+  if (seats is! List || seats.length != 10) return false;
+  for (final s in seats) {
+    if (s is! Map) return false;
+    final player = s['player'];
+    if (player is! String || player.trim().isEmpty) return false;
+    if (Role.findByValue(s['role'] as String? ?? '') == null) return false;
+  }
+  if (d['date'] is! String || d['table'] is! num || d['gameNumber'] is! num) return false;
+  final firstKilled = d['firstKilled'] ?? 0;
+  if (firstKilled != 0 && !_isSlot(firstKilled)) return false;
+  final support = d['supportFive'] ?? const [];
+  if (support is! List || support.any((g) => g is! num || !_isSlot(g.abs()))) return false;
+  final protocol = d['protocol'] ?? const [];
+  if (protocol is! List) return false;
+  for (final p in protocol) {
+    if (p is! Map || !_isSlot(p['slot'])) return false;
+    if (p['version'] != null && !_isSlot(p['version'])) return false;
+    final c = p['color'];
+    if (c != null && (c is! Map || !_isSlot(c['slot']) || c['black'] is! bool)) return false;
+  }
+  return true;
 }

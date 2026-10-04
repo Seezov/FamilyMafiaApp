@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { docToForm, draftKey, emptyForm, formToDoc, nextGameNumber } from './form';
+import { docToForm, draftKey, emptyForm, eveningDate, formToDoc, nextGameNumber, pickDraft, wrapDraft } from './form';
 
 describe('formToDoc', () => {
   it('stores penalties negative whatever sign was typed', () => {
@@ -51,5 +51,40 @@ describe('draftKey', () => {
     expect(draftKey(null)).toBe('fm-host-draft:new');
     expect(draftKey('abc')).toBe('fm-host-draft:abc');
     expect(draftKey('abc')).not.toBe(draftKey('def'));
+  });
+});
+
+describe('player names', () => {
+  it('formToDoc collapses inner spaces', () => {
+    const f = emptyForm(32, '2026-12-03'); f.seats[0].player = ' Іван   Петров ';
+    expect(formToDoc(f).seats[0].player).toBe('Іван Петров');
+  });
+});
+
+describe('eveningDate', () => {
+  it('a game after midnight still belongs to the evening before', () => {
+    expect(eveningDate(new Date(2026, 9, 6, 1, 30))).toBe('2026-10-05');
+  });
+  it('an evening game is that day', () => {
+    expect(eveningDate(new Date(2026, 9, 5, 19, 0))).toBe('2026-10-05');
+  });
+});
+
+describe('drafts', () => {
+  const f = emptyForm(32, '2026-10-05');
+  it('an edit draft is used only while the server version is the one it started from', () => {
+    const raw = wrapDraft(f, 1000);
+    expect(pickDraft(raw, 1000, '2026-10-05')).toEqual(f);
+    expect(pickDraft(raw, 2000, '2026-10-05')).toBeNull();
+  });
+  it('a new-game draft from another evening is dropped', () => {
+    const raw = wrapDraft(f, null);
+    expect(pickDraft(raw, null, '2026-10-05')).toEqual(f);
+    expect(pickDraft(raw, null, '2026-10-12')).toBeNull();
+  });
+  it('garbage or an old-format draft is ignored', () => {
+    expect(pickDraft('not json', null, '2026-10-05')).toBeNull();
+    expect(pickDraft(JSON.stringify(f), null, '2026-10-05')).toBeNull();
+    expect(pickDraft(null, null, '2026-10-05')).toBeNull();
   });
 });

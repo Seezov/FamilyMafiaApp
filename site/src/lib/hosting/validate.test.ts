@@ -57,4 +57,15 @@ describe('validate', () => {
     const f = valid(); f.firstKilled = 6; f.seats.slice(0, 7).forEach((s) => { s.additional = '0.1'; });
     expect(validate(f).warnings).toContain('Бали мають більше ніж 7 клітинок');
   });
+  it('duplicates differing only by inner spaces are caught', () => {
+    const f = valid(); f.seats[0].player = 'Іван  Петров'; f.seats[1].player = 'Іван Петров';
+    expect(validate(f).fields.has('seat-2-player')).toBe(true);
+  });
+  it('a nickname of a player already seated is a duplicate', () => {
+    const f = valid(); f.seats[0].player = 'Seezov'; f.seats[1].player = 'Сізов';
+    const aliases = new Map([['сізов', 'Seezov'], ['seezov', 'Seezov']]);
+    const r = validate(f, aliases);
+    expect(r.errors).toContain('Гравець «Seezov» записаний двічі');
+    expect(r.fields.has('seat-2-player')).toBe(true);
+  });
 });

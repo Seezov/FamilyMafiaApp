@@ -13,6 +13,28 @@ List<Game> _canonicalNames(List<Game> games, PlayerResolver resolver) => [
         ]),
     ];
 
+/// A season's rating games with canonical names. A sheet game with a broken
+/// role list or a duplicate player is a data error worth failing loudly on; a
+/// game recorded on /host/ (firestore snapshot) is skipped instead, so one bad
+/// entry cannot stop the app from loading for everyone.
+List<Game> _ratingGames(int seasonId, String json, PlayerResolver resolver) {
+  final firestore = json.trimLeft().startsWith('{');
+  final games = _canonicalNames(
+      _parseSeasonGames(seasonId, json).where((g) => g.isRatingGame()).toList(),
+      resolver);
+  final normal = <Game>[];
+  for (var i = 0; i < games.length; i++) {
+    if (games[i].isNormalGame()) {
+      normal.add(games[i]);
+    } else if (!firestore) {
+      throw Exception('Not a normal game #$i: ${games[i].players}');
+    } else {
+      debugPrint('Season $seasonId: skipping game #$i (not a normal game): ${games[i].players}');
+    }
+  }
+  return normal;
+}
+
 // Top-level function: partial load (no percentiles)
 _PartialLoadOutput _computePartialData(_LoadInput input) {
   final rawPlayers =
@@ -32,17 +54,7 @@ _PartialLoadOutput _computePartialData(_LoadInput input) {
     final meta = input.seasonMetas[si];
     final json = input.seasonJsons[si];
 
-    final gamesData = _canonicalNames(
-        _parseSeasonGames(meta.id, json)
-            .where((g) => g.isRatingGame())
-            .toList(),
-        resolver);
-
-    for (var i = 0; i < gamesData.length; i++) {
-      if (!gamesData[i].isNormalGame()) {
-        throw Exception('Not a normal game #$i: ${gamesData[i].players}');
-      }
-    }
+    final gamesData = _ratingGames(meta.id, json, resolver);
 
     allGames.addAll(gamesData);
 
@@ -91,17 +103,7 @@ _LoadOutput _computeAllData(_LoadInput input) {
     final meta = input.seasonMetas[si];
     final json = input.seasonJsons[si];
 
-    final gamesData = _canonicalNames(
-        _parseSeasonGames(meta.id, json)
-            .where((g) => g.isRatingGame())
-            .toList(),
-        resolver);
-
-    for (var i = 0; i < gamesData.length; i++) {
-      if (!gamesData[i].isNormalGame()) {
-        throw Exception('Not a normal game #$i: ${gamesData[i].players}');
-      }
-    }
+    final gamesData = _ratingGames(meta.id, json, resolver);
 
     allGames.addAll(gamesData);
 

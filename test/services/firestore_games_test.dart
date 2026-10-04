@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:family_mafia_app/models/protocol_entry.dart';
 import 'package:family_mafia_app/services/firestore_games.dart';
@@ -112,6 +113,33 @@ void main() {
     test('a firestore snapshot string parses through the loader', () {
       final json = jsonEncode({'format': 'firestore', 'games': [doc()]});
       expect(parseSeasonJsonForTest(32, json).single.host, 'Серпень');
+    });
+  });
+
+  group('bad documents never break a season', () {
+    test('malformed games are skipped, good ones kept', () {
+      final noPlayer = doc(n: 2)..['seats'] = [for (final s in doc()['seats'] as List) Map.of(s as Map)..remove('player')];
+      final badRole = doc(n: 3)..['seats'] = [for (final s in doc()['seats'] as List) {...(s as Map), 'role': 'Шпигун'}];
+      final badSupport = doc(n: 4)..['supportFive'] = [11];
+      final badProtocol = doc(n: 5)..['protocol'] = [{'version': 4}];
+      final nineSeats = doc(n: 6)..['seats'] = (doc()['seats'] as List).sublist(0, 9);
+      final games = gamesFromFirestoreSnapshot(32, {
+        'format': 'firestore',
+        'games': [doc(n: 1), noPlayer, badRole, badSupport, badProtocol, nineSeats],
+      });
+      expect(games, hasLength(1));
+    });
+
+    test('one player entered under two nicknames skips that game instead of throwing', () {
+      final dup = doc(n: 2)
+        ..['seats'] = [
+          for (final (i, s) in (doc()['seats'] as List).indexed)
+            {...(s as Map), if (i == 0) 'player': 'Малишка', if (i == 1) 'player': 'Малышка'},
+        ];
+      final json = jsonEncode({'format': 'firestore', 'games': [doc(n: 1), dup]});
+      final rows = seasonRatingsForTest(
+          const SeasonMeta(32, 40, 0.0), File('assets/raw/players.json').readAsStringSync(), json);
+      expect(rows.where((r) => r.player.displayName == 'Німфа').single.gamesPlayed, 1);
     });
   });
 }
