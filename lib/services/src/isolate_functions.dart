@@ -32,14 +32,8 @@ _PartialLoadOutput _computePartialData(_LoadInput input) {
     final meta = input.seasonMetas[si];
     final json = input.seasonJsons[si];
 
-    final raw = (jsonDecode(json) as List).cast<Map<String, dynamic>>();
-    final rawData = raw
-        .map((e) => GamesDataSeason.fromJson(e))
-        .where((d) => _filterRawData(d, meta.id))
-        .toList();
-
     final gamesData = _canonicalNames(
-        _getGamesDataSeason(meta.id, rawData)
+        _parseSeasonGames(meta.id, json)
             .where((g) => g.isRatingGame())
             .toList(),
         resolver);
@@ -97,14 +91,8 @@ _LoadOutput _computeAllData(_LoadInput input) {
     final meta = input.seasonMetas[si];
     final json = input.seasonJsons[si];
 
-    final raw = (jsonDecode(json) as List).cast<Map<String, dynamic>>();
-    final rawData = raw
-        .map((e) => GamesDataSeason.fromJson(e))
-        .where((d) => _filterRawData(d, meta.id))
-        .toList();
-
     final gamesData = _canonicalNames(
-        _getGamesDataSeason(meta.id, rawData)
+        _parseSeasonGames(meta.id, json)
             .where((g) => g.isRatingGame())
             .toList(),
         resolver);

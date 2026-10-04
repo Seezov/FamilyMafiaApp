@@ -38,7 +38,9 @@ mixin _$Game {
       throw _privateConstructorUsedError; // up to 5 signed ints: abs=slot, positive=red, negative=black
   String? get host =>
       throw _privateConstructorUsedError; // who hosted (ведучий); null for seasons 0-1 or when blank
-  DateTime? get date => throw _privateConstructorUsedError;
+  DateTime? get date =>
+      throw _privateConstructorUsedError; // game day (UTC midnight); null when unknown
+  List<int>? get fouls => throw _privateConstructorUsedError;
 
   /// Create a copy of Game
   /// with the given fields replaced by the non-null parameter values.
@@ -69,6 +71,7 @@ abstract class $GameCopyWith<$Res> {
     List<int>? supportFive,
     String? host,
     DateTime? date,
+    List<int>? fouls,
   });
 }
 
@@ -104,6 +107,7 @@ class _$GameCopyWithImpl<$Res, $Val extends Game>
     Object? supportFive = freezed,
     Object? host = freezed,
     Object? date = freezed,
+    Object? fouls = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -175,6 +179,10 @@ class _$GameCopyWithImpl<$Res, $Val extends Game>
                 ? _value.date
                 : date // ignore: cast_nullable_to_non_nullable
                       as DateTime?,
+            fouls: freezed == fouls
+                ? _value.fouls
+                : fouls // ignore: cast_nullable_to_non_nullable
+                      as List<int>?,
           )
           as $Val,
     );
@@ -207,6 +215,7 @@ abstract class _$$GameImplCopyWith<$Res> implements $GameCopyWith<$Res> {
     List<int>? supportFive,
     String? host,
     DateTime? date,
+    List<int>? fouls,
   });
 }
 
@@ -239,6 +248,7 @@ class __$$GameImplCopyWithImpl<$Res>
     Object? supportFive = freezed,
     Object? host = freezed,
     Object? date = freezed,
+    Object? fouls = freezed,
   }) {
     return _then(
       _$GameImpl(
@@ -310,6 +320,10 @@ class __$$GameImplCopyWithImpl<$Res>
             ? _value.date
             : date // ignore: cast_nullable_to_non_nullable
                   as DateTime?,
+        fouls: freezed == fouls
+            ? _value._fouls
+            : fouls // ignore: cast_nullable_to_non_nullable
+                  as List<int>?,
       ),
     );
   }
@@ -336,6 +350,7 @@ class _$GameImpl extends _Game {
     final List<int>? supportFive,
     this.host,
     this.date,
+    final List<int>? fouls,
   }) : _players = players,
        _roles = roles,
        _bestMove = bestMove,
@@ -347,6 +362,7 @@ class _$GameImpl extends _Game {
        _wonByPlayer = wonByPlayer,
        _protocol = protocol,
        _supportFive = supportFive,
+       _fouls = fouls,
        super._();
 
   @override
@@ -474,10 +490,21 @@ class _$GameImpl extends _Game {
   // who hosted (ведучий); null for seasons 0-1 or when blank
   @override
   final DateTime? date;
+  // game day (UTC midnight); null when unknown
+  final List<int>? _fouls;
+  // game day (UTC midnight); null when unknown
+  @override
+  List<int>? get fouls {
+    final value = _fouls;
+    if (value == null) return null;
+    if (_fouls is EqualUnmodifiableListView) return _fouls;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
 
   @override
   String toString() {
-    return 'Game(seasonId: $seasonId, players: $players, roles: $roles, cityWon: $cityWon, firstKilled: $firstKilled, bestMovePoints: $bestMovePoints, bestMove: $bestMove, additionalPoints: $additionalPoints, penaltyPoints: $penaltyPoints, autoAdditionalPoints: $autoAdditionalPoints, protocolAdditionalPoints: $protocolAdditionalPoints, protocolPenaltyPoints: $protocolPenaltyPoints, wonByPlayer: $wonByPlayer, protocol: $protocol, supportFive: $supportFive, host: $host, date: $date)';
+    return 'Game(seasonId: $seasonId, players: $players, roles: $roles, cityWon: $cityWon, firstKilled: $firstKilled, bestMovePoints: $bestMovePoints, bestMove: $bestMove, additionalPoints: $additionalPoints, penaltyPoints: $penaltyPoints, autoAdditionalPoints: $autoAdditionalPoints, protocolAdditionalPoints: $protocolAdditionalPoints, protocolPenaltyPoints: $protocolPenaltyPoints, wonByPlayer: $wonByPlayer, protocol: $protocol, supportFive: $supportFive, host: $host, date: $date, fouls: $fouls)';
   }
 
   @override
@@ -525,7 +552,8 @@ class _$GameImpl extends _Game {
               _supportFive,
             ) &&
             (identical(other.host, host) || other.host == host) &&
-            (identical(other.date, date) || other.date == date));
+            (identical(other.date, date) || other.date == date) &&
+            const DeepCollectionEquality().equals(other._fouls, _fouls));
   }
 
   @override
@@ -548,6 +576,7 @@ class _$GameImpl extends _Game {
     const DeepCollectionEquality().hash(_supportFive),
     host,
     date,
+    const DeepCollectionEquality().hash(_fouls),
   );
 
   /// Create a copy of Game
@@ -578,6 +607,7 @@ abstract class _Game extends Game {
     final List<int>? supportFive,
     final String? host,
     final DateTime? date,
+    final List<int>? fouls,
   }) = _$GameImpl;
   const _Game._() : super._();
 
@@ -614,7 +644,9 @@ abstract class _Game extends Game {
   @override
   String? get host; // who hosted (ведучий); null for seasons 0-1 or when blank
   @override
-  DateTime? get date;
+  DateTime? get date; // game day (UTC midnight); null when unknown
+  @override
+  List<int>? get fouls;
 
   /// Create a copy of Game
   /// with the given fields replaced by the non-null parameter values.

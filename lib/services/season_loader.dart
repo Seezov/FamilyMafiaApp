@@ -16,6 +16,7 @@ import 'package:family_mafia_app/repositories/players_repository.dart';
 import 'package:family_mafia_app/repositories/rating_repository.dart';
 import 'package:family_mafia_app/repositories/role_percentiles_repository.dart';
 import 'package:family_mafia_app/repositories/season_repository.dart';
+import 'package:family_mafia_app/services/firestore_games.dart';
 import 'package:family_mafia_app/services/rating_formulas.dart';
 import 'package:family_mafia_app/services/stats/game_points.dart';
 import 'package:family_mafia_app/services/stats/player_resolver.dart';
@@ -40,6 +41,11 @@ List<Game> parseSeasonGamesForTest(
           .where((d) => _filterRawData(d, seasonId))
           .toList(),
     );
+
+/// Parses one season's JSON string (sheet rows or a firestore snapshot).
+@visibleForTesting
+List<Game> parseSeasonJsonForTest(int seasonId, String json) =>
+    _parseSeasonGames(seasonId, json);
 
 /// Per-player rating rows of one season, computed the same way the app does.
 @visibleForTesting

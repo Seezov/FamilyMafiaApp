@@ -19,7 +19,9 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$ProtocolEntry {
   int get killedSlot =>
       throw _privateConstructorUsedError; // 1-indexed slot that was killed
-  List<int> get colorGuesses => throw _privateConstructorUsedError;
+  List<int> get colorGuesses =>
+      throw _privateConstructorUsedError; // signed ints: abs=slot, positive=red, negative=black
+  int? get sheriffVersion => throw _privateConstructorUsedError;
 
   /// Create a copy of ProtocolEntry
   /// with the given fields replaced by the non-null parameter values.
@@ -35,7 +37,7 @@ abstract class $ProtocolEntryCopyWith<$Res> {
     $Res Function(ProtocolEntry) then,
   ) = _$ProtocolEntryCopyWithImpl<$Res, ProtocolEntry>;
   @useResult
-  $Res call({int killedSlot, List<int> colorGuesses});
+  $Res call({int killedSlot, List<int> colorGuesses, int? sheriffVersion});
 }
 
 /// @nodoc
@@ -52,7 +54,11 @@ class _$ProtocolEntryCopyWithImpl<$Res, $Val extends ProtocolEntry>
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({Object? killedSlot = null, Object? colorGuesses = null}) {
+  $Res call({
+    Object? killedSlot = null,
+    Object? colorGuesses = null,
+    Object? sheriffVersion = freezed,
+  }) {
     return _then(
       _value.copyWith(
             killedSlot: null == killedSlot
@@ -63,6 +69,10 @@ class _$ProtocolEntryCopyWithImpl<$Res, $Val extends ProtocolEntry>
                 ? _value.colorGuesses
                 : colorGuesses // ignore: cast_nullable_to_non_nullable
                       as List<int>,
+            sheriffVersion: freezed == sheriffVersion
+                ? _value.sheriffVersion
+                : sheriffVersion // ignore: cast_nullable_to_non_nullable
+                      as int?,
           )
           as $Val,
     );
@@ -78,7 +88,7 @@ abstract class _$$ProtocolEntryImplCopyWith<$Res>
   ) = __$$ProtocolEntryImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int killedSlot, List<int> colorGuesses});
+  $Res call({int killedSlot, List<int> colorGuesses, int? sheriffVersion});
 }
 
 /// @nodoc
@@ -94,7 +104,11 @@ class __$$ProtocolEntryImplCopyWithImpl<$Res>
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({Object? killedSlot = null, Object? colorGuesses = null}) {
+  $Res call({
+    Object? killedSlot = null,
+    Object? colorGuesses = null,
+    Object? sheriffVersion = freezed,
+  }) {
     return _then(
       _$ProtocolEntryImpl(
         killedSlot: null == killedSlot
@@ -105,6 +119,10 @@ class __$$ProtocolEntryImplCopyWithImpl<$Res>
             ? _value._colorGuesses
             : colorGuesses // ignore: cast_nullable_to_non_nullable
                   as List<int>,
+        sheriffVersion: freezed == sheriffVersion
+            ? _value.sheriffVersion
+            : sheriffVersion // ignore: cast_nullable_to_non_nullable
+                  as int?,
       ),
     );
   }
@@ -116,6 +134,7 @@ class _$ProtocolEntryImpl implements _ProtocolEntry {
   const _$ProtocolEntryImpl({
     required this.killedSlot,
     final List<int> colorGuesses = const [],
+    this.sheriffVersion,
   }) : _colorGuesses = colorGuesses;
 
   @override
@@ -131,9 +150,13 @@ class _$ProtocolEntryImpl implements _ProtocolEntry {
     return EqualUnmodifiableListView(_colorGuesses);
   }
 
+  // signed ints: abs=slot, positive=red, negative=black
+  @override
+  final int? sheriffVersion;
+
   @override
   String toString() {
-    return 'ProtocolEntry(killedSlot: $killedSlot, colorGuesses: $colorGuesses)';
+    return 'ProtocolEntry(killedSlot: $killedSlot, colorGuesses: $colorGuesses, sheriffVersion: $sheriffVersion)';
   }
 
   @override
@@ -146,7 +169,9 @@ class _$ProtocolEntryImpl implements _ProtocolEntry {
             const DeepCollectionEquality().equals(
               other._colorGuesses,
               _colorGuesses,
-            ));
+            ) &&
+            (identical(other.sheriffVersion, sheriffVersion) ||
+                other.sheriffVersion == sheriffVersion));
   }
 
   @override
@@ -154,6 +179,7 @@ class _$ProtocolEntryImpl implements _ProtocolEntry {
     runtimeType,
     killedSlot,
     const DeepCollectionEquality().hash(_colorGuesses),
+    sheriffVersion,
   );
 
   /// Create a copy of ProtocolEntry
@@ -169,12 +195,15 @@ abstract class _ProtocolEntry implements ProtocolEntry {
   const factory _ProtocolEntry({
     required final int killedSlot,
     final List<int> colorGuesses,
+    final int? sheriffVersion,
   }) = _$ProtocolEntryImpl;
 
   @override
   int get killedSlot; // 1-indexed slot that was killed
   @override
-  List<int> get colorGuesses;
+  List<int> get colorGuesses; // signed ints: abs=slot, positive=red, negative=black
+  @override
+  int? get sheriffVersion;
 
   /// Create a copy of ProtocolEntry
   /// with the given fields replaced by the non-null parameter values.
