@@ -87,8 +87,8 @@ const places = ['1st', '2nd', '3rd'];
 </Base>
 
 <style>
-  .t-minicap { --c: #5CC7B6; } .t-maxicap { --c: #E9A948; } .t-bigcap { --c: #E08795; }
-  .t-marathon { --c: #9AA2EC; } .t-tournament { --c: #B3ADB2; }
+  .t-minicap { --c: var(--t-minicap); } .t-maxicap { --c: var(--t-maxicap); } .t-bigcap { --c: var(--t-bigcap); }
+  .t-marathon { --c: var(--t-marathon); } .t-tournament { --c: var(--t-tournament); }
 
   .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 16px; }
   .type { background: var(--panel); border: 1px solid var(--border); border-top: 2px solid var(--c);

@@ -66,15 +66,15 @@ const seasons = [...new Set([...d.tournaments.map((t) => t.season), ...d.candida
   .dbg-head .acts { margin-left: auto; display: flex; gap: 6px; flex-wrap: wrap; }
   .chip { font-size: 11px; letter-spacing: .05em; text-transform: uppercase; padding: 2px 8px; border-radius: 999px;
     color: var(--c, var(--muted)); background: color-mix(in srgb, var(--c, var(--muted)) 15%, transparent); }
-  .chip.t-minicap { --c: #5CC7B6; } .chip.t-maxicap { --c: #E9A948; } .chip.t-bigcap { --c: #E08795; }
-  .chip.t-marathon { --c: #9AA2EC; } .chip.t-tournament { --c: #B3ADB2; }
+  .chip.t-minicap { --c: var(--t-minicap); } .chip.t-maxicap { --c: var(--t-maxicap); } .chip.t-bigcap { --c: var(--t-bigcap); }
+  .chip.t-marathon { --c: var(--t-marathon); } .chip.t-tournament { --c: var(--t-tournament); }
   .chip.s-detected { --c: var(--mid); } .chip.s-confirmed { --c: var(--good); } .chip.s-sheet { --c: var(--muted); }
   .chip.s-candidate { --c: var(--sheriff); } .chip.s-pending { --c: var(--accent); }
   .flag { font-size: 12px; color: var(--mid); }
   .flag.bad { color: var(--city); }
   .pod { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 13px; }
   .pod i { font-style: normal; font-weight: 700; margin-right: 4px; }
-  .pod .p1 i { color: var(--gold); } .pod .p2 i { color: var(--silver); } .pod .p3 i { color: #D08A57; }
+  .pod .p1 i { color: var(--gold); } .pod .p2 i { color: var(--silver); } .pod .p3 i { color: var(--bronze-text); }
   .ev summary { cursor: pointer; color: var(--muted); font-size: 13px; }
   .ev table { border-collapse: collapse; margin-top: 6px; font-size: 13px; }
   .ev th, .ev td { padding: 3px 10px 3px 0; text-align: right; }
@@ -113,7 +113,7 @@ const seasons = [...new Set([...d.tournaments.map((t) => t.season), ...d.candida
   .list { display: grid; gap: 8px; padding-bottom: 80px; }
   .pending { position: fixed; left: 50%; bottom: 16px; transform: translateX(-50%); z-index: 20;
     display: flex; align-items: center; gap: 10px; background: var(--panel-2); border: 1px solid var(--accent);
-    border-radius: 10px; padding: 10px 14px; box-shadow: 0 8px 30px rgba(0, 0, 0, .5); max-width: calc(100vw - 32px); }
+    border-radius: 10px; padding: 10px 14px; box-shadow: 0 8px 30px var(--shadow); max-width: calc(100vw - 32px); }
   .pending[hidden] { display: none; }
   #pending-text { font-size: 13px; }
   @media (max-width: 599px) { #q { width: 100%; } }

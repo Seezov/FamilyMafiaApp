@@ -7,11 +7,47 @@
   --city: #E5484D; --mafia: #A3ADBA; --accent: #FFFFFF;
   --civilian: #E5484D; --sheriff: #22C3DC; --don: #A78BFA;
   --good: #3FB950; --mid: #D29922; --low: var(--muted);
-  --gold: #E3B341; --silver: #B4BCC8; --bronze: #C2410C;
+  --gold: #E3B341; --silver: #B4BCC8; --bronze: #C2410C; --bronze-text: #D08A57;
+  --award-mvp: #F87171; --award-civilian: #FB923C;
+  --t-minicap: #5CC7B6; --t-maxicap: #E9A948; --t-bigcap: #E08795;
+  --t-marathon: #9AA2EC; --t-tournament: #B3ADB2;
+  --tint: rgba(255, 255, 255, .05); --tint-weak: rgba(255, 255, 255, .025);
+  --header-bg: rgba(10, 10, 10, .92); --shadow: rgba(0, 0, 0, .5);
   --radius: 8px; --gutter: 24px; --max: 1280px;
   --font-display: 'Unbounded', system-ui, sans-serif;
   --font-body: 'Inter', system-ui, sans-serif;
 }
+/* Light theme: the system's choice unless the header toggle picked one
+   (data-theme on <html>, set before first paint in Base.astro). Data colours
+   are darker so they keep their contrast on white. */
+@media (prefers-color-scheme: light) { :root:not([data-theme='dark']) { 
+  color-scheme: light;
+  --bg: #F4F4F4; --panel: #FFFFFF; --panel-2: #F0F0F0; --border: #E0E0E0;
+  --text: #0A0A0A; --muted: #6B6B6B;
+  --city: #D63B40; --mafia: #5F6B7A; --accent: #0A0A0A;
+  --civilian: #D63B40; --sheriff: #0B8FA3; --don: #7357D9;
+  --good: #1E8A34; --mid: #A66A00;
+  --gold: #B8870B; --silver: #8A93A0; --bronze: #B4530F; --bronze-text: #A85E2A;
+  --award-mvp: #D94545; --award-civilian: #DD6A12;
+  --t-minicap: #17917E; --t-maxicap: #B5740F; --t-bigcap: #C14B61;
+  --t-marathon: #5560C8; --t-tournament: #7E777D;
+  --tint: rgba(0, 0, 0, .05); --tint-weak: rgba(0, 0, 0, .025);
+  --header-bg: rgba(244, 244, 244, .92); --shadow: rgba(0, 0, 0, .15);
+ } }
+:root[data-theme='light'] { 
+  color-scheme: light;
+  --bg: #F4F4F4; --panel: #FFFFFF; --panel-2: #F0F0F0; --border: #E0E0E0;
+  --text: #0A0A0A; --muted: #6B6B6B;
+  --city: #D63B40; --mafia: #5F6B7A; --accent: #0A0A0A;
+  --civilian: #D63B40; --sheriff: #0B8FA3; --don: #7357D9;
+  --good: #1E8A34; --mid: #A66A00;
+  --gold: #B8870B; --silver: #8A93A0; --bronze: #B4530F; --bronze-text: #A85E2A;
+  --award-mvp: #D94545; --award-civilian: #DD6A12;
+  --t-minicap: #17917E; --t-maxicap: #B5740F; --t-bigcap: #C14B61;
+  --t-marathon: #5560C8; --t-tournament: #7E777D;
+  --tint: rgba(0, 0, 0, .05); --tint-weak: rgba(0, 0, 0, .025);
+  --header-bg: rgba(244, 244, 244, .92); --shadow: rgba(0, 0, 0, .15);
+ }
 @media (max-width: 899px) { :root { --gutter: 16px; } }
 
 * { box-sizing: border-box; }

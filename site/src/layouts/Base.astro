@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import logoSvg from '../../public/logo.svg?raw';
 import { absolute, href } from '../lib/url';
 import { loadIndex } from '../lib/data';
 
@@ -19,6 +20,10 @@ const nav = [
   { key: 'debug', label: 'Debug', url: href('debug/') },
 ];
 const site = 'Family Mafia Club';
+// Inline so the monogram follows the theme: ink = text colour, cut = background.
+const logo = logoSvg
+  .replace('<svg ', '<svg width="22" height="30" aria-hidden="true" ')
+  .replaceAll('#fff', 'currentColor').replaceAll('#000', 'var(--bg)');
 const fullTitle = title === site ? title : `${title} · ${site}`;
 ---
 <!doctype html>
@@ -35,7 +40,11 @@ const fullTitle = title === site ? title : `${title} · ${site}`;
     <meta property="og:image" content={absolute('og.png')} />
     <meta property="og:url" content={new URL(Astro.url.pathname, 'https://seezov.github.io').toString()} />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="theme-color" content="#0A0A0A" />
+    <meta name="theme-color" content="#0A0A0A" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#F4F4F4" media="(prefers-color-scheme: light)" />
+    <script is:inline>
+      try { const t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch {}
+    </script>
     <link rel="icon" href={href('favicon.svg')} type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -47,12 +56,15 @@ const fullTitle = title === site ? title : `${title} · ${site}`;
   <body>
     <header class="top">
       <div class="wrap bar">
-        <a class="logo display" href={href(`season/${latestSeasonId}/`)}><img src={href('logo.svg')} alt="" width="22" height="30" />FAMILY MAFIA<span>CLUB</span></a>
+        <a class="logo display" href={href(`season/${latestSeasonId}/`)}><Fragment set:html={logo} />FAMILY MAFIA<span>CLUB</span></a>
         <nav class="tabs" aria-label="Sections">
           {nav.map((n) => (
             <a href={n.url} aria-current={n.key === active ? 'page' : undefined}>{n.label}</a>
           ))}
         </nav>
+        <button class="theme" type="button" aria-label="Switch light / dark theme" title="Switch light / dark theme">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 3a9 9 0 0 0 0 18z" /></svg>
+        </button>
         <form class="search" action={href('players/')} method="get" role="search">
           <input name="q" type="search" placeholder="Find a player…" aria-label="Find a player" />
         </form>
@@ -60,27 +72,40 @@ const fullTitle = title === site ? title : `${title} · ${site}`;
     </header>
     <main class="wrap"><slot /></main>
     <footer class="wrap foot label">Family Mafia Club · statistics · updated nightly</footer>
+    <script is:inline>
+      document.querySelector('.theme').addEventListener('click', () => {
+        const root = document.documentElement;
+        const light = root.dataset.theme
+          ? root.dataset.theme === 'light'
+          : matchMedia('(prefers-color-scheme: light)').matches;
+        root.dataset.theme = light ? 'dark' : 'light';
+        try { localStorage.setItem('theme', root.dataset.theme); } catch {}
+      });
+    </script>
   </body>
 </html>
 
 <style>
-  .top { position: sticky; top: 0; z-index: 10; background: rgba(10, 10, 10, .92);
+  .top { position: sticky; top: 0; z-index: 10; background: var(--header-bg);
     backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); }
   .bar { display: flex; align-items: center; gap: 28px; height: 56px; }
   .logo { display: flex; align-items: center; gap: 10px; font-size: 15px; letter-spacing: .04em; white-space: nowrap; }
-  .logo img { display: block; }
+  .logo :global(svg) { display: block; flex: none; }
   .logo span { color: var(--muted); }
   .tabs { display: flex; gap: 4px; height: 100%; }
   .tabs a { display: flex; align-items: center; padding: 0 12px; color: var(--muted);
     border-bottom: 2px solid transparent; font-weight: 500; white-space: nowrap; }
   .tabs a[aria-current='page'] { color: var(--text); border-bottom-color: var(--accent); }
-  .search { margin-left: auto; }
+  .theme { margin-left: auto; display: grid; place-items: center; width: 32px; height: 32px; padding: 0;
+    background: none; border: 1px solid var(--border); border-radius: var(--radius); color: var(--muted); cursor: pointer; }
+  .theme:hover { color: var(--text); }
+  .theme svg { width: 16px; height: 16px; fill: currentColor; stroke: currentColor; stroke-width: 2; }
+  .theme svg circle { fill: none; }
   .search input { width: 220px; background: var(--panel); border: 1px solid var(--border);
     border-radius: var(--radius); color: var(--text); padding: 7px 10px; font: inherit; }
   .foot { padding-top: 24px; padding-bottom: 32px; border-top: 1px solid var(--border); }
   @media (max-width: 899px) {
     .bar { flex-wrap: wrap; height: auto; gap: 0 12px; padding-top: 10px; }
-    .search { margin-left: auto; }
     .search input { width: 140px; }
     .tabs { order: 3; width: 100%; overflow-x: auto; scrollbar-width: none; height: 44px; }
   }
