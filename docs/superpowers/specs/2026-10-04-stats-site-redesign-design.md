@@ -55,11 +55,11 @@ presentation is new.
 Google Sheets ──prefetch──▶ assets/prefetched/*.json ─┐
 assets/raw/*.json ────────────────────────────────────┤
                                                       ▼
-                tool/export_site_data.dart (flutter test harness,
+                tool/export_site_data_test.dart (flutter test,  
                 ProviderContainer reading the app's providers)
                                                       │
                                                       ▼
-                         site/public/data/*.json
+                         site/data/*.json
                                                       │
                                                       ▼
                        site/ (Astro, static build) ──▶ site/dist ──▶ GitHub Pages
@@ -67,7 +67,7 @@ assets/raw/*.json ────────────────────�
 
 ### Data export
 
-`tool/export_site_data.dart` runs under `flutter test` so `rootBundle` and
+`tool/export_site_data_test.dart` runs under `flutter test` so `rootBundle` and
 assets work without decoupling Flutter imports (`role.dart`, `tournament.dart`,
 `season_data_service.dart`, `season_loader.dart`). It:
 
@@ -78,7 +78,7 @@ assets work without decoupling Flutter imports (`role.dart`, `tournament.dart`,
 3. Iterates seasons × leagues and players, setting the selection providers
    (`selectedSeasonProvider`, `selectedLeagueProvider`, selected player) and
    reading the same providers the screens read.
-4. Writes JSON to `site/public/data/` (output dir overridable for tests).
+4. Writes JSON to `site/data/` (gitignored; the pages are pre-rendered, so the JSON is read at build time and not served). Output dir overridable via `SITE_DATA_DIR`.
 
 Files (raw numbers plus minimal labels; formatting is done by the site):
 
@@ -90,9 +90,16 @@ Files (raw numbers plus minimal labels; formatting is done by the site):
 | `player/<slug>.json` | hero; accomplishments; league per season; games per season; role games/wins/percentile; first kill; best moves | `playerAccomplishmentsProvider`, `playerLeaguesProvider`, `seasonGamesProvider`, `playerRoleGamesProvider`, `playerRoleWinsProvider`, `roleWinRatePercentilesProvider`, `playerFirstKillProvider`, `playerBestMovesProvider` |
 | `records.json` | every category × role × period × scope, pre-ranked, with scope label | `services/stats/records.dart`, `win_streaks.dart` via the records providers |
 
-The award "avg pts" / "record" strings currently formatted inside
-`season_header_card.dart` / `season_stats_card.dart` are exported as the raw
-numbers they are built from (wins, games, points); the site formats them.
+**Tables are exported display-ready.** Every ranked list (awards, season
+stats, leaderboards, protocol guesses, seasons table, records, season player
+ratings) is exported as one generic table shape: columns (label, alignment,
+optional tooltip / group / phone visibility) and rows of cells, where each cell
+carries its display text `t`, an optional numeric sort key `s`, an optional
+player link, and an optional tone (`wr`, `pos`, `neg`, role). The text is
+produced in Dart with the same formatting the app's widgets use (e.g.
+`season_header_card.dart` `_roleDetail` / `_rolePoints`, the records screen's
+`_pct` / `_f` / `_season`), so the site renders and sorts but never re-derives
+a number. KPIs and chart series are exported as raw numbers.
 
 **Slugs:** transliterated `displayName` (Ukrainian → Latin, lowercase,
 hyphenated). On collision, append `-<id>` to every colliding player. Junk
@@ -151,11 +158,19 @@ tap-to-expand awards, bottom nav.
 - **Theme:** dark only. Background `#0B0D10`, panel `#12161B`, border
   `#1F252D`, text `#E6E8EB`, muted `#8B95A1`. Flat panels, 1 px border, 8 px
   radius, no shadows.
-- **Colour carries data:** brand accent mafia red `#E5484D` (logo, active nav,
-  focus). City blue `#4C9AFF` vs mafia red wherever city/mafia appear. Role hues
-  from `role.dart`, re-tuned for contrast on dark (≥ 4.5:1 for text). Win rate
-  is coloured text (green ≥ 50, amber ≥ 35, red below) plus a thin inline bar in
-  tables. Top-3 ranks get a gold / silver / bronze marker.
+- **Colour carries data.** In this game the city holds the *red* cards
+  (Мирний, Шериф) and the mafia the *black* ones (Мафія, Дон) — `role.dart`
+  `isBlack` — so the palette follows the cards:
+  - City red `#E5484D`; it is also the brand accent (logo, active nav, focus).
+  - Mafia ("black" team) slate `#A3ADBA` — a light grey, because true black
+    is invisible on the dark background.
+  - Roles: Мирний `#E5484D`, Шериф `#22C3DC` (the cyan of `role.dart`),
+    Мафія `#A3ADBA`, Дон `#A78BFA`. All ≥ 4.5:1 on the panel colour.
+  - Win rate is coloured text plus a thin inline bar in tables: green
+    `#3FB950` ≥ 50 %, amber `#D29922` ≥ 35 %, muted below — not red, so a low
+    WR is never confused with the city colour. One rule everywhere (the app's
+    player grid used 50 / 40; the site uses 50 / 35 like the season cards).
+  - Top-3 ranks get a gold / silver / bronze marker.
 - **Type (Google Fonts, Cyrillic):** Unbounded for logo, page titles and big
   KPI numbers; Inter for everything else; `tabular-nums` on all numbers. Small
   uppercase letter-spaced labels above KPIs.
@@ -178,7 +193,7 @@ tap-to-expand awards, bottom nav.
 1. Checkout `feature/flutter_migration`, Flutter setup, empty
    `assets/.env.json`, `flutter pub get`, prefetch remote seasons (unchanged).
 2. `flutter test` (existing suite + export tests).
-3. `flutter test tool/export_site_data.dart` → `site/public/data/`.
+3. `flutter test tool/export_site_data_test.dart` → `site/data/`.
 4. Node 22: `npm ci && npm run build` in `site/`.
 5. Guards on `site/dist`: no `AIza`; `index.html` exists; a page exists for
    every player in `players.json`; internal link check passes.
@@ -192,8 +207,8 @@ and `master`.
 - **Export (Dart, `flutter test`):** from a small fixture season, check JSON
   shape per file; season ratings equal `currentSeasonStatsProvider` for both
   leagues; slugs unique and stable; junk players excluded.
-- **Site:** `astro check`; Vitest for formatters, slugging helpers on the site
-  side and sortable-table logic; post-build internal link check.
+- **Site:** `astro check`; Vitest for the small formatters (KPI percentages,
+  WR tone) and the sortable-table logic; post-build internal link check.
 - **Visual:** run the built site locally and walk every page in Chrome at
   1440 px and 390 px; spot-check several numbers against the app.
 
