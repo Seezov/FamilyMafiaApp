@@ -12,9 +12,9 @@ export function getStaticPaths() {
 const data = loadRecords();
 const cat = data.categories.find((c) => c.slug === Astro.params.category)!;
 const options: Record<FilterName, { key: string; label: string }[]> = {
-  role: data.roles, scope: data.scopes, period: data.periods,
+  role: data.roles, scope: data.scopes, period: data.periods, league: data.leagues,
 };
-const order: FilterName[] = ['role', 'scope', 'period'];
+const order: FilterName[] = ['role', 'scope', 'period', 'league'];
 const filters = order.filter((f) => cat.filters.includes(f));
 
 // Every combination of this category's filters → its table.

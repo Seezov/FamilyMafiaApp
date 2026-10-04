@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:family_mafia_app/repositories/games_repository.dart';
+import 'package:family_mafia_app/screens/players/players_providers.dart';
 import 'package:family_mafia_app/services/stats/host_stats.dart';
 
 import 'package:family_mafia_app/site_export/export_context.dart';
@@ -11,7 +12,7 @@ import 'fixture.dart';
 
 String keyFor(Map cat, Map<String, String> f) => [
       cat['slug'],
-      for (final name in ['role', 'scope', 'period'])
+      for (final name in ['role', 'scope', 'period', 'league'])
         if ((cat['filters'] as List).contains(name)) f[name],
     ].join('/');
 
@@ -27,12 +28,15 @@ void main() {
       final roles = filters.contains('role') ? (json['roles'] as List).map((r) => r['key'] as String) : [''];
       final scopes = filters.contains('scope') ? (json['scopes'] as List).map((r) => r['key'] as String) : [''];
       final periods = filters.contains('period') ? (json['periods'] as List).map((r) => r['key'] as String) : [''];
+      final leagues = filters.contains('league') ? (json['leagues'] as List).map((r) => r['key'] as String) : [''];
       for (final role in roles) {
         for (final scope in scopes) {
           for (final period in periods) {
-            final key = keyFor(cat, {'role': role, 'scope': scope, 'period': period});
-            expect(tables.containsKey(key), isTrue, reason: key);
-            expected++;
+            for (final league in leagues) {
+              final key = keyFor(cat, {'role': role, 'scope': scope, 'period': period, 'league': league});
+              expect(tables.containsKey(key), isTrue, reason: key);
+              expected++;
+            }
           }
         }
       }
@@ -85,6 +89,31 @@ void main() {
       expect(labels('$cat/season'), contains('Season'), reason: cat);
       for (final row in tables['$cat/alltime']['table']['rows'] as List) {
         expect((row as List).length, labels('$cat/alltime').length);
+      }
+    }
+  });
+
+  test('prize places rank by wins, then 2nd and 3rd, and match the profiles', () async {
+    final c = await fixtureContainer();
+    final x = ExportContext(c);
+    final json = jsonDecode(jsonEncode(recordsJson(x))) as Map;
+    final tables = json['tables'] as Map;
+    for (final league in ['main', 'small']) {
+      final rows = (tables['podiums/$league']['table']['rows'] as List).cast<List>();
+      expect(rows, isNotEmpty, reason: league);
+      for (final p in x.players) {
+        final acc = c.read(playerAccomplishmentsProvider(p));
+        final counts = league == 'main'
+            ? [acc.firsts, acc.seconds, acc.thirds]
+            : [acc.smallFirsts, acc.smallSeconds, acc.smallThirds];
+        final row = rows.where((r) => r[0]['t'] == p.displayName).firstOrNull;
+        if (counts.every((n) => n == 0)) {
+          expect(row, isNull, reason: p.displayName);
+        } else {
+          expect(row![1]['s'], counts[0] * 10000 + counts[1] * 100 + counts[2]);
+          expect([row[2]['s'], row[3]['s'], row[4]['s']],
+              [counts[1], counts[2], counts.reduce((a, b) => a + b)]);
+        }
       }
     }
   });

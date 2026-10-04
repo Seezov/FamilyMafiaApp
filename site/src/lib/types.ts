@@ -48,13 +48,14 @@ export interface PlayerData extends PlayerSummary {
   bestMoves: { firstKilled: number; zero: number; one: number; two: number; three: number };
 }
 
-export type FilterName = 'role' | 'scope' | 'period';
+export type FilterName = 'role' | 'scope' | 'period' | 'league';
 export interface RecordCategory { slug: string; label: string; filters: FilterName[] }
 export interface RecordsData {
   categories: RecordCategory[];
   roles: { key: string; label: string }[];
   scopes: { key: string; label: string }[];
   periods: { key: string; label: string }[];
+  leagues: { key: string; label: string }[];
   defaults: Record<FilterName, string>;
   tables: Record<string, { scope: string; table: SiteTable }>;
 }

@@ -1,5 +1,6 @@
 import 'package:family_mafia_app/constants/season_constants.dart';
 import 'package:family_mafia_app/enums/role.dart';
+import 'package:family_mafia_app/screens/players/players_providers.dart';
 import 'package:family_mafia_app/screens/records/records_providers.dart';
 import 'package:family_mafia_app/services/stats/host_stats.dart';
 import 'package:family_mafia_app/services/stats/points_period.dart';
@@ -179,6 +180,34 @@ Map<String, Object?> recordsJson(ExportContext x) {
       ]
   ]));
 
+  // Season prize places: top 3 of each league, as on the player profiles.
+  for (final league in ['main', 'small']) {
+    final rows = <List<SiteCell>>[];
+    for (final p in x.players) {
+      final acc = x.read(playerAccomplishmentsProvider(p));
+      final c = league == 'main'
+          ? [acc.firsts, acc.seconds, acc.thirds]
+          : [acc.smallFirsts, acc.smallSeconds, acc.smallThirds];
+      final total = c[0] + c[1] + c[2];
+      if (total == 0) continue;
+      rows.add([
+        x.name(p),
+        // Ties on wins are broken by 2nd, then 3rd places.
+        SiteCell('${c[0]}', s: c[0] * 10000 + c[1] * 100 + c[2]),
+        SiteCell('${c[1]}', s: c[1]),
+        SiteCell('${c[2]}', s: c[2]),
+        SiteCell('$total', s: total),
+      ]);
+    }
+    add('podiums/$league', 'Ranked by wins, then 2nd and 3rd places', _table(const [
+      SiteColumn('Player', numeric: false),
+      SiteColumn('1st'),
+      SiteColumn('2nd'),
+      SiteColumn('3rd'),
+      SiteColumn('Podiums'),
+    ], rows));
+  }
+
   return {
     'categories': const [
       {'slug': 'mvp', 'label': 'MVP', 'filters': ['period']},
@@ -188,6 +217,7 @@ Map<String, Object?> recordsJson(ExportContext x) {
       {'slug': 'pu', 'label': 'ПУ', 'filters': <String>[]},
       {'slug': 'penalties', 'label': 'Penalties', 'filters': <String>[]},
       {'slug': 'streaks', 'label': 'Streaks', 'filters': <String>[]},
+      {'slug': 'podiums', 'label': 'Prize places', 'filters': ['league']},
     ],
     'roles': [
       for (final r in Role.values) {'key': r.name, 'label': roleLabel(r)}
@@ -196,10 +226,19 @@ Map<String, Object?> recordsJson(ExportContext x) {
       {'key': 'alltime', 'label': 'All time'},
       {'key': 'season', 'label': 'Per season'},
     ],
+    'leagues': const [
+      {'key': 'main', 'label': 'Main league'},
+      {'key': 'small', 'label': 'Small league'},
+    ],
     'periods': [
       for (final p in PointsPeriod.values) {'key': p.name, 'label': p.label}
     ],
-    'defaults': const {'role': 'don', 'scope': 'alltime', 'period': 'modern'},
+    'defaults': const {
+      'role': 'don',
+      'scope': 'alltime',
+      'period': 'modern',
+      'league': 'main',
+    },
     'tables': tables,
   };
 }
