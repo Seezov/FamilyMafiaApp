@@ -1,0 +1,31 @@
+---
+import type { IndexData, RoleKey } from '../lib/types';
+import { pct } from '../lib/format';
+interface Props { roleWR: IndexData['roleWR'] }
+const { roleWR } = Astro.props;
+const roles: { key: RoleKey; label: string }[] = [
+  { key: 'civilian', label: 'Civilian' }, { key: 'sheriff', label: 'Sheriff' },
+  { key: 'mafia', label: 'Mafia' }, { key: 'don', label: 'Don' },
+];
+const r = 34, c = 2 * Math.PI * r;
+---
+<div class="rings">
+  {roles.map(({ key, label }) => (
+    <figure>
+      <svg viewBox="0 0 80 80" role="img" aria-label={`${label} win rate ${pct(roleWR[key])}`}>
+        <circle cx="40" cy="40" r={r} fill="none" stroke="var(--panel-2)" stroke-width="8" />
+        <circle cx="40" cy="40" r={r} fill="none" stroke={`var(--${key})`} stroke-width="8" stroke-linecap="round"
+          stroke-dasharray={`${(roleWR[key] * c).toFixed(1)} ${c.toFixed(1)}`} transform="rotate(-90 40 40)" />
+        <text x="40" y="45" text-anchor="middle">{pct(roleWR[key])}</text>
+      </svg>
+      <figcaption class={`label role-${key}`}>{label}</figcaption>
+    </figure>
+  ))}
+</div>
+
+<style>
+  .rings { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+  figure { margin: 0; text-align: center; }
+  svg { width: 100%; max-width: 120px; }
+  text { fill: var(--text); font: 700 15px var(--font-display); }
+</style>
