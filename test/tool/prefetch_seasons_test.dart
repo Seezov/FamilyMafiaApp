@@ -78,4 +78,27 @@ void main() {
     );
     expect(out.listSync(), isEmpty);
   });
+
+  test('snapshots firestore seasons too (no API key needed for them)', () async {
+    const config = '{"seasons": ['
+        '{"id": 32, "title": "Season 32", "gameLimit": 40, "gamesMultiplier": 0.0, "source": "firestore", "projectId": "p1"}'
+        ']}';
+    final dio = Dio()
+      ..httpClientAdapter = _FakeAdapter((uri) {
+        if (uri.host == 'config.test') return _body(config);
+        if (uri.host == 'firestore.googleapis.com') {
+          return _body(jsonEncode([
+            {'document': {'name': 'x/games/g1', 'fields': {'season': {'integerValue': '32'}}}},
+          ]));
+        }
+        return _body('{}', 404);
+      });
+
+    final ids = await prefetch.prefetchSeasons(
+        dio: dio, apiKey: 'k', configUrl: _configUrl, outDir: out);
+
+    expect(ids, [32]);
+    final snap = jsonDecode(File('${out.path}/season32.json').readAsStringSync());
+    expect(snap, {'format': 'firestore', 'games': [{'id': 'g1', 'season': 32}]});
+  });
 }
