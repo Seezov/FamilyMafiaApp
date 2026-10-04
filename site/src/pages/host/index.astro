@@ -92,6 +92,7 @@ const data = JSON.stringify({ names, defaultSeason }).replace(/</g, '\\u003c');
   .list { display: grid; gap: 8px; }
   .game-row { text-align: left; color: var(--text); font: inherit; cursor: pointer; width: 100%; }
   .host-form { display: grid; gap: 4px; }
+  #signed-out[hidden], #not-host[hidden], #list-view[hidden], .host-form[hidden] { display: none; }
   .host-form fieldset { display: grid; gap: 8px; }
   .host-form .head { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); }
   .host-form .wide { grid-column: 1 / -1; }
