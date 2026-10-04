@@ -11,8 +11,19 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 /// site has pages for, and their slugs.
 class ExportContext {
   ExportContext(this.container)
-      : players = container.read(playersListProvider),
-        slugs = assignSlugs(container.read(playersListProvider));
+      : players = _onePerName(container),
+        slugs = assignSlugs(_onePerName(container));
+
+  /// players.json has a few display names twice. Stats are keyed by name, so
+  /// both entries would show the same numbers on two pages; keep only the
+  /// player the app's resolver maps that name to.
+  static List<Player> _onePerName(ProviderContainer c) {
+    final resolver = c.read(playerResolverProvider);
+    return [
+      for (final p in c.read(playersListProvider))
+        if (resolver.resolve(p.displayName).id == p.id) p
+    ];
+  }
 
   final ProviderContainer container;
 
