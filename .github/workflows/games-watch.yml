@@ -1,0 +1,45 @@
+name: Games watch
+
+# Rebuilds the site when a game was saved on /host/ since the last check.
+# Must also be on master: GitHub runs `schedule` from the default branch.
+on:
+  schedule:
+    - cron: '17 * * * *' # hourly
+  workflow_dispatch:
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Read meta/state.updatedAt
+        id: state
+        run: |
+          ts=$(curl -s "https://firestore.googleapis.com/v1/projects/familymafiaapp/databases/(default)/documents/meta/state" \
+            | jq -r '.fields.updatedAt.timestampValue // empty')
+          echo "ts=${ts:-none}" >> "$GITHUB_OUTPUT"
+      - name: Seen before?
+        id: seen
+        if: steps.state.outputs.ts != 'none'
+        uses: actions/cache/restore@v4
+        with:
+          path: .games-state
+          key: games-state-${{ steps.state.outputs.ts }}
+          lookup-only: true
+      - name: Rebuild the site
+        if: steps.state.outputs.ts != 'none' && steps.seen.outputs.cache-hit != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run web.yml --repo "$GITHUB_REPOSITORY" --ref master
+      - name: Remember this state
+        if: steps.state.outputs.ts != 'none' && steps.seen.outputs.cache-hit != 'true'
+        run: echo "${{ steps.state.outputs.ts }}" > .games-state
+      - if: steps.state.outputs.ts != 'none' && steps.seen.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: .games-state
+          key: games-state-${{ steps.state.outputs.ts }}
