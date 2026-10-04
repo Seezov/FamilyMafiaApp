@@ -1,0 +1,120 @@
+---
+import fs from 'node:fs';
+import path from 'node:path';
+import Base from '../../layouts/Base.astro';
+
+// Player names for autocomplete: the app's roster with nicknames, junk filtered.
+const root = path.resolve(process.cwd(), '..');
+const roster = JSON.parse(fs.readFileSync(path.join(root, 'assets/raw/players.json'), 'utf8')) as { displayName: string; nicknames?: string[] }[];
+const names = [...new Set(roster.flatMap((p) => [p.displayName, ...(p.nicknames ?? [])])
+  .map((n) => n.trim()).filter((n) => n.length >= 2 && !/^[\d/\\.]+$/.test(n)))].sort((a, b) => a.localeCompare(b, 'uk'));
+// Default season: the latest firestore season in the live config, else none.
+const config = JSON.parse(fs.readFileSync(path.join(root, 'remote_config.json'), 'utf8')) as { seasons: { id: number; source: string }[] };
+const defaultSeason = config.seasons.filter((s) => s.source === 'firestore').map((s) => s.id).sort((a, b) => b - a)[0] ?? null;
+const data = JSON.stringify({ names, defaultSeason }).replace(/</g, '\\u003c');
+---
+<Base title="Провести гру" description="Запис ігор клубу для ведучих." active="host">
+  <div class="pagehead"><h1 class="display">Провести гру</h1><span class="label" id="who"></span></div>
+
+  <section id="signed-out" class="box" hidden>
+    <p>Записувати ігри можуть лише ведучі клубу.</p>
+    <button class="btn primary" id="sign-in" type="button">Увійти через Google</button>
+  </section>
+  <section id="not-host" class="box" hidden>
+    <p>Немає прав ведучого — звернись до адміна.</p>
+    <button class="btn" id="sign-out-2" type="button">Вийти</button>
+  </section>
+
+  <section id="list-view" hidden>
+    <div class="toolbar">
+      <button class="btn primary" id="new-game" type="button">Нова гра</button>
+      <label class="inline">Сезон <input id="l-season" type="number" min="1" inputmode="numeric" /></label>
+      <button class="btn" id="sign-out" type="button">Вийти</button>
+    </div>
+    <div id="games" class="list" aria-live="polite"></div>
+  </section>
+
+  <form id="game-form" class="host-form" hidden novalidate>
+    <fieldset class="box head">
+      <label>Сезон <input id="f-season" type="number" min="1" inputmode="numeric" /></label>
+      <label>Дата <input id="f-date" type="date" /></label>
+      <label>Стіл <select id="f-table"><option value="1">1</option><option value="2">2</option></select></label>
+      <label>Гра № <input id="f-number" type="number" min="1" inputmode="numeric" /></label>
+      <label class="wide">Ведучий <input id="f-host" list="names" autocomplete="off" placeholder="Оберіть ведучого" /></label>
+    </fieldset>
+    <div id="seats" class="seats"></div>
+    <fieldset class="box">
+      <legend>ПУ і Опорна 5</legend>
+      <label>ПУ <input id="f-first" type="number" min="0" max="10" inputmode="numeric" /></label>
+      <div id="support" class="stack"></div>
+      <span class="label" id="op-value"></span>
+    </fieldset>
+    <fieldset class="box">
+      <legend>Протокол</legend>
+      <div id="protocol" class="stack"></div>
+      <button class="btn" id="add-protocol" type="button">+ Вбитий гравець</button>
+    </fieldset>
+    <fieldset class="box" id="f-result">
+      <legend>Перемога</legend>
+      <label class="inline"><input type="radio" name="result" value="city" /> Місто</label>
+      <label class="inline"><input type="radio" name="result" value="mafia" /> Мафія</label>
+      <label class="inline"><input type="radio" name="result" value="unrated" /> Не рейтинг</label>
+    </fieldset>
+    <fieldset class="box">
+      <legend>Коментарі до дод. балів</legend>
+      <div id="comments" class="stack"></div>
+      <button class="btn" id="add-comment" type="button">+ Коментар</button>
+    </fieldset>
+    <div id="messages" aria-live="polite"></div>
+    <div class="toolbar sticky">
+      <button class="btn" id="cancel" type="button">До списку</button>
+      <button class="btn primary" id="save" type="submit">Зберегти</button>
+    </div>
+  </form>
+
+  <datalist id="names">{names.map((n) => <option value={n} />)}</datalist>
+  <script type="application/json" id="host-data" set:html={data} />
+</Base>
+
+<script>
+  import '../../scripts/host';
+</script>
+
+<style is:global>
+  .box { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; margin: 0 0 12px; }
+  .box legend { padding: 0 4px; font-weight: 600; }
+  .btn { background: var(--panel-2); border: 1px solid var(--border); color: var(--text); border-radius: var(--radius);
+    padding: 8px 14px; font: inherit; font-size: 14px; cursor: pointer; white-space: nowrap; min-height: 40px; }
+  .btn:hover { border-color: var(--muted); }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+  .btn:disabled { opacity: .45; cursor: not-allowed; }
+  .toolbar { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; margin-bottom: 14px; }
+  .list { display: grid; gap: 8px; }
+  .game-row { text-align: left; color: var(--text); font: inherit; cursor: pointer; width: 100%; }
+  .host-form { display: grid; gap: 4px; }
+  .host-form fieldset { display: grid; gap: 8px; }
+  .host-form .head { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); }
+  .host-form .wide { grid-column: 1 / -1; }
+  .host-form label { display: grid; gap: 4px; font-size: 13px; color: var(--muted); }
+  .host-form label.inline, .toolbar label.inline { display: inline-flex; align-items: center; gap: 6px; color: var(--text); }
+  .host-form input:not([type=radio]), .host-form select, .toolbar input {
+    background: var(--panel-2); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text);
+    padding: 6px 9px; font: inherit; font-size: 16px; min-height: 40px; min-width: 0; }
+  .toolbar input { width: 6em; }
+  .stack { display: grid; gap: 8px; }
+  .stack .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: end; }
+  .stack .row input[type=number] { width: 5em; }
+  .stack .row input[data-k=text] { flex: 1 1 200px; }
+  .seats { display: grid; gap: 8px; margin-bottom: 12px; }
+  .seat { display: grid; gap: 8px; grid-template-columns: 2rem 1fr; align-items: center; padding: 10px;
+    background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); }
+  .seat > b { font-size: 18px; text-align: center; }
+  .seat .nums { grid-column: 2; display: grid; gap: 6px; grid-template-columns: repeat(auto-fit, minmax(72px, 1fr)); }
+  .seat .roles button { background: var(--panel-2); border: 1px solid var(--border); color: var(--text); border-radius: var(--radius);
+    min-height: 36px; font: inherit; font-size: 13px; cursor: pointer; }
+  .seat .roles button[aria-pressed="true"] { border-color: var(--text); font-weight: 700; }
+  .seat .new-player { grid-column: 2; }
+  .invalid, .invalid input { outline: 2px solid var(--city) !important; outline-offset: 1px; }
+  .msg-error { color: var(--city); } .msg-warn { color: var(--mid); }
+  .toolbar.sticky { position: sticky; bottom: 0; background: var(--bg); padding: 8px 0; margin: 0; }
+</style>
