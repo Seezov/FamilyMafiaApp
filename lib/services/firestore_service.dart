@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:family_mafia_app/models/season_config.dart';
-import 'package:family_mafia_app/services/firestore_games.dart';
+import 'package:family_mafia_app/services/firestore_rest.dart';
 
 /// Reads a season's games from Firestore over REST. Games are publicly
 /// readable (firestore.rules), so no key or sign-in is needed.
