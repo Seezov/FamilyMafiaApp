@@ -32,4 +32,17 @@ void main() {
     final bm = json['bestMoves'] as Map;
     expect(bm['zero'] + bm['one'] + bm['two'] + bm['three'], bm['firstKilled']);
   });
+
+  test('award cards add up to the accomplishments total', () {
+    for (final p in x.players.take(20)) {
+      final json = jsonDecode(jsonEncode(playerJson(x, p))) as Map;
+      final a = json['accomplishments'] as Map;
+      final cards = [for (final g in a['groups'] as List) ...g['cards'] as List];
+      expect(cards.fold<int>(0, (s, c) => s + (c['count'] as int)), a['total'],
+          reason: p.displayName);
+      for (final c in cards) {
+        expect(c['where'], hasLength(c['count']));
+      }
+    }
+  });
 }

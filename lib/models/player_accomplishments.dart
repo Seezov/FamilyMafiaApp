@@ -18,6 +18,12 @@ class PlayerAccomplishments {
   /// Prize places per tournament type: `[1st, 2nd, 3rd]` counts.
   final Map<TournamentType, List<int>> tournamentPlaces;
 
+  /// Where each accomplishment was earned, oldest first: `S12` for a season,
+  /// `Мінікап 16.12.2023 · S20` for a tournament. Keys: `main:0`–`main:2`,
+  /// `small:0`–`small:2`, `mvp`, `sheriff`, `don`, `civilian`, `mafia`,
+  /// `<tournament type>:0`–`:2`.
+  final Map<String, List<String>> where = {};
+
   PlayerAccomplishments(
     this.player, {
     this.firsts = 0,

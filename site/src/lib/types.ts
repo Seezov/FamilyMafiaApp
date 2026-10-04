@@ -38,6 +38,7 @@ export interface PlayersData { players: PlayerSummary[]; table: SiteTable }
 export interface PlayerData extends PlayerSummary {
   accomplishments: {
     total: number; main: number[]; small: number[];
+    groups: { title: string; cards: AwardCard[] }[];
     awards: Record<'mvp' | 'sheriff' | 'don' | 'civilian' | 'mafia', number>;
     tournaments: { type: string; label: string; podiums: number; places: number[] }[];
   };
@@ -67,4 +68,9 @@ export interface TournamentsData {
     id: number; title: string;
     events: { type: string; label: string; name: string; games: number; date: string | null; podium: SiteCell[] }[];
   }[];
+}
+
+export interface AwardCard {
+  label: string; icon: 'trophy' | 'star' | 'sheriff' | 'civilian' | 'mafia' | 'don' | 'medal';
+  tone: string; kind?: string; kindType?: string; count: number; where: string[];
 }

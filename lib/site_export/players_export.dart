@@ -1,5 +1,6 @@
 import 'package:family_mafia_app/enums/role.dart';
 import 'package:family_mafia_app/models/player.dart';
+import 'package:family_mafia_app/models/player_accomplishments.dart';
 import 'package:family_mafia_app/models/tournament.dart';
 import 'package:family_mafia_app/screens/players/players_providers.dart';
 import 'package:family_mafia_app/services/stats/player_leagues.dart';
@@ -98,6 +99,7 @@ Map<String, Object?> playerJson(ExportContext x, Player p) {
     ..._summary(x, p),
     'accomplishments': {
       'total': acc.sumOfNominations(),
+      'groups': _awardGroups(acc),
       'main': [acc.firsts, acc.seconds, acc.thirds],
       'small': [acc.smallFirsts, acc.smallSeconds, acc.smallThirds],
       'awards': {
@@ -152,4 +154,53 @@ Map<String, Object?> playerJson(ExportContext x, Player p) {
       'three': bm.threeBlacks,
     },
   };
+}
+
+const _places = ['1st', '2nd', '3rd'];
+const _medals = ['gold', 'silver', 'bronze'];
+
+/// The profile's award cards, grouped like the app's Accomplishments section:
+/// one card per place or award, with where it was earned.
+List<Map<String, Object?>> _awardGroups(PlayerAccomplishments acc) {
+  Map<String, Object?> card(String key, String label, String icon, String tone,
+          {String? kind, String? kindType}) =>
+      {
+        'label': label,
+        'icon': icon,
+        'tone': tone,
+        'kind': ?kind,
+        'kindType': ?kindType,
+        'count': acc.where[key]?.length ?? 0,
+        'where': acc.where[key] ?? const <String>[],
+      };
+  List<Map<String, Object?>> podium(String prefix) => [
+        for (var i = 0; i < 3; i++)
+          card('$prefix:$i', '${_places[i]} place', 'trophy', _medals[i]),
+      ];
+
+  final groups = [
+    ('Main league', podium('main')),
+    ('Small league', podium('small')),
+    ('Season awards', [
+      card('mvp', 'MVP', 'star', 'mvp'),
+      card('sheriff', 'Best Sheriff', 'sheriff', 'sheriff'),
+      card('civilian', 'Best Civilian', 'civilian', 'civilian'),
+      card('mafia', 'Best Mafia', 'mafia', 'mafia'),
+      card('don', 'Best Don', 'don', 'don'),
+    ]),
+    ('Tournament prize places', [
+      for (final t in TournamentType.values)
+        for (var i = 0; i < 3; i++)
+          card('${t.name}:$i', '${_places[i]} place', 'medal', _medals[i],
+              kind: t.label, kindType: t.name),
+    ]),
+  ];
+  return [
+    for (final (title, cards) in groups)
+      if (cards.any((c) => (c['count'] as int) > 0))
+        {
+          'title': title,
+          'cards': [for (final c in cards) if ((c['count'] as int) > 0) c],
+        }
+  ];
 }

@@ -44,6 +44,7 @@ void main() {
     );
     expect((acc.firsts, acc.seconds, acc.thirds), (0, 1, 0));
     expect((acc.smallFirsts, acc.smallSeconds, acc.smallThirds), (0, 1, 0));
+    expect(acc.where, {'main:1': ['S1'], 'small:1': ['S2']});
   });
 
   test('tournament podiums resolve nicknames and group by type', () {
@@ -67,6 +68,11 @@ void main() {
       TournamentType.bigcap: [0, 1, 0],
     });
     expect(acc.sumOfNominations(), 3);
+    expect(acc.where, {
+      'minicap:0': ['x · S1'],
+      'minicap:2': ['x · S1'],
+      'bigcap:1': ['x · S1'],
+    });
   });
 
   test('podium is parsed from config and optional', () {

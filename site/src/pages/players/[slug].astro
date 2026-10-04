@@ -1,5 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
+import AwardCards from '../../components/AwardCards.astro';
 import Bars from '../../components/Bars.astro';
 import GamesBySeasonChart from '../../components/GamesBySeasonChart.astro';
 import Kpi from '../../components/Kpi.astro';
@@ -13,14 +14,6 @@ export function getStaticPaths() {
 const p = loadPlayer(Astro.params.slug!);
 const a = p.accomplishments;
 const roleColor = { civilian: 'var(--civilian)', sheriff: 'var(--sheriff)', mafia: 'var(--mafia)', don: 'var(--don)' } as const;
-const badges = [
-  ...['1st', '2nd', '3rd'].map((l, i) => ({ label: `Main ${l}`, n: a.main[i] })),
-  ...['1st', '2nd', '3rd'].map((l, i) => ({ label: `Small ${l}`, n: a.small[i] })),
-  { label: 'MVP', n: a.awards.mvp }, { label: 'Best Sheriff', n: a.awards.sheriff },
-  { label: 'Best Civilian', n: a.awards.civilian }, { label: 'Best Mafia', n: a.awards.mafia },
-  { label: 'Best Don', n: a.awards.don },
-  ...a.tournaments.map((t) => ({ label: `${t.label} podium`, n: t.podiums })),
-].filter((b) => b.n > 0);
 const bm = p.bestMoves;
 const fk = p.firstKill;
 ---
@@ -40,8 +33,10 @@ const fk = p.firstKill;
     <Kpi label="Accomplishments" value={String(a.total)} />
   </div>
 
-  {badges.length > 0 && (
-    <div class="pills badges">{badges.map((b) => <span class="pill">{b.label} <b>×{b.n}</b></span>)}</div>
+  {a.groups.length > 0 && (
+    <Panel title="Accomplishments" note={`${a.total} in total`} class="awards">
+      <AwardCards groups={a.groups} />
+    </Panel>
   )}
 
   <div class="grid">
@@ -80,7 +75,6 @@ const fk = p.firstKill;
   .who h1 { overflow-wrap: anywhere; }
   .kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 14px; }
   @media (max-width: 899px) { .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-  .badges { margin-bottom: 16px; flex-wrap: wrap; }
-  .badges b { color: var(--text); }
+  .awards { margin-bottom: 16px; }
   .duo { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 8px; }
 </style>
