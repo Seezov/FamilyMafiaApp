@@ -6,8 +6,9 @@ function cellOf(td: HTMLTableCellElement): SiteCell {
   return { t: td.textContent?.trim() ?? '', s: s === undefined || s === '' ? undefined : Number(s) };
 }
 
-function renumber(root: HTMLElement) {
-  root.querySelectorAll<HTMLTableSectionElement>('tbody').forEach((tb, i) => {
+/** Ranks the visible rows 1…n; rows hidden by a page filter are skipped. */
+export function renumber(root: HTMLElement) {
+  [...root.querySelectorAll<HTMLTableSectionElement>('tbody')].filter((tb) => !tb.hidden).forEach((tb, i) => {
     const rank = tb.querySelector<HTMLElement>('[data-rank]');
     if (!rank) return;
     rank.textContent = String(i + 1);

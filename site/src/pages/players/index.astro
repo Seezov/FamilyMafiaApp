@@ -4,11 +4,19 @@ import DataTable from '../../components/DataTable.astro';
 import Panel from '../../components/Panel.astro';
 import { loadPlayers } from '../../lib/data';
 const { players, table } = loadPlayers();
+const minGames = [0, 10, 50, 100, 500];
 ---
 <Base title="Players" description={`${players.length} Family Mafia Club players: games, win rate, seasons.`} active="players">
   <div class="pagehead">
     <h1 class="display">Players</h1>
     <input id="filter" type="search" placeholder="Filter by name…" aria-label="Filter players" />
+    <nav class="pills" id="games" aria-label="Games played">
+      {minGames.map((n) => (
+        <a class="pill" href={n ? `?games=${n}` : '?'} data-min={n} aria-current={n === 0 ? 'true' : undefined}>
+          {n ? `${n}+ games` : 'All'}
+        </a>
+      ))}
+    </nav>
   </div>
   <Panel>
     <DataTable table={table} />
@@ -17,23 +25,45 @@ const { players, table } = loadPlayers();
 </Base>
 
 <script>
+  import { renumber } from '../../components/table';
+
   const input = document.getElementById('filter') as HTMLInputElement;
   const none = document.getElementById('none')!;
-  const q = new URLSearchParams(location.search).get('q') ?? '';
-  input.value = q;
+  const pills = [...document.querySelectorAll<HTMLAnchorElement>('#games [data-min]')];
+  const root = document.querySelector<HTMLElement>('[data-table]')!;
+  const gamesCol = [...root.querySelectorAll<HTMLElement>('th[data-col]')]
+    .find((th) => th.textContent?.trim() === 'Games')!.dataset.col;
+  const params = new URLSearchParams(location.search);
+  input.value = params.get('q') ?? '';
+  let min = Number(params.get('games')) || 0;
+  if (!pills.some((p) => Number(p.dataset.min) === min)) min = 0;
+
   const apply = () => {
     const needle = input.value.trim().toLowerCase();
     let shown = 0;
-    document.querySelectorAll<HTMLTableSectionElement>('[data-table] tbody').forEach((tb) => {
-      const name = tb.querySelector('td:not([data-rank])')?.textContent?.toLowerCase() ?? '';
-      const match = !needle || name.includes(needle);
-      tb.style.display = match ? '' : 'none';
+    root.querySelectorAll<HTMLTableSectionElement>('tbody').forEach((tb) => {
+      const cells = [...tb.rows[0].cells].filter((c) => !c.hasAttribute('data-rank'));
+      const name = cells[0]?.textContent?.toLowerCase() ?? '';
+      const games = Number(cells[Number(gamesCol)]?.dataset.s ?? 0);
+      const match = (!needle || name.includes(needle)) && games >= min;
+      tb.hidden = !match;
       if (match) shown++;
     });
-    document.querySelector('[data-table]')?.classList.toggle('open', needle !== '');
+    root.classList.toggle('open', needle !== '' || min > 0);
+    renumber(root);
     none.hidden = shown > 0;
+    pills.forEach((p) => p.setAttribute('aria-current', String(Number(p.dataset.min) === min)));
+    const qs = new URLSearchParams();
+    if (needle) qs.set('q', input.value.trim());
+    if (min) qs.set('games', String(min));
+    history.replaceState(null, '', qs.size ? `?${qs}` : location.pathname);
   };
   input.addEventListener('input', apply);
+  pills.forEach((p) => p.addEventListener('click', (e) => {
+    e.preventDefault();
+    min = Number(p.dataset.min);
+    apply();
+  }));
   apply();
 </script>
 
