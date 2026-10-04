@@ -103,3 +103,4 @@ site/data/
 site/dist/
 site/node_modules/
 site/.astro/
+firebase/rules-test/node_modules/
