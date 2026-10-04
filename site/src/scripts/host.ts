@@ -13,6 +13,9 @@ const store = {
 };
 const today = () => new Date().toLocaleDateString('sv-SE'); // yyyy-mm-dd, local
 const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
+const ROLE_LETTER: Record<Role, string> = { 'Мирний': 'М', 'Мафія': 'Ч', 'Дон': 'Д', 'Шериф': 'Ш' };
+const nextRole = (r: Role) => ROLES[(ROLES.indexOf(r) + 1) % ROLES.length];
+const isNew = (name: string) => !!name.trim() && !page.names.includes(name.trim());
 
 let user: HostUser | null = null;
 let games: (GameDoc & { id: string })[] = [];
@@ -44,30 +47,30 @@ async function refreshList() {
 }
 
 // ── Form rendering ────────────────────────────────────────────────────────
+const num = (k: string, v: string, cls = '') =>
+  `<td><input data-k="${k}" class="${cls}" inputmode="decimal" value="${esc(v)}" aria-label="${k}" /></td>`;
+
 function renderSeats() {
-  $('seats').innerHTML = form.seats.map((s, i) => `
-    <div class="seat" data-i="${i}">
-      <b>${i + 1}</b>
-      <input data-k="player" list="names" autocomplete="off" placeholder="Гравець" value="${esc(s.player)}" aria-label="Гравець ${i + 1}" />
-      <div class="roles nums">${ROLES.map((r) => `<button type="button" data-role="${r}" aria-pressed="${s.role === r}">${r}</button>`).join('')}</div>
-      <div class="nums">
-        <label>Фоли <input data-k="fouls" type="number" min="0" max="4" inputmode="numeric" value="${s.fouls}" /></label>
-        <label>Доп <input data-k="additional" inputmode="decimal" value="${esc(s.additional)}" /></label>
-        <label>Штраф <input data-k="penalty" inputmode="decimal" value="${esc(s.penalty)}" /></label>
-        <label>ПрДод <input data-k="protocolAdditional" inputmode="decimal" value="${esc(s.protocolAdditional)}" /></label>
-        <label>ПрШтраф <input data-k="protocolPenalty" inputmode="decimal" value="${esc(s.protocolPenalty)}" /></label>
-      </div>
-      <span class="label new-player" ${!s.player.trim() || page.names.includes(s.player.trim()) ? 'hidden' : ''}>новий гравець</span>
-    </div>`).join('');
+  $('seats').querySelector('tbody')!.innerHTML = form.seats.map((s, i) => `
+    <tr class="seat" data-i="${i}">
+      <td>${i + 1}</td>
+      <td class="pl"><input data-k="player" class="${isNew(s.player) ? 'new' : ''}" list="names" autocomplete="off"
+        value="${esc(s.player)}" aria-label="Гравець ${i + 1}" title="${isNew(s.player) ? 'новий гравець' : ''}" /></td>
+      <td><button type="button" class="role" data-role="${s.role}" title="${s.role}" aria-label="Роль: ${s.role}">${ROLE_LETTER[s.role]}</button></td>
+      <td><input data-k="fouls" type="number" min="0" max="4" inputmode="numeric" value="${s.fouls || ''}" aria-label="Фоли" /></td>
+      ${num('additional', s.additional)}${num('penalty', s.penalty)}${num('protocolAdditional', s.protocolAdditional)}${num('protocolPenalty', s.protocolPenalty)}
+    </tr>`).join('');
 }
 
+const dot = (black: boolean) =>
+  `<button type="button" class="dot ${black ? 'black' : 'red'}" data-k="color" aria-label="${black ? 'чорний' : 'червоний'}" title="${black ? 'чорний' : 'червоний'}"></button>`;
+
 function renderSupport() {
-  const rows = [...form.supportFive, ...(form.supportFive.length < 5 ? [0] : [])];
-  $('support').innerHTML = rows.map((g, j) => `
-    <div class="row" data-j="${j}">
-      <label>Опорна ${j + 1} <input data-k="slot" type="number" min="1" max="10" inputmode="numeric" value="${g ? Math.abs(g) : ''}" /></label>
-      <select data-k="color" aria-label="Колір"><option value="red" ${g >= 0 ? 'selected' : ''}>червоний</option><option value="black" ${g < 0 ? 'selected' : ''}>чорний</option></select>
-    </div>`).join('');
+  $('support').innerHTML = Array.from({ length: 5 }, (_, j) => {
+    const g = form.supportFive[j] ?? 0;
+    return `<span class="cell" data-j="${j}"><input data-k="slot" type="number" min="1" max="10" inputmode="numeric"
+      value="${g ? Math.abs(g) : ''}" aria-label="Опорна ${j + 1}" />${dot(g < 0)}</span>`;
+  }).join('');
   renderOp();
 }
 
@@ -80,20 +83,20 @@ function renderOp() {
 function renderProtocol() {
   $('protocol').innerHTML = form.protocol.map((p, j) => `
     <div class="row" data-j="${j}">
-      <label>Вбитий <input data-k="slot" type="number" min="1" max="10" inputmode="numeric" value="${p.slot || ''}" /></label>
-      <label>Версія (шериф) <input data-k="version" type="number" min="1" max="10" inputmode="numeric" value="${p.version ?? ''}" /></label>
-      <label>Колір: гравець <input data-k="cslot" type="number" min="1" max="10" inputmode="numeric" value="${p.color?.slot ?? ''}" /></label>
-      <select data-k="cblack" aria-label="Колір"><option value="red" ${p.color?.black ? '' : 'selected'}>червоний</option><option value="black" ${p.color?.black ? 'selected' : ''}>чорний</option></select>
-      <button class="btn" type="button" data-remove aria-label="Прибрати">✕</button>
+      <label>вбитий <input data-k="slot" type="number" min="1" max="10" inputmode="numeric" value="${p.slot || ''}" /></label>
+      <label>версія <input data-k="version" type="number" min="1" max="10" inputmode="numeric" value="${p.version ?? ''}" /></label>
+      <label>колір <input data-k="cslot" type="number" min="1" max="10" inputmode="numeric" value="${p.color?.slot ?? ''}" /></label>
+      ${dot(!!p.color?.black)}
+      <button class="x" type="button" data-remove aria-label="Прибрати">✕</button>
     </div>`).join('');
 }
 
 function renderComments() {
   $('comments').innerHTML = form.comments.map((c, j) => `
     <div class="row" data-j="${j}">
-      <input data-k="slot" type="number" min="1" max="10" inputmode="numeric" value="${c.slot || ''}" aria-label="Номер" />
+      <input data-k="slot" type="number" min="1" max="10" inputmode="numeric" value="${c.slot || ''}" aria-label="Номер" placeholder="№" />
       <input data-k="text" value="${esc(c.text)}" aria-label="Коментар" />
-      <button class="btn" type="button" data-remove aria-label="Прибрати">✕</button>
+      <button class="x" type="button" data-remove aria-label="Прибрати">✕</button>
     </div>`).join('');
 }
 
@@ -129,14 +132,16 @@ function showMessages(highlight: boolean) {
 
 const changed = () => { saveDraft(); renderOp(); showMessages(false); };
 
-// ── Form events ───────────────────────────────────────────────────────────
+// ── Reading compound inputs back ──────────────────────────────────────────
+const isBlackDot = (el: Element | null) => !!el?.classList.contains('black');
+
 function readSupport() {
-  const inputs = [...$('support').querySelectorAll<HTMLElement>('.row')].map((r) => {
-    const n = Number(r.querySelector<HTMLInputElement>('[data-k=slot]')!.value) || 0;
-    return r.querySelector<HTMLSelectElement>('[data-k=color]')!.value === 'black' ? -n : n;
-  });
-  form.supportFive = inputs.filter((x) => x !== 0);
-  return inputs;
+  form.supportFive = [...$('support').querySelectorAll<HTMLElement>('.cell')]
+    .map((c) => {
+      const n = Number(c.querySelector<HTMLInputElement>('[data-k=slot]')!.value) || 0;
+      return isBlackDot(c.querySelector('.dot')) ? -n : n;
+    })
+    .filter((x) => x !== 0);
 }
 
 function readProtocolRow(row: HTMLElement) {
@@ -144,7 +149,13 @@ function readProtocolRow(row: HTMLElement) {
   const v = (key: string) => Number(row.querySelector<HTMLInputElement>(`[data-k=${key}]`)!.value) || 0;
   p.slot = v('slot');
   p.version = v('version') || null;
-  p.color = v('cslot') ? { slot: v('cslot'), black: row.querySelector<HTMLSelectElement>('[data-k=cblack]')!.value === 'black' } : null;
+  p.color = v('cslot') ? { slot: v('cslot'), black: isBlackDot(row.querySelector('.dot')) } : null;
+}
+
+function readCommentRow(row: HTMLElement) {
+  const c = form.comments[+row.dataset.j!];
+  c.slot = Number(row.querySelector<HTMLInputElement>('[data-k=slot]')!.value) || 0;
+  c.text = row.querySelector<HTMLInputElement>('[data-k=text]')!.value;
 }
 
 function onEdit(t: HTMLInputElement | HTMLSelectElement) {
@@ -166,18 +177,10 @@ function onEdit(t: HTMLInputElement | HTMLSelectElement) {
     const s = form.seats[+seat.dataset.i!];
     if (k === 'fouls') s.fouls = Math.max(0, Math.min(4, Number(t.value) || 0));
     else (s as unknown as Record<string, string>)[k] = t.value;
-    if (k === 'player') seat.querySelector<HTMLElement>('.new-player')!.hidden = !t.value.trim() || page.names.includes(t.value.trim());
-  } else if (row?.parentElement?.id === 'support') {
-    const inputs = readSupport();
-    // A filled last row grows a new empty one (up to 5).
-    if (k === 'slot' && t.value && inputs.length < 5 && row.dataset.j === String(inputs.length - 1)) renderSupport();
-  } else if (row?.parentElement?.id === 'protocol') {
-    readProtocolRow(row);
-  } else if (row?.parentElement?.id === 'comments') {
-    const c = form.comments[+row.dataset.j!];
-    c.slot = Number(row.querySelector<HTMLInputElement>('[data-k=slot]')!.value) || 0;
-    c.text = row.querySelector<HTMLInputElement>('[data-k=text]')!.value;
-  }
+    if (k === 'player') { t.classList.toggle('new', isNew(t.value)); t.title = isNew(t.value) ? 'новий гравець' : ''; }
+  } else if (t.closest('#support')) readSupport();
+  else if (row?.parentElement?.id === 'protocol') readProtocolRow(row);
+  else if (row?.parentElement?.id === 'comments') readCommentRow(row);
   changed();
 }
 
@@ -186,19 +189,26 @@ $('game-form').addEventListener('input', (e) => {
   if (t.tagName !== 'SELECT') onEdit(t);
 });
 $('game-form').addEventListener('change', (e) => {
-  const t = e.target as HTMLSelectElement;
-  if (t.tagName === 'SELECT') onEdit(t);
+  const t = e.target as HTMLInputElement | HTMLSelectElement;
+  if (t.tagName === 'SELECT' || t.getAttribute('name') === 'result') onEdit(t);
 });
 
 $('game-form').addEventListener('click', (e) => {
   const t = e.target as HTMLElement;
-  const role = t.dataset.role as Role | undefined;
-  if (role) {
-    form.seats[+t.closest<HTMLElement>('.seat')!.dataset.i!].role = role;
-    t.parentElement!.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b === t)));
+  if (t.classList.contains('role')) {
+    const s = form.seats[+t.closest<HTMLElement>('.seat')!.dataset.i!];
+    s.role = nextRole(s.role);
+    t.dataset.role = s.role; t.textContent = ROLE_LETTER[s.role]; t.title = s.role;
+    t.setAttribute('aria-label', `Роль: ${s.role}`);
     changed();
-  }
-  if (t.hasAttribute('data-remove')) {
+  } else if (t.classList.contains('dot')) {
+    const black = !t.classList.contains('black');
+    t.classList.toggle('black', black); t.classList.toggle('red', !black);
+    t.title = black ? 'чорний' : 'червоний'; t.setAttribute('aria-label', t.title);
+    const row = t.closest<HTMLElement>('.row');
+    if (t.closest('#support')) readSupport(); else if (row) readProtocolRow(row);
+    changed();
+  } else if (t.hasAttribute('data-remove')) {
     const row = t.closest<HTMLElement>('.row')!;
     const isProtocol = row.parentElement!.id === 'protocol';
     (isProtocol ? form.protocol : form.comments).splice(+row.dataset.j!, 1);

@@ -35,38 +35,46 @@ const data = JSON.stringify({ names, defaultSeason }).replace(/</g, '\\u003c');
   </section>
 
   <form id="game-form" class="host-form" hidden novalidate>
-    <fieldset class="box head">
-      <label>Сезон <input id="f-season" type="number" min="1" inputmode="numeric" /></label>
+    <div class="line head">
+      <label>Сезон <input id="f-season" class="n3" type="number" min="1" inputmode="numeric" /></label>
       <label>Дата <input id="f-date" type="date" /></label>
       <label>Стіл <select id="f-table"><option value="1">1</option><option value="2">2</option></select></label>
-      <label>Гра № <input id="f-number" type="number" min="1" inputmode="numeric" /></label>
-      <label class="wide">Ведучий <input id="f-host" list="names" autocomplete="off" placeholder="Оберіть ведучого" /></label>
-    </fieldset>
-    <div id="seats" class="seats"></div>
-    <fieldset class="box">
-      <legend>ПУ і Опорна 5</legend>
-      <label>ПУ <input id="f-first" type="number" min="0" max="10" inputmode="numeric" /></label>
-      <div id="support" class="stack"></div>
+      <label>Гра <input id="f-number" class="n2" type="number" min="1" inputmode="numeric" /></label>
+      <label class="grow">Ведучий <input id="f-host" list="names" autocomplete="off" placeholder="Оберіть ведучого" /></label>
+      <span id="f-result" class="seg" role="radiogroup" aria-label="Перемога">
+        <label><input type="radio" name="result" value="city" /><span>Місто</span></label>
+        <label><input type="radio" name="result" value="mafia" /><span>Мафія</span></label>
+        <label><input type="radio" name="result" value="unrated" /><span>Не рейт.</span></label>
+      </span>
+    </div>
+
+    <div class="scroll">
+      <table id="seats" class="seats">
+        <thead><tr><th>№</th><th class="pl">Гравець</th><th>Роль</th><th>Фоли</th><th>Доп</th><th>Штраф</th><th>ПрДод</th><th>ПрШтр</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div class="line">
+      <label>ПУ <input id="f-first" class="n2" type="number" min="0" max="10" inputmode="numeric" /></label>
+      <span class="lbl">Опорна 5</span>
+      <span id="support" class="cells"></span>
       <span class="label" id="op-value"></span>
-    </fieldset>
-    <fieldset class="box">
-      <legend>Протокол</legend>
-      <div id="protocol" class="stack"></div>
-      <button class="btn" id="add-protocol" type="button">+ Вбитий гравець</button>
-    </fieldset>
-    <fieldset class="box" id="f-result">
-      <legend>Перемога</legend>
-      <label class="inline"><input type="radio" name="result" value="city" /> Місто</label>
-      <label class="inline"><input type="radio" name="result" value="mafia" /> Мафія</label>
-      <label class="inline"><input type="radio" name="result" value="unrated" /> Не рейтинг</label>
-    </fieldset>
-    <fieldset class="box">
-      <legend>Коментарі до дод. балів</legend>
-      <div id="comments" class="stack"></div>
-      <button class="btn" id="add-comment" type="button">+ Коментар</button>
-    </fieldset>
-    <div id="messages" aria-live="polite"></div>
-    <div class="toolbar sticky">
+    </div>
+
+    <div class="line top">
+      <span class="lbl">Протокол</span>
+      <div class="rows"><div id="protocol" class="rows"></div>
+        <button class="btn sm" id="add-protocol" type="button">+ вбитий</button></div>
+    </div>
+    <div class="line top">
+      <span class="lbl">Коментарі</span>
+      <div class="rows grow"><div id="comments" class="rows"></div>
+        <button class="btn sm" id="add-comment" type="button">+ коментар</button></div>
+    </div>
+
+    <div class="line foot">
+      <div id="messages" class="grow" aria-live="polite"></div>
       <button class="btn" id="cancel" type="button">До списку</button>
       <button class="btn primary" id="save" type="submit">Зберегти</button>
     </div>
@@ -81,41 +89,93 @@ const data = JSON.stringify({ names, defaultSeason }).replace(/</g, '\\u003c');
 </script>
 
 <style is:global>
+  #signed-out[hidden], #not-host[hidden], #list-view[hidden], .host-form[hidden] { display: none; }
   .box { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; margin: 0 0 12px; }
-  .box legend { padding: 0 4px; font-weight: 600; }
   .btn { background: var(--panel-2); border: 1px solid var(--border); color: var(--text); border-radius: var(--radius);
-    padding: 8px 14px; font: inherit; font-size: 14px; cursor: pointer; white-space: nowrap; min-height: 40px; }
+    padding: 6px 14px; font: inherit; font-size: 14px; cursor: pointer; white-space: nowrap; min-height: 34px; }
   .btn:hover { border-color: var(--muted); }
   .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+  .btn.sm { min-height: 28px; padding: 2px 10px; font-size: 13px; }
   .btn:disabled { opacity: .45; cursor: not-allowed; }
   .toolbar { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; margin-bottom: 14px; }
+  .toolbar label.inline { display: inline-flex; align-items: center; gap: 6px; }
+  .toolbar input { width: 6em; }
   .list { display: grid; gap: 8px; }
   .game-row { text-align: left; color: var(--text); font: inherit; cursor: pointer; width: 100%; }
-  .host-form { display: grid; gap: 4px; }
-  #signed-out[hidden], #not-host[hidden], #list-view[hidden], .host-form[hidden] { display: none; }
-  .host-form fieldset { display: grid; gap: 8px; }
-  .host-form .head { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); }
-  .host-form .wide { grid-column: 1 / -1; }
-  .host-form label { display: grid; gap: 4px; font-size: 13px; color: var(--muted); }
-  .host-form label.inline, .toolbar label.inline { display: inline-flex; align-items: center; gap: 6px; color: var(--text); }
+
+  .host-form { display: grid; gap: 8px; font-size: 14px; }
   .host-form input:not([type=radio]), .host-form select, .toolbar input {
-    background: var(--panel-2); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text);
-    padding: 6px 9px; font: inherit; font-size: 16px; min-height: 40px; min-width: 0; }
-  .toolbar input { width: 6em; }
-  .stack { display: grid; gap: 8px; }
-  .stack .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: end; }
-  .stack .row input[type=number] { width: 5em; }
-  .stack .row input[data-k=text] { flex: 1 1 200px; }
-  .seats { display: grid; gap: 8px; margin-bottom: 12px; }
-  .seat { display: grid; gap: 8px; grid-template-columns: 2rem 1fr; align-items: center; padding: 10px;
-    background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); }
-  .seat > b { font-size: 18px; text-align: center; }
-  .seat .nums { grid-column: 2; display: grid; gap: 6px; grid-template-columns: repeat(auto-fit, minmax(72px, 1fr)); }
-  .seat .roles button { background: var(--panel-2); border: 1px solid var(--border); color: var(--text); border-radius: var(--radius);
-    min-height: 36px; font: inherit; font-size: 13px; cursor: pointer; }
-  .seat .roles button[aria-pressed="true"] { border-color: var(--text); font-weight: 700; }
-  .seat .new-player { grid-column: 2; }
+    background: var(--panel-2); border: 1px solid var(--border); border-radius: 6px; color: var(--text);
+    padding: 3px 6px; font: inherit; height: 30px; min-width: 0; }
+  .host-form .line { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; }
+  .host-form .line.top { align-items: flex-start; }
+  .host-form .line label { display: inline-flex; align-items: center; gap: 5px; color: var(--muted); }
+  .host-form .grow { flex: 1 1 180px; }
+  .host-form .grow input { flex: 1; width: 100%; }
+  .host-form .lbl { color: var(--muted); min-width: 5.5em; }
+  .host-form .n2 { width: 3.2em; } .host-form .n3 { width: 4.2em; }
+  .host-form .rows { display: grid; gap: 4px; justify-items: start; }
+  .host-form .rows.grow { justify-items: stretch; }
+  .host-form .rows.grow > .btn { justify-self: start; }
+  .host-form .row { display: flex; flex-wrap: wrap; gap: 4px 6px; align-items: center; }
+  .host-form .row input[type=number] { width: 3.2em; }
+  .host-form .row input[data-k=text] { flex: 1 1 220px; }
+  .host-form .row .x { background: none; border: 0; color: var(--muted); cursor: pointer; font-size: 15px; padding: 0 4px; }
+
+  .seg { display: inline-flex; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+  .seg label { cursor: pointer; }
+  .seg input { position: absolute; opacity: 0; pointer-events: none; }
+  .seg span { display: block; padding: 4px 10px; color: var(--text); }
+  .seg input:checked + span { background: var(--accent); color: var(--bg); font-weight: 600; }
+
+  .scroll { overflow-x: auto; }
+  .seats { border-collapse: collapse; width: 100%; min-width: 520px; }
+  .seats th { font-size: 11px; font-weight: 500; color: var(--muted); text-align: center; padding: 0 2px 2px; }
+  .seats th.pl { text-align: left; }
+  .seats td { padding: 1px 2px; text-align: center; }
+  .seats td:first-child { color: var(--muted); width: 1.6em; }
+  .seats td.pl { width: 38%; }
+  .seats td.pl input { width: 100%; }
+  .seats td.pl input.new { border-style: dashed; border-color: var(--mid); }
+  .seats td input[data-k] { width: 4.2em; text-align: center; }
+  .seats td.pl input[data-k] { width: 100%; text-align: left; }
+  .seats td input[data-k=fouls] { width: 2.6em; }
+  .role { width: 2.4em; height: 30px; border-radius: 6px; border: 1px solid var(--border); font: inherit; font-weight: 700; cursor: pointer; }
+  .role[data-role="Мирний"] { background: var(--civilian); color: #fff; border-color: transparent; }
+  .role[data-role="Мафія"] { background: var(--mafia); color: #fff; border-color: transparent; }
+  .role[data-role="Дон"] { background: var(--don); color: #fff; border-color: transparent; }
+  .role[data-role="Шериф"] { background: var(--sheriff); color: #fff; border-color: transparent; }
+
+  .cells { display: inline-flex; gap: 4px; }
+  .cell { display: inline-flex; }
+  .cell input { width: 2.6em !important; text-align: center; border-radius: 6px 0 0 6px !important; }
+  .dot { width: 22px; height: 30px; border: 1px solid var(--border); border-left: 0; border-radius: 0 6px 6px 0; cursor: pointer; padding: 0; }
+  .dot.red { background: var(--civilian); }
+  .dot.black { background: #000; box-shadow: inset 0 0 0 2px var(--muted); }
+  .row .dot { border-left: 1px solid var(--border); border-radius: 6px; }
+
   .invalid, .invalid input { outline: 2px solid var(--city) !important; outline-offset: 1px; }
+  #messages p { margin: 0; }
   .msg-error { color: var(--city); } .msg-warn { color: var(--mid); }
-  .toolbar.sticky { position: sticky; bottom: 0; background: var(--bg); padding: 8px 0; margin: 0; }
+  .line.foot { position: sticky; bottom: 0; background: var(--bg); padding: 6px 0; }
+  .line.foot #messages { flex-basis: 100%; }
+  .line.foot .btn:last-child { margin-left: auto; }
+
+  /* Phones: all eight columns without sideways scrolling. */
+  @media (max-width: 560px) {
+    .host-form { font-size: 13px; }
+    .host-form input:not([type=radio]), .host-form select { padding: 2px 4px; }
+    .seats { min-width: 0; table-layout: fixed; }
+    .seats th { font-size: 9px; padding: 0 0 2px; overflow: hidden; }
+    .seats td { padding: 1px; }
+    .seats th:nth-child(1) { width: 16px; }
+    .seats th:nth-child(3) { width: 30px; } .seats th:nth-child(4) { width: 28px; }
+    .seats th:nth-child(n+5) { width: 40px; }
+    .seats td.pl { width: auto; }
+    .seats td input[data-k], .seats td input[data-k=fouls] { width: 100%; padding: 2px 1px; }
+    .role { width: 28px; padding: 0; }
+    .cell input { width: 2.2em !important; padding: 2px !important; }
+    .dot { width: 16px; }
+    .host-form .lbl { min-width: 0; }
+  }
 </style>
