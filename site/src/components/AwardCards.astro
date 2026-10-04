@@ -12,6 +12,7 @@ const icons: Record<AwardCard['icon'], string> = {
   sheriff: '<path d="M12 3l7 3v5c0 4.6-3 7.8-7 10-4-2.2-7-5.4-7-10V6z"/><path d="M12 9l1 2 2 .3-1.5 1.4.4 2.1L12 13.8l-1.9 1 .4-2.1L9 11.3l2-.3z"/>',
   civilian: '<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/>',
   mafia: '<path d="M3 17c4 2 14 2 18 0"/><path d="M6 16l1.6-7.5C8.2 5.5 15.8 5.5 16.4 8.5L18 16"/><path d="M7 12.5h10"/>',
+  killed: '<circle cx="12" cy="12" r="9"/><path d="M8.5 8.5l7 7M15.5 8.5l-7 7"/>',
   don: '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/>',
 };
 ---
@@ -48,6 +49,7 @@ const icons: Record<AwardCard['icon'], string> = {
   .tone-gold { --c: var(--gold); } .tone-silver { --c: var(--silver); } .tone-bronze { --c: var(--bronze-text); }
   .tone-mvp { --c: var(--award-mvp); } .tone-sheriff { --c: var(--sheriff); } .tone-civilian { --c: var(--award-civilian); }
   .tone-mafia { --c: var(--mafia); } .tone-don { --c: var(--don); }
+  .tone-killed { --c: var(--city); }
   .k-minicap { --k: var(--t-minicap); } .k-maxicap { --k: var(--t-maxicap); } .k-bigcap { --k: var(--t-bigcap); }
   .k-marathon { --k: var(--t-marathon); } .k-tournament { --k: var(--t-tournament); }
 

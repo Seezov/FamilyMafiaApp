@@ -84,6 +84,10 @@ PlayerAccomplishments computeAccomplishments(
       acc.bestMafia++;
       at('mafia', s);
     }
+    if (stats.mostKilledPlayerId == player.id) {
+      acc.mostKilled++;
+      at('killed', s);
+    }
   }
 
   for (final t in tournaments) {

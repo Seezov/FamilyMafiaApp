@@ -126,13 +126,13 @@ void main() {
     expect(rows, isNotEmpty);
     for (final p in x.players) {
       final acc = c.read(playerAccomplishmentsProvider(p));
-      final counts = [acc.mvp, acc.bestSheriff, acc.bestCivilian, acc.bestMafia, acc.bestDon];
+      final counts = [acc.mvp, acc.bestSheriff, acc.bestCivilian, acc.bestMafia, acc.bestDon, acc.mostKilled];
       final row = rows.where((r) => r[0]['t'] == p.displayName).firstOrNull;
       if (counts.every((n) => n == 0)) {
         expect(row, isNull, reason: p.displayName);
       } else {
-        expect([for (var i = 1; i <= 5; i++) row![i]['s']], counts, reason: p.displayName);
-        expect(row![6]['t'], '${counts.reduce((a, b) => a + b)}');
+        expect([for (var i = 1; i <= 6; i++) row![i]['s']], counts, reason: p.displayName);
+        expect(row![7]['t'], '${counts.reduce((a, b) => a + b)}');
       }
     }
   });

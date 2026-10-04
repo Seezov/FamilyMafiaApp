@@ -10,14 +10,14 @@ import 'package:flutter_test/flutter_test.dart';
 SeasonConfig _c(int id) => SeasonConfig(id: id, title: 'S$id', gameLimit: 40, smallLeagueMinGames: 15,
     gamesMultiplier: 0, source: const BundledSource(jsonFile: 'x'));
 
-SeasonStats _s(List<RatingPlayerStats> ranked) => SeasonStats(
+SeasonStats _s(List<RatingPlayerStats> ranked, {List<int> mostKilled = const []}) => SeasonStats(
       playerStats: ranked,
       mvpRanking: const [],
       bestSheriffRanking: const [],
       bestDonRanking: const [],
       bestCivilianRanking: const [],
       bestMafiaRanking: const [],
-      mostKilledRanking: const [],
+      mostKilledRanking: mostKilled,
     );
 
 void main() {
@@ -45,6 +45,23 @@ void main() {
     expect((acc.firsts, acc.seconds, acc.thirds), (0, 1, 0));
     expect((acc.smallFirsts, acc.smallSeconds, acc.smallThirds), (0, 1, 0));
     expect(acc.where, {'main:1': ['S1'], 'small:1': ['S2']});
+  });
+
+  test('counts seasons as most killed, outside the nomination total', () {
+    final acc = computeAccomplishments(
+      me,
+      {
+        1: _s([r(me, 45)], mostKilled: [me.id, a.id]),
+        2: _s([r(me, 45)], mostKilled: [a.id, me.id]), // runner-up: no award
+        3: _s([r(me, 45)], mostKilled: [me.id]),
+      },
+      [_c(1), _c(2), _c(3)],
+      const [],
+      resolver,
+    );
+    expect(acc.mostKilled, 2);
+    expect(acc.where['killed'], ['S1', 'S3']);
+    expect(acc.sumOfNominations(), 3); // the three 1st places only
   });
 
   test('tournament podiums resolve nicknames and group by type', () {

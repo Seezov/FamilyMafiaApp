@@ -15,12 +15,16 @@ class PlayerAccomplishments {
   int bestCivilian;
   int bestMafia;
 
+  /// Seasons as the main league's most first-night-killed player. Shown on the
+  /// site only, so not part of [sumOfNominations].
+  int mostKilled;
+
   /// Prize places per tournament type: `[1st, 2nd, 3rd]` counts.
   final Map<TournamentType, List<int>> tournamentPlaces;
 
   /// Where each accomplishment was earned, oldest first: `S12` for a season,
   /// `Мінікап 16.12.2023 · S20` for a tournament. Keys: `main:0`–`main:2`,
-  /// `small:0`–`small:2`, `mvp`, `sheriff`, `don`, `civilian`, `mafia`,
+  /// `small:0`–`small:2`, `mvp`, `sheriff`, `don`, `civilian`, `mafia`, `killed`,
   /// `<tournament type>:0`–`:2`.
   final Map<String, List<String>> where = {};
 
@@ -37,6 +41,7 @@ class PlayerAccomplishments {
     this.bestDon = 0,
     this.bestCivilian = 0,
     this.bestMafia = 0,
+    this.mostKilled = 0,
     Map<TournamentType, List<int>>? tournamentPlaces,
   }) : tournamentPlaces = tournamentPlaces ?? {};
 

@@ -39,7 +39,7 @@ export interface PlayerData extends PlayerSummary {
   accomplishments: {
     total: number; main: number[]; small: number[];
     groups: { title: string; cards: AwardCard[] }[];
-    awards: Record<'mvp' | 'sheriff' | 'don' | 'civilian' | 'mafia', number>;
+    awards: Record<'mvp' | 'sheriff' | 'don' | 'civilian' | 'mafia' | 'killed', number>;
     tournaments: { type: string; label: string; podiums: number; places: number[] }[];
   };
   timeline: { seasonId: number; title: string; games: number; league: 'main' | 'small' | 'below' | 'none' }[];
@@ -72,7 +72,7 @@ export interface TournamentsData {
 }
 
 export interface AwardCard {
-  label: string; icon: 'trophy' | 'star' | 'sheriff' | 'civilian' | 'mafia' | 'don' | 'medal';
+  label: string; icon: 'trophy' | 'star' | 'sheriff' | 'civilian' | 'mafia' | 'don' | 'killed' | 'medal';
   tone: string; kind?: string; kindType?: string; count: number; where: string[];
 }
 

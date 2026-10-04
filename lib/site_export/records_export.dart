@@ -218,6 +218,7 @@ Map<String, Object?> recordsJson(ExportContext x) {
       acc.bestCivilian,
       acc.bestMafia,
       acc.bestDon,
+      acc.mostKilled,
     ];
     final total = c.fold(0, (a, n) => a + n);
     if (total == 0) continue;
@@ -231,7 +232,7 @@ Map<String, Object?> recordsJson(ExportContext x) {
   add('nominations', 'Season awards · ranked by total, then MVPs', SiteTable(
     showRank: true,
     collapsed: _topN,
-    sortColumn: 6,
+    sortColumn: 7,
     empty: 'No records yet.',
     columns: const [
       SiteColumn('Player', numeric: false),
@@ -240,6 +241,7 @@ Map<String, Object?> recordsJson(ExportContext x) {
       SiteColumn('Civilian', tip: 'Best Civilian'),
       SiteColumn('Mafia', tip: 'Best Mafia'),
       SiteColumn('Don', tip: 'Best Don'),
+      SiteColumn('Most killed', tip: 'Most first-night kills in the main league'),
       SiteColumn('Total'),
     ],
     rows: nominations,

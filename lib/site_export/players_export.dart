@@ -98,7 +98,7 @@ Map<String, Object?> playerJson(ExportContext x, Player p) {
   return {
     ..._summary(x, p),
     'accomplishments': {
-      'total': acc.sumOfNominations(),
+      'total': acc.sumOfNominations() + acc.mostKilled,
       'groups': _awardGroups(acc),
       'main': [acc.firsts, acc.seconds, acc.thirds],
       'small': [acc.smallFirsts, acc.smallSeconds, acc.smallThirds],
@@ -108,6 +108,7 @@ Map<String, Object?> playerJson(ExportContext x, Player p) {
         'don': acc.bestDon,
         'civilian': acc.bestCivilian,
         'mafia': acc.bestMafia,
+        'killed': acc.mostKilled,
       },
       'tournaments': [
         for (final t in TournamentType.values)
@@ -187,6 +188,7 @@ List<Map<String, Object?>> _awardGroups(PlayerAccomplishments acc) {
       card('civilian', 'Best Civilian', 'civilian', 'civilian'),
       card('mafia', 'Best Mafia', 'mafia', 'mafia'),
       card('don', 'Best Don', 'don', 'don'),
+      card('killed', 'Most Killed', 'killed', 'killed'),
     ]),
     ('Tournament prize places', [
       for (final t in TournamentType.values)
