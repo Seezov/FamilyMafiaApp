@@ -1,0 +1,23 @@
+---
+interface Props { title?: string; note?: string; class?: string }
+const { title, note, class: cls } = Astro.props;
+---
+<section class:list={['panel', cls]}>
+  {(title || Astro.slots.has('actions')) && (
+    <header>
+      {title && <h2 class="label">{title}</h2>}
+      {note && <span class="note">{note}</span>}
+      <div class="actions"><slot name="actions" /></div>
+    </header>
+  )}
+  <slot />
+</section>
+
+<style>
+  .panel { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 16px; min-width: 0; }
+  header { display: flex; align-items: baseline; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+  h2 { margin: 0; font-weight: 600; color: var(--text); }
+  .note { color: var(--muted); font-size: 12px; }
+  .actions { margin-left: auto; }
+</style>

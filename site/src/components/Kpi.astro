@@ -1,0 +1,15 @@
+---
+interface Props { label: string; value: string; tone?: 'city' | 'mafia' }
+const { label, value, tone } = Astro.props;
+---
+<div class="kpi">
+  <div class="label">{label}</div>
+  <div class:list={['display', 'value', tone && `t-${tone}`]}>{value}</div>
+</div>
+
+<style>
+  .kpi { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 14px 16px; min-width: 0; }
+  .value { font-size: 28px; line-height: 1.15; margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .t-city { color: var(--city); } .t-mafia { color: var(--mafia); }
+</style>
