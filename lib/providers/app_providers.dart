@@ -10,6 +10,7 @@ import 'package:family_mafia_app/repositories/rating_repository.dart';
 import 'package:family_mafia_app/repositories/role_percentiles_repository.dart';
 import 'package:family_mafia_app/repositories/season_repository.dart';
 import 'package:family_mafia_app/services/asset_season_cache_service.dart';
+import 'package:family_mafia_app/services/firestore_service.dart';
 import 'package:family_mafia_app/services/io_season_cache_service.dart';
 import 'package:family_mafia_app/services/season_cache_service.dart';
 import 'package:family_mafia_app/services/season_data_service.dart';
@@ -45,6 +46,10 @@ Future<Map<String, String>> _loadEnvJson() async {
 // ── Singletons ────────────────────────────────────────────────────────────
 
 final dioProvider = Provider<Dio>((ref) => Dio());
+
+/// Null in the site export, which reads the prefetched snapshot instead.
+final firestoreServiceProvider =
+    Provider<FirestoreService?>((ref) => FirestoreService(dio: ref.read(dioProvider)));
 
 final seasonCacheServiceProvider = Provider<SeasonCacheService>(
   (ref) => kIsWeb ? AssetSeasonCacheService(rootBundle) : IoSeasonCacheService(),
@@ -220,6 +225,7 @@ final initialLoadProvider = FutureProvider<void>((ref) async {
       : null;
   final dataService = SeasonDataService(
     sheetsService: sheetsService,
+    firestoreService: ref.read(firestoreServiceProvider),
     cacheService: cacheService,
   );
 
@@ -277,7 +283,7 @@ final backgroundLoadProvider = FutureProvider<void>((ref) async {
 
   // Load bundled seasons in parallel, remote sequentially
   final bundled = remainingConfigs.where((c) => c.source is BundledSource).toList();
-  final remote = remainingConfigs.where((c) => c.source is RemoteSource).toList();
+  final remote = remainingConfigs.where((c) => c.source is! BundledSource).toList();
 
   final bundledResults = await Future.wait(
     bundled.map((c) => shared.dataService.loadSeasonJson(c)),
@@ -354,7 +360,7 @@ final selectedTabProvider = StateProvider<int>((ref) => 0);
 
 /// Invalidates cache for a remote season and reloads all data.
 Future<void> refreshSeason(WidgetRef ref, SeasonConfig config) async {
-  if (config.source is RemoteSource) {
+  if (config.source is! BundledSource) {
     final cacheService = ref.read(seasonCacheServiceProvider);
     await cacheService.invalidateSeasonCache(config.id);
   }

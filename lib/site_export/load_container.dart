@@ -12,6 +12,8 @@ Future<ProviderContainer> loadSiteContainer() async {
     envJsonProvider.overrideWith((ref) async => const <String, String>{}),
     seasonCacheServiceProvider
         .overrideWithValue(AssetSeasonCacheService(rootBundle)),
+    // The build reads firestore seasons from the prefetched snapshot too.
+    firestoreServiceProvider.overrideWithValue(null),
   ]);
   await container.read(appDataProvider.future);
   return container;

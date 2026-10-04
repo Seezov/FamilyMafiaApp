@@ -20,16 +20,15 @@ class SeasonConfig {
 
   factory SeasonConfig.fromJson(Map<String, dynamic> json) {
     final sourceType = json['source'] as String;
-    final SeasonSource source;
-    if (sourceType == 'remote') {
-      source = RemoteSource(
-        spreadsheetId: json['spreadsheetId'] as String,
-        sheetName: json['sheetName'] as String,
-        range: json['range'] as String,
-      );
-    } else {
-      source = BundledSource(jsonFile: json['jsonFile'] as String);
-    }
+    final SeasonSource source = switch (sourceType) {
+      'remote' => RemoteSource(
+          spreadsheetId: json['spreadsheetId'] as String,
+          sheetName: json['sheetName'] as String,
+          range: json['range'] as String,
+        ),
+      'firestore' => FirestoreSource(projectId: json['projectId'] as String),
+      _ => BundledSource(jsonFile: json['jsonFile'] as String),
+    };
 
     return SeasonConfig(
       id: json['id'] as int,
@@ -59,6 +58,9 @@ class SeasonConfig {
         map['spreadsheetId'] = spreadsheetId;
         map['sheetName'] = sheetName;
         map['range'] = range;
+      case FirestoreSource(:final projectId):
+        map['source'] = 'firestore';
+        map['projectId'] = projectId;
     }
     return map;
   }
@@ -94,4 +96,11 @@ class RemoteSource extends SeasonSource {
     required this.sheetName,
     required this.range,
   });
+}
+
+/// Games recorded on the site's /host/ page (season 32+), read over the
+/// Firestore REST API.
+class FirestoreSource extends SeasonSource {
+  final String projectId;
+  const FirestoreSource({required this.projectId});
 }
