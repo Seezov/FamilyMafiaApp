@@ -22,7 +22,7 @@ const combos: Record<FilterName, string>[] = filters.reduce<Record<FilterName, s
   (acc, f) => acc.flatMap((c) => options[f].map((o) => ({ ...c, [f]: o.key }))),
   [{ ...data.defaults }],
 );
-// Ungrouped categories first, then each named group behind its label.
+// Each group behind its label, in the order the categories come in.
 const groups = [...new Set(data.categories.map((c) => c.group ?? ''))].map((g) => ({
   title: g, cats: data.categories.filter((c) => (c.group ?? '') === g),
 }));
@@ -102,5 +102,6 @@ const pillHref = (f: FilterName, key: string) => {
   .cats, .filter { margin-bottom: 10px; }
   .cats { align-items: center; }
   .group { white-space: nowrap; margin-left: 10px; padding-left: 16px; border-left: 1px solid var(--border); }
+  .group:first-child { margin-left: 0; padding-left: 0; border-left: 0; }
   .filter .pill { font-size: 12px; padding: 3px 10px; }
 </style>

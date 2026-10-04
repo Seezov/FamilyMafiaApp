@@ -247,13 +247,6 @@ Map<String, Object?> recordsJson(ExportContext x) {
 
   return {
     'categories': const [
-      {'slug': 'mvp', 'label': 'MVP', 'filters': ['period']},
-      {'slug': 'roles', 'label': 'Roles', 'filters': ['role', 'period']},
-      {'slug': 'games', 'label': 'Games', 'filters': ['scope']},
-      {'slug': 'hosts', 'label': 'Hosts', 'filters': ['scope']},
-      {'slug': 'pu', 'label': 'ПУ', 'filters': <String>[]},
-      {'slug': 'penalties', 'label': 'Penalties', 'filters': <String>[]},
-      {'slug': 'streaks', 'label': 'Streaks', 'filters': <String>[]},
       {
         'slug': 'podiums',
         'label': 'Prize places',
@@ -265,6 +258,28 @@ Map<String, Object?> recordsJson(ExportContext x) {
         'label': 'Nominations',
         'filters': <String>[],
         'group': 'Season stats',
+      },
+      {'slug': 'mvp', 'label': 'MVP', 'filters': ['period'], 'group': 'All time'},
+      {
+        'slug': 'roles',
+        'label': 'Roles',
+        'filters': ['role', 'period'],
+        'group': 'All time',
+      },
+      {'slug': 'games', 'label': 'Games', 'filters': ['scope'], 'group': 'All time'},
+      {'slug': 'hosts', 'label': 'Hosts', 'filters': ['scope'], 'group': 'All time'},
+      {'slug': 'pu', 'label': 'ПУ', 'filters': <String>[], 'group': 'All time'},
+      {
+        'slug': 'penalties',
+        'label': 'Penalties',
+        'filters': <String>[],
+        'group': 'All time',
+      },
+      {
+        'slug': 'streaks',
+        'label': 'Streaks',
+        'filters': <String>[],
+        'group': 'All time',
       },
     ],
     'roles': [
