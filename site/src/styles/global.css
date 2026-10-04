@@ -13,6 +13,7 @@
   --t-marathon: #9AA2EC; --t-tournament: #B3ADB2;
   --tint: rgba(255, 255, 255, .05); --tint-weak: rgba(255, 255, 255, .025);
   --header-bg: rgba(10, 10, 10, .92); --shadow: rgba(0, 0, 0, .5);
+  --logo-tile: #FFFFFF; --logo-ink: #0A0A0A; --logo-cut: #FFFFFF;
   --radius: 8px; --gutter: 24px; --max: 1280px;
   --font-display: 'Unbounded', system-ui, sans-serif;
   --font-body: 'Inter', system-ui, sans-serif;
@@ -33,6 +34,7 @@
   --t-marathon: #5560C8; --t-tournament: #7E777D;
   --tint: rgba(0, 0, 0, .05); --tint-weak: rgba(0, 0, 0, .025);
   --header-bg: rgba(244, 244, 244, .92); --shadow: rgba(0, 0, 0, .15);
+  --logo-tile: transparent; --logo-ink: #0A0A0A; --logo-cut: var(--bg);
  } }
 :root[data-theme='light'] { 
   color-scheme: light;
@@ -47,6 +49,7 @@
   --t-marathon: #5560C8; --t-tournament: #7E777D;
   --tint: rgba(0, 0, 0, .05); --tint-weak: rgba(0, 0, 0, .025);
   --header-bg: rgba(244, 244, 244, .92); --shadow: rgba(0, 0, 0, .15);
+  --logo-tile: transparent; --logo-ink: #0A0A0A; --logo-cut: var(--bg);
  }
 @media (max-width: 899px) { :root { --gutter: 16px; } }
 

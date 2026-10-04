@@ -10,7 +10,7 @@ const svg = `
   <rect width="1200" height="630" fill="#0A0A0A"/>
   ${logo}
   <text x="440" y="270" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="88" fill="#F2F2F2">FAMILY</text>
-  <text x="440" y="368" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="88" fill="#F2F2F2">MAFIA <tspan fill="#8C8C8C">CLUB</tspan></text>
+  <text x="440" y="368" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="88" fill="#F2F2F2">MAFIA CLUB</text>
   <text x="444" y="430" font-family="Arial, sans-serif" font-size="32" fill="#8C8C8C">Statistics · seasons · players · records</text>
 </svg>`;
 const png = new Resvg(svg, { font: { loadSystemFonts: true } }).render().asPng();
