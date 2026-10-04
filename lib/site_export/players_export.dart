@@ -45,7 +45,6 @@ Map<String, Object?> playersJson(ExportContext x) {
         SiteColumn('Games'),
         SiteColumn('WR'),
         SiteColumn('Seasons'),
-        SiteColumn('Rating', tip: 'Rating in the latest season played', phone: false),
       ],
       rows: [
         for (final s in summaries)
@@ -55,10 +54,6 @@ Map<String, Object?> playersJson(ExportContext x) {
             SiteCell(pct0(s['winRate']! as double),
                 s: s['winRate'] as double, tone: 'wr'),
             SiteCell('${s['seasons']}', s: s['seasons'] as int),
-            switch (s['latestRating']) {
-              final double r => SiteCell(rounded(r, 2), s: r),
-              _ => const SiteCell('—'),
-            },
           ]
       ],
     ).toJson(),
