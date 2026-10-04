@@ -122,7 +122,7 @@ const colCount = columns.length + (showRank ? 1 : 0);
   dt { color: var(--muted); } dd { margin: 0; }
   @media (max-width: 899px) {
     th, td { height: 40px; }
-    .ph { display: none; }
+    .ph, tr.groups { display: none; }
     tr.tappable { cursor: pointer; }
     tbody.expanded tr.detail { display: table-row; }
     tr.detail td { white-space: normal; height: auto; }

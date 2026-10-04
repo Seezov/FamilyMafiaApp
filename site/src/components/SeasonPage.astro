@@ -53,21 +53,23 @@ const seasons = [...index.seasons].reverse();
   <div class="grid">
     <Panel title="Player ratings" note={small
       ? `${season.smallLeagueMinGames}–${season.gameLimit - 1} games`
-      : `${season.gameLimit}+ games`} class="span-8">
+      : `${season.gameLimit}+ games`} class="span-12">
       <DataTable table={league.ratings} />
     </Panel>
-    <div class="span-4 side">
-      {league.awards && (
-        <Panel title="Awards">
+    {league.awards && (
+      <Panel title="Awards" class="span-12">
+        <div class="lists">
           {league.awards.map((a) => <RankedList title={a.label} winner={a.winner} winnerLink={a.winnerLink} table={a.table} />)}
-        </Panel>
-      )}
-      {league.stats.length > 0 && (
-        <Panel title="Season stats">
+        </div>
+      </Panel>
+    )}
+    {league.stats.length > 0 && (
+      <Panel title="Season stats" class="span-12">
+        <div class="lists">
           {league.stats.map((st) => <RankedList title={st.label} winner={st.winner} table={st.table} />)}
-        </Panel>
-      )}
-    </div>
+        </div>
+      </Panel>
+    )}
   </div>
 </Base>
 
@@ -83,5 +85,6 @@ const seasons = [...index.seasons].reverse();
   .picker li a[aria-current='page'] { color: var(--accent); }
   .kpis { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; margin-bottom: 16px; }
   @media (max-width: 899px) { .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-  .side { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+  .lists { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px 28px; }
+  .lists > :global(.rl) { min-width: 0; }
 </style>

@@ -18,17 +18,19 @@ const d = loadIndex();
   </div>
   <div class="grid">
     <Panel title="Win rate by role" class="span-12"><RoleRings roleWR={d.roleWR} /></Panel>
+    <p class="label note span-12">{d.leaderboardNote}</p>
     {d.leaderboards.map((l) => (
-      <Panel title={`Best ${l.label}`} note={l === d.leaderboards[0] ? d.leaderboardNote : undefined} class="span-3">
+      <Panel title={`Best ${l.label}`} class="span-6">
         <DataTable table={l.table} compact />
       </Panel>
     ))}
-    <Panel title="Protocol guesses" class="span-4"><DataTable table={d.protocol} compact /></Panel>
-    <Panel title="Seasons" class="span-8"><DataTable table={d.seasonsTable} compact /></Panel>
+    <Panel title="Seasons" class="span-12"><DataTable table={d.seasonsTable} compact /></Panel>
+    <Panel title="Protocol guesses" class="span-6"><DataTable table={d.protocol} compact /></Panel>
   </div>
 </Base>
 
 <style>
   .kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 16px; }
   @media (max-width: 899px) { .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .note { margin: 8px 0 -4px; }
 </style>
