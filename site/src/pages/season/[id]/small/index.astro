@@ -1,0 +1,10 @@
+---
+import SeasonPage from '../../../../components/SeasonPage.astro';
+import { loadIndex } from '../../../../lib/data';
+
+export function getStaticPaths() {
+  return loadIndex().seasons.map((s) => ({ params: { id: String(s.id) } }));
+}
+const id = Number(Astro.params.id);
+---
+<SeasonPage id={id} small={true} />

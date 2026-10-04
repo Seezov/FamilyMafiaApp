@@ -1,0 +1,21 @@
+---
+import DataTable from './DataTable.astro';
+import type { SiteTable } from '../lib/types';
+import { playerHref } from '../lib/url';
+
+interface Props { title: string; winner: string; winnerLink?: string; table?: SiteTable }
+const { title, winner, winnerLink, table } = Astro.props;
+---
+<div class="rl">
+  <div class="head">
+    <span class="label">{title}</span>
+    <span class="winner">{winnerLink ? <a href={playerHref(winnerLink)}>{winner}</a> : winner}</span>
+  </div>
+  {table && <DataTable table={{ ...table, collapsed: table.collapsed ?? 5 }} compact />}
+</div>
+
+<style>
+  .rl + .rl { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border); }
+  .head { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; margin-bottom: 6px; }
+  .winner { font-weight: 600; text-align: right; }
+</style>
