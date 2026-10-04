@@ -1,0 +1,65 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null && request.auth.token.email_verified == true; }
+    function email() { return request.auth.token.email; }
+    function isHost() { return signedIn() && exists(/databases/$(database)/documents/hosts/$(email())); }
+    function isAdmin() { return isHost() && get(/databases/$(database)/documents/hosts/$(email())).data.admin == true; }
+
+    function validSeat(s) {
+      return s.player is string && s.player.size() > 0
+        && s.role in ['Мирний', 'Мафія', 'Дон', 'Шериф'];
+    }
+
+    function validGame(d) {
+      return d.keys().hasOnly(['season', 'date', 'table', 'gameNumber', 'host', 'seats', 'firstKilled',
+          'supportFive', 'protocol', 'result', 'comments',
+          'createdBy', 'createdByEmail', 'createdAt', 'updatedBy', 'updatedAt'])
+        && d.season is int
+        && d.date is string && d.date.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
+        && d.table in [1, 2]
+        && d.gameNumber is int && d.gameNumber >= 1
+        && d.host is string && d.host.size() > 0
+        && d.seats is list && d.seats.size() == 10
+        && validSeat(d.seats[0]) && validSeat(d.seats[1]) && validSeat(d.seats[2]) && validSeat(d.seats[3])
+        && validSeat(d.seats[4]) && validSeat(d.seats[5]) && validSeat(d.seats[6]) && validSeat(d.seats[7])
+        && validSeat(d.seats[8]) && validSeat(d.seats[9])
+        && d.firstKilled is int && d.firstKilled >= 0 && d.firstKilled <= 10
+        && d.supportFive is list && d.supportFive.size() <= 5
+        && d.protocol is list && d.protocol.size() <= 9
+        && d.result in ['city', 'mafia', 'unrated']
+        && d.comments is list
+        && d.updatedBy == request.auth.uid
+        && d.updatedAt == request.time;
+    }
+
+    match /games/{id} {
+      allow read: if true;
+      // Auto ids only: the id is rendered into the /host/ page.
+      allow create: if isHost() && id.matches('^[A-Za-z0-9]{20}$') && validGame(request.resource.data)
+        && request.resource.data.createdBy == request.auth.uid
+        && request.resource.data.createdByEmail == email()
+        && request.resource.data.createdAt == request.time;
+      allow update: if isHost()
+        && (resource.data.createdBy == request.auth.uid || isAdmin())
+        && validGame(request.resource.data)
+        && request.resource.data.createdBy == resource.data.createdBy
+        && request.resource.data.createdByEmail == resource.data.createdByEmail
+        && request.resource.data.createdAt == resource.data.createdAt;
+      allow delete: if isAdmin();
+    }
+
+    match /hosts/{hostEmail} {
+      allow read: if signedIn() && hostEmail == email();
+      allow write: if false;
+    }
+
+    match /meta/state {
+      allow read: if true;
+      allow write: if isHost()
+        && request.resource.data.keys().hasOnly(['updatedAt'])
+        && request.resource.data.updatedAt == request.time;
+    }
+  }
+}

@@ -7,7 +7,7 @@ import { loadIndex } from '../lib/data';
 interface Props {
   title: string;
   description?: string;
-  active?: 'season' | 'players' | 'overview' | 'records' | 'tournaments' | 'debug';
+  active?: 'season' | 'players' | 'overview' | 'records' | 'tournaments' | 'debug' | 'host';
 }
 const { title, description = 'Family Mafia Club statistics: seasons, players, records, tournaments.', active } = Astro.props;
 const { latestSeasonId } = loadIndex();
@@ -18,6 +18,7 @@ const nav = [
   { key: 'records', label: 'Records', url: href('records/mvp/') },
   { key: 'tournaments', label: 'Tournaments', url: href('tournaments/') },
   { key: 'debug', label: 'Debug', url: href('debug/') },
+  { key: 'host', label: 'Провести гру', url: href('host/') },
 ];
 const site = 'Family Mafia Club';
 // Inline so the monogram follows the theme (--logo-* in global.css).

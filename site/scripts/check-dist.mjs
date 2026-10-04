@@ -6,6 +6,10 @@ const dist = path.resolve('dist');
 const dataDir = process.env.SITE_DATA_DIR ?? path.resolve('data');
 const base = '/FamilyMafiaApp/';
 const errors = [];
+// The Firebase web key is public by design (firestore.rules guard the data);
+// it is the only key allowed in the build.
+const fbConfig = fs.readFileSync(path.resolve('src/lib/hosting/firebase-config.ts'), 'utf8');
+const allowedKey = fbConfig.match(/apiKey:\s*'([^']+)'/)?.[1];
 
 const walk = (dir) =>
   fs.readdirSync(dir, { withFileTypes: true }).flatMap((e) =>
@@ -14,7 +18,8 @@ const files = walk(dist);
 
 for (const file of files) {
   const text = fs.readFileSync(file, 'latin1');
-  if (text.includes('AIza')) errors.push(`API key pattern in ${path.relative(dist, file)}`);
+  const keys = text.match(/AIza[0-9A-Za-z_-]{35}/g) ?? [];
+  if (keys.some((k) => k !== allowedKey)) errors.push(`API key pattern in ${path.relative(dist, file)}`);
   if (!file.endsWith('.html')) continue;
   for (const [, url] of text.matchAll(/(?:href|src)="([^"]+)"/g)) {
     if (!url.startsWith(base)) continue;

@@ -29,6 +29,7 @@ class Game with _$Game {
     List<int>? supportFive, // up to 5 signed ints: abs=slot, positive=red, negative=black
     String? host, // who hosted (ведучий); null for seasons 0-1 or when blank
     DateTime? date, // game day (UTC midnight); null when unknown
+    List<int>? fouls, // per slot 0..4; null for sheet seasons (fouls are not parsed there)
   }) = _Game;
 
   int getPlayerSlot(String player) => players.indexOf(player);

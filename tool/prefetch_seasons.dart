@@ -1,4 +1,4 @@
-// Snapshots the remote config and every remote (Google Sheets) season into
+// Snapshots the remote config and every remote (Google Sheets) and firestore season into
 // assets/prefetched/ so the web build can show them without an API key.
 //
 // Usage (CI):  SHEETS_API_KEY=... REMOTE_CONFIG_URL=... dart run tool/prefetch_seasons.dart
@@ -8,6 +8,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:family_mafia_app/models/season_config.dart';
+import 'package:family_mafia_app/services/firestore_service.dart';
 import 'package:family_mafia_app/services/prefetch_paths.dart';
 import 'package:family_mafia_app/services/sheets_service.dart';
 
@@ -47,7 +48,7 @@ Future<void> main() async {
 /// Downloads the remote config and every remote season, then writes them to
 /// [outDir]. Everything is fetched before anything is written, so a failure
 /// throws and leaves [outDir] untouched: CI never deploys a partial snapshot.
-/// Returns the ids of the remote seasons written.
+/// Returns the ids of the remote and firestore seasons written.
 Future<List<int>> prefetchSeasons({
   required Dio dio,
   required String apiKey,
@@ -64,10 +65,16 @@ Future<List<int>> prefetchSeasons({
       .map(SeasonConfig.fromJson);
 
   final sheets = SheetsService(dio: dio, apiKey: apiKey);
+  final firestore = FirestoreService(dio: dio);
   final fetched = <int, String>{};
   for (final season in seasons) {
-    if (season.source case final RemoteSource remote) {
-      fetched[season.id] = await sheets.fetchSeasonData(remote);
+    switch (season.source) {
+      case final RemoteSource remote:
+        fetched[season.id] = await sheets.fetchSeasonData(remote);
+      case final FirestoreSource source:
+        fetched[season.id] = await firestore.fetchSeasonGames(source, season.id);
+      case BundledSource():
+        break;
     }
   }
 

@@ -374,4 +374,32 @@ void main() {
       expect(result, 80.925);
     });
   });
+
+  // ── calculateSupportFivePoints (season-30 sheet formula) ─────────────────
+
+  group('calculateSupportFivePoints', () {
+    // Season 30 game 1: 1 Мирний, 5 Мафія, 7 Дон; Опорна 5 = 1, 5, 7 (all "red")
+    const roles = ['Мирний', 'Мирний', 'Мирний', 'Шериф', 'Мафія',
+                   'Мирний', 'Дон', 'Мирний', 'Мафія', 'Мирний'];
+
+    test('sheet game: 1,5,7 all red → -0.15', () {
+      expect(calculateSupportFivePoints([1, 5, 7], roles), closeTo(-0.15, 1e-9));
+    });
+    test('empty → -0.1', () {
+      expect(calculateSupportFivePoints([], roles), -0.1);
+    });
+    test('all three blacks found → 0.9', () {
+      expect(calculateSupportFivePoints([-5, -7, -9], roles), closeTo(0.9, 1e-9));
+    });
+    test('one black miss → -0.1', () {
+      expect(calculateSupportFivePoints([-1], roles), closeTo(-0.1, 1e-9));
+    });
+    test('two blacks hit + two reds hit → 0.55 + 0.2 = 0.75', () {
+      expect(calculateSupportFivePoints([-5, -9, 1, 2], roles), closeTo(0.75, 1e-9));
+    });
+    test('five black guesses, three hit → 0.9 + (mMiss5 - mMiss3) = 0.9 - 2.0', () {
+      expect(calculateSupportFivePoints([-5, -7, -9, -1, -2], roles),
+          closeTo(0.9 + (-2.45 - -0.45), 1e-9));
+    });
+  });
 }

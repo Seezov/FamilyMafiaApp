@@ -8,6 +8,20 @@ List<Game> _getGamesDataSeason(
   return rawData.chunked(chunkSize).map((p) => _buildGame(seasonId, p)).toList();
 }
 
+/// A season's JSON is either sheet rows (a list) or a firestore snapshot (a map).
+List<Game> _parseSeasonGames(int seasonId, String json) {
+  final decoded = jsonDecode(json);
+  if (decoded is Map<String, dynamic>) {
+    return gamesFromFirestoreSnapshot(seasonId, decoded);
+  }
+  final rawData = (decoded as List)
+      .cast<Map<String, dynamic>>()
+      .map(GamesDataSeason.fromJson)
+      .where((d) => _filterRawData(d, seasonId))
+      .toList();
+  return _getGamesDataSeason(seasonId, rawData);
+}
+
 Game _buildGame(int seasonId, List<GamesDataSeason> p) {
   if (seasonId <= kOldFormatMaxSeason) {
     return Game(

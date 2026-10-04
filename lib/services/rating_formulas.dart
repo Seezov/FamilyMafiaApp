@@ -190,3 +190,26 @@ double calculateRatingCoefficient({
 
   return result.roundTo(3);
 }
+
+// ── Опорна 5 (ОП) — port of the season-30 sheet formula ──────────────────
+// supportFive: signed slots, positive = called red, negative = called black.
+// Only the first-killed player (ПУ) gets this value.
+
+const _supportMafiaSuccess = [0.0, 0.25, 0.55, 0.9, 0.9, 0.9];
+const _supportMafiaMiss = [0.0, -0.1, -0.25, -0.45, -1.45, -2.45];
+const _supportCityMiss = [0.0, -0.1, -0.2, -0.35, -0.55, -0.8];
+
+double calculateSupportFivePoints(List<int> supportFive, List<String> roles) {
+  final guesses = supportFive.where((g) => g != 0).toList();
+  if (guesses.isEmpty) return -0.1;
+  bool isBlack(int g) =>
+      Role.findByValue(roles[g.abs() - 1])?.isBlack ?? false;
+  final nMaf = guesses.where((g) => g < 0).length;
+  final kMaf = guesses.where((g) => g < 0 && isBlack(g)).length;
+  final nCit = guesses.where((g) => g > 0).length;
+  final kCit = guesses.where((g) => g > 0 && !isBlack(g)).length;
+  return _supportMafiaSuccess[kMaf] +
+      (_supportMafiaMiss[nMaf] - _supportMafiaMiss[kMaf]) +
+      0.1 * kCit +
+      (_supportCityMiss[nCit] - _supportCityMiss[kCit]);
+}
