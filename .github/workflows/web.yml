@@ -44,21 +44,28 @@ jobs:
 
       - run: flutter test
 
-      - run: flutter build web --release --base-href /FamilyMafiaApp/
+      - name: Export site data
+        run: flutter test tool/export_site_data_test.dart
 
-      - name: Guard - no Google API key in the build
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+
+      # `npm run build` ends with scripts/check-dist.mjs: fails on an `AIza`
+      # key, a broken internal link, or a player without a page.
+      - name: Build site
+        working-directory: site
         run: |
-          if grep -rla 'AIza' build/web; then
-            echo '::error::A Google API key ended up in build/web'
-            exit 1
-          fi
-
-      - name: Guard - base href
-        run: grep -q '<base href="/FamilyMafiaApp/">' build/web/index.html
+          npm ci
+          npm run check
+          npm test
+          npm run build
 
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: build/web
+          path: site/dist
 
   deploy:
     needs: build
