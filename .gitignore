@@ -97,3 +97,9 @@ family_mafia_app.iml
 .superpowers/
 .claude/settings.local.json
 *.stackdump
+
+# Stats site: JSON exported by tool/export_site_data_test.dart, and build output
+site/data/
+site/dist/
+site/node_modules/
+site/.astro/
