@@ -1,0 +1,132 @@
+---
+import Base from '../../layouts/Base.astro';
+import DataTable from '../../components/DataTable.astro';
+import Kpi from '../../components/Kpi.astro';
+import Panel from '../../components/Panel.astro';
+import { loadTournaments } from '../../lib/data';
+import { playerHref, seasonHref } from '../../lib/url';
+
+const d = loadTournaments();
+const plural = (n: number, label: string) => `${n} ${label.toLowerCase()}${n === 1 ? '' : 's'}`;
+const places = ['1st', '2nd', '3rd'];
+---
+<Base
+  title="Tournaments"
+  description={`${d.totals.tournaments} tournaments, ${d.totals.games} games: minicaps, maxicaps, bigcaps, marathons and cups by season.`}
+  active="tournaments"
+>
+  <div class="pagehead"><h1 class="display">Tournaments</h1></div>
+
+  <div class="kpis">
+    <Kpi label="Tournaments" value={String(d.totals.tournaments)} />
+    <Kpi label="Tournament games" value={String(d.totals.games)} />
+    {d.types.map((t) => (
+      <div class={`type t-${t.type}`}>
+        <div class="label">{t.label}s</div>
+        <div class="display value">{t.count}</div>
+        <div class="label">{t.games} games</div>
+      </div>
+    ))}
+  </div>
+
+  <div class="grid">
+    <Panel title="Most prize places" note="Ranked by wins, then 2nd and 3rd places" class="span-6">
+      <DataTable table={d.winners} compact />
+    </Panel>
+    <Panel title="By season" class="span-6">
+      <DataTable table={d.bySeason} compact />
+    </Panel>
+
+    <Panel title="Every tournament" class="span-12">
+      <div class="seasons">
+        {d.seasons.map((s, i) => (
+          <details open={i < 2}>
+            <summary>
+              <a class="sn display" href={seasonHref(s.id)}>S{s.id}</a>
+              <span class="label">{s.events.reduce((a, e) => a + e.games, 0)} games</span>
+              <span class="chips">
+                {d.types.filter((t) => s.events.some((e) => e.type === t.type)).map((t) => (
+                  <span class={`chip t-${t.type}`}>{plural(s.events.filter((e) => e.type === t.type).length, t.label)}</span>
+                ))}
+              </span>
+            </summary>
+            <ol class="events">
+              {s.events.map((e) => (
+                <li class={`ev t-${e.type}`}>
+                  <span class="kind">{e.label}</span>
+                  <span class="name">{e.name}</span>
+                  <span class="meta num">{e.date ?? 'date unknown'} · {e.games} games</span>
+                  <span class="podium">
+                    {e.podium.length === 0 ? (
+                      <span class="label">No results entered</span>
+                    ) : e.podium.map((p, k) => (
+                      <span class={`place p${k + 1}`} title={places[k]}>
+                        <i aria-hidden="true">{k + 1}</i>
+                        {p.link ? <a href={playerHref(p.link)}>{p.t}</a> : p.t}
+                      </span>
+                    ))}
+                  </span>
+                </li>
+              ))}
+            </ol>
+          </details>
+        ))}
+      </div>
+    </Panel>
+
+    <Panel title="How it's counted" class="span-12">
+      <ul class="rules">
+        <li>Tournaments come from each season's Google sheet: its tournament tabs, with their own game list or a row range in the main “Ігри” tab. Game counts are taken from those tabs.</li>
+        <li>Bigcaps are the “Big …” / “Біг …” events: Big Fish, Big Brother, Big Ben, Big Family, Big Spell Mage, Біг Смоук, Біг Тейсті, Біг Сіті Лайф.</li>
+        <li>Tabs copied into another season's sheet are counted once. Templates, summary tabs, “EmptyMarathon” and the FAS 2023 fantasy tab are skipped.</li>
+        <li>The date comes from the games, not the tab name: the “Мінікап10.08.2024” tab was played on 08.10.2024. Seasons 0, 1 and 5 have no dates.</li>
+        <li>Podium names are matched to players by nickname, so “Железный” and “Залізний” count as one player.</li>
+      </ul>
+    </Panel>
+  </div>
+</Base>
+
+<style>
+  .t-minicap { --c: #5CC7B6; } .t-maxicap { --c: #E9A948; } .t-bigcap { --c: #E08795; }
+  .t-marathon { --c: #9AA2EC; } .t-tournament { --c: #B3ADB2; }
+
+  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 16px; }
+  .type { background: var(--panel); border: 1px solid var(--border); border-top: 2px solid var(--c);
+    border-radius: var(--radius); padding: 14px 16px; min-width: 0; }
+  .type .value { font-size: 28px; line-height: 1.15; margin: 4px 0 2px; color: var(--c); }
+
+  .seasons { display: grid; gap: 8px; }
+  details { border: 1px solid var(--border); border-radius: var(--radius); background: var(--panel-2); }
+  summary { cursor: pointer; list-style: none; display: flex; flex-wrap: wrap; align-items: center;
+    gap: 6px 14px; padding: 10px 14px; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: '▸'; color: var(--muted); margin-left: auto; transition: transform .15s; }
+  details[open] summary::after { transform: rotate(90deg); }
+  details[open] summary { border-bottom: 1px solid var(--border); }
+  .sn { font-size: 15px; min-width: 40px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { font-size: 12px; padding: 2px 8px; border-radius: 999px; color: var(--c);
+    background: color-mix(in srgb, var(--c) 14%, transparent); }
+
+  .events { list-style: none; margin: 0; padding: 0; }
+  .ev { display: grid; grid-template-columns: 90px minmax(0, 1.2fr) 190px minmax(0, 2fr); gap: 4px 14px;
+    align-items: baseline; padding: 9px 14px; border-bottom: 1px solid var(--border); }
+  .ev:last-child { border-bottom: 0; }
+  .kind { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--c); font-weight: 600; }
+  .name { font-weight: 500; }
+  .meta { color: var(--muted); font-size: 13px; }
+  .podium { display: flex; flex-wrap: wrap; gap: 4px 14px; }
+  .place { display: inline-flex; align-items: baseline; gap: 6px; white-space: nowrap; }
+  .place i { font-style: normal; font-size: 11px; font-weight: 700; width: 18px; height: 18px; line-height: 18px;
+    text-align: center; border-radius: 50%; color: var(--bg); background: var(--muted); align-self: center; }
+  .p1 i { background: var(--gold); } .p2 i { background: var(--silver); } .p3 i { background: var(--bronze); color: var(--text); }
+  .place a { text-decoration: underline; text-decoration-color: var(--border); text-underline-offset: 3px; }
+
+  .rules { margin: 0; padding-left: 18px; display: grid; gap: 6px; color: var(--muted); max-width: 90ch; }
+
+  @media (max-width: 899px) {
+    .ev { grid-template-columns: minmax(0, 1fr) auto; }
+    .kind { grid-column: 1 / -1; }
+    .podium { grid-column: 1 / -1; }
+  }
+</style>

@@ -57,3 +57,14 @@ export interface RecordsData {
   defaults: Record<FilterName, string>;
   tables: Record<string, { scope: string; table: SiteTable }>;
 }
+
+export interface TournamentsData {
+  totals: { tournaments: number; games: number };
+  types: { type: string; label: string; count: number; games: number }[];
+  winners: SiteTable;
+  bySeason: SiteTable;
+  seasons: {
+    id: number; title: string;
+    events: { type: string; label: string; name: string; games: number; date: string | null; podium: SiteCell[] }[];
+  }[];
+}

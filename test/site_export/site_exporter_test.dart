@@ -14,7 +14,7 @@ void main() {
 
     await writeSiteData(await fixtureContainer(), out);
 
-    for (final f in ['index.json', 'players.json', 'records.json', 'season/17.json', 'season/21.json']) {
+    for (final f in ['index.json', 'players.json', 'records.json', 'tournaments.json', 'season/17.json', 'season/21.json']) {
       expect(File('${out.path}/$f').existsSync(), isTrue, reason: f);
     }
     expect(File('${out.path}/player/stale.json').existsSync(), isFalse);
