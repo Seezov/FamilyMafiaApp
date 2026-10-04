@@ -81,12 +81,12 @@ Map<String, Object?> recordsJson(ExportContext x) {
       final key = allTime ? null : s;
       noHost[key] = (noHost[key] ?? 0) + n;
     }
-    add('hosts/${allTime ? 'alltime' : 'season'}', 'All hosts', _table(const [
-      SiteColumn('Host', numeric: false),
-      SiteColumn('Hosted'),
-      SiteColumn('Avg +'),
-      SiteColumn('Avg −'),
-      SiteColumn('Season'),
+    add('hosts/${allTime ? 'alltime' : 'season'}', 'All hosts', _table([
+      const SiteColumn('Host', numeric: false),
+      const SiteColumn('Hosted'),
+      const SiteColumn('Avg +'),
+      const SiteColumn('Avg −'),
+      if (!allTime) const SiteColumn('Season'),
     ], [
       for (final r in hostRecords(input, allTime: allTime))
         [
@@ -98,7 +98,7 @@ Map<String, Object?> recordsJson(ExportContext x) {
           r.periodGames >= kHostMinGamesForAverage
               ? SiteCell(f2(r.avgMinus), s: -r.avgMinus)
               : const SiteCell('—', s: -99),
-          SiteCell(seasonLabel(r.seasonId), s: r.seasonId ?? -1),
+          if (!allTime) SiteCell(seasonLabel(r.seasonId), s: r.seasonId ?? -1),
         ],
       for (final MapEntry(key: season, value: n) in noHost.entries)
         [
@@ -106,25 +106,25 @@ Map<String, Object?> recordsJson(ExportContext x) {
           SiteCell('$n', s: n),
           const SiteCell('—', s: -99),
           const SiteCell('—', s: -99),
-          SiteCell(seasonLabel(season), s: season ?? -1),
+          if (!allTime) SiteCell(seasonLabel(season), s: season ?? -1),
         ],
     ]));
   }
 
   for (final allTime in [false, true]) {
     add('games/${allTime ? 'alltime' : 'season'}',
-        allTime ? 'All players' : 'Main league only', _table(const [
-      SiteColumn('Player', numeric: false),
-      SiteColumn('Games'),
-      SiteColumn('WR'),
-      SiteColumn('Season'),
+        allTime ? 'All players' : 'Main league only', _table([
+      const SiteColumn('Player', numeric: false),
+      const SiteColumn('Games'),
+      const SiteColumn('WR'),
+      if (!allTime) const SiteColumn('Season'),
     ], [
       for (final r in gamesRecords(input, allTime: allTime))
         [
           x.name(r.player),
           SiteCell('${r.games}', s: r.games),
           SiteCell(pct0(r.winRate), s: r.winRate, tone: 'wr'),
-          SiteCell(seasonLabel(r.seasonId), s: r.seasonId ?? -1),
+          if (!allTime) SiteCell(seasonLabel(r.seasonId), s: r.seasonId ?? -1),
         ]
     ]));
   }
@@ -193,13 +193,13 @@ Map<String, Object?> recordsJson(ExportContext x) {
       for (final r in Role.values) {'key': r.name, 'label': roleLabel(r)}
     ],
     'scopes': const [
-      {'key': 'season', 'label': 'Per season'},
       {'key': 'alltime', 'label': 'All time'},
+      {'key': 'season', 'label': 'Per season'},
     ],
     'periods': [
       for (final p in PointsPeriod.values) {'key': p.name, 'label': p.label}
     ],
-    'defaults': const {'role': 'don', 'scope': 'season', 'period': 'modern'},
+    'defaults': const {'role': 'don', 'scope': 'alltime', 'period': 'modern'},
     'tables': tables,
   };
 }

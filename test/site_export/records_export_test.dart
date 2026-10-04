@@ -71,4 +71,21 @@ void main() {
     expect(all[2]['t'], '—');
     expect(all[3]['t'], '—');
   });
+
+  test('All time is the first and default scope, and its tables have no Season column', () async {
+    final x = ExportContext(await fixtureContainer());
+    final json = jsonDecode(jsonEncode(recordsJson(x))) as Map;
+    expect((json['scopes'] as List).first['key'], 'alltime');
+    expect(json['defaults']['scope'], 'alltime');
+    final tables = json['tables'] as Map;
+    List labels(String key) =>
+        [for (final c in tables[key]['table']['columns'] as List) c['label']];
+    for (final cat in ['hosts', 'games']) {
+      expect(labels('$cat/alltime'), isNot(contains('Season')), reason: cat);
+      expect(labels('$cat/season'), contains('Season'), reason: cat);
+      for (final row in tables['$cat/alltime']['table']['rows'] as List) {
+        expect((row as List).length, labels('$cat/alltime').length);
+      }
+    }
+  });
 }
