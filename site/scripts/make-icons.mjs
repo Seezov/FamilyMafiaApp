@@ -23,7 +23,7 @@ function mark(ink, cut, strokeScale) {
 }
 
 // Letter bounds in the vector's viewport ≈ x 103–235, y 108–293.
-const favicon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="49 80 240 240"><rect x="49" y="80" width="240" height="240" rx="52" fill="#000"/>${mark('#fff', '#000', 4)}</svg>\n`;
+const favicon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="49 80 240 240"><rect x="49" y="80" width="240" height="240" rx="52" fill="#fff"/>${mark('#0A0A0A', '#fff', 4)}</svg>\n`;
 const logo = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="94 100 150 202">${mark('#fff', '#000', 1.6)}</svg>\n`;
 fs.writeFileSync(new URL('../public/favicon.svg', import.meta.url), favicon);
 fs.writeFileSync(new URL('../public/logo.svg', import.meta.url), logo);
