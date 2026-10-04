@@ -22,6 +22,10 @@ const combos: Record<FilterName, string>[] = filters.reduce<Record<FilterName, s
   (acc, f) => acc.flatMap((c) => options[f].map((o) => ({ ...c, [f]: o.key }))),
   [{ ...data.defaults }],
 );
+// Ungrouped categories first, then each named group behind its label.
+const groups = [...new Set(data.categories.map((c) => c.group ?? ''))].map((g) => ({
+  title: g, cats: data.categories.filter((c) => (c.group ?? '') === g),
+}));
 const keyOf = (c: Record<FilterName, string>) => [cat.slug, ...filters.map((f) => c[f])].join('/');
 const isDefault = (c: Record<FilterName, string>) => filters.every((f) => c[f] === data.defaults[f]);
 const pillHref = (f: FilterName, key: string) => {
@@ -32,8 +36,13 @@ const pillHref = (f: FilterName, key: string) => {
 <Base title={`${cat.label} records`} description={`Family Mafia Club all-time ${cat.label} records.`} active="records">
   <div class="pagehead"><h1 class="display">Records</h1></div>
   <nav class="pills cats" aria-label="Category">
-    {data.categories.map((c) => (
-      <a class="pill" href={href(`records/${c.slug}/`)} aria-current={c.slug === cat.slug ? 'true' : undefined}>{c.label}</a>
+    {groups.map((g) => (
+      <>
+        {g.title && <span class="group label">{g.title}</span>}
+        {g.cats.map((c) => (
+          <a class="pill" href={href(`records/${c.slug}/`)} aria-current={c.slug === cat.slug ? 'true' : undefined}>{c.label}</a>
+        ))}
+      </>
     ))}
   </nav>
   {filters.map((f) => (
@@ -91,5 +100,7 @@ const pillHref = (f: FilterName, key: string) => {
 
 <style>
   .cats, .filter { margin-bottom: 10px; }
+  .cats { align-items: center; }
+  .group { white-space: nowrap; margin-left: 10px; padding-left: 16px; border-left: 1px solid var(--border); }
   .filter .pill { font-size: 12px; padding: 3px 10px; }
 </style>

@@ -49,7 +49,7 @@ export interface PlayerData extends PlayerSummary {
 }
 
 export type FilterName = 'role' | 'scope' | 'period' | 'league';
-export interface RecordCategory { slug: string; label: string; filters: FilterName[] }
+export interface RecordCategory { slug: string; label: string; filters: FilterName[]; group?: string }
 export interface RecordsData {
   categories: RecordCategory[];
   roles: { key: string; label: string }[];

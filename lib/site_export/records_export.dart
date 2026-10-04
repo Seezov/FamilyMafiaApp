@@ -208,6 +208,43 @@ Map<String, Object?> recordsJson(ExportContext x) {
     ], rows));
   }
 
+  // Season awards, as on the player profiles.
+  final nominations = <List<SiteCell>>[];
+  for (final p in x.players) {
+    final acc = x.read(playerAccomplishmentsProvider(p));
+    final c = [
+      acc.mvp,
+      acc.bestSheriff,
+      acc.bestCivilian,
+      acc.bestMafia,
+      acc.bestDon,
+    ];
+    final total = c.fold(0, (a, n) => a + n);
+    if (total == 0) continue;
+    nominations.add([
+      x.name(p),
+      for (final n in c) SiteCell('$n', s: n),
+      // Ties on the total are broken by MVPs.
+      SiteCell('$total', s: total * 100 + acc.mvp),
+    ]);
+  }
+  add('nominations', 'Season awards · ranked by total, then MVPs', SiteTable(
+    showRank: true,
+    collapsed: _topN,
+    sortColumn: 6,
+    empty: 'No records yet.',
+    columns: const [
+      SiteColumn('Player', numeric: false),
+      SiteColumn('MVP'),
+      SiteColumn('Sheriff', tip: 'Best Sheriff'),
+      SiteColumn('Civilian', tip: 'Best Civilian'),
+      SiteColumn('Mafia', tip: 'Best Mafia'),
+      SiteColumn('Don', tip: 'Best Don'),
+      SiteColumn('Total'),
+    ],
+    rows: nominations,
+  ));
+
   return {
     'categories': const [
       {'slug': 'mvp', 'label': 'MVP', 'filters': ['period']},
@@ -217,7 +254,18 @@ Map<String, Object?> recordsJson(ExportContext x) {
       {'slug': 'pu', 'label': 'ПУ', 'filters': <String>[]},
       {'slug': 'penalties', 'label': 'Penalties', 'filters': <String>[]},
       {'slug': 'streaks', 'label': 'Streaks', 'filters': <String>[]},
-      {'slug': 'podiums', 'label': 'Prize places', 'filters': ['league']},
+      {
+        'slug': 'podiums',
+        'label': 'Prize places',
+        'filters': ['league'],
+        'group': 'Season stats',
+      },
+      {
+        'slug': 'nominations',
+        'label': 'Nominations',
+        'filters': <String>[],
+        'group': 'Season stats',
+      },
     ],
     'roles': [
       for (final r in Role.values) {'key': r.name, 'label': roleLabel(r)}
