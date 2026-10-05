@@ -96,6 +96,23 @@ void main() {
     test('S28: a number cell turned into a date → no seats', () {
       expect(find(sheetGameExtras(28, season(28)), 'голосували в чорних без балансу')!.seats, isEmpty);
     });
+    test('no comment is a bare ISO date, in any season 17+', () {
+      final iso = RegExp(r'^\d{4}-\d\d-\d\d');
+      for (var id = 17; id <= 31; id++) {
+        if (!File('assets/raw/season$id.json').existsSync() && !hasPrefetched(id)) continue;
+        expect(allComments(sheetGameExtras(id, season(id))).where((c) => iso.hasMatch(c.text)), isEmpty,
+            reason: 'S$id');
+      }
+    });
+    test('a group word in the seat column joins its text', () {
+      GamesDataSeason r(Map<String, dynamic> m) => GamesDataSeason.fromJson(m);
+      final e = sheetGameExtras(27, [
+        r({'A': 'Дата', 'B': '2025-05-01'}),
+        r({'A': 'Коментарі до дод балів'}),
+        r({'B': 'Мирнячки', 'C': 'Душили чорних'}),
+      ]);
+      expect(e.single.comments, const [GameComment(text: 'Мирнячки: Душили чорних')]);
+    });
     test('S29: one cell with prefixed lines, and text in B', () {
       final e = sheetGameExtras(29, season(29));
       expect(find(e, '0.1 ОП')!.seats, [5]);

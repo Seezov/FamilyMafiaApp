@@ -23,9 +23,12 @@ final _prefix = RegExp(r'^(\d{1,2}(?:\s*,\s*\d{1,2})*)\s*(?:[-–—:.)]\s*|\s+)
 final _tableLabel = RegExp(r'(?:^|\s)(?:([12])\s*(?:-?ий)?\s*стіл|стіл\s*([12]))(?:$|[\s,])', caseSensitive: false);
 final _onlyTable = RegExp(r'^\s*(?:[12]\s*(?:-?ий)?\s*стіл|стіл\s*[12])\s*$', caseSensitive: false);
 
+final _isoDate = RegExp(r'^\d{4}-\d\d-\d\d(?:T|$)');
+
 bool _isText(String s) {
   final t = s.trim();
-  return t.isNotEmpty && _letter.hasMatch(t) && !_kLabels.contains(t) && !t.startsWith('Голосування');
+  // A seat number the sheet turned into a date is no text.
+  return t.isNotEmpty && !_isoDate.hasMatch(t) && _letter.hasMatch(t) && !_kLabels.contains(t) && !t.startsWith('Голосування');
 }
 
 /// Seats named by a «Номер» cell: `6`, `10.0`, `6.9`, `3,6`, `3, 6`. Null when
@@ -73,6 +76,12 @@ List<GameComment> _rowComments(GamesDataSeason r) {
   final out = <GameComment>[];
   for (var i = 1; i < c.length; i++) {
     if (!_isText(c[i])) continue;
+    // A short group word in the seat column («Мирнячки») with its text beside it.
+    if (i + 1 < c.length && _isText(c[i + 1]) && c[i].trim().length <= 25 && !c[i].contains('\n')) {
+      out.add(GameComment(text: '${c[i].trim()}: ${c[i + 1].trim()}'));
+      i++;
+      continue;
+    }
     final left = i > 1 ? c[i - 1].trim() : '';
     // A label on the left («Додаткові бали:», «Номер») is no seat number either.
     if (left.isEmpty || _isText(left) || _kLabels.contains(left)) {
