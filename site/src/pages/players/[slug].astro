@@ -7,21 +7,26 @@ import Kpi from '../../components/Kpi.astro';
 import Panel from '../../components/Panel.astro';
 import { loadPlayer, loadPlayers } from '../../lib/data';
 import { pct } from '../../lib/format';
+import { href } from '../../lib/url';
+import { profileFor } from '../../lib/profiles/site';
 
 export function getStaticPaths() {
   return loadPlayers().players.map((p) => ({ params: { slug: p.slug } }));
 }
 const p = loadPlayer(Astro.params.slug!);
+const prof = profileFor(p.slug);
+const shown = prof?.nick ?? p.name;
 const a = p.accomplishments;
 const roleColor = { civilian: 'var(--civilian)', sheriff: 'var(--sheriff)', mafia: 'var(--mafia)', don: 'var(--don)' } as const;
 const bm = p.bestMoves;
 const fk = p.firstKill;
 ---
-<Base title={p.name} description={`${p.name}: ${pct(p.winRate)} WR · ${p.games} games · ${p.seasons} seasons`} active="players">
+<Base title={shown} description={`${shown}: ${pct(p.winRate)} WR · ${p.games} games · ${p.seasons} seasons`} active="players">
   <div class="hero">
-    <div class="avatar display">{p.initials}</div>
+    {prof?.avatar ? <img class="avatar" src={href(prof.avatar)} alt="" width="64" height="64" /> : <div class="avatar display">{p.initials}</div>}
     <div class="who">
-      <h1 class="display">{p.name}</h1>
+      <h1 class="display">{shown}</h1>
+      {prof?.nick && <div class="label">у таблицях: {p.name}</div>}
       <div class="label">{p.games} games played</div>
     </div>
   </div>
@@ -70,6 +75,7 @@ const fk = p.firstKill;
   .hero { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
   .avatar { width: 64px; height: 64px; border-radius: 12px; display: grid; place-items: center;
     background: var(--panel-2); border: 1px solid var(--border); color: var(--accent); font-size: 22px; flex: none; }
+  img.avatar { object-fit: cover; padding: 0; }
   .who { min-width: 0; }
   .who h1 { overflow-wrap: anywhere; }
   .kpis { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 14px; }

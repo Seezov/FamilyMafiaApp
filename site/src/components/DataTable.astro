@@ -2,7 +2,8 @@
 import type { SiteCell, SiteTable } from '../lib/types';
 import { sortedIndices } from '../lib/sort';
 import { wrTone } from '../lib/format';
-import { playerHref } from '../lib/url';
+import { profileFor } from '../lib/profiles/site';
+import PlayerName from './PlayerName.astro';
 
 interface Props { table: SiteTable; compact?: boolean }
 const { table, compact = false } = Astro.props;
@@ -59,9 +60,10 @@ const colCount = columns.length + (showRank ? 1 : 0);
                 <td
                   class:list={[toneClass(cell), { num: columns[i].numeric, ph: columns[i].phone === false, sorted: i === table.sortColumn }]}
                   data-s={cell.s}
+                  data-alt={cell.link && profileFor(cell.link)?.nick ? cell.t : undefined}
                 >
                   {cell.tone === 'wr' && cell.s !== undefined && <span class="bar" style={`--w:${Math.round(cell.s * 100)}%`} />}
-                  {cell.link ? <a href={playerHref(cell.link)}>{cell.t}</a> : cell.t}
+                  {cell.link ? <PlayerName slug={cell.link} name={cell.t} /> : cell.t}
                 </td>
               ))}
             </tr>

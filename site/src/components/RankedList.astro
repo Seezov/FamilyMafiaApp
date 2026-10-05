@@ -1,7 +1,7 @@
 ---
 import DataTable from './DataTable.astro';
 import type { SiteTable } from '../lib/types';
-import { playerHref } from '../lib/url';
+import PlayerName from './PlayerName.astro';
 
 interface Props { title: string; winner: string; winnerLink?: string; table?: SiteTable }
 const { title, winner, winnerLink, table } = Astro.props;
@@ -9,7 +9,7 @@ const { title, winner, winnerLink, table } = Astro.props;
 <div class="rl">
   <div class="head">
     <span class="label">{title}</span>
-    <span class="winner">{winnerLink ? <a href={playerHref(winnerLink)}>{winner}</a> : winner}</span>
+    <span class="winner">{winnerLink ? <PlayerName slug={winnerLink} name={winner} /> : winner}</span>
   </div>
   {table && <DataTable table={{ ...table, collapsed: table.collapsed ?? 5 }} compact />}
 </div>

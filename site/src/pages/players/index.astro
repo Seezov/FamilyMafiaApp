@@ -26,6 +26,7 @@ const minGames = [0, 10, 50, 100, 500];
 
 <script>
   import { renumber } from '../../components/table';
+  import { matchesFilter } from '../../lib/profiles/core';
 
   const input = document.getElementById('filter') as HTMLInputElement;
   const none = document.getElementById('none')!;
@@ -43,9 +44,8 @@ const minGames = [0, 10, 50, 100, 500];
     let shown = 0;
     root.querySelectorAll<HTMLTableSectionElement>('tbody').forEach((tb) => {
       const cells = [...tb.rows[0].cells].filter((c) => !c.hasAttribute('data-rank'));
-      const name = cells[0]?.textContent?.toLowerCase() ?? '';
       const games = Number(cells[Number(gamesCol)]?.dataset.s ?? 0);
-      const match = (!needle || name.includes(needle)) && games >= min;
+      const match = matchesFilter(needle, cells[0]?.textContent ?? '', cells[0]?.dataset.alt) && games >= min;
       tb.hidden = !match;
       if (match) shown++;
     });

@@ -1,0 +1,15 @@
+---
+// site/src/components/PlayerName.astro — a player link showing the profile nick and avatar.
+import { nameFor, profileFor } from '../lib/profiles/site';
+import { href, playerHref } from '../lib/url';
+
+interface Props { slug: string; name: string }
+const { slug, name } = Astro.props;
+const prof = profileFor(slug);
+---
+<a class="pn" href={playerHref(slug)} title={prof?.nick ? name : undefined}>{prof?.avatar && <img src={href(prof.avatar)} alt="" width="20" height="20" loading="lazy" decoding="async" />}{nameFor(slug, name)}</a>
+
+<style>
+  .pn { display: inline-flex; align-items: center; gap: 6px; }
+  .pn img { width: 20px; height: 20px; border-radius: 50%; object-fit: cover; flex: none; }
+</style>

@@ -4,7 +4,8 @@ import DataTable from '../../components/DataTable.astro';
 import Kpi from '../../components/Kpi.astro';
 import Panel from '../../components/Panel.astro';
 import { loadTournaments } from '../../lib/data';
-import { playerHref, seasonHref } from '../../lib/url';
+import PlayerName from '../../components/PlayerName.astro';
+import { seasonHref } from '../../lib/url';
 
 const d = loadTournaments();
 const plural = (n: number, label: string) => `${n} ${label.toLowerCase()}${n === 1 ? '' : 's'}`;
@@ -62,7 +63,7 @@ const places = ['1st', '2nd', '3rd'];
                     ) : e.podium.map((p, k) => (
                       <span class={`place p${k + 1}`} title={places[k]}>
                         <i aria-hidden="true">{k + 1}</i>
-                        {p.link ? <a href={playerHref(p.link)}>{p.t}</a> : p.t}
+                        {p.link ? <PlayerName slug={p.link} name={p.t} /> : p.t}
                       </span>
                     ))}
                   </span>
