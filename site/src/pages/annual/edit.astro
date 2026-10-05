@@ -1,0 +1,52 @@
+---
+import Base from '../../layouts/Base.astro';
+import { loadAnnual, loadPlayers } from '../../lib/data';
+
+const years = loadAnnual().years.map((y) => y.year);
+const thisYear = new Date().getFullYear();
+const options = [...new Set([thisYear, ...years])].sort((a, b) => b - a);
+const names = loadPlayers().players.map((p) => p.name);
+---
+<Base title="Edit annual events" description="Admins add tournaments, series and marathons to the annual rating." active="annual">
+  <div class="pagehead"><h1 class="display">Annual events</h1><span class="label" id="state">Loading…</span></div>
+
+  <div class="panel access">
+    <span class="label">Editing</span> <span id="who">Read-only</span>
+    <button type="button" id="sign-in" class="btn primary">Sign in with Google</button>
+    <button type="button" id="sign-out" class="btn" hidden>Sign out</button>
+    <button type="button" id="import" class="btn" hidden>Import 2024–2026 from the sheets</button>
+    <p class="hint">Admins (hosts with <code>admin: true</code>) can save. Club seasons are added automatically. The site rebuilds within an hour.</p>
+  </div>
+
+  <div class="toolbar">
+    <label>Year <select id="year">{options.map((y) => <option value={y}>{y}</option>)}</select></label>
+    <button type="button" id="add" class="btn" disabled>Add event</button>
+  </div>
+
+  <p id="msg" class="msg" role="status"></p>
+  <form id="form" class="panel form" hidden></form>
+  <div id="list" class="list"></div>
+
+  <datalist id="players">{names.map((n) => <option value={n} />)}</datalist>
+  <script type="application/json" id="player-names" set:html={JSON.stringify(names).replace(/</g, '\\u003c')} />
+</Base>
+
+<script>
+  import '../../scripts/annual-edit';
+</script>
+
+<style>
+  .access, .toolbar { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; margin-bottom: 12px; }
+  .hint { flex-basis: 100%; margin: 0; color: var(--muted); }
+  .msg:empty { display: none; }
+  .msg.error { color: var(--city); }
+  .list .ev { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: baseline; padding: 8px 0; border-top: 1px solid var(--border); }
+  .list .ev .name { font-weight: 600; }
+  .form { display: grid; gap: 8px; margin-bottom: 16px; }
+  .form .fields { display: flex; flex-wrap: wrap; gap: 8px; }
+  .form .rows { display: grid; gap: 4px; }
+  .form .r { display: grid; grid-template-columns: 1fr 5em 4.5em 2em; gap: 6px; align-items: center; }
+  .form .r.guest input[name='player'] { outline: 2px solid var(--mid); }
+  .form .errors { color: var(--city); margin: 0; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; }
+</style>
