@@ -148,10 +148,8 @@ extension _IntentHandlers on ChatEngine {
     final qualified = config != null && stats.gamesPlayed >= config.gameLimit;
 
     // Find rank
-    final sorted = seasonRatings
-        .where((r) => config == null || r.gamesPlayed >= config.gameLimit)
-        .toList()
-      ..sort(compareByRating);
+    final sorted = sortByRating(seasonRatings
+        .where((r) => config == null || r.gamesPlayed >= config.gameLimit));
     final rank = sorted.indexWhere((r) => r.player.id == player.id) + 1;
 
     final buf = StringBuffer('${player.displayName} — Season $seasonId\n');
@@ -379,10 +377,8 @@ extension _IntentHandlers on ChatEngine {
       if (seasonRatings == null) {
         return (text: 'No data for season $seasonId.', suggestions: ['Help']);
       }
-      final qualified = seasonRatings
-          .where((r) => config == null || r.gamesPlayed >= config.gameLimit)
-          .toList()
-        ..sort(compareByRating);
+      final qualified = sortByRating(seasonRatings
+          .where((r) => config == null || r.gamesPlayed >= config.gameLimit));
 
       final top = qualified.take(n).toList();
       final buf = StringBuffer('Top $n — Season $seasonId\n');

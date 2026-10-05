@@ -24,7 +24,7 @@ List<Game> _ratingGames(int seasonId, String json, PlayerResolver resolver) {
       resolver);
   final normal = <Game>[];
   for (var i = 0; i < games.length; i++) {
-    if (games[i].isNormalGame()) {
+    if (games[i].isNormalGame() || _sheetCountsIrregular(games[i])) {
       normal.add(games[i]);
     } else if (!firestore) {
       throw Exception('Not a normal game #$i: ${games[i].players}');
@@ -34,6 +34,12 @@ List<Game> _ratingGames(int seasonId, String json, PlayerResolver resolver) {
   }
   return normal;
 }
+
+/// Whether [g] is one of the [kSheetCountedIrregularGames].
+bool _sheetCountsIrregular(Game g) =>
+    kSheetCountedIrregularGames[g.seasonId]
+        ?.any((e) => e.$1 == g.date && e.$2 == g.host) ??
+    false;
 
 // Top-level function: partial load (no percentiles)
 _PartialLoadOutput _computePartialData(_LoadInput input) {
@@ -66,7 +72,7 @@ _PartialLoadOutput _computePartialData(_LoadInput input) {
 
     ratingsBySeason[meta.id] = ratings;
 
-    final sorted = [...ratings]..sort(compareByRating);
+    final sorted = sortByRating(ratings);
     statsBySeason[meta.id] =
         _generateSeasonStats(sorted, meta.gameLimit);
   }
@@ -115,7 +121,7 @@ _LoadOutput _computeAllData(_LoadInput input) {
 
     ratingsBySeason[meta.id] = ratings;
 
-    final sorted = [...ratings]..sort(compareByRating);
+    final sorted = sortByRating(ratings);
     statsBySeason[meta.id] =
         _generateSeasonStats(sorted, meta.gameLimit);
   }

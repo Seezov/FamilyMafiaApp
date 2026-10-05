@@ -46,9 +46,9 @@ void main() {
   // ── calculateWinPoints ───────────────────────────────────────────────────
 
   group('calculateWinPoints', () {
-    test('season 0-1: winByRoleSum - loseByRoleSum + penalty + bestMove', () {
+    test('season 0-1: wins - don/sheriff losses + penalty + every G point', () {
       final result = calculateWinPoints(1, 2.0, 1.5, -0.5, 0.0, 0.0, 10, 3);
-      expect(result, 10 - 3 + (-0.5) + 1.5); // 8.0
+      expect(result, 10 - 3 + (-0.5) + 1.5 + 2.0); // 10.0
     });
 
     test('season 2-3: winByRoleSum + additional + bestMove + penalty', () {
@@ -88,10 +88,14 @@ void main() {
     });
 
     test('season 19-20: high first-kill rate uses max factor', () {
-      // r = 25/50 = 0.5, which is > 0.399
-      // result = 0.4 * firstKilledCityLost = 0.4 * 10 = 4.0
-      final result = calculateCiForGame(10, 25, 50, 20);
-      expect(result, closeTo(4.0, 1e-9));
+      // r = 25/50 = 0.5, which is > 0.399 → CI/I = 0.4
+      expect(calculateCiForGame(10, 25, 50, 20), closeTo(0.4, 1e-9));
+    });
+
+    test('season 19-20: СІ is its own sheet formula', () {
+      // r > 0.399: 0.4 * ПУП = 0.4 * 10; otherwise ROUND(r * ПУП; 3)
+      expect(calculateCi(0.4, 10, 25, 50, 20), closeTo(4.0, 1e-9));
+      expect(calculateCi(0.067, 3, 5, 75, 19), closeTo(0.2, 1e-9));
     });
 
     test('season 21+: low first-kill rate uses r * 1.25', () {
@@ -209,9 +213,9 @@ void main() {
     SeasonMeta meta(int id, {double mult = 0.0}) =>
         SeasonMeta(id, 60, mult);
 
-    test('season 0-1: avgWinPoints * 100 + games * multiplier', () {
+    test('season 0-1: ROUND(points / games * 100 + games * multiplier)', () {
       // winPoints=10, games=5, mult=0.5
-      // (10/5).roundTo(2) * 100 + 5 * 0.5 = 2.0*100 + 2.5 = 202.5
+      // ROUND(10/5 * 100 + 5 * 0.5) = ROUND(202.5) = 203
       final result = calculateRatingCoefficient(
         player: 'Test',
         winPoints: 10.0,
@@ -224,10 +228,10 @@ void main() {
         autoAdditionalPoints: 0.0,
         season: meta(1, mult: 0.5),
       );
-      expect(result, closeTo(202.5, 1e-3));
+      expect(result, 203.0);
     });
 
-    test('season 2-3: winPoints/games + games * multiplier', () {
+    test('season 2-3: ROUND(ROUND(winPoints/games; 2) + games * multiplier; 2)', () {
       // 10/5 + 5*0.2 = 2.0 + 1.0 = 3.0
       final result = calculateRatingCoefficient(
         player: 'Test',
@@ -244,7 +248,7 @@ void main() {
       expect(result, closeTo(3.0, 1e-3));
     });
 
-    test('season 4: (winPoints/games + games*mult) * 100', () {
+    test('season 4: ROUND(ROUND(winPoints/games; 2) + games*mult; 3) * 100', () {
       // (10/5 + 5*0.1) * 100 = (2.0 + 0.5) * 100 = 250.0
       final result = calculateRatingCoefficient(
         player: 'Test',
@@ -282,11 +286,10 @@ void main() {
       expect(result, closeTo(180.0, 1e-3));
     });
 
-    test('season 17: includes Iron Man correction', () {
-      // winRate*100 + winPoints/games + ci + bestMove + autoAdd + add + bonus
-      // 0.5*100 + 20/10 + 0.3 + 1.0 + 0.9 + 2.0 + 1 = 50+2+0.3+1+0.9+2+1 = 57.2
+    test('season 17: winRate*100 + avg + ci + bestMove + autoAdd + add', () {
+      // 0.5*100 + 20/10 + 0.3 + 1.0 + 0.9 + 2.0 = 56.2 — no per-player bonus
       final result = calculateRatingCoefficient(
-        player: 'Железный',
+        player: 'Залізний',
         winPoints: 20.0,
         gamesPlayed: 10,
         winRate: 0.5,
@@ -297,7 +300,7 @@ void main() {
         autoAdditionalPoints: 0.9,
         season: meta(17),
       );
-      expect(result, closeTo(57.2, 1e-3));
+      expect(result, closeTo(56.2, 1e-3));
     });
 
     test('season 18-20: deducts games without auto points * 0.3', () {
@@ -359,8 +362,8 @@ void main() {
       expect(result, 80.9218);
     });
 
-    test('season 29 keeps full-precision winRate and 3-decimal rounding', () {
-      // same inputs on season 29: 51.612903... + 29/93 + 29.0 = 80.924731...
+    test('season 29 sheet rounds like season 30: ROUND(WR;2), ROUND(…;4)', () {
+      // same inputs on season 29: 51.61 + 29/93 + 29.0 = 80.921827... → 80.9218
       final result = calculateRatingCoefficient(
         player: 'Seezov',
         winPoints: 29.0,
@@ -373,7 +376,7 @@ void main() {
         autoAdditionalPoints: 0.0,
         season: meta(29),
       );
-      expect(result, 80.925);
+      expect(result, 80.9218);
     });
   });
 
@@ -404,29 +407,50 @@ void main() {
           closeTo(0.9 + (-2.45 - -0.45), 1e-9));
     });
   });
-  // ── compareByRating ──────────────────────────────────────────────────────
+  // ── sortByRating ─────────────────────────────────────────────────────────
 
-  group('compareByRating', () {
-    RatingPlayerStats stats(String name, double rating, double winRate) =>
+  group('sortByRating', () {
+    RatingPlayerStats stats(int season, String name, double rating) =>
         RatingPlayerStats(
-          seasonId: 15,
+          seasonId: season,
           player: Player(id: name.hashCode, displayName: name),
           ratingCoefficient: rating,
-          winRate: winRate,
         );
+    List<String> names(Iterable<RatingPlayerStats> l) =>
+        [for (final p in sortByRating(l)) p.player.displayName];
 
     test('higher rating first', () {
-      final sorted = [stats('a', 77.2, 0.6), stats('b', 81.8, 0.5)]
-        ..sort(compareByRating);
-      expect(sorted.map((p) => p.player.displayName), ['b', 'a']);
+      expect(names([stats(15, 'Floppy', 81.8), stats(15, 'Braun', 83.2)]),
+          ['Braun', 'Floppy']);
     });
 
-    // Season 15: Braun and Хоттабыч both finished on 83.2; the club's sheet
-    // ranks Braun first on the higher win rate (55.17% vs 51.64%).
-    test('equal rating: higher win rate first', () {
-      final sorted = [stats('Хоттабич', 83.2, 0.5164), stats('Braun', 83.2, 0.5517)]
-        ..sort(compareByRating);
-      expect(sorted.map((p) => p.player.displayName), ['Braun', 'Хоттабич']);
+    test('a sheet tie keeps the sheet order (season 15)', () {
+      expect(names([stats(15, 'Хоттабич', 83.2), stats(15, 'Braun', 83.2)]),
+          ['Braun', 'Хоттабич']);
     });
+
+    test('other ties keep input order', () {
+      expect(names([stats(3, 'Крис', 1.44), stats(3, 'Candy', 1.44)]),
+          ['Крис', 'Candy']);
+      expect(names([stats(3, 'Candy', 1.44), stats(3, 'Крис', 1.44)]),
+          ['Candy', 'Крис']);
+    });
+  });
+
+  test('season 16: no rounding inside, ROUND(…;4)*100 outside', () {
+    // Floppy, sheet: 45.1 win points over 65 games, 38 wins → 84.58.
+    final result = calculateRatingCoefficient(
+      player: 'Floppy',
+      winPoints: 45.1,
+      gamesPlayed: 65,
+      winRate: 38 / 65,
+      ci: 0.0,
+      bestMovePoints: 0.0,
+      additionalPoints: 0.0,
+      penaltyPoints: 0.0,
+      autoAdditionalPoints: 0.0,
+      season: SeasonMeta(16, 58, 0.004),
+    );
+    expect(result, closeTo(84.58, 1e-9));
   });
 }

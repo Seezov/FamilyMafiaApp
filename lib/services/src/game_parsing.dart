@@ -22,6 +22,33 @@ List<Game> _parseSeasonGames(int seasonId, String json) {
   return _getGamesDataSeason(seasonId, rawData);
 }
 
+/// A season 17+ player row's name, or blank when the sheet doesn't count the
+/// seat for anyone: its Бал cell is empty, as games are COUNTIFS(Бал > -1)
+/// (season 17: Луна on 05.03.2023; season 27: Мідас), or it is one of the
+/// [kSheetUncountedSeats].
+String _sheetCountedName(int seasonId, DateTime? date, GamesDataSeason row) {
+  if (row.g.trim().isEmpty) return '';
+  final uncounted = kSheetUncountedSeats[seasonId]
+          ?.any((e) => e.$1 == date && e.$2 == row.b) ??
+      false;
+  return uncounted ? '' : row.b;
+}
+
+/// A season 17+ player row's win as the sheet counts it: COUNTIFS(Бал = 1),
+/// whatever the role and result say (season 17, 23.04.2023: two civilians
+/// scored 1 in a mafia win).
+String _sheetWin(GamesDataSeason row) => double.tryParse(row.g) == 1
+    ? GameValues.yes.sheetValues.first
+    : GameValues.no.sheetValues.first;
+
+/// The ПУ seat as the sheet counts it: only when that seat's КХ cell holds a
+/// number, since ПУ is COUNTIFS(КХ > -1) (season 21: Tina; season 22: Braun).
+int _sheetFirstKilled(String puCell, List<GamesDataSeason> playerRows) {
+  final seat = int.tryParse(puCell) ?? 0;
+  if (seat < 1 || seat > playerRows.length) return 0;
+  return double.tryParse(playerRows[seat - 1].i) == null ? 0 : seat;
+}
+
 Game _buildGame(int seasonId, List<GamesDataSeason> p) {
   if (seasonId <= kOldFormatMaxSeason) {
     return Game(
@@ -39,10 +66,17 @@ Game _buildGame(int seasonId, List<GamesDataSeason> p) {
         final row = p.where((r) => r.f == GameValues.yes.sheetValues.first);
         return row.isEmpty ? 0 : (int.tryParse(row.first.a) ?? 0);
       }(),
+      // The sheet's Балы add up column G on every row (SUMIFS): the first
+      // killed's best move, and also bonuses or minuses on other seats.
       bestMovePoints: () {
-        final row = p.where((r) => r.g.isNotEmpty);
+        final row = p.where((r) => r.f == GameValues.yes.sheetValues.first);
         return row.isEmpty ? 0.0 : (double.tryParse(row.first.g) ?? 0.0);
       }(),
+      additionalPoints: p
+          .map((r) => r.f == GameValues.yes.sheetValues.first
+              ? 0.0
+              : double.tryParse(r.g) ?? 0.0)
+          .toList(),
       wonByPlayer: p.map((r) => r.d).toList(),
       penaltyPoints: p
           .map((r) =>
@@ -77,11 +111,22 @@ Game _buildGame(int seasonId, List<GamesDataSeason> p) {
 
   if (seasonId <= kLegacyMaxSeason) {
     final firstKilled = int.tryParse(p[1].c) ?? 0;
+    final host = _parseHost(p[8].c);
+    final date = p[9].b.trim() == 'Дата' ? _parseSheetDate(p[9].c) : null;
+    final cityWon = _getVictoryTeam(p[0].c);
+    // A game with a blank result the sheet still counts: played, lost by all.
+    final unresolved = p[0].c.trim().isEmpty &&
+        (kSheetCountedUnresolvedGames[seasonId]
+                ?.any((e) => e.$1 == date && e.$2 == host && e.$3 == p[0].g) ??
+            false);
     return Game(
       seasonId: seasonId,
       players: _fillBlanks(p.map((r) => r.g).toList()),
       roles: p.map((r) => r.h).toList(),
-      cityWon: _getVictoryTeam(p[0].c),
+      cityWon: unresolved ? false : cityWon,
+      wonByPlayer: unresolved
+          ? List.filled(p.length, GameValues.no.sheetValues.first)
+          : null,
       firstKilled: firstKilled,
       bestMovePoints: _bestMovePointsOldFormat(firstKilled, p.map((r) => r.j).toList()),
       bestMove: [
@@ -91,19 +136,23 @@ Game _buildGame(int seasonId, List<GamesDataSeason> p) {
       ],
       additionalPoints:
           p.map((r) => double.tryParse(r.i) ?? 0.0).toList(),
-      host: _parseHost(p[8].c),
-      date: p[9].b.trim() == 'Дата' ? _parseSheetDate(p[9].c) : null,
+      host: host,
+      date: date,
     );
   }
 
   // Season 17–28: chunk of 14 rows; player rows are p[2]..p[11]
-  final firstKilled = int.tryParse(p[12].b) ?? 0;
   final playerRows = p.sublist(2, 12);
+  final firstKilled = _sheetFirstKilled(p[12].b, playerRows);
+  final date = p[0].a.trim() == 'Дата' ? _parseSheetDate(p[0].b) : null;
+  final players = _fillBlanks(
+      playerRows.map((r) => _sheetCountedName(seasonId, date, r)).toList());
 
   if (seasonId <= kPreProtocolMaxSeason) {
     return Game(
       seasonId: seasonId,
-      players: _fillBlanks(playerRows.map((r) => r.b).toList()),
+      players: players,
+      wonByPlayer: playerRows.map(_sheetWin).toList(),
       roles: playerRows.map((r) => r.c).toList(),
       cityWon: _getVictoryTeam(p.last.c),
       firstKilled: firstKilled,
@@ -124,7 +173,7 @@ Game _buildGame(int seasonId, List<GamesDataSeason> p) {
           ? playerRows.map((r) => double.tryParse(r.h) ?? 0.0).toList()
           : null,
       host: _hostLabels.contains(p[0].c.trim()) ? _parseHost(p[0].d) : null,
-      date: p[0].a.trim() == 'Дата' ? _parseSheetDate(p[0].b) : null,
+      date: date,
     );
   }
 
@@ -155,7 +204,8 @@ Game _buildGame(int seasonId, List<GamesDataSeason> p) {
 
   return Game(
     seasonId: seasonId,
-    players: _fillBlanks(playerRows.map((r) => r.b).toList()),
+    players: players,
+    wonByPlayer: playerRows.map(_sheetWin).toList(),
     roles: playerRows.map((r) => r.c).toList(),
     cityWon: _getVictoryTeam(p.last.c),
     firstKilled: firstKilled,
@@ -174,7 +224,7 @@ Game _buildGame(int seasonId, List<GamesDataSeason> p) {
     protocol: protocolEntries.isEmpty ? null : protocolEntries,
     supportFive: supportFive.isEmpty ? null : supportFive,
     host: _hostLabels.contains(p[0].c.trim()) ? _parseHost(p[0].d) : null,
-    date: p[0].a.trim() == 'Дата' ? _parseSheetDate(p[0].b) : null,
+    date: date,
   );
 }
 

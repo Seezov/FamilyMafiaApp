@@ -54,6 +54,13 @@ List<RatingPlayerStats> seasonRatingsForTest(
     _computePartialData(_LoadInput(playersJson, [seasonJson], [meta]))
         .ratingsBySeason[meta.id]!;
 
+/// [meta]'s standings in display order, as the season screen ranks them.
+List<RatingPlayerStats> seasonStandingsForTest(
+        SeasonMeta meta, String playersJson, String seasonJson) =>
+    _computePartialData(_LoadInput(playersJson, [seasonJson], [meta]))
+        .statsBySeason[meta.id]!
+        .playerStats;
+
 // ── Service ─────────────────────────────────────────────────────────────────
 
 class SeasonLoaderService {

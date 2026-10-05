@@ -147,10 +147,11 @@ RatingPlayerStats _computePlayerRating(
   final ciForGame = isTopUpCi
       ? calculateAvgRedGamePoints(redGamePoints)
       : calculateCiForGame(
-          firstKilledCityLost, firstKilled, gamesPlayed, season.id);
+          firstKilledCityLost, firstKilled, gamesPlayed, season.id, player: name);
   final ci = isTopUpCi
       ? calculateCiTopUp(ciForGame, firstKilledLossPoints)
-      : ciForGame * firstKilledCityLost;
+      : calculateCi(
+          ciForGame, firstKilledCityLost, firstKilled, gamesPlayed, season.id);
 
   final percentOfDeath =
       gamesAsRed > 0 ? firstKilled / gamesAsRed : 0.0;

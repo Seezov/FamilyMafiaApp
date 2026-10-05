@@ -93,21 +93,66 @@ const kCiFactorNew = 0.5;
 const kCiMultiplierNew = 1.25;
 
 /// ── Player exclusions ─────────────────────────────────────────────────────
-/// Some players in early seasons were test/placeholder entries that should be
-/// excluded from rating calculations. These are hardcoded per season.
+/// Players the season sheet leaves out of its rating (test/placeholder entries
+/// or players it never listed, e.g. Савиола in season 1, ТВЛ in season 2),
+/// so they get no rating row here either.
 /// Key: seasonId, Value: list of player display names to exclude.
 const kExcludedPlayers = <int, List<String>>{
   0: ['Рауль'],
+  1: ['Савиола'],
+  2: ['ТВЛ'],
   8: ['Рауль', 'Остин'],
   9: ['Рауль'],
 };
 
-/// ── Historical corrections ────────────────────────────────────────────────
-/// In season 17, player "Железный" (Iron Man) had a data entry error that
-/// resulted in a missing win. Rather than fix the source data, a +1 rating
-/// correction was applied in the formula. This is the only per-player override.
-const kIronManPlayer = 'Железный';
-const kIronManBonus = 1;
+/// Games the season sheets count although they are not a regular table (two
+/// mafia, a don, a sheriff), keyed by season, as (date, host). Season 17,
+/// 11.03.2023: nine civilians and an empty seat, all scored as a city win —
+/// the "fake win" that put Железный second in the sheet.
+final kSheetCountedIrregularGames = <int, List<(DateTime, String)>>{
+  17: [(DateTime.utc(2023, 3, 11), 'Braun')],
+};
+
+/// Games with no result that the season sheet still counts (seasons 4-16 count
+/// a seat by its Y flag): played, and lost by every seat. Keyed by season, as
+/// (date, host, seat 1). Season 4, 30.11.2019: Остин and Vamos reach 80 and 48
+/// games.
+final kSheetCountedUnresolvedGames = <int, List<(DateTime, String, String)>>{
+  4: [(DateTime.utc(2019, 11, 30), 'Vamos', 'KozZzka')],
+};
+
+/// Seats the season sheets count for nobody, keyed by season, as (date, name
+/// as written). Season 18, 11.08.2023: "Red Fox", while his rating row looks
+/// up "RedFox", so the sheet has him on 63 games, not 64.
+final kSheetUncountedSeats = <int, List<(DateTime, String)>>{
+  18: [(DateTime.utc(2023, 8, 11), 'Red Fox')],
+};
+
+/// Rows whose Балла за игру the season sheet rounds to other than 2 places
+/// (seasons 5-15), keyed by season and display name. Season 12: Braun's row
+/// alone has ROUND(…;7), which gives him 91.6 instead of 91.8.
+const kSheetPpgDigits = <int, Map<String, int>>{
+  12: {'Braun': 7},
+};
+
+/// Season 26's rating tab rounds WR and CI/I (ROUND(…;2), ROUND(…;3)) on every
+/// row but its first 21, which keep them unrounded; display names of those.
+const kSheetUnroundedRows = <int, Set<String>>{
+  26: {
+    'Braun', 'Don`Tright', 'Seezov', 'Floppy', 'Kulav', 'Green', 'Малишка',
+    'Німфа', 'Rathma', 'Таті', 'Сирник', 'Хоттабич', 'Аватар', 'Серпень',
+    'Лисиця', 'Шпак', 'Фрау', 'Фенікс', 'Залізний', 'Вітамінка', 'Мідас',
+  },
+};
+
+/// Main-league ties on the coefficient, in the order the season sheets list
+/// them. The sheets break these by hand (neither win rate, games nor the
+/// unrounded coefficient explains all of them), so they are kept verbatim.
+const kSheetTieOrder = <int, List<String>>{
+  13: ['Majest', 'Green', 'Залізний', 'Кори'],
+  14: ['Хоттабич', 'Floppy'],
+  15: ['Braun', 'Хоттабич', 'Seezov', 'Majest', 'Don`Tright'],
+};
 
 /// ── Percentile & leaderboard thresholds ───────────────────────────────────
 /// Role percentiles compare a player's win rate in a specific role against all
