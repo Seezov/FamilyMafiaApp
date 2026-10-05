@@ -179,8 +179,10 @@ final clubConfigProvider = FutureProvider<ClubConfig?>((ref) async {
     try {
       final json = await firestore.fetchClubConfig(kFirebaseProjectId);
       if (json != null) {
+        // Parsed first: a document Dart can't read must not replace the cache.
+        final club = ClubConfig.fromJson(jsonDecode(json) as Map<String, dynamic>);
         await cache.cacheClubConfig(json);
-        return ClubConfig.fromJson(jsonDecode(json) as Map<String, dynamic>);
+        return club;
       }
     } catch (e) {
       debugPrint('Club config fetch failed: $e');

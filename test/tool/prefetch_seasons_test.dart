@@ -155,5 +155,21 @@ void main() {
       );
       expect(out.listSync(), isEmpty);
     });
+  
+    test('an unparsable document fails the prefetch, writing nothing', () async {
+      final bad = Dio()
+        ..httpClientAdapter = _FakeAdapter((uri) {
+          if (uri.host == 'config.test') return _body(withTournaments);
+          if (uri.path.endsWith('/documents/config/club')) {
+            return _body(jsonEncode({'fields': {'gameLimits': {'mapValue': {'fields': {'31': {'stringValue': 'x'}}}}}}));
+          }
+          return _body('{}', 404);
+        });
+      await expectLater(
+        prefetch.prefetchSeasons(dio: bad, apiKey: 'k', configUrl: _configUrl, outDir: out),
+        throwsFormatException,
+      );
+      expect(out.listSync(), isEmpty);
+    });
   });
 }

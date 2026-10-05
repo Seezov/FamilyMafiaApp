@@ -71,4 +71,14 @@ void main() {
     expect(c.read(tournamentsProvider), isNotEmpty,
         reason: 'the bundled season_config.json still has its tournaments block');
   });
+
+  test('an unparsable live document is not cached; the cached copy wins', () async {
+    final cache = _MemCache()..club = _club('Cached cup');
+    final bad = jsonEncode({'tournaments': [], 'rejectedCandidates': [], 'gameLimits': {'31': 'x'}});
+    final c = _container(cache, _FakeFirestore(() async => bad));
+    await c.read(parsedConfigProvider.future);
+    await c.read(clubConfigProvider.future);
+    expect(c.read(tournamentsProvider).map((t) => t.name), ['Cached cup']);
+    expect(cache.club, _club('Cached cup'));
+  });
 }

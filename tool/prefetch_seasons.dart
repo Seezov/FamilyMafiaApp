@@ -8,6 +8,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:family_mafia_app/models/season_config.dart';
+import 'package:family_mafia_app/services/club_config_check.dart';
 import 'package:family_mafia_app/services/firestore_service.dart';
 import 'package:family_mafia_app/services/prefetch_paths.dart';
 import 'package:family_mafia_app/services/sheets_service.dart';
@@ -81,6 +82,10 @@ Future<List<int>> prefetchSeasons({
   final club = await firestore.fetchClubConfig(kFirebaseProjectId);
   final configHasTournaments =
       (jsonDecode(configJson) as Map<String, dynamic>).containsKey('tournaments');
+  if (club != null) {
+    // The build must fail on a document the app can't read, not drop tournaments.
+    checkClubConfigJson(jsonDecode(club) as Map<String, dynamic>);
+  }
   if (club == null && !configHasTournaments) {
     throw const FormatException(
         'config/club is missing and the config has no tournaments');
