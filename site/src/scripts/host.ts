@@ -6,6 +6,8 @@ import { ROLES, type FormState, type GameDoc, type Role } from '../lib/hosting/t
 import { validate } from '../lib/hosting/validate';
 import { loadRoster } from '../lib/roster/store';
 import { aliasPairs, autocompleteNames } from '../lib/roster/roster';
+import { loadClubSeasons } from '../lib/seasons/store';
+import { hostDefaultSeason } from '../lib/seasons/seasons';
 
 const page = JSON.parse(document.getElementById('host-data')!.textContent!) as { names: string[]; defaultSeason: number | null; aliases: [string, string][] };
 const aliases = new Map(page.aliases);
@@ -32,6 +34,15 @@ void loadRoster().then((r) => {
 let user: HostUser | null = null;
 let games: (GameDoc & { id: string })[] = [];
 let form: FormState = emptyForm(page.defaultSeason, today());
+// The live default: the newest club season whose start date has come (config/seasons),
+// else the build's. A form still on the old default follows it.
+const seasonReady = loadClubSeasons().then((list) => {
+  const d = hostDefaultSeason(list, today(), page.defaultSeason);
+  if (d === page.defaultSeason) return;
+  const old = page.defaultSeason;
+  page.defaultSeason = d;
+  if (form.season === old) form.season = d;
+}).catch(() => { /* keep the build's default */ });
 let editing: { id: string; updatedAtMillis: number } | null = null;
 
 function show(view: 'signed-out' | 'not-host' | 'list-view' | 'game-form') {
@@ -292,6 +303,7 @@ onUser(async (u) => {
   user = u;
   $('who').textContent = `${u.name}${u.admin ? ' · адмін' : ''}`;
   show('list-view');
+  await seasonReady;
   $<HTMLInputElement>('l-season').value = (form.season ?? page.defaultSeason)?.toString() ?? '';
   try { await refreshList(); } catch (e) { $('games').innerHTML = `<p class="msg-error">${esc(explainError(e))}</p>`; }
 });
