@@ -9,4 +9,7 @@ const String prefetchedConfigFile = 'remote_config.json';
 /// Firestore `config/club` (tournaments, final thresholds).
 const String prefetchedClubConfigFile = 'club_config.json';
 
+/// Firestore `events` (the annual rating's tournaments, series, marathons).
+const String prefetchedAnnualEventsFile = 'annual_events.json';
+
 String prefetchedSeasonFile(int seasonId) => 'season$seasonId.json';

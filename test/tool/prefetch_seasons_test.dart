@@ -34,9 +34,10 @@ const _config = '{"seasons": ['
     '{"id": 29, "title": "Season 29", "gameLimit": 60, "gamesMultiplier": 0.0, "source": "remote", "spreadsheetId": "sheetB", "sheetName": "My Sheet", "range": "A:J"}'
     '], "tournaments": []}';
 
-Dio _dio({bool failSheetB = false}) => Dio()
+Dio _dio({bool failSheetB = false, Object? events}) => Dio()
   ..httpClientAdapter = _FakeAdapter((uri) {
     if (uri.host == 'config.test') return _body(_config);
+    if (uri.path.endsWith('/documents/events')) return _body(jsonEncode(events ?? {}));
     if (uri.path.contains('/sheetA/')) {
       return _body(jsonEncode({'values': [['1', 'Rathma'], ['2', 'Joi']]}));
     }
@@ -85,6 +86,7 @@ void main() {
         '], "tournaments": []}';
     final dio = Dio()
       ..httpClientAdapter = _FakeAdapter((uri) {
+        if (uri.path.endsWith('/documents/events')) return _body('{}'); // empty collection
         if (uri.host == 'config.test') return _body(config);
         if (uri.path.endsWith(':runQuery')) {
           return _body(jsonEncode([
@@ -121,6 +123,7 @@ void main() {
 
     Dio dio({required String config, required bool club}) => Dio()
       ..httpClientAdapter = _FakeAdapter((uri) {
+        if (uri.path.endsWith('/documents/events')) return _body('{}'); // empty collection
         if (uri.host == 'config.test') return _body(config);
         if (uri.path.endsWith('/documents/config/club')) {
           return club ? _body(jsonEncode(clubDoc)) : _body('{}', 404);
@@ -159,6 +162,7 @@ void main() {
     test('an unparsable document fails the prefetch, writing nothing', () async {
       final bad = Dio()
         ..httpClientAdapter = _FakeAdapter((uri) {
+          if (uri.path.endsWith('/documents/events')) return _body('{}'); // empty collection
           if (uri.host == 'config.test') return _body(withTournaments);
           if (uri.path.endsWith('/documents/config/club')) {
             return _body(jsonEncode({'fields': {'gameLimits': {'mapValue': {'fields': {'31': {'stringValue': 'x'}}}}}}));
@@ -171,5 +175,23 @@ void main() {
       );
       expect(out.listSync(), isEmpty);
     });
+  });
+
+  test('writes the annual events, [] when the collection is empty', () async {
+    await prefetch.prefetchSeasons(dio: _dio(), apiKey: 'k', configUrl: _configUrl, outDir: out);
+    expect(File('${out.path}/annual_events.json').readAsStringSync(), '[]');
+  });
+
+  test('a malformed event fails the prefetch with its id and writes nothing', () async {
+    final bad = {'documents': [{
+      'name': 'projects/p/databases/(default)/documents/events/doc7',
+      'fields': {'year': {'integerValue': '2026'}, 'kind': {'stringValue': 'cup'},
+                 'name': {'stringValue': 'X'}, 'results': {'arrayValue': {}}},
+    }]};
+    await expectLater(
+      prefetch.prefetchSeasons(dio: _dio(events: bad), apiKey: 'k', configUrl: _configUrl, outDir: out),
+      throwsA(isA<FormatException>().having((e) => e.message, 'message', contains('doc7'))),
+    );
+    expect(out.listSync(), isEmpty);
   });
 }

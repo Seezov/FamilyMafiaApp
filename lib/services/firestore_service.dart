@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:family_mafia_app/models/annual_event.dart';
 import 'package:family_mafia_app/models/season_config.dart';
 import 'package:family_mafia_app/services/firestore_rest.dart';
 
@@ -61,5 +62,27 @@ class FirestoreService {
       if (e.response?.statusCode == 404) return null;
       rethrow;
     }
+  }
+
+  /// Every `events` document as a JSON list of `{id, year, kind, …}` — only
+  /// the event fields, never who saved it. Throws [FormatException] naming
+  /// the document when one is malformed, so the build fails loudly.
+  Future<String> fetchAnnualEvents(String projectId) async {
+    final events = <Map<String, Object?>>[];
+    String? token;
+    do {
+      final uri = Uri.parse('https://firestore.googleapis.com/v1/projects/'
+              '$projectId/databases/(default)/documents/events')
+          .replace(queryParameters: {'pageSize': '300', 'pageToken': ?token});
+      final response = await _dio.getUri<Map<String, dynamic>>(uri);
+      for (final d in (response.data?['documents'] as List?) ?? const []) {
+        final doc = d as Map<String, dynamic>;
+        final id = (doc['name'] as String).split('/').last;
+        final fields = decodeFirestoreFields(doc['fields'] as Map<String, dynamic>? ?? const {});
+        events.add(AnnualEvent.fromJson(fields, id: id).toJson());
+      }
+      token = response.data?['nextPageToken'] as String?;
+    } while (token != null);
+    return jsonEncode(events);
   }
 }
