@@ -37,6 +37,11 @@ const kPenaltyColumnFirstSeason = kAutoPointsMaxSeason + 1;
 /// ("CI/I" in the club spreadsheet). Seasons 17-29 keep the old formula.
 const kNewCiStartSeason = 30;
 
+/// Season 31+: ratings are counted exactly by the club's rules — no sheet pass,
+/// no per-row sheet quirks, and no intermediate ROUND (WR, СІ, coefficient).
+/// Values are rounded only for display. Seasons up to 30 match the sheets.
+const kExactRatingStartSeason = 31;
+
 /// Seasons up to 28: No protocol data. Season 29+ added protocol entries
 /// (night kill guesses) as a new data column in the spreadsheet.
 const kPreProtocolMaxSeason = 28;

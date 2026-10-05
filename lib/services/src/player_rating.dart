@@ -152,7 +152,7 @@ RatingPlayerStats _computePlayerRating(
           firstKilledCityLost, firstKilled, gamesPlayed, season.id,
           player: name, sheet: sheet);
   final ci = isTopUpCi
-      ? calculateCiTopUp(ciForGame, firstKilledLossPoints)
+      ? calculateCiTopUp(ciForGame, firstKilledLossPoints, seasonId: season.id)
       : calculateCi(
           ciForGame, firstKilledCityLost, firstKilled, gamesPlayed, season.id);
 

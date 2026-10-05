@@ -155,4 +155,17 @@ void main() {
       }
     }
   });
+
+  // Season 31+ is counted by the rules at full precision; the sheet's rounding
+  // and per-row quirks no longer apply. Season 30's games stand in for 31's.
+  test('season 31+: main league coefficients are not rounded to 4 places', () {
+    final rows = seasonStandingsForTest(
+      const SeasonMeta(31, 40, 0.0),
+      File('assets/raw/players.json').readAsStringSync(),
+      File('assets/prefetched/season30.json').readAsStringSync(),
+    ).where((p) => p.gamesPlayed >= 40).toList();
+    expect(rows, isNotEmpty);
+    double round4(double v) => (v * 10000).round() / 10000;
+    expect(rows.any((p) => (p.ratingCoefficient - round4(p.ratingCoefficient)).abs() > 1e-9), isTrue);
+  });
 }

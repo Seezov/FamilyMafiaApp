@@ -54,13 +54,16 @@ bool _sheetCountsIrregular(Game g) =>
 ({List<Game> games, List<RatingPlayerStats> ratings}) _seasonData(
     SeasonMeta meta, String json, PlayerResolver resolver, List<Player> players) {
   final games = _ratingGames(meta.id, json, resolver);
-  final sheetGames = _ratingGames(meta.id, json, resolver, sheet: true);
 
   Map<String, RatingPlayerStats> rate(List<Game> gs, {required bool sheet}) => {
         for (final name in gs.getPlayersList(meta.id))
           name: _computePlayerRating(name, gs, meta, players, sheet: sheet),
       };
   final byRules = rate(games, sheet: false);
+  if (meta.id >= kExactRatingStartSeason) {
+    return (games: games, ratings: byRules.values.toList());
+  }
+  final sheetGames = _ratingGames(meta.id, json, resolver, sheet: true);
   final bySheet = rate(sheetGames, sheet: true);
 
   bool main(RatingPlayerStats? r) => r != null && r.gamesPlayed >= meta.gameLimit;

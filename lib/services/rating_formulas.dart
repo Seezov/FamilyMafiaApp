@@ -149,15 +149,17 @@ double calculateAvgRedGamePoints(List<double> redGamePoints) {
 /// average rather than a bonus.
 double calculateCiTopUp(
   double avgRedGamePoints,
-  List<double> firstKilledLossPoints,
-) {
-  final target = _sheetRound(avgRedGamePoints, 2);
+  List<double> firstKilledLossPoints, {
+  int seasonId = kNewCiStartSeason,
+}) {
+  final exact = seasonId >= kExactRatingStartSeason;
+  final target = exact ? avgRedGamePoints : _sheetRound(avgRedGamePoints, 2);
   var total = 0.0;
   for (final scored in firstKilledLossPoints) {
     final topUp = target - (scored > 0 ? scored : 0.0);
     if (topUp > 0) total += topUp;
   }
-  return _sheetRound(total, 2);
+  return exact ? total : _sheetRound(total, 2);
 }
 
 /// [removalPoints] is the (negative) sum of removal deductions — 4 fouls or
@@ -221,7 +223,8 @@ double calculateRatingCoefficient({
     // Season 17+ sheets: ROUND(WR;2) (except [kSheetUnroundedRows]), then the
     // whole coefficient ROUND(…;4). Season 17's "fake win" for Железный (an
     // 11.03.2023 game with every seat a civilian) is in the season data.
-    final wr = _sheetRowRounds(id, player, sheet)
+    final exact = id >= kExactRatingStartSeason;
+    final wr = !exact && _sheetRowRounds(id, player, sheet)
         ? _sheetRound(winRate * 100, 2)
         : winRate * 100;
     final avg = winPoints / gamesPlayed;
@@ -235,7 +238,7 @@ double calculateRatingCoefficient({
     } else {
       result = wr + avg + ci + bestMovePoints + additionalPoints + penaltyPoints;
     }
-    return _sheetRound(result, 4);
+    return exact ? result : _sheetRound(result, 4);
   }
 
   return _sheetRound(result, 3);

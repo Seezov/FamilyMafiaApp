@@ -453,4 +453,33 @@ void main() {
     );
     expect(result, closeTo(84.58, 1e-9));
   });
+
+  // ── Season 31+: exact, no intermediate rounding ──────────────────────────
+  group('season 31+ counts exactly', () {
+    double coefficient(int season) => calculateRatingCoefficient(
+          player: 'Test',
+          winPoints: 7.0,
+          gamesPlayed: 3,
+          winRate: 2 / 3,
+          ci: 0.123456,
+          bestMovePoints: 0.3,
+          additionalPoints: 1.234567,
+          penaltyPoints: -0.5,
+          autoAdditionalPoints: 0.0,
+          season: SeasonMeta(season, 60, 0.0),
+        );
+    const exact = 200 / 3 + 7 / 3 + 0.123456 + 0.3 + 1.234567 - 0.5;
+
+    test('season 30 rounds WR to 2 places and the coefficient to 4', () {
+      expect(coefficient(30), closeTo(70.1614, 1e-9));
+    });
+    test('season 31 keeps full precision', () {
+      expect(coefficient(31), closeTo(exact, 1e-12));
+    });
+    test('season 31 СІ top-up keeps full precision', () {
+      expect(calculateCiTopUp(0.25918367346938775, const [0.0, 0.1], seasonId: 31),
+          closeTo(0.25918367346938775 * 2 - 0.1, 1e-12));
+      expect(calculateCiTopUp(0.25918367346938775, const [0.0, 0.1]), closeTo(0.42, 1e-9));
+    });
+  });
 }
