@@ -324,4 +324,10 @@ describe('events', () => {
       { participants: 1.5 }, { date: 5 }, { extra: 1 }, { updatedBy: HOST.uid }, { updatedByEmail: HOST.email },
     ]) await assertFails(setDoc(ev(as(ADMIN)), body(ADMIN, extra)));
   });
+  it('documents the build would reject are denied', async () => {
+    for (const extra of [
+      { year: 1999 }, { year: 2101 }, { stars: 6 }, { stars: -1 }, { stars: null }, { participants: null },
+      { participants: 0 }, { date: '"><img src=x onerror=alert(1)>' }, { date: '28.02.2026' },
+    ]) await assertFails(setDoc(ev(as(ADMIN)), body(ADMIN, extra)));
+  });
 });

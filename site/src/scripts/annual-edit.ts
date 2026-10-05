@@ -3,12 +3,11 @@ import { onClubUser, signIn, signOutUser, type ClubAdmin } from '../lib/club/sto
 import { deleteEvent, eventsEmpty, importEvents, loadEvents, saveEvent } from '../lib/annual/store';
 import { eventPoints, type EventKind } from '../lib/annual/points';
 import { validateEvent, type EventDraft } from '../lib/annual/validate';
+import { esc, eventRow, LABEL } from '../lib/annual/render';
 
 const IMPORT_URL = 'https://raw.githubusercontent.com/Seezov/FamilyMafiaApp/feature/flutter_migration/tool/import/annual_events.json';
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 const names = new Set((JSON.parse($('player-names').textContent!) as string[]).map((n) => n.toLowerCase()));
-const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
-const LABEL: Record<EventKind, string> = { tournament: 'Tournament', series: 'Series', marathon: 'Marathon', season: 'Season' };
 
 let user: ClubAdmin | null | 'not-host' = null;
 let events: { id: string; data: EventDraft }[] = [];
@@ -38,14 +37,8 @@ async function refresh() {
 
 function render() {
   $('add').toggleAttribute('disabled', !canSave() || editing !== null);
-  $('list').innerHTML = events.map(({ id, data: d }) => `
-    <div class="ev">
-      <span class="label">${LABEL[d.kind]}</span><span class="name">${esc(d.name)}</span>
-      <span class="label">${d.date ?? 'no date'}${d.kind === 'tournament' ? ` · ${d.stars}★ · ${d.participants} players` : ''} · ${d.results.length} results</span>
-      ${canSave() && d.kind !== 'season' ? (confirmDelete === id
-        ? `<button class="btn" data-del-yes="${id}">Delete for good</button><button class="btn" data-del-no>Keep</button>`
-        : `<button class="btn" data-edit="${id}">Edit</button><button class="btn" data-del="${id}">Delete</button>`) : ''}
-    </div>`).join('') || '<p class="hint">No stored events for this year (club seasons are added automatically).</p>';
+  $('list').innerHTML = events.map(({ id, data: d }) => eventRow(id, d, { canSave: canSave(), confirming: confirmDelete === id }))
+    .join('') || '<p class="hint">No stored events for this year (club seasons are added automatically).</p>';
   renderForm();
 }
 
@@ -59,9 +52,9 @@ function renderForm() {
     <div class="fields">
       <label>Kind <select name="kind">${(['tournament', 'series', 'marathon'] as EventKind[]).map((k) => `<option value="${k}" ${k === d.kind ? 'selected' : ''}>${LABEL[k]}</option>`).join('')}</select></label>
       <label>Name <input name="name" value="${esc(d.name)}" required></label>
-      <label>Date <input name="date" type="date" value="${d.date ?? ''}"></label>
-      ${t ? `<label>Stars <input name="stars" type="number" min="0" max="5" value="${d.stars ?? ''}"></label>
-             <label>Participants <input name="participants" type="number" min="1" value="${d.participants ?? ''}"></label>` : ''}
+      <label>Date <input name="date" type="date" value="${esc(d.date ?? '')}"></label>
+      ${t ? `<label>Stars <input name="stars" type="number" min="0" max="5" value="${esc(d.stars ?? '')}"></label>
+             <label>Participants <input name="participants" type="number" min="1" value="${esc(d.participants ?? '')}"></label>` : ''}
     </div>
     <div class="rows">
       ${d.results.map((r, i) => `
