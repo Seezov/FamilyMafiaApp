@@ -31,7 +31,7 @@
 2. **A player re-claims after rejection / cancels while pending** → claim overwrite and delete must work, approved claims must not be overwritable by the owner. Pinned in Task 2 rules tests.
 3. **Nick that equals another player's sheet name or nick, in different case or with extra spaces** → rejected on the page and dropped at build. Pinned in Task 1 (`nickError`) and Task 3 (`selectProfiles`).
 4. **Firestore REST unavailable or empty during the CI build** → build still succeeds with sheet names. Pinned in Task 3 (script test on fetch failure).
-5. **Players-list filter typed with the sheet name while a nick is shown** → still finds the player. Pinned in Task 4 (`matchesFilter` test).
+5. **Players-list filter typed with the sheet name while a nick is shown** → still finds the player. Pinned in Task 1 (`matchesFilter` test), wired in Task 4.
 
 ---
 
