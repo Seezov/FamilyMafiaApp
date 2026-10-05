@@ -18,6 +18,7 @@ import 'package:family_mafia_app/repositories/role_percentiles_repository.dart';
 import 'package:family_mafia_app/repositories/season_repository.dart';
 import 'package:family_mafia_app/services/firestore_games.dart';
 import 'package:family_mafia_app/services/rating_formulas.dart';
+import 'package:family_mafia_app/services/sheet_game_extras.dart';
 import 'package:family_mafia_app/services/stats/game_points.dart';
 import 'package:family_mafia_app/services/stats/player_resolver.dart';
 import 'package:flutter/foundation.dart';
@@ -46,6 +47,11 @@ List<Game> parseSeasonGamesForTest(
 @visibleForTesting
 List<Game> parseSeasonJsonForTest(int seasonId, String json) =>
     _parseSeasonGames(seasonId, json);
+
+/// Every game of a season as the site's game browser shows it: rating and
+/// non-rating, by the club's rules, names made canonical, comments attached.
+List<Game> browserGames(int seasonId, String json, PlayerResolver resolver) =>
+    _canonicalNames(_parseSeasonGames(seasonId, json), resolver);
 
 /// Per-player rating rows of one season, computed the same way the app does.
 @visibleForTesting

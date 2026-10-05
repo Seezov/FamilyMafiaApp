@@ -19,12 +19,33 @@ List<Game> _parseSeasonGames(int seasonId, String json, {bool sheet = false}) {
   if (decoded is Map<String, dynamic>) {
     return gamesFromFirestoreSnapshot(seasonId, decoded);
   }
-  final rawData = (decoded as List)
+  final raw = (decoded as List)
       .cast<Map<String, dynamic>>()
       .map(GamesDataSeason.fromJson)
-      .where((d) => _filterRawData(d, seasonId))
       .toList();
-  return _getGamesDataSeason(seasonId, rawData, sheet: sheet);
+  final games = _getGamesDataSeason(
+      seasonId, raw.where((d) => _filterRawData(d, seasonId)).toList(),
+      sheet: sheet);
+  // The sheet-quirk pass only feeds the main-league table; it needs no extras.
+  if (sheet) return games;
+  return _withExtras(seasonId, games, sheetGameExtras(seasonId, raw));
+}
+
+/// [extras] zipped onto [games] by position. If the anchors don't line up the
+/// sheet has a stray row; no extras beat comments on the wrong game.
+List<Game> _withExtras(int seasonId, List<Game> games, List<SheetGameExtras> extras) {
+  if (extras.length != games.length) {
+    debugPrint('Season $seasonId: ${extras.length} comment blocks for ${games.length} games, skipping comments');
+    return games;
+  }
+  return [
+    for (var i = 0; i < games.length; i++)
+      games[i].copyWith(
+        comments: extras[i].comments.isEmpty ? null : extras[i].comments,
+        label: extras[i].label,
+        table: extras[i].table,
+      ),
+  ];
 }
 
 /// A season 17+ player row's name, or blank when the sheet doesn't count the
