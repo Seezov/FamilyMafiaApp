@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:family_mafia_app/models/game.dart';
 import 'package:family_mafia_app/models/protocol_entry.dart';
 import 'package:family_mafia_app/services/firestore_games.dart';
 import 'package:family_mafia_app/services/season_loader.dart';
@@ -140,6 +141,29 @@ void main() {
       final rows = seasonRatingsForTest(
           const SeasonMeta(32, 40, 0.0), File('assets/raw/players.json').readAsStringSync(), json);
       expect(rows.where((r) => r.player.displayName == 'Німфа').single.gamesPlayed, 1);
+    });
+  });
+
+  group('comments and table', () {
+    test('maps comments to seats, slot 0 to the whole game, and the table', () {
+      final d = doc(table: 2)
+        ..['comments'] = [
+          {'slot': 6, 'text': 'Зняв 1, заповіт зняти 10'},
+          {'slot': 0, 'text': 'Закрили на 2в2'},
+          {'slot': 3, 'text': '   '},
+          {'slot': 4},
+        ];
+      final g = gameFromFirestore(32, d);
+      expect(g.table, 2);
+      expect(g.comments, const [
+        GameComment(seats: [6], text: 'Зняв 1, заповіт зняти 10'),
+        GameComment(seats: [], text: 'Закрили на 2в2'),
+      ]);
+      expect(g.label, isNull);
+    });
+
+    test('no comments → null', () {
+      expect(gameFromFirestore(32, doc()).comments, isNull);
     });
   });
 }

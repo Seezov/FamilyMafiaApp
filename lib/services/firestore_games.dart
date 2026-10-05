@@ -39,6 +39,17 @@ Game gameFromFirestore(int seasonId, Map<String, dynamic> doc) {
   ];
   final date = DateTime.tryParse(doc['date'] as String? ?? '');
   final host = (doc['host'] as String?)?.trim();
+  final comments = [
+    for (final c in ((doc['comments'] as List?) ?? const []).whereType<Map>())
+      if (c['text'] is String && (c['text'] as String).trim().isNotEmpty)
+        GameComment(
+          seats: switch (c['slot']) {
+            final num s when s >= 1 && s <= 10 => [s.toInt()],
+            _ => const [],
+          },
+          text: (c['text'] as String).trim(),
+        ),
+  ];
   return Game(
     seasonId: seasonId,
     players: [for (final s in seats) (s['player'] as String).trim()],
@@ -55,6 +66,8 @@ Game gameFromFirestore(int seasonId, Map<String, dynamic> doc) {
     fouls: [for (final s in seats) (s['fouls'] as num?)?.toInt() ?? 0],
     protocol: protocol.isEmpty ? null : protocol,
     supportFive: supportFive.isEmpty ? null : supportFive,
+    comments: comments.isEmpty ? null : comments,
+    table: (doc['table'] as num?)?.toInt(),
     host: host == null || host.isEmpty ? null : host,
     date: date == null ? null : DateTime.utc(date.year, date.month, date.day),
   );

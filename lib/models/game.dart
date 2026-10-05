@@ -30,6 +30,9 @@ class Game with _$Game {
     String? host, // who hosted (ведучий); null for seasons 0-1 or when blank
     DateTime? date, // game day (UTC midnight); null when unknown
     List<int>? fouls, // per slot 0..4; null for sheet seasons (fouls are not parsed there)
+    List<GameComment>? comments, // host's comments, sheet order; null = none recorded
+    String? label, // event label above the game in the sheet («МІНІКАП», «Гра 3»)
+    int? table, // 1/2 when known: Firestore `table`, or a «Стіл N» label in the sheet
   }) = _Game;
 
   int getPlayerSlot(String player) => players.indexOf(player);
@@ -91,6 +94,14 @@ class Game with _$Game {
   bool isRegularGame() =>
       wonByPlayer?.contains(GameValues.no.sheetValues.first) == true &&
       wonByPlayer!.contains(GameValues.yes.sheetValues.first);
+}
+
+@freezed
+class GameComment with _$GameComment {
+  const factory GameComment({
+    @Default([]) List<int> seats, // 1-indexed; empty = about the whole game
+    required String text,
+  }) = _GameComment;
 }
 
 extension GameListExtensions on List<Game> {

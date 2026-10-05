@@ -40,7 +40,13 @@ mixin _$Game {
       throw _privateConstructorUsedError; // who hosted (ведучий); null for seasons 0-1 or when blank
   DateTime? get date =>
       throw _privateConstructorUsedError; // game day (UTC midnight); null when unknown
-  List<int>? get fouls => throw _privateConstructorUsedError;
+  List<int>? get fouls =>
+      throw _privateConstructorUsedError; // per slot 0..4; null for sheet seasons (fouls are not parsed there)
+  List<GameComment>? get comments =>
+      throw _privateConstructorUsedError; // host's comments, sheet order; null = none recorded
+  String? get label =>
+      throw _privateConstructorUsedError; // event label above the game in the sheet («МІНІКАП», «Гра 3»)
+  int? get table => throw _privateConstructorUsedError;
 
   /// Create a copy of Game
   /// with the given fields replaced by the non-null parameter values.
@@ -72,6 +78,9 @@ abstract class $GameCopyWith<$Res> {
     String? host,
     DateTime? date,
     List<int>? fouls,
+    List<GameComment>? comments,
+    String? label,
+    int? table,
   });
 }
 
@@ -108,6 +117,9 @@ class _$GameCopyWithImpl<$Res, $Val extends Game>
     Object? host = freezed,
     Object? date = freezed,
     Object? fouls = freezed,
+    Object? comments = freezed,
+    Object? label = freezed,
+    Object? table = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -183,6 +195,18 @@ class _$GameCopyWithImpl<$Res, $Val extends Game>
                 ? _value.fouls
                 : fouls // ignore: cast_nullable_to_non_nullable
                       as List<int>?,
+            comments: freezed == comments
+                ? _value.comments
+                : comments // ignore: cast_nullable_to_non_nullable
+                      as List<GameComment>?,
+            label: freezed == label
+                ? _value.label
+                : label // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            table: freezed == table
+                ? _value.table
+                : table // ignore: cast_nullable_to_non_nullable
+                      as int?,
           )
           as $Val,
     );
@@ -216,6 +240,9 @@ abstract class _$$GameImplCopyWith<$Res> implements $GameCopyWith<$Res> {
     String? host,
     DateTime? date,
     List<int>? fouls,
+    List<GameComment>? comments,
+    String? label,
+    int? table,
   });
 }
 
@@ -249,6 +276,9 @@ class __$$GameImplCopyWithImpl<$Res>
     Object? host = freezed,
     Object? date = freezed,
     Object? fouls = freezed,
+    Object? comments = freezed,
+    Object? label = freezed,
+    Object? table = freezed,
   }) {
     return _then(
       _$GameImpl(
@@ -324,6 +354,18 @@ class __$$GameImplCopyWithImpl<$Res>
             ? _value._fouls
             : fouls // ignore: cast_nullable_to_non_nullable
                   as List<int>?,
+        comments: freezed == comments
+            ? _value._comments
+            : comments // ignore: cast_nullable_to_non_nullable
+                  as List<GameComment>?,
+        label: freezed == label
+            ? _value.label
+            : label // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        table: freezed == table
+            ? _value.table
+            : table // ignore: cast_nullable_to_non_nullable
+                  as int?,
       ),
     );
   }
@@ -351,6 +393,9 @@ class _$GameImpl extends _Game {
     this.host,
     this.date,
     final List<int>? fouls,
+    final List<GameComment>? comments,
+    this.label,
+    this.table,
   }) : _players = players,
        _roles = roles,
        _bestMove = bestMove,
@@ -363,6 +408,7 @@ class _$GameImpl extends _Game {
        _protocol = protocol,
        _supportFive = supportFive,
        _fouls = fouls,
+       _comments = comments,
        super._();
 
   @override
@@ -502,9 +548,28 @@ class _$GameImpl extends _Game {
     return EqualUnmodifiableListView(value);
   }
 
+  // per slot 0..4; null for sheet seasons (fouls are not parsed there)
+  final List<GameComment>? _comments;
+  // per slot 0..4; null for sheet seasons (fouls are not parsed there)
+  @override
+  List<GameComment>? get comments {
+    final value = _comments;
+    if (value == null) return null;
+    if (_comments is EqualUnmodifiableListView) return _comments;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  // host's comments, sheet order; null = none recorded
+  @override
+  final String? label;
+  // event label above the game in the sheet («МІНІКАП», «Гра 3»)
+  @override
+  final int? table;
+
   @override
   String toString() {
-    return 'Game(seasonId: $seasonId, players: $players, roles: $roles, cityWon: $cityWon, firstKilled: $firstKilled, bestMovePoints: $bestMovePoints, bestMove: $bestMove, additionalPoints: $additionalPoints, penaltyPoints: $penaltyPoints, autoAdditionalPoints: $autoAdditionalPoints, protocolAdditionalPoints: $protocolAdditionalPoints, protocolPenaltyPoints: $protocolPenaltyPoints, wonByPlayer: $wonByPlayer, protocol: $protocol, supportFive: $supportFive, host: $host, date: $date, fouls: $fouls)';
+    return 'Game(seasonId: $seasonId, players: $players, roles: $roles, cityWon: $cityWon, firstKilled: $firstKilled, bestMovePoints: $bestMovePoints, bestMove: $bestMove, additionalPoints: $additionalPoints, penaltyPoints: $penaltyPoints, autoAdditionalPoints: $autoAdditionalPoints, protocolAdditionalPoints: $protocolAdditionalPoints, protocolPenaltyPoints: $protocolPenaltyPoints, wonByPlayer: $wonByPlayer, protocol: $protocol, supportFive: $supportFive, host: $host, date: $date, fouls: $fouls, comments: $comments, label: $label, table: $table)';
   }
 
   @override
@@ -553,11 +618,14 @@ class _$GameImpl extends _Game {
             ) &&
             (identical(other.host, host) || other.host == host) &&
             (identical(other.date, date) || other.date == date) &&
-            const DeepCollectionEquality().equals(other._fouls, _fouls));
+            const DeepCollectionEquality().equals(other._fouls, _fouls) &&
+            const DeepCollectionEquality().equals(other._comments, _comments) &&
+            (identical(other.label, label) || other.label == label) &&
+            (identical(other.table, table) || other.table == table));
   }
 
   @override
-  int get hashCode => Object.hash(
+  int get hashCode => Object.hashAll([
     runtimeType,
     seasonId,
     const DeepCollectionEquality().hash(_players),
@@ -577,7 +645,10 @@ class _$GameImpl extends _Game {
     host,
     date,
     const DeepCollectionEquality().hash(_fouls),
-  );
+    const DeepCollectionEquality().hash(_comments),
+    label,
+    table,
+  ]);
 
   /// Create a copy of Game
   /// with the given fields replaced by the non-null parameter values.
@@ -608,6 +679,9 @@ abstract class _Game extends Game {
     final String? host,
     final DateTime? date,
     final List<int>? fouls,
+    final List<GameComment>? comments,
+    final String? label,
+    final int? table,
   }) = _$GameImpl;
   const _Game._() : super._();
 
@@ -646,12 +720,183 @@ abstract class _Game extends Game {
   @override
   DateTime? get date; // game day (UTC midnight); null when unknown
   @override
-  List<int>? get fouls;
+  List<int>? get fouls; // per slot 0..4; null for sheet seasons (fouls are not parsed there)
+  @override
+  List<GameComment>? get comments; // host's comments, sheet order; null = none recorded
+  @override
+  String? get label; // event label above the game in the sheet («МІНІКАП», «Гра 3»)
+  @override
+  int? get table;
 
   /// Create a copy of Game
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$GameImplCopyWith<_$GameImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+mixin _$GameComment {
+  List<int> get seats =>
+      throw _privateConstructorUsedError; // 1-indexed; empty = about the whole game
+  String get text => throw _privateConstructorUsedError;
+
+  /// Create a copy of GameComment
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $GameCommentCopyWith<GameComment> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $GameCommentCopyWith<$Res> {
+  factory $GameCommentCopyWith(
+    GameComment value,
+    $Res Function(GameComment) then,
+  ) = _$GameCommentCopyWithImpl<$Res, GameComment>;
+  @useResult
+  $Res call({List<int> seats, String text});
+}
+
+/// @nodoc
+class _$GameCommentCopyWithImpl<$Res, $Val extends GameComment>
+    implements $GameCommentCopyWith<$Res> {
+  _$GameCommentCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of GameComment
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({Object? seats = null, Object? text = null}) {
+    return _then(
+      _value.copyWith(
+            seats: null == seats
+                ? _value.seats
+                : seats // ignore: cast_nullable_to_non_nullable
+                      as List<int>,
+            text: null == text
+                ? _value.text
+                : text // ignore: cast_nullable_to_non_nullable
+                      as String,
+          )
+          as $Val,
+    );
+  }
+}
+
+/// @nodoc
+abstract class _$$GameCommentImplCopyWith<$Res>
+    implements $GameCommentCopyWith<$Res> {
+  factory _$$GameCommentImplCopyWith(
+    _$GameCommentImpl value,
+    $Res Function(_$GameCommentImpl) then,
+  ) = __$$GameCommentImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({List<int> seats, String text});
+}
+
+/// @nodoc
+class __$$GameCommentImplCopyWithImpl<$Res>
+    extends _$GameCommentCopyWithImpl<$Res, _$GameCommentImpl>
+    implements _$$GameCommentImplCopyWith<$Res> {
+  __$$GameCommentImplCopyWithImpl(
+    _$GameCommentImpl _value,
+    $Res Function(_$GameCommentImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of GameComment
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({Object? seats = null, Object? text = null}) {
+    return _then(
+      _$GameCommentImpl(
+        seats: null == seats
+            ? _value._seats
+            : seats // ignore: cast_nullable_to_non_nullable
+                  as List<int>,
+        text: null == text
+            ? _value.text
+            : text // ignore: cast_nullable_to_non_nullable
+                  as String,
+      ),
+    );
+  }
+}
+
+/// @nodoc
+
+class _$GameCommentImpl implements _GameComment {
+  const _$GameCommentImpl({
+    final List<int> seats = const [],
+    required this.text,
+  }) : _seats = seats;
+
+  final List<int> _seats;
+  @override
+  @JsonKey()
+  List<int> get seats {
+    if (_seats is EqualUnmodifiableListView) return _seats;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_seats);
+  }
+
+  // 1-indexed; empty = about the whole game
+  @override
+  final String text;
+
+  @override
+  String toString() {
+    return 'GameComment(seats: $seats, text: $text)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$GameCommentImpl &&
+            const DeepCollectionEquality().equals(other._seats, _seats) &&
+            (identical(other.text, text) || other.text == text));
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    runtimeType,
+    const DeepCollectionEquality().hash(_seats),
+    text,
+  );
+
+  /// Create a copy of GameComment
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$GameCommentImplCopyWith<_$GameCommentImpl> get copyWith =>
+      __$$GameCommentImplCopyWithImpl<_$GameCommentImpl>(this, _$identity);
+}
+
+abstract class _GameComment implements GameComment {
+  const factory _GameComment({
+    final List<int> seats,
+    required final String text,
+  }) = _$GameCommentImpl;
+
+  @override
+  List<int> get seats; // 1-indexed; empty = about the whole game
+  @override
+  String get text;
+
+  /// Create a copy of GameComment
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$GameCommentImplCopyWith<_$GameCommentImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
