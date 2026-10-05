@@ -366,3 +366,39 @@ describe('config/players', () => {
     await assertFails(deleteDoc(ref(as(ADMIN))));
   });
 });
+
+describe('config/seasons', () => {
+  const ref = (db: ReturnType<typeof as>) => doc(db, 'config', 'seasons');
+  const body = (u: User, extra: Record<string, unknown> = {}) => ({
+    seasons: [{ id: 32, title: 'Season 32', smallLeagueMinGames: 15, startDate: '2026-12-01' }],
+    updatedAt: serverTimestamp(), updatedBy: u.uid, updatedByEmail: u.email, ...extra,
+  });
+  it('anyone can read', async () => {
+    await assertSucceeds(getDoc(doc(env.unauthenticatedContext().firestore(), 'config', 'seasons')));
+  });
+  it('an admin can create and update', async () => {
+    await assertSucceeds(setDoc(ref(as(ADMIN)), body(ADMIN)));
+    await assertSucceeds(setDoc(ref(as(ADMIN)), body(ADMIN, { seasons: [] })));
+  });
+  it('a host who is not admin cannot write', async () => {
+    await assertFails(setDoc(ref(as(HOST)), body(HOST)));
+  });
+  it('a guest cannot write', async () => {
+    await assertFails(setDoc(doc(env.unauthenticatedContext().firestore(), 'config', 'seasons'), body(ADMIN)));
+  });
+  it('rejects extra keys, a non-list, a forged author and a client timestamp', async () => {
+    await assertFails(setDoc(ref(as(ADMIN)), body(ADMIN, { extra: 1 })));
+    await assertFails(setDoc(ref(as(ADMIN)), body(ADMIN, { seasons: 'x' })));
+    await assertFails(setDoc(ref(as(ADMIN)), body(ADMIN, { updatedBy: 'someone' })));
+    await assertFails(setDoc(ref(as(ADMIN)), body(ADMIN, { updatedByEmail: 'x@x.com' })));
+    await assertFails(setDoc(ref(as(ADMIN)), body(ADMIN, { updatedAt: new Date(0) })));
+  });
+  it('rejects more than 100 seasons', async () => {
+    const seasons = Array.from({ length: 101 }, (_, i) => ({ id: 32 + i, title: 'S', smallLeagueMinGames: 15, startDate: '2026-12-01' }));
+    await assertFails(setDoc(ref(as(ADMIN)), body(ADMIN, { seasons })));
+  });
+  it('nobody can delete it', async () => {
+    await env.withSecurityRulesDisabled((ctx) => setDoc(doc(ctx.firestore(), 'config', 'seasons'), { seasons: [] }));
+    await assertFails(deleteDoc(ref(as(ADMIN))));
+  });
+});

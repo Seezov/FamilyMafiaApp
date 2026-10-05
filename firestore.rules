@@ -150,6 +150,20 @@ service cloud.firestore {
       allow delete: if false;
     }
 
+    // Club seasons 32+ (the JSON config keeps 0–31), created on /seasons/edit/. Entry contents
+    // are checked by the build and the editor (rules cannot loop over a list).
+    match /config/seasons {
+      allow read: if true;
+      allow create, update: if isAdmin()
+        && request.resource.data.keys().hasOnly(['seasons', 'updatedAt', 'updatedBy', 'updatedByEmail'])
+        && request.resource.data.seasons is list
+        && request.resource.data.seasons.size() <= 100
+        && request.resource.data.updatedAt == request.time
+        && request.resource.data.updatedBy == request.auth.uid
+        && request.resource.data.updatedByEmail == email();
+      allow delete: if false;
+    }
+
     match /events/{id} {
       allow read: if true;
       allow create, update: if isAdmin()
