@@ -141,6 +141,12 @@ default branch.
 
 ## Adding a New Season
 
+**Club seasons (32+):** admins create them on `/seasons/edit/` (Firestore `config/seasons`: title,
+small-league minimum, start date; id = last + 1). The prefetch appends them to the `remote_config.json`
+snapshot and snapshots their games; the app appends them in `parsedConfigProvider` (live → cache).
+A season with no games yet is skipped by the app and the site; `/host/` offers it from its start date.
+`remote_config.json` keeps seasons 0–31 — do not add new seasons there.
+
 **Bundled (offline):**
 1. Add the season JSON to `assets/raw/`
 2. Add a new entry to `lib/enums/season.dart` with correct `id`, `title`, `jsonFile`, `gameLimit`, and `gamesMultiplier`
