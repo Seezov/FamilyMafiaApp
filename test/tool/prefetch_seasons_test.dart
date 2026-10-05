@@ -34,10 +34,14 @@ const _config = '{"seasons": ['
     '{"id": 29, "title": "Season 29", "gameLimit": 60, "gamesMultiplier": 0.0, "source": "remote", "spreadsheetId": "sheetB", "sheetName": "My Sheet", "range": "A:J"}'
     '], "tournaments": []}';
 
-Dio _dio({bool failSheetB = false, Object? events, Object? players}) => Dio()
+Dio _dio({bool failSheetB = false, Object? events, Object? players, Object? seasons}) => Dio()
   ..httpClientAdapter = _FakeAdapter((uri) {
     if (uri.host == 'config.test') return _body(_config);
     if (uri.path.endsWith('/documents/events')) return _body(jsonEncode(events ?? {}));
+    if (uri.path.endsWith('/documents/config/seasons')) {
+      return seasons == null ? _body('{}', 404) : _body(jsonEncode(seasons));
+    }
+    if (uri.path.endsWith(':runQuery')) return _body('[]');
     if (uri.path.endsWith('/documents/config/players')) {
       return players == null ? _body('{}', 404) : _body(jsonEncode(players));
     }
@@ -217,6 +221,34 @@ void main() {
       prefetch.prefetchSeasons(
           dio: _dio(players: {'fields': {'players': {'stringValue': 'x'}}}),
           apiKey: 'k', configUrl: _configUrl, outDir: out),
+      throwsFormatException,
+    );
+    expect(out.listSync(), isEmpty);
+  });
+
+  Map<String, dynamic> seasonsDoc(int id) => {'fields': {'seasons': {'arrayValue': {'values': [
+        {'mapValue': {'fields': {
+          'id': {'integerValue': '$id'},
+          'title': {'stringValue': 'Season $id'},
+          'smallLeagueMinGames': {'integerValue': '15'},
+          'startDate': {'stringValue': '2026-12-01'},
+        }}},
+      ]}}}};
+
+  test('club seasons are appended to the config snapshot and their games fetched', () async {
+    final ids = await prefetch.prefetchSeasons(
+        dio: _dio(seasons: seasonsDoc(30)), apiKey: 'k', configUrl: _configUrl, outDir: out);
+    final config = jsonDecode(File('${out.path}/remote_config.json').readAsStringSync()) as Map<String, dynamic>;
+    final seasons = (config['seasons'] as List).cast<Map<String, dynamic>>();
+    expect(seasons.last, containsPair('id', 30));
+    expect(seasons.last, containsPair('source', 'firestore'));
+    expect(ids, contains(30));
+    expect(File('${out.path}/season30.json').existsSync(), isTrue);
+  });
+
+  test('a club season clashing with the JSON fails the prefetch and writes nothing', () async {
+    await expectLater(
+      prefetch.prefetchSeasons(dio: _dio(seasons: seasonsDoc(29)), apiKey: 'k', configUrl: _configUrl, outDir: out),
       throwsFormatException,
     );
     expect(out.listSync(), isEmpty);

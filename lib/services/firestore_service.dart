@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:family_mafia_app/models/annual_event.dart';
+import 'package:family_mafia_app/models/club_season.dart';
 import 'package:family_mafia_app/models/roster.dart';
 import 'package:family_mafia_app/models/season_config.dart';
 import 'package:family_mafia_app/services/firestore_rest.dart';
@@ -79,6 +80,23 @@ class FirestoreService {
       final roster = parseRoster(fields['players']);
       checkRoster(roster);
       return rosterAppJson(roster);
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 404) return null;
+      rethrow;
+    }
+  }
+
+  /// `config/seasons` (club seasons 32+), or null when the document doesn't
+  /// exist yet. Throws [FormatException] on wrong types; checking the ids
+  /// against the JSON config is the caller's job.
+  Future<List<ClubSeason>?> fetchClubSeasons(String projectId) async {
+    final uri = Uri.parse('https://firestore.googleapis.com/v1/projects/'
+        '$projectId/databases/(default)/documents/config/seasons');
+    try {
+      final response = await _dio.getUri<Map<String, dynamic>>(uri);
+      final fields = decodeFirestoreFields(
+          response.data?['fields'] as Map<String, dynamic>? ?? const {});
+      return parseClubSeasons(fields['seasons'] ?? const []);
     } on DioException catch (e) {
       if (e.response?.statusCode == 404) return null;
       rethrow;

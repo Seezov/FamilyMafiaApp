@@ -1,4 +1,4 @@
-// Snapshots the remote config, Firestore config/club, config/players and events, and every remote (Google Sheets) and firestore season into
+// Snapshots the remote config (+ club seasons from config/seasons), Firestore config/club, config/players and events, and every remote (Google Sheets) and firestore season into
 // assets/prefetched/ so the web build can show them without an API key.
 //
 // Usage (CI):  SHEETS_API_KEY=... REMOTE_CONFIG_URL=... dart run tool/prefetch_seasons.dart
@@ -7,6 +7,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:family_mafia_app/models/club_season.dart';
 import 'package:family_mafia_app/models/season_config.dart';
 import 'package:family_mafia_app/services/club_config_check.dart';
 import 'package:family_mafia_app/services/firestore_service.dart';
@@ -60,13 +61,23 @@ Future<List<int>> prefetchSeasons({
     configUrl,
     options: Options(responseType: ResponseType.plain),
   );
-  final configJson = configResponse.data!;
+  final configMap = jsonDecode(configResponse.data!) as Map<String, dynamic>;
+  final jsonSeasons = (configMap['seasons'] as List).cast<Map<String, dynamic>>();
+
+  final firestore = FirestoreService(dio: dio);
+  // Seasons 32+ created on /seasons/edit/: appended, so every reader of the
+  // snapshot sees one list. Validated against the JSON's last id.
+  final clubSeasons = await firestore.fetchClubSeasons(kFirebaseProjectId) ?? const <ClubSeason>[];
+  checkClubSeasons(clubSeasons, lastJsonId: lastSeasonId(jsonSeasons));
+  // Unchanged bytes when there are none, so the snapshot equals the config.
+  final configJson = clubSeasons.isEmpty
+      ? configResponse.data!
+      : jsonEncode({...configMap, 'seasons': appendClubSeasons(jsonSeasons, clubSeasons)});
   final seasons = ((jsonDecode(configJson) as Map<String, dynamic>)['seasons'] as List)
       .cast<Map<String, dynamic>>()
       .map(SeasonConfig.fromJson);
 
   final sheets = SheetsService(dio: dio, apiKey: apiKey);
-  final firestore = FirestoreService(dio: dio);
   final fetched = <int, String>{};
   for (final season in seasons) {
     switch (season.source) {
