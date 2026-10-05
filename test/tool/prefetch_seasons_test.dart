@@ -34,10 +34,13 @@ const _config = '{"seasons": ['
     '{"id": 29, "title": "Season 29", "gameLimit": 60, "gamesMultiplier": 0.0, "source": "remote", "spreadsheetId": "sheetB", "sheetName": "My Sheet", "range": "A:J"}'
     '], "tournaments": []}';
 
-Dio _dio({bool failSheetB = false, Object? events}) => Dio()
+Dio _dio({bool failSheetB = false, Object? events, Object? players}) => Dio()
   ..httpClientAdapter = _FakeAdapter((uri) {
     if (uri.host == 'config.test') return _body(_config);
     if (uri.path.endsWith('/documents/events')) return _body(jsonEncode(events ?? {}));
+    if (uri.path.endsWith('/documents/config/players')) {
+      return players == null ? _body('{}', 404) : _body(jsonEncode(players));
+    }
     if (uri.path.contains('/sheetA/')) {
       return _body(jsonEncode({'values': [['1', 'Rathma'], ['2', 'Joi']]}));
     }
@@ -191,6 +194,30 @@ void main() {
     await expectLater(
       prefetch.prefetchSeasons(dio: _dio(events: bad), apiKey: 'k', configUrl: _configUrl, outDir: out),
       throwsA(isA<FormatException>().having((e) => e.message, 'message', contains('doc7'))),
+    );
+    expect(out.listSync(), isEmpty);
+  });
+  test('writes the roster snapshot when config/players exists', () async {
+    await prefetch.prefetchSeasons(
+        dio: _dio(players: {'fields': {'players': {'arrayValue': {'values': [
+          {'mapValue': {'fields': {'name': {'stringValue': 'Braun'}}}},
+        ]}}}}),
+        apiKey: 'k', configUrl: _configUrl, outDir: out);
+    expect(jsonDecode(File('${out.path}/players.json').readAsStringSync()),
+        [{'id': 0, 'displayName': 'Braun'}]);
+  });
+
+  test('no config/players: no roster snapshot, the bundled file is used', () async {
+    await prefetch.prefetchSeasons(dio: _dio(), apiKey: 'k', configUrl: _configUrl, outDir: out);
+    expect(File('${out.path}/players.json').existsSync(), isFalse);
+  });
+
+  test('a malformed roster fails the prefetch and writes nothing', () async {
+    await expectLater(
+      prefetch.prefetchSeasons(
+          dio: _dio(players: {'fields': {'players': {'stringValue': 'x'}}}),
+          apiKey: 'k', configUrl: _configUrl, outDir: out),
+      throwsFormatException,
     );
     expect(out.listSync(), isEmpty);
   });

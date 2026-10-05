@@ -1,4 +1,4 @@
-// Snapshots the remote config, Firestore config/club and events, and every remote (Google Sheets) and firestore season into
+// Snapshots the remote config, Firestore config/club, config/players and events, and every remote (Google Sheets) and firestore season into
 // assets/prefetched/ so the web build can show them without an API key.
 //
 // Usage (CI):  SHEETS_API_KEY=... REMOTE_CONFIG_URL=... dart run tool/prefetch_seasons.dart
@@ -94,11 +94,17 @@ Future<List<int>> prefetchSeasons({
   // Validated per document inside fetchAnnualEvents.
   final annualEvents = await firestore.fetchAnnualEvents(kFirebaseProjectId);
 
+  // Validated inside fetchPlayers; null until the roster is imported.
+  final players = await firestore.fetchPlayers(kFirebaseProjectId);
+
   await outDir.create(recursive: true);
   if (club != null) {
     await File('${outDir.path}/$prefetchedClubConfigFile').writeAsString(club);
   }
   await File('${outDir.path}/$prefetchedAnnualEventsFile').writeAsString(annualEvents);
+  if (players != null) {
+    await File('${outDir.path}/$prefetchedPlayersFile').writeAsString(players);
+  }
   await File('${outDir.path}/$prefetchedConfigFile').writeAsString(configJson);
   for (final MapEntry(key: id, value: json) in fetched.entries) {
     await File('${outDir.path}/${prefetchedSeasonFile(id)}').writeAsString(json);

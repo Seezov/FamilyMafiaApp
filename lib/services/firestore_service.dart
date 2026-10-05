@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:family_mafia_app/models/annual_event.dart';
+import 'package:family_mafia_app/models/roster.dart';
 import 'package:family_mafia_app/models/season_config.dart';
 import 'package:family_mafia_app/services/firestore_rest.dart';
 
@@ -58,6 +59,25 @@ class FirestoreService {
         'rejectedCandidates': fields['rejectedCandidates'] ?? const [],
         'gameLimits': fields['gameLimits'] ?? const {},
       });
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 404) return null;
+      rethrow;
+    }
+  }
+
+  /// `config/players` in the app's `players.json` shape, or null when the
+  /// document doesn't exist yet. Throws [FormatException] when it is
+  /// malformed or two players share a name, so the build fails loudly.
+  Future<String?> fetchPlayers(String projectId) async {
+    final uri = Uri.parse('https://firestore.googleapis.com/v1/projects/'
+        '$projectId/databases/(default)/documents/config/players');
+    try {
+      final response = await _dio.getUri<Map<String, dynamic>>(uri);
+      final fields = decodeFirestoreFields(
+          response.data?['fields'] as Map<String, dynamic>? ?? const {});
+      final roster = parseRoster(fields['players']);
+      checkRoster(roster);
+      return rosterAppJson(roster);
     } on DioException catch (e) {
       if (e.response?.statusCode == 404) return null;
       rethrow;

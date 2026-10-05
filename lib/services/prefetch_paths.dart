@@ -13,3 +13,6 @@ const String prefetchedClubConfigFile = 'club_config.json';
 const String prefetchedAnnualEventsFile = 'annual_events.json';
 
 String prefetchedSeasonFile(int seasonId) => 'season$seasonId.json';
+
+/// Firestore `config/players` (the roster), in the app's players.json shape.
+const String prefetchedPlayersFile = 'players.json';
