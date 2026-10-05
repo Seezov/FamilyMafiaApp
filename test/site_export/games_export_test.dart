@@ -69,6 +69,12 @@ void main() {
     expect(count, greaterThanOrEqualTo(2));
     expect((days.last['games'] as List).map((g) => g['id']), [for (var i = 0; i < count; i++) 'g-x-$i']);
     expect(days.where((d) => d['date'] == null).length, 1);
+    final ids = (days.last['games'] as List).cast<Map>();
+    final injected = [gs[0], gs[1]];
+    for (var i = 0; i < 2; i++) {
+      final seatPlayers = (ids[i]['seats'] as List).map((s) => (s as Map)['player']).toList();
+      expect(seatPlayers, [for (final p in injected[i].players) p.startsWith('_blank_') ? null : p]);
+    }
   });
 
   test('result, host filter list and players list', () {
@@ -76,5 +82,19 @@ void main() {
     expect(games(j).map((g) => g['result']).toSet(), containsAll(['city', 'mafia', 'unrated']));
     expect(j['hosts'], isNotEmpty);
     expect((j['players'] as List).cast<Map>().every((p) => p['key'] != null && p['name'] != null), isTrue);
+  });
+
+  test('empty template blocks are not exported and do not use up ids', () {
+    final gs = load(21);
+    final dated = gs.firstWhere((g) => g.date != null);
+    String blank(int i) => '_blank_$i';
+    final empty = dated.copyWith(players: [for (var i = 0; i < 10; i++) blank(i)]);
+    final real = dated.copyWith(label: 'real');
+    final j = jsonDecode(jsonEncode(gamesJson(x, x.seasons.firstWhere((s) => s.id == 21), [empty, real]))) as Map;
+    final out = games(j);
+    expect(out.length, 1);
+    expect(out.single['n'], 1);
+    expect(out.single['label'], 'real');
+    expect(out.single['id'], endsWith('-1'));
   });
 }

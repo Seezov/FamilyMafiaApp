@@ -31,7 +31,9 @@ Map<String, Object?> _compact(Map<String, Object?> m) =>
     {for (final e in m.entries) if (e.value != null) e.key: e.value};
 
 /// One season's games for /season/N/games/, grouped by day in sheet order.
-Map<String, Object?> gamesJson(ExportContext x, SeasonConfig season, List<Game> games) {
+Map<String, Object?> gamesJson(ExportContext x, SeasonConfig season, List<Game> allGames) {
+  // Empty template blocks (every seat a placeholder) are not games.
+  final games = [for (final g in allGames) if (!g.players.every((p) => p.startsWith('_blank_'))) g];
   final resolver = x.read(playerResolverProvider);
   final onSite = {for (final p in x.players) p.id};
   String? slugOf(String name) {
@@ -124,7 +126,8 @@ Map<String, Object?> gamesJson(ExportContext x, SeasonConfig season, List<Game> 
       for (final e in players.entries.toList()..sort((a, b) => a.value.toLowerCase().compareTo(b.value.toLowerCase())))
         {'name': e.value, 'key': e.key},
     ],
-    'hosts': ({for (final g in games) if (g.host != null) g.host!}.toList()..sort()),
+    'hosts': ({for (final g in games) if (g.host != null) g.host!}.toList()
+      ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()))),
     'days': days,
   };
 }
