@@ -37,6 +37,8 @@ Map<String, Object?> seasonJson(ExportContext x, SeasonConfig season) {
     'id': season.id,
     'title': season.title,
     'gameLimit': season.gameLimit,
+    'thresholdFormula': season.thresholdFormula,
+    'thresholdLive': season.thresholdLive,
     'smallLeagueMinGames': season.smallLeagueMinGames,
     'summary': summary == null
         ? null

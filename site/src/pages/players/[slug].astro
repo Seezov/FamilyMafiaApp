@@ -20,6 +20,7 @@ const a = p.accomplishments;
 const roleColor = { civilian: 'var(--civilian)', sheriff: 'var(--sheriff)', mafia: 'var(--mafia)', don: 'var(--don)' } as const;
 const bm = p.bestMoves;
 const fk = p.firstKill;
+const chase = p.timeline.find((t) => t.needed);
 ---
 <Base title={shown} description={`${shown}: ${pct(p.winRate)} WR · ${p.games} games · ${p.seasons} seasons`} active="players">
   <div class="hero">
@@ -44,7 +45,7 @@ const fk = p.firstKill;
   )}
 
   <div class="grid">
-    <Panel title="Games by season" class="span-8"><GamesBySeasonChart timeline={p.timeline} slug={p.slug} /></Panel>
+    <Panel title="Games by season" note={chase ? `S${chase.seasonId}: ${chase.needed} more game${chase.needed === 1 ? '' : 's'} to the main league` : undefined} class="span-8"><GamesBySeasonChart timeline={p.timeline} slug={p.slug} /></Panel>
     <Panel title="Roles" class="span-4">
       <Bars items={p.roles.map((r) => ({
         label: r.label, value: r.share, color: roleColor[r.role], badge: r.top,

@@ -39,7 +39,9 @@ const description = s
   <div class="grid">
     <Panel title="Player ratings" note={small
       ? `${season.smallLeagueMinGames}–${season.gameLimit - 1} games`
-      : `${season.gameLimit}+ games`} class="span-12">
+      : season.thresholdLive && season.thresholdFormula !== null
+        ? `${season.gameLimit}+ games · live threshold ${season.thresholdFormula.toFixed(1)}`
+        : `${season.gameLimit}+ games`} class="span-12">
       <DataTable table={league.ratings} />
     </Panel>
     {league.awards && (

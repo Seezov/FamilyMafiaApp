@@ -23,6 +23,7 @@ export interface Award { key: string; label: string; winner: string; winnerLink?
 export interface LeagueData { ratings: SiteTable; stats: StatItem[]; awards?: Award[] }
 export interface SeasonData {
   id: number; title: string; gameLimit: number; smallLeagueMinGames: number;
+  thresholdFormula: number | null; thresholdLive: boolean;
   summary: { games: number; players: number; cityWR: number; mafiaWR: number } | null;
   leagueCounts: { main: number; small: number } | null;
   tournaments: { type: string; label: string; name: string; games: number; date: string | null; podium: string[] }[];
@@ -42,7 +43,7 @@ export interface PlayerData extends PlayerSummary {
     awards: Record<'mvp' | 'sheriff' | 'don' | 'civilian' | 'mafia' | 'killed', number>;
     tournaments: { type: string; label: string; podiums: number; places: number[] }[];
   };
-  timeline: { seasonId: number; title: string; games: number; league: 'main' | 'small' | 'below' | 'none' }[];
+  timeline: { seasonId: number; title: string; games: number; league: 'main' | 'small' | 'below' | 'none'; needed?: number }[];
   roles: { role: RoleKey; label: string; games: number; wins: number; share: number; top: string | null }[];
   firstKill: { total: number; cityLost: number; civSherGames: number };
   bestMoves: { firstKilled: number; zero: number; one: number; two: number; three: number };

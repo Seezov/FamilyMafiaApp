@@ -123,6 +123,11 @@ Map<String, Object?> playerJson(ExportContext x, Player p) {
           'title': c.title,
           'games': perSeason[c.id] ?? 0,
           'league': (leagues[c.id] ?? SeasonLeague.none).name,
+          // Games still missing for the main league of a season in progress.
+          if (c.thresholdLive &&
+              (perSeason[c.id] ?? 0) > 0 &&
+              (perSeason[c.id] ?? 0) < c.gameLimit)
+            'needed': c.gameLimit - perSeason[c.id]!,
         }
     ],
     'roles': [
