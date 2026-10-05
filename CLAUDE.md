@@ -93,6 +93,11 @@ default branch.
   fails the build if `AIza` appears, an internal link is broken, or a player has no page.
 - Player URLs are `/players/<slug>/`, transliterated from the display name (`slugs.dart`);
   renaming a player changes the URL.
+- **Game browser:** `/season/N/games/` shows every parsed game (rating and non-rating) from
+  `site/data/games/N.json` (`lib/site_export/games_export.dart`; `browserGames` re-parses each
+  season's JSON — the repositories hold rating games only). Host comments, event labels and
+  «Стіл N» come from the raw sheet rows via `lib/services/sheet_game_extras.dart`; if a season's
+  anchors don't match its games the extras are dropped (alignment test names the season).
 - `web/`, `WebFrame` and the `kIsWeb` branches still exist in the app but are no longer deployed.
 - GitHub disables `schedule` workflows in public repos after 60 days without
   repo activity; if the nightly build stops, re-enable it in the Actions tab.

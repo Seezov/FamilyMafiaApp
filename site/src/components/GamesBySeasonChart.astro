@@ -1,7 +1,8 @@
 ---
 import type { PlayerData } from '../lib/types';
-interface Props { timeline: PlayerData['timeline'] }
-const { timeline } = Astro.props;
+import { gamesHref } from '../lib/url';
+interface Props { timeline: PlayerData['timeline']; slug: string }
+const { timeline, slug } = Astro.props;
 const W = 760, H = 220, padL = 32, padR = 12, padT = 12, band = 10, padB = 30;
 const max = Math.max(1, ...timeline.map((t) => t.games));
 const n = timeline.length;
@@ -27,9 +28,11 @@ const ticks = [0, Math.round(max / 2), max];
   ))}
   <path d={path} fill="none" stroke="var(--text)" stroke-width="2" />
   {played.map((t) => (
-    <circle cx={x(t.i)} cy={y(t.games)} r="3.5" fill="var(--bg)" stroke="var(--text)" stroke-width="2">
-      <title>{`${t.title}: ${t.games} games`}</title>
-    </circle>
+    <a href={gamesHref(t.seasonId, slug)} aria-label={`${t.title}: ${t.games} games`}>
+      <circle cx={x(t.i)} cy={y(t.games)} r="5" fill="var(--bg)" stroke="var(--text)" stroke-width="2">
+        <title>{`${t.title}: ${t.games} games — open the games`}</title>
+      </circle>
+    </a>
   ))}
   {timeline.map((t, i) => (t.seasonId % 5 === 0 || i === n - 1) && (
     <text x={x(i)} y={H - 8} text-anchor="middle">S{t.seasonId}</text>

@@ -44,7 +44,7 @@ const fk = p.firstKill;
   )}
 
   <div class="grid">
-    <Panel title="Games by season" class="span-8"><GamesBySeasonChart timeline={p.timeline} /></Panel>
+    <Panel title="Games by season" class="span-8"><GamesBySeasonChart timeline={p.timeline} slug={p.slug} /></Panel>
     <Panel title="Roles" class="span-4">
       <Bars items={p.roles.map((r) => ({
         label: r.label, value: r.share, color: roleColor[r.role], badge: r.top,
