@@ -16,16 +16,23 @@ List<Game> _canonicalNames(List<Game> games, PlayerResolver resolver) => [
 /// A season's rating games with canonical names. A sheet game with a broken
 /// role list or a duplicate player is a data error worth failing loudly on; a
 /// game recorded on /host/ (firestore snapshot) is skipped instead, so one bad
-/// entry cannot stop the app from loading for everyone.
-List<Game> _ratingGames(int seasonId, String json, PlayerResolver resolver) {
+/// entry cannot stop the app from loading for everyone. [sheet] counts games
+/// the way the season sheet does (see [_buildGame]).
+List<Game> _ratingGames(int seasonId, String json, PlayerResolver resolver,
+    {bool sheet = false}) {
   final firestore = json.trimLeft().startsWith('{');
   final games = _canonicalNames(
-      _parseSeasonGames(seasonId, json).where((g) => g.isRatingGame()).toList(),
+      _parseSeasonGames(seasonId, json, sheet: sheet)
+          .where((g) => g.isRatingGame())
+          .toList(),
       resolver);
   final normal = <Game>[];
   for (var i = 0; i < games.length; i++) {
-    if (games[i].isNormalGame() || _sheetCountsIrregular(games[i])) {
+    if (games[i].isNormalGame()) {
       normal.add(games[i]);
+    } else if (_sheetCountsIrregular(games[i])) {
+      // Not a real table: only the sheet's own count includes it.
+      if (sheet) normal.add(games[i]);
     } else if (!firestore) {
       throw Exception('Not a normal game #$i: ${games[i].players}');
     } else {
@@ -40,6 +47,34 @@ bool _sheetCountsIrregular(Game g) =>
     kSheetCountedIrregularGames[g.seasonId]
         ?.any((e) => e.$1 == g.date && e.$2 == g.host) ??
     false;
+
+/// One season's games and rating rows. The main league is the season sheet's
+/// own count, quirks included, so its standings equal the sheet; every other
+/// row, and the games behind the rest of the stats, follow the club's rules.
+({List<Game> games, List<RatingPlayerStats> ratings}) _seasonData(
+    SeasonMeta meta, String json, PlayerResolver resolver, List<Player> players) {
+  final games = _ratingGames(meta.id, json, resolver);
+  final sheetGames = _ratingGames(meta.id, json, resolver, sheet: true);
+
+  Map<String, RatingPlayerStats> rate(List<Game> gs, {required bool sheet}) => {
+        for (final name in gs.getPlayersList(meta.id))
+          name: _computePlayerRating(name, gs, meta, players, sheet: sheet),
+      };
+  final byRules = rate(games, sheet: false);
+  final bySheet = rate(sheetGames, sheet: true);
+
+  bool main(RatingPlayerStats? r) => r != null && r.gamesPlayed >= meta.gameLimit;
+  final ratings = [
+    for (final name in {...bySheet.keys, ...byRules.keys})
+      // Main league membership is the sheet's: a player the rules would lift
+      // over the limit but the sheet keeps below stays the sheet's row.
+      if (main(bySheet[name]) || (main(byRules[name]) && bySheet[name] != null))
+        bySheet[name]!
+      else
+        byRules[name]!,
+  ];
+  return (games: games, ratings: ratings);
+}
 
 // Top-level function: partial load (no percentiles)
 _PartialLoadOutput _computePartialData(_LoadInput input) {
@@ -60,15 +95,8 @@ _PartialLoadOutput _computePartialData(_LoadInput input) {
     final meta = input.seasonMetas[si];
     final json = input.seasonJsons[si];
 
-    final gamesData = _ratingGames(meta.id, json, resolver);
-
-    allGames.addAll(gamesData);
-
-    final playerNames = gamesData.getPlayersList(meta.id);
-    final ratings = playerNames
-        .map((name) => _computePlayerRating(
-            name, gamesData, meta, players))
-        .toList();
+    final (:games, :ratings) = _seasonData(meta, json, resolver, players);
+    allGames.addAll(games);
 
     ratingsBySeason[meta.id] = ratings;
 
@@ -109,15 +137,8 @@ _LoadOutput _computeAllData(_LoadInput input) {
     final meta = input.seasonMetas[si];
     final json = input.seasonJsons[si];
 
-    final gamesData = _ratingGames(meta.id, json, resolver);
-
-    allGames.addAll(gamesData);
-
-    final playerNames = gamesData.getPlayersList(meta.id);
-    final ratings = playerNames
-        .map((name) => _computePlayerRating(
-            name, gamesData, meta, players))
-        .toList();
+    final (:games, :ratings) = _seasonData(meta, json, resolver, players);
+    allGames.addAll(games);
 
     ratingsBySeason[meta.id] = ratings;
 

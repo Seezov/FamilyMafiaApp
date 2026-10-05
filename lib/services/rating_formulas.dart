@@ -72,9 +72,10 @@ double calculateWinPoints(
   return additionalPoints + autoAdditionalPoints + penaltyPoints + bestMovePoints + ci;
 }
 
-/// Whether the season sheet's row for [player] rounds WR and CI/I.
-bool _sheetRowRounds(int seasonId, String player) =>
-    !(kSheetUnroundedRows[seasonId]?.contains(player) ?? false);
+/// Whether the season sheet's row for [player] rounds WR and CI/I; always so
+/// outside the sheet's own count ([sheet] false).
+bool _sheetRowRounds(int seasonId, String player, bool sheet) =>
+    !sheet || !(kSheetUnroundedRows[seasonId]?.contains(player) ?? false);
 
 double calculateCiForGame(
   int firstKilledCityLost,
@@ -82,6 +83,7 @@ double calculateCiForGame(
   int gamesPlayed,
   int seasonId, {
   String player = '',
+  bool sheet = false,
 }) {
   if (seasonId <= kLegacyMaxSeason) return 0.0;
   if (seasonId <= 18) return kCiEarlyValue;
@@ -94,7 +96,9 @@ double calculateCiForGame(
   }
   // The sheet's CI/I: ROUND(IF(ПУ/Ігри > 0.399; 0.5; ПУ/Ігри * 1.25); 3).
   final ciForGame = r > kCiFirstKillThreshold ? kCiFactorNew : r * kCiMultiplierNew;
-  return _sheetRowRounds(seasonId, player) ? _sheetRound(ciForGame, 3) : ciForGame;
+  return _sheetRowRounds(seasonId, player, sheet)
+      ? _sheetRound(ciForGame, 3)
+      : ciForGame;
 }
 
 /// A player's season CI (СІ) before season 30. Seasons 19-20 have their own
@@ -185,6 +189,7 @@ double calculateRatingCoefficient({
   required double penaltyPoints,
   required double autoAdditionalPoints,
   required SeasonMeta season,
+  bool sheet = false,
 }) {
   final id = season.id;
   final m = season.gamesMultiplier;
@@ -192,29 +197,31 @@ double calculateRatingCoefficient({
 
   if (id <= kOldFormatMaxSeason) {
     // The sheet: ROUND((Балы / Игр) * 100 + 25% * Игр), a whole number.
-    return (winPoints / gamesPlayed * 100 + gamesPlayed * m).roundToDouble();
+    return _sheetRound(winPoints / gamesPlayed * 100 + gamesPlayed * m, 0);
   } else if (id <= kMidFormatMaxSeason) {
     // The sheet: ROUND(ROUND(Балы / Игр; 2) + Игр * m; 2).
-    return ((winPoints / gamesPlayed).roundTo(2) + gamesPlayed * m).roundTo(2);
+    return _sheetRound(_sheetRound(winPoints / gamesPlayed, 2) + gamesPlayed * m, 2);
   } else if (id == 4) {
     // The sheet: ROUND(ROUND(Балы / Игр; 2) + Игр * 0.007; 3) * 100.
     result =
-        ((winPoints / gamesPlayed).roundTo(2) + gamesPlayed * m).roundTo(3) * 100;
+        _sheetRound(_sheetRound(winPoints / gamesPlayed, 2) + gamesPlayed * m, 3) *
+            100;
   } else if (id < kLegacyMaxSeason) {
-    final ppgDigits = kSheetPpgDigits[id]?[player] ?? 2;
-    result = ((winPoints / gamesPlayed).roundTo(ppgDigits) +
-                gamesPlayed * (winRate * 100).roundTo(2) / 100 * m)
-            .roundTo(3) *
+    final ppgDigits = sheet ? (kSheetPpgDigits[id]?[player] ?? 2) : 2;
+    result = _sheetRound(
+            _sheetRound(winPoints / gamesPlayed, ppgDigits) +
+                gamesPlayed * _sheetRound(winRate * 100, 2) / 100 * m,
+            3) *
         100;
   } else if (id == kLegacyMaxSeason) {
     // Season 16's sheet keeps Бал/игру and WR at full precision: ROUND(…;4)*100.
     result =
-        (winPoints / gamesPlayed + gamesPlayed * winRate * m).roundTo(4) * 100;
+        _sheetRound(winPoints / gamesPlayed + gamesPlayed * winRate * m, 4) * 100;
   } else {
     // Season 17+ sheets: ROUND(WR;2) (except [kSheetUnroundedRows]), then the
     // whole coefficient ROUND(…;4). Season 17's "fake win" for Железный (an
     // 11.03.2023 game with every seat a civilian) is in the season data.
-    final wr = _sheetRowRounds(id, player)
+    final wr = _sheetRowRounds(id, player, sheet)
         ? _sheetRound(winRate * 100, 2)
         : winRate * 100;
     final avg = winPoints / gamesPlayed;
@@ -231,7 +238,7 @@ double calculateRatingCoefficient({
     return _sheetRound(result, 4);
   }
 
-  return result.roundTo(3);
+  return _sheetRound(result, 3);
 }
 
 // ── Опорна 5 (ОП) — port of the season-30 sheet formula ──────────────────

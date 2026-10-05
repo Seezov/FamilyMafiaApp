@@ -2,14 +2,19 @@ part of '../season_loader.dart';
 
 // ── JSON → Game objects ───────────────────────────────────────────────────
 
+/// [sheet] reproduces the season sheet's own counting, quirks included (used
+/// for the main league); otherwise games are read by the club's rules.
 List<Game> _getGamesDataSeason(
-    int seasonId, List<GamesDataSeason> rawData) {
+    int seasonId, List<GamesDataSeason> rawData, {bool sheet = false}) {
   final chunkSize = seasonId <= kLegacyMaxSeason ? kOldChunkSize : kNewChunkSize;
-  return rawData.chunked(chunkSize).map((p) => _buildGame(seasonId, p)).toList();
+  return rawData
+      .chunked(chunkSize)
+      .map((p) => _buildGame(seasonId, p, sheet: sheet))
+      .toList();
 }
 
 /// A season's JSON is either sheet rows (a list) or a firestore snapshot (a map).
-List<Game> _parseSeasonGames(int seasonId, String json) {
+List<Game> _parseSeasonGames(int seasonId, String json, {bool sheet = false}) {
   final decoded = jsonDecode(json);
   if (decoded is Map<String, dynamic>) {
     return gamesFromFirestoreSnapshot(seasonId, decoded);
@@ -19,7 +24,7 @@ List<Game> _parseSeasonGames(int seasonId, String json) {
       .map(GamesDataSeason.fromJson)
       .where((d) => _filterRawData(d, seasonId))
       .toList();
-  return _getGamesDataSeason(seasonId, rawData);
+  return _getGamesDataSeason(seasonId, rawData, sheet: sheet);
 }
 
 /// A season 17+ player row's name, or blank when the sheet doesn't count the
@@ -49,7 +54,7 @@ int _sheetFirstKilled(String puCell, List<GamesDataSeason> playerRows) {
   return double.tryParse(playerRows[seat - 1].i) == null ? 0 : seat;
 }
 
-Game _buildGame(int seasonId, List<GamesDataSeason> p) {
+Game _buildGame(int seasonId, List<GamesDataSeason> p, {bool sheet = false}) {
   if (seasonId <= kOldFormatMaxSeason) {
     return Game(
       seasonId: seasonId,
@@ -115,7 +120,8 @@ Game _buildGame(int seasonId, List<GamesDataSeason> p) {
     final date = p[9].b.trim() == 'Дата' ? _parseSheetDate(p[9].c) : null;
     final cityWon = _getVictoryTeam(p[0].c);
     // A game with a blank result the sheet still counts: played, lost by all.
-    final unresolved = p[0].c.trim().isEmpty &&
+    final unresolved = sheet &&
+        p[0].c.trim().isEmpty &&
         (kSheetCountedUnresolvedGames[seasonId]
                 ?.any((e) => e.$1 == date && e.$2 == host && e.$3 == p[0].g) ??
             false);
@@ -143,16 +149,20 @@ Game _buildGame(int seasonId, List<GamesDataSeason> p) {
 
   // Season 17–28: chunk of 14 rows; player rows are p[2]..p[11]
   final playerRows = p.sublist(2, 12);
-  final firstKilled = _sheetFirstKilled(p[12].b, playerRows);
+  final firstKilled = sheet
+      ? _sheetFirstKilled(p[12].b, playerRows)
+      : int.tryParse(p[12].b) ?? 0;
   final date = p[0].a.trim() == 'Дата' ? _parseSheetDate(p[0].b) : null;
-  final players = _fillBlanks(
-      playerRows.map((r) => _sheetCountedName(seasonId, date, r)).toList());
+  final players = _fillBlanks(playerRows
+      .map((r) => sheet ? _sheetCountedName(seasonId, date, r) : r.b)
+      .toList());
+  final wonByPlayer = sheet ? playerRows.map(_sheetWin).toList() : null;
 
   if (seasonId <= kPreProtocolMaxSeason) {
     return Game(
       seasonId: seasonId,
       players: players,
-      wonByPlayer: playerRows.map(_sheetWin).toList(),
+      wonByPlayer: wonByPlayer,
       roles: playerRows.map((r) => r.c).toList(),
       cityWon: _getVictoryTeam(p.last.c),
       firstKilled: firstKilled,
@@ -205,7 +215,7 @@ Game _buildGame(int seasonId, List<GamesDataSeason> p) {
   return Game(
     seasonId: seasonId,
     players: players,
-    wonByPlayer: playerRows.map(_sheetWin).toList(),
+    wonByPlayer: wonByPlayer,
     roles: playerRows.map((r) => r.c).toList(),
     cityWon: _getVictoryTeam(p.last.c),
     firstKilled: firstKilled,

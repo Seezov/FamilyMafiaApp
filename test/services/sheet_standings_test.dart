@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:family_mafia_app/enums/season.dart';
+import 'package:family_mafia_app/models/rating_player_stats.dart';
 import 'package:family_mafia_app/services/season_loader.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -103,6 +104,40 @@ void main() {
     expect(of('Остин').rating, closeTo(114.0, 1e-9));
     expect(of('Vamos').games, 48);
     expect(of('Vamos').rating, closeTo(97.6, 1e-9));
+  });
+
+  // Small leagues follow the club's rules, not the sheets' slips.
+  group('small leagues by the rules', () {
+    RatingPlayerStats row(int id, String name) {
+      final season = Season.values.firstWhere((s) => s.id == id);
+      return seasonStandingsForTest(
+        SeasonMeta(id, season.gameLimit, season.gamesMultiplier),
+        File('assets/raw/players.json').readAsStringSync(),
+        File('assets/raw/${season.jsonFile}').readAsStringSync(),
+      ).firstWhere((r) => r.player.displayName == name);
+    }
+
+    test('season 17: the all-civilian game does not count (sheet: 26)', () {
+      expect(row(17, 'Nemo').gamesPlayed, 25);
+    });
+
+    test('season 17: Бал 1 in a mafia win is a loss (sheet counts a win)', () {
+      final p = row(17, 'Капібара');
+      expect(p.gamesPlayed, 51);
+      expect(p.ratingCoefficient, 62.9886);
+    });
+
+    test('season 27: a seat with a blank Бал still played (sheet: 43)', () {
+      expect(row(27, 'Мідас').gamesPlayed, 44);
+    });
+
+    test('season 4: the result-less game is not a game (sheet: 20)', () {
+      expect(row(4, 'Joi').gamesPlayed, 19);
+    });
+
+    test('season 5: 23/40 = 0.575 rounds to 0.58, as ROUND does', () {
+      expect(row(5, 'Seezov').ratingCoefficient, 66.0);
+    });
   });
 
   // Seasons 17+ are cut into 14-row games, so one stray row would shift every

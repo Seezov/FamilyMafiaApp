@@ -11,8 +11,10 @@ Player _findPlayer(String name, List<Player> players) {
   );
 }
 
+/// [sheet] applies the season sheet's per-row quirks (main league only).
 RatingPlayerStats _computePlayerRating(
-    String name, List<Game> gamesData, SeasonMeta season, List<Player> players) {
+    String name, List<Game> gamesData, SeasonMeta season, List<Player> players,
+    {bool sheet = false}) {
   final gamesForPlayer =
       gamesData.where((g) => g.players.contains(name)).toList();
   final gamesPlayed = gamesForPlayer.length;
@@ -147,7 +149,8 @@ RatingPlayerStats _computePlayerRating(
   final ciForGame = isTopUpCi
       ? calculateAvgRedGamePoints(redGamePoints)
       : calculateCiForGame(
-          firstKilledCityLost, firstKilled, gamesPlayed, season.id, player: name);
+          firstKilledCityLost, firstKilled, gamesPlayed, season.id,
+          player: name, sheet: sheet);
   final ci = isTopUpCi
       ? calculateCiTopUp(ciForGame, firstKilledLossPoints)
       : calculateCi(
@@ -189,6 +192,7 @@ RatingPlayerStats _computePlayerRating(
     penaltyPoints: penaltyPointsByRoleSum,
     autoAdditionalPoints: autoAdditionalPointsByRoleSum,
     season: season,
+    sheet: sheet,
   );
 
   return RatingPlayerStats(

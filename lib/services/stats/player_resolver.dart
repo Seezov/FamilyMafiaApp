@@ -2,12 +2,13 @@ import 'package:family_mafia_app/models/player.dart';
 
 /// Maps a raw sheet name to its canonical [Player] the same way the loader
 /// does (`displayName` or any nickname), with a lookup table instead of a scan.
+/// Case is ignored, as the sheets' COUNTIFS ignore it ("аглая" is Аглая).
 class PlayerResolver {
   PlayerResolver(List<Player> players) {
     for (final p in players) {
-      _byName.putIfAbsent(p.displayName, () => p);
+      _byName.putIfAbsent(p.displayName.toLowerCase(), () => p);
       for (final n in p.nicknames ?? const <String>[]) {
-        _byName.putIfAbsent(n, () => p);
+        _byName.putIfAbsent(n.toLowerCase(), () => p);
       }
     }
   }
@@ -15,7 +16,7 @@ class PlayerResolver {
   final _byName = <String, Player>{};
 
   Player resolve(String raw) =>
-      _byName[raw] ?? Player(id: -1, displayName: raw);
+      _byName[raw.toLowerCase()] ?? Player(id: -1, displayName: raw);
 }
 
 /// Stable identity for grouping: the player id, or the raw name for players
