@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import { afterAll, beforeAll, beforeEach, describe, it } from 'vitest';
 import { assertFails, assertSucceeds, initializeTestEnvironment, type RulesTestEnvironment } from '@firebase/rules-unit-testing';
-import { deleteDoc, doc, getDoc, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore';
+import { deleteDoc, deleteField, doc, getDoc, serverTimestamp, setDoc, updateDoc, writeBatch } from 'firebase/firestore';
 
 let env: RulesTestEnvironment;
 // Firestore auto ids: 20 letters/digits. The rules accept nothing else.
@@ -111,5 +111,148 @@ describe('meta/state', () => {
   });
   it('no extra fields', async () => {
     await assertFails(setDoc(doc(as(HOST), 'meta', 'state'), { updatedAt: serverTimestamp(), x: 1 }));
+  });
+});
+
+const PLAYER = { uid: 'u-player', email: 'player@x.com' };
+const RIVAL = { uid: 'u-rival', email: 'rival@x.com' };
+const claim = (who: User, extra: Record<string, unknown> = {}) => ({
+  player: 'Braun', playerKey: 'braun', email: who.email, googleName: 'B', status: 'pending',
+  createdAt: serverTimestamp(), ...extra,
+});
+const approve = (db: ReturnType<typeof as>, who: User, key = 'braun', player = 'Braun') => {
+  const b = writeBatch(db);
+  b.update(doc(db, 'claims', who.uid), { status: 'approved', decidedBy: ADMIN.email, decidedAt: serverTimestamp() });
+  b.set(doc(db, 'profiles', key), { player, uid: who.uid, updatedAt: serverTimestamp() });
+  return b.commit();
+};
+const seedApproved = (who: User, extra: Record<string, unknown> = {}) =>
+  env.withSecurityRulesDisabled(async (ctx) => {
+    const db = ctx.firestore();
+    await setDoc(doc(db, 'claims', who.uid), { ...claim(who), status: 'approved', createdAt: new Date() });
+    await setDoc(doc(db, 'profiles', 'braun'), { player: 'Braun', uid: who.uid, updatedAt: new Date(), ...extra });
+  });
+
+describe('claims', () => {
+  it('a signed-in user claims a player for themselves', async () => {
+    await assertSucceeds(setDoc(doc(as(PLAYER), 'claims', PLAYER.uid), claim(PLAYER)));
+  });
+  it('not for another uid', async () => {
+    await assertFails(setDoc(doc(as(PLAYER), 'claims', RIVAL.uid), claim(PLAYER)));
+  });
+  it('not with someone else’s email, a non-pending status or extra fields', async () => {
+    await assertFails(setDoc(doc(as(PLAYER), 'claims', PLAYER.uid), claim(PLAYER, { email: RIVAL.email })));
+    await assertFails(setDoc(doc(as(PLAYER), 'claims', PLAYER.uid), claim(PLAYER, { status: 'approved' })));
+    await assertFails(setDoc(doc(as(PLAYER), 'claims', PLAYER.uid), claim(PLAYER, { admin: true })));
+  });
+  it('a guest cannot claim', async () => {
+    await assertFails(setDoc(doc(env.unauthenticatedContext().firestore(), 'claims', PLAYER.uid), claim(PLAYER)));
+  });
+  it('owner and admin read; others do not', async () => {
+    await setDoc(doc(as(PLAYER), 'claims', PLAYER.uid), claim(PLAYER));
+    await assertSucceeds(getDoc(doc(as(PLAYER), 'claims', PLAYER.uid)));
+    await assertSucceeds(getDoc(doc(as(ADMIN), 'claims', PLAYER.uid)));
+    await assertFails(getDoc(doc(as(RIVAL), 'claims', PLAYER.uid)));
+    await assertFails(getDoc(doc(as(HOST), 'claims', PLAYER.uid)));
+  });
+  it('owner cancels or re-claims while pending or rejected', async () => {
+    await setDoc(doc(as(PLAYER), 'claims', PLAYER.uid), claim(PLAYER));
+    await assertSucceeds(setDoc(doc(as(PLAYER), 'claims', PLAYER.uid), claim(PLAYER, { player: 'Floppy', playerKey: 'floppy' })));
+    await updateDoc(doc(as(ADMIN), 'claims', PLAYER.uid), { status: 'rejected', decidedBy: ADMIN.email, decidedAt: serverTimestamp() });
+    await assertSucceeds(setDoc(doc(as(PLAYER), 'claims', PLAYER.uid), claim(PLAYER)));
+    await assertSucceeds(deleteDoc(doc(as(PLAYER), 'claims', PLAYER.uid)));
+  });
+  it('owner cannot touch an approved claim', async () => {
+    await seedApproved(PLAYER);
+    await assertFails(setDoc(doc(as(PLAYER), 'claims', PLAYER.uid), claim(PLAYER, { player: 'Floppy', playerKey: 'floppy' })));
+    await assertFails(deleteDoc(doc(as(PLAYER), 'claims', PLAYER.uid)));
+  });
+  it('only an admin rejects, with their own email', async () => {
+    await setDoc(doc(as(PLAYER), 'claims', PLAYER.uid), claim(PLAYER));
+    const reject = (who: User, by = who.email) =>
+      updateDoc(doc(as(who), 'claims', PLAYER.uid), { status: 'rejected', decidedBy: by, decidedAt: serverTimestamp() });
+    await assertFails(reject(HOST));
+    await assertFails(reject(PLAYER));
+    await assertFails(reject(ADMIN, HOST.email));
+    await assertSucceeds(reject(ADMIN));
+  });
+});
+
+describe('profiles', () => {
+  it('admin approves: claim and profile in one batch', async () => {
+    await setDoc(doc(as(PLAYER), 'claims', PLAYER.uid), claim(PLAYER));
+    await assertSucceeds(approve(as(ADMIN), PLAYER));
+  });
+  it('approval without a profile, or a profile without approval, fails', async () => {
+    await setDoc(doc(as(PLAYER), 'claims', PLAYER.uid), claim(PLAYER));
+    await assertFails(updateDoc(doc(as(ADMIN), 'claims', PLAYER.uid), { status: 'approved', decidedBy: ADMIN.email, decidedAt: serverTimestamp() }));
+    await assertFails(setDoc(doc(as(ADMIN), 'profiles', 'braun'), { player: 'Braun', uid: PLAYER.uid, updatedAt: serverTimestamp() }));
+  });
+  it('profile key and player must match the claim', async () => {
+    await setDoc(doc(as(PLAYER), 'claims', PLAYER.uid), claim(PLAYER));
+    await assertFails(approve(as(ADMIN), PLAYER, 'floppy', 'Braun'));
+    await assertFails(approve(as(ADMIN), PLAYER, 'braun', 'Floppy'));
+  });
+  it('a non-admin cannot approve', async () => {
+    await setDoc(doc(as(PLAYER), 'claims', PLAYER.uid), claim(PLAYER));
+    await assertFails(approve(as(HOST), PLAYER));
+    await assertFails(approve(as(PLAYER), PLAYER));
+  });
+  it('a second account cannot get the same player', async () => {
+    await seedApproved(PLAYER);
+    await setDoc(doc(as(RIVAL), 'claims', RIVAL.uid), claim(RIVAL));
+    await assertFails(approve(as(ADMIN), RIVAL));
+  });
+  it('everyone reads profiles', async () => {
+    await seedApproved(PLAYER);
+    await assertSucceeds(getDoc(doc(env.unauthenticatedContext().firestore(), 'profiles', 'braun')));
+  });
+  it('owner sets and clears nick and avatar', async () => {
+    await seedApproved(PLAYER);
+    const ref = doc(as(PLAYER), 'profiles', 'braun');
+    await assertSucceeds(updateDoc(ref, { nick: 'Boss', avatar: 'data:image/webp;base64,UklGRg==', updatedAt: serverTimestamp() }));
+    await assertSucceeds(updateDoc(ref, { nick: deleteField(), avatar: deleteField(), updatedAt: serverTimestamp() }));
+  });
+  it('owner limits: nick length, avatar type and size, no other fields', async () => {
+    await seedApproved(PLAYER);
+    const ref = doc(as(PLAYER), 'profiles', 'braun');
+    const up = (d: Record<string, unknown>) => updateDoc(ref, { ...d, updatedAt: serverTimestamp() });
+    await assertFails(up({ nick: 'X' }));
+    await assertFails(up({ nick: 'X'.repeat(25) }));
+    await assertFails(up({ avatar: 'data:image/png;base64,iVBO' }));
+    await assertFails(up({ avatar: `data:image/webp;base64,${'A'.repeat(140_000)}` }));
+    await assertFails(up({ player: 'Floppy' }));
+    await assertFails(up({ uid: RIVAL.uid }));
+  });
+  it('others cannot edit a profile', async () => {
+    await seedApproved(PLAYER);
+    await assertFails(updateDoc(doc(as(RIVAL), 'profiles', 'braun'), { nick: 'Boss', updatedAt: serverTimestamp() }));
+    await assertFails(updateDoc(doc(as(HOST), 'profiles', 'braun'), { nick: 'Boss', updatedAt: serverTimestamp() }));
+  });
+  it('admin resets nick/avatar but cannot set them', async () => {
+    await seedApproved(PLAYER, { nick: 'Boss', avatar: 'data:image/webp;base64,UklGRg==' });
+    const ref = doc(as(ADMIN), 'profiles', 'braun');
+    await assertFails(updateDoc(ref, { nick: 'Admin-made', updatedAt: serverTimestamp() }));
+    await assertSucceeds(updateDoc(ref, { nick: deleteField(), avatar: deleteField(), updatedAt: serverTimestamp() }));
+  });
+  it('admin unlinks: profile and claim deleted together; owner cannot delete', async () => {
+    await seedApproved(PLAYER);
+    await assertFails(deleteDoc(doc(as(PLAYER), 'profiles', 'braun')));
+    const db = as(ADMIN);
+    const b = writeBatch(db);
+    b.delete(doc(db, 'profiles', 'braun'));
+    b.delete(doc(db, 'claims', PLAYER.uid));
+    await assertSucceeds(b.commit());
+  });
+});
+
+describe('meta/state by players', () => {
+  it('an approved player bumps updatedAt', async () => {
+    await seedApproved(PLAYER);
+    await assertSucceeds(setDoc(doc(as(PLAYER), 'meta', 'state'), { updatedAt: serverTimestamp() }));
+  });
+  it('a pending player cannot', async () => {
+    await setDoc(doc(as(PLAYER), 'claims', PLAYER.uid), claim(PLAYER));
+    await assertFails(setDoc(doc(as(PLAYER), 'meta', 'state'), { updatedAt: serverTimestamp() }));
   });
 });

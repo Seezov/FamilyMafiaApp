@@ -6,6 +6,16 @@ service cloud.firestore {
     function email() { return request.auth.token.email; }
     function isHost() { return signedIn() && exists(/databases/$(database)/documents/hosts/$(email())); }
     function isAdmin() { return isHost() && get(/databases/$(database)/documents/hosts/$(email())).data.admin == true; }
+    function approvedPlayer() {
+      return signedIn() && exists(/databases/$(database)/documents/claims/$(request.auth.uid))
+        && get(/databases/$(database)/documents/claims/$(request.auth.uid)).data.status == 'approved';
+    }
+    // Keep in sync with site/src/lib/profiles/core.ts.
+    function validNick(d) { return !('nick' in d) || (d.nick is string && d.nick.size() >= 2 && d.nick.size() <= 24); }
+    function validAvatar(d) {
+      return !('avatar' in d) || (d.avatar is string && d.avatar.size() <= 140000
+        && d.avatar.matches('^data:image/(webp|jpeg);base64,[A-Za-z0-9+/]+=*$'));
+    }
 
     function validSeat(s) {
       return s.player is string && s.player.size() > 0
@@ -55,9 +65,65 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    match /claims/{uid} {
+      function own() { return signedIn() && uid == request.auth.uid; }
+      function validClaim(d) {
+        return d.keys().hasOnly(['player', 'playerKey', 'email', 'googleName', 'status', 'createdAt'])
+          && d.keys().hasAll(['player', 'playerKey', 'email', 'googleName', 'status', 'createdAt'])
+          && d.player is string && d.player.size() > 0 && d.player.size() <= 60
+          && d.playerKey is string && d.playerKey.size() > 0 && d.playerKey.size() <= 400
+          && d.email == email()
+          && d.googleName is string && d.googleName.size() <= 100
+          && d.status == 'pending'
+          && d.createdAt == request.time;
+      }
+      function decision(d) {
+        return d.diff(resource.data).affectedKeys().hasOnly(['status', 'decidedBy', 'decidedAt'])
+          && d.decidedBy == email() && d.decidedAt == request.time
+          && (d.status == 'rejected'
+            || (d.status == 'approved'
+              && existsAfter(/databases/$(database)/documents/profiles/$(resource.data.playerKey))));
+      }
+      allow read: if own() || isAdmin();
+      allow create: if own() && validClaim(request.resource.data);
+      allow update: if (own() && resource.data.status != 'approved' && validClaim(request.resource.data))
+        || (isAdmin() && decision(request.resource.data));
+      allow delete: if (own() && resource.data.status != 'approved') || isAdmin();
+    }
+
+    match /profiles/{key} {
+      function validProfile(d) {
+        return d.keys().hasOnly(['player', 'uid', 'nick', 'avatar', 'updatedAt'])
+          && d.player is string && d.uid is string
+          && validNick(d) && validAvatar(d)
+          && d.updatedAt == request.time;
+      }
+      function claimAfter(uid) { return getAfter(/databases/$(database)/documents/claims/$(uid)).data; }
+      function onlyStyle() {
+        return request.resource.data.diff(resource.data).affectedKeys().hasOnly(['nick', 'avatar', 'updatedAt'])
+          && request.resource.data.player == resource.data.player
+          && request.resource.data.uid == resource.data.uid;
+      }
+      // A reset removes a field or leaves it; it never sets a new value.
+      function onlyResets() {
+        return (!('nick' in request.resource.data) || request.resource.data.nick == resource.data.get('nick', null))
+          && (!('avatar' in request.resource.data) || request.resource.data.avatar == resource.data.get('avatar', null));
+      }
+      allow read: if true;
+      allow create: if isAdmin()
+        && request.resource.data.keys().hasOnly(['player', 'uid', 'updatedAt'])
+        && validProfile(request.resource.data)
+        && claimAfter(request.resource.data.uid).status == 'approved'
+        && claimAfter(request.resource.data.uid).playerKey == key
+        && claimAfter(request.resource.data.uid).player == request.resource.data.player;
+      allow update: if validProfile(request.resource.data) && onlyStyle()
+        && ((signedIn() && resource.data.uid == request.auth.uid) || (isAdmin() && onlyResets()));
+      allow delete: if isAdmin();
+    }
+
     match /meta/state {
       allow read: if true;
-      allow write: if isHost()
+      allow write: if (isHost() || approvedPlayer())
         && request.resource.data.keys().hasOnly(['updatedAt'])
         && request.resource.data.updatedAt == request.time;
     }
