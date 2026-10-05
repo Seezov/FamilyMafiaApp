@@ -331,3 +331,38 @@ describe('events', () => {
     ]) await assertFails(setDoc(ev(as(ADMIN)), body(ADMIN, extra)));
   });
 });
+
+describe('config/players', () => {
+  const ref = (db: ReturnType<typeof as>) => doc(db, 'config', 'players');
+  const body = (u: User, extra: Record<string, unknown> = {}) => ({
+    players: [{ name: 'Braun', nicknames: ['Браун'] }], updatedAt: serverTimestamp(), updatedBy: u.uid, updatedByEmail: u.email, ...extra,
+  });
+  it('anyone can read', async () => {
+    await assertSucceeds(getDoc(doc(env.unauthenticatedContext().firestore(), 'config', 'players')));
+  });
+  it('an admin can create and update', async () => {
+    await assertSucceeds(setDoc(ref(as(ADMIN)), body(ADMIN)));
+    await assertSucceeds(setDoc(ref(as(ADMIN)), body(ADMIN, { players: [] })));
+  });
+  it('a host who is not admin cannot write', async () => {
+    await assertFails(setDoc(ref(as(HOST)), body(HOST)));
+  });
+  it('a guest cannot write', async () => {
+    await assertFails(setDoc(doc(env.unauthenticatedContext().firestore(), 'config', 'players'), body(ADMIN)));
+  });
+  it('rejects extra keys, a non-list, a forged author and a client timestamp', async () => {
+    await assertFails(setDoc(ref(as(ADMIN)), body(ADMIN, { extra: 1 })));
+    await assertFails(setDoc(ref(as(ADMIN)), body(ADMIN, { players: 'x' })));
+    await assertFails(setDoc(ref(as(ADMIN)), body(ADMIN, { updatedBy: 'someone' })));
+    await assertFails(setDoc(ref(as(ADMIN)), body(ADMIN, { updatedByEmail: 'x@x.com' })));
+    await assertFails(setDoc(ref(as(ADMIN)), body(ADMIN, { updatedAt: new Date(0) })));
+  });
+  it('rejects more than 2000 players', async () => {
+    const players = Array.from({ length: 2001 }, (_, i) => ({ name: `p${i}`, nicknames: [] }));
+    await assertFails(setDoc(ref(as(ADMIN)), body(ADMIN, { players })));
+  });
+  it('nobody can delete it', async () => {
+    await env.withSecurityRulesDisabled((ctx) => setDoc(doc(ctx.firestore(), 'config', 'players'), { players: [] }));
+    await assertFails(deleteDoc(ref(as(ADMIN))));
+  });
+});

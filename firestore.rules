@@ -136,6 +136,20 @@ service cloud.firestore {
         && request.resource.data.updatedByEmail == email();
     }
 
+    // The club's player list (names + nicknames), edited on /players/edit/. Entry contents
+    // are checked by the build and the editor (rules cannot loop over a list).
+    match /config/players {
+      allow read: if true;
+      allow create, update: if isAdmin()
+        && request.resource.data.keys().hasOnly(['players', 'updatedAt', 'updatedBy', 'updatedByEmail'])
+        && request.resource.data.players is list
+        && request.resource.data.players.size() <= 2000
+        && request.resource.data.updatedAt == request.time
+        && request.resource.data.updatedBy == request.auth.uid
+        && request.resource.data.updatedByEmail == email();
+      allow delete: if false;
+    }
+
     match /events/{id} {
       allow read: if true;
       allow create, update: if isAdmin()
