@@ -1,0 +1,11 @@
+---
+import AnnualPage from '../../components/AnnualPage.astro';
+import { loadAnnual } from '../../lib/data';
+
+export function getStaticPaths() {
+  const data = loadAnnual();
+  return data.years.slice(1).map((y) => ({ params: { year: String(y.year) }, props: { data, y } }));
+}
+const { data, y } = Astro.props;
+---
+<AnnualPage data={data} y={y} />

@@ -105,3 +105,14 @@ export interface GameEntry { id: string; n: number; table?: number; label?: stri
   comments?: { seats: number[]; text: string }[] }
 export interface GamesData { season: number; autoLabel: string; players: { name: string; key: string }[]; hosts: string[];
   days: { date: string | null; games: GameEntry[] }[] }
+export interface AnnualStanding {
+  rank: number; player: SiteCell; score: string; wins: number; top3: number; top10: number; events: number;
+  entries: { event: string; place: number; points: string; counted: boolean }[];
+}
+export interface AnnualEvent {
+  id: string; kind: 'tournament' | 'series' | 'marathon' | 'season'; label: string; name: string;
+  date: string | null; stars: number | null; participants: number | null;
+  results: { player: SiteCell; place: number; points: string }[];
+}
+export interface AnnualYear { year: number; standings: AnnualStanding[]; events: AnnualEvent[] }
+export interface AnnualData { years: AnnualYear[] }

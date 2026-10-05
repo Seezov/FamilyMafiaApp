@@ -7,7 +7,7 @@ import { loadIndex } from '../lib/data';
 interface Props {
   title: string;
   description?: string;
-  active?: 'season' | 'players' | 'overview' | 'records' | 'tournaments' | 'debug' | 'host';
+  active?: 'season' | 'players' | 'overview' | 'records' | 'tournaments' | 'annual' | 'debug' | 'host';
 }
 const { title, description = 'Family Mafia Club statistics: seasons, players, records, tournaments.', active } = Astro.props;
 const { latestSeasonId } = loadIndex();
@@ -17,6 +17,7 @@ const nav = [
   { key: 'overview', label: 'Overview', url: href('overview/') },
   { key: 'records', label: 'Records', url: href('records/mvp/') },
   { key: 'tournaments', label: 'Tournaments', url: href('tournaments/') },
+  { key: 'annual', label: 'Annual', url: href('annual/') },
   { key: 'debug', label: 'Debug', url: href('debug/') },
   { key: 'host', label: 'Провести гру', url: href('host/') },
 ];

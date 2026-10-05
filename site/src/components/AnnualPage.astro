@@ -1,0 +1,107 @@
+---
+// One year of the annual rating: standings (rows expand into the player's
+// events) and the year's events with full results.
+import Base from '../layouts/Base.astro';
+import Panel from './Panel.astro';
+import PlayerName from './PlayerName.astro';
+import { href } from '../lib/url';
+import type { AnnualData, AnnualYear } from '../lib/types';
+
+interface Props { data: AnnualData; y: AnnualYear }
+const { data, y } = Astro.props;
+const newest = data.years[0]?.year;
+const yearHref = (year: number) => href(year === newest ? 'annual/' : `annual/${year}/`);
+const byId = new Map(y.events.map((e) => [e.id, e]));
+const place = (p: number) => (p > 100 ? `S${p - 100}` : String(p));
+const placeTip = (p: number) => (p > 100 ? `Small league #${p - 100}` : undefined);
+---
+<Base title={`Annual rating ${y.year}`} description={`Family Mafia Club annual rating ${y.year}: tournaments, series, marathons and club seasons.`} active="annual">
+  <div class="pagehead">
+    <h1 class="display">Annual rating {y.year}</h1>
+    <nav class="years" aria-label="Year">
+      {data.years.map((o) => <a href={yearHref(o.year)} aria-current={o.year === y.year ? 'page' : undefined}>{o.year}</a>)}
+    </nav>
+  </div>
+  <p class="hint">Sum of each player's 12 best results: club seasons, external tournaments, series and marathons.</p>
+
+  <div class="grid">
+    <Panel title="Standings" class="span-12">
+      <div class="standings" role="table">
+        <div class="row head" role="row">
+          <span>#</span><span>Player</span><span class="num">Score</span><span class="num">Wins</span>
+          <span class="num">Top-3</span><span class="num">Top-10</span><span class="num">Events</span>
+        </div>
+        {y.standings.map((s) => (
+          <details class="st">
+            <summary class="row" role="row">
+              <span class="num">{s.rank}</span>
+              <span>{s.player.link ? <PlayerName slug={s.player.link} name={s.player.t} /> : s.player.t}</span>
+              <span class="num strong">{s.score}</span><span class="num">{s.wins}</span>
+              <span class="num">{s.top3}</span><span class="num">{s.top10}</span><span class="num">{s.events}</span>
+            </summary>
+            <ol class="entries">
+              {s.entries.map((e) => {
+                const ev = byId.get(e.event);
+                return (
+                  <li class={e.counted ? 'counted' : 'dropped'}>
+                    <span class={`kind k-${ev?.kind}`}>{ev?.label}</span>
+                    <span class="name">{ev?.name}</span>
+                    <span class="num" title={placeTip(e.place)}>#{place(e.place)}</span>
+                    <span class="num">{e.points}</span>
+                  </li>
+                );
+              })}
+            </ol>
+          </details>
+        ))}
+      </div>
+    </Panel>
+
+    <Panel title="Events" note={`${y.events.length} events`} class="span-12">
+      <div class="events">
+        {y.events.map((e) => (
+          <details class="ev">
+            <summary>
+              <span class={`kind k-${e.kind}`}>{e.label}</span>
+              <span class="name">{e.name}</span>
+              <span class="meta num">{e.date ?? 'date unknown'}{e.kind === 'tournament' && ` · ${e.stars}★ · ${e.participants} players`}</span>
+            </summary>
+            <ol class="results">
+              {e.results.map((r) => (
+                <li>
+                  <span class="num" title={placeTip(r.place)}>#{place(r.place)}</span>
+                  <span>{r.player.link ? <PlayerName slug={r.player.link} name={r.player.t} /> : r.player.t}</span>
+                  <span class="num">{r.points}</span>
+                </li>
+              ))}
+            </ol>
+          </details>
+        ))}
+      </div>
+    </Panel>
+  </div>
+</Base>
+
+<style>
+  .years { display: flex; gap: 8px; flex-wrap: wrap; }
+  .years a { padding: 2px 10px; border: 1px solid var(--border); border-radius: 999px; }
+  .years a[aria-current='page'] { background: var(--text); color: var(--bg); }
+  .standings .row { display: grid; grid-template-columns: 2.5em 1fr repeat(5, 4.2em); gap: 6px; align-items: center; padding: 6px 4px; }
+  .standings .head { color: var(--muted); font-size: 0.85em; }
+  .st summary { cursor: pointer; list-style: none; border-top: 1px solid var(--border); }
+  .st summary::-webkit-details-marker { display: none; }
+  .entries, .results { list-style: none; margin: 0 0 8px; padding: 0 0 0 2.5em; }
+  .entries li, .results li { display: grid; grid-template-columns: 6em 1fr 4em 4.5em; gap: 6px; padding: 2px 0; }
+  .results li { grid-template-columns: 4em 1fr 4.5em; }
+  .entries .dropped { opacity: 0.45; }
+  .ev summary { display: flex; flex-wrap: wrap; gap: 6px 12px; cursor: pointer; padding: 6px 0; border-top: 1px solid var(--border); }
+  .kind { font-size: 0.8em; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); }
+  .num { text-align: right; font-variant-numeric: tabular-nums; }
+  .strong { font-weight: 600; }
+  @media (max-width: 640px) {
+    .standings .row { grid-template-columns: 2em 1fr 4.2em 3em; }
+    .standings .row > :nth-child(n + 5) { display: none; }
+    .entries li { grid-template-columns: 1fr 3em 4em; }
+    .entries .kind { display: none; }
+  }
+</style>

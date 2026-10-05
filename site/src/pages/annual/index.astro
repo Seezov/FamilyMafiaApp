@@ -1,0 +1,11 @@
+---
+import AnnualPage from '../../components/AnnualPage.astro';
+import Base from '../../layouts/Base.astro';
+import { loadAnnual } from '../../lib/data';
+
+const data = loadAnnual();
+const y = data.years[0];
+---
+{y ? <AnnualPage data={data} y={y} /> : (
+  <Base title="Annual rating" active="annual"><div class="pagehead"><h1 class="display">Annual rating</h1></div><p>No events yet.</p></Base>
+)}
