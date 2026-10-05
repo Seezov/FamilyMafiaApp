@@ -48,19 +48,21 @@ describe('format', () => {
   });
 });
 
+type G = { n?: number; table?: number };
+
 describe('tableGroups', () => {
   it('has no heading for a single group', () => {
-    expect(tableGroups([{ n: 1 }, { n: 2 }]).map((g) => g.table)).toEqual([null]);
+    expect(tableGroups<G>([{ n: 1 }, { n: 2 }]).map((g) => g.table)).toEqual([null]);
     expect(tableGroups([{ table: 2 }]).map((g) => g.table)).toEqual([null]);
   });
   it('labels unknown tables as Table 1 when the day has several tables', () => {
-    const g = tableGroups([{ n: 1 }, { n: 2, table: 2 }, { n: 3 }]);
+    const g = tableGroups<G>([{ n: 1 }, { n: 2, table: 2 }, { n: 3 }]);
     expect(g.map((x) => x.table)).toEqual([1, 2]);
-    expect(g[0].games.map((x: any) => x.n)).toEqual([1, 3]);
+    expect(g[0].games.map((x) => x.n)).toEqual([1, 3]);
   });
   it('merges unknown and real table 1 in sheet order', () => {
     const g = tableGroups([{ n: 1, table: 1 }, { n: 2, table: 2 }, { n: 3 }, { n: 4, table: 1 }]);
     expect(g.map((x) => x.table)).toEqual([1, 2]);
-    expect(g[0].games.map((x: any) => x.n)).toEqual([1, 3, 4]);
+    expect(g[0].games.map((x) => x.n)).toEqual([1, 3, 4]);
   });
 });
