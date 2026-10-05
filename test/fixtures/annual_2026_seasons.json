@@ -1,0 +1,228 @@
+[
+ {
+  "year": 2026,
+  "kind": "season",
+  "name": "Зима 2025-2026",
+  "date": null,
+  "stars": null,
+  "participants": null,
+  "results": [
+   {
+    "player": "Сирник",
+    "place": 1
+   },
+   {
+    "player": "Braun",
+    "place": 2
+   },
+   {
+    "player": "Rathma",
+    "place": 3
+   },
+   {
+    "player": "Seezov",
+    "place": 4
+   },
+   {
+    "player": "Шпак",
+    "place": 5
+   },
+   {
+    "player": "Серпень",
+    "place": 6
+   },
+   {
+    "player": "Фенікс",
+    "place": 7
+   },
+   {
+    "player": "Green",
+    "place": 8
+   },
+   {
+    "player": "Єнотик",
+    "place": 9
+   },
+   {
+    "player": "Німфа",
+    "place": 10
+   },
+   {
+    "player": "Мідас",
+    "place": 101
+   },
+   {
+    "player": "Muggle",
+    "place": 102
+   },
+   {
+    "player": "Залізний",
+    "place": 103
+   },
+   {
+    "player": "Траїн",
+    "place": 104
+   },
+   {
+    "player": "Фрау",
+    "place": 105
+   }
+  ]
+ },
+ {
+  "year": 2026,
+  "kind": "season",
+  "name": "Весна 2026",
+  "date": null,
+  "stars": null,
+  "participants": null,
+  "results": [
+   {
+    "player": "Kulav",
+    "place": 1
+   },
+   {
+    "player": "Rathma",
+    "place": 2
+   },
+   {
+    "player": "Seezov",
+    "place": 3
+   },
+   {
+    "player": "Don`Tright",
+    "place": 4
+   },
+   {
+    "player": "Сирник",
+    "place": 5
+   },
+   {
+    "player": "Серпень",
+    "place": 6
+   },
+   {
+    "player": "Таті",
+    "place": 7
+   },
+   {
+    "player": "Єнотик",
+    "place": 8
+   },
+   {
+    "player": "Вітамінка",
+    "place": 9
+   },
+   {
+    "player": "Німфа",
+    "place": 10
+   },
+   {
+    "player": "Шпак",
+    "place": 11
+   },
+   {
+    "player": "Фрау",
+    "place": 12
+   },
+   {
+    "player": "Фенікс",
+    "place": 13
+   },
+   {
+    "player": "Luna",
+    "place": 101
+   },
+   {
+    "player": "Red Fox",
+    "place": 102
+   },
+   {
+    "player": "Малишка",
+    "place": 103
+   },
+   {
+    "player": "Залізний",
+    "place": 104
+   },
+   {
+    "player": "Флекс",
+    "place": 105
+   }
+  ]
+ },
+ {
+  "year": 2026,
+  "kind": "season",
+  "name": "Літо 2026",
+  "date": null,
+  "stars": null,
+  "participants": null,
+  "results": [
+   {
+    "player": "Seezov",
+    "place": 1
+   },
+   {
+    "player": "Хоттабич",
+    "place": 2
+   },
+   {
+    "player": "Don`Tright",
+    "place": 3
+   },
+   {
+    "player": "Малишка",
+    "place": 4
+   },
+   {
+    "player": "Аватар",
+    "place": 5
+   },
+   {
+    "player": "Шпак",
+    "place": 6
+   },
+   {
+    "player": "Фрау",
+    "place": 7
+   },
+   {
+    "player": "Німфа",
+    "place": 8
+   },
+   {
+    "player": "Сирник",
+    "place": 9
+   },
+   {
+    "player": "Rathma",
+    "place": 10
+   },
+   {
+    "player": "Вітамінка",
+    "place": 11
+   },
+   {
+    "player": "Малина",
+    "place": 101
+   },
+   {
+    "player": "Залізний",
+    "place": 102
+   },
+   {
+    "player": "Green",
+    "place": 103
+   },
+   {
+    "player": "Kulav",
+    "place": 104
+   },
+   {
+    "player": "Флекс",
+    "place": 105
+   }
+  ]
+ }
+]

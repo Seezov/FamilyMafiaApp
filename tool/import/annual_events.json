@@ -1,0 +1,3968 @@
+[
+ {
+  "year": 2024,
+  "kind": "tournament",
+  "name": "Quidich Cup",
+  "date": "2024-01-19",
+  "stars": 1,
+  "participants": 30,
+  "results": [
+   {
+    "player": "Light",
+    "place": 18
+   },
+   {
+    "player": "Anatolich",
+    "place": 17
+   }
+  ]
+ },
+ {
+  "year": 2024,
+  "kind": "tournament",
+  "name": "Dnipro team cup",
+  "date": "2024-02-09",
+  "stars": 3,
+  "participants": 80,
+  "results": [
+   {
+    "player": "Majest",
+    "place": 55
+   },
+   {
+    "player": "Floppy",
+    "place": 73
+   },
+   {
+    "player": "Залізний",
+    "place": 34
+   }
+  ]
+ },
+ {
+  "year": 2024,
+  "kind": "marathon",
+  "name": "WM final",
+  "date": "2024-02-25",
+  "stars": null,
+  "participants": null,
+  "results": [
+   {
+    "player": "Скай",
+    "place": 2
+   },
+   {
+    "player": "Don`Tright",
+    "place": 1
+   },
+   {
+    "player": "Луна",
+    "place": 3
+   },
+   {
+    "player": "Аглая",
+    "place": 4
+   },
+   {
+    "player": "Найт",
+    "place": 5
+   },
+   {
+    "player": "Хоттабич",
+    "place": 6
+   },
+   {
+    "player": "Луиза",
+    "place": 7
+   },
+   {
+    "player": "Braun",
+    "place": 8
+   },
+   {
+    "player": "Малишка",
+    "place": 9
+   },
+   {
+    "player": "Без Понятия",
+    "place": 10
+   },
+   {
+    "player": "Blake",
+    "place": 7
+   }
+  ]
+ },
+ {
+  "year": 2024,
+  "kind": "season",
+  "name": "Зима 23-24",
+  "date": null,
+  "stars": null,
+  "participants": null,
+  "results": [
+   {
+    "player": "Don`Tright",
+    "place": 1
+   },
+   {
+    "player": "Braun",
+    "place": 2
+   },
+   {
+    "player": "Аглая",
+    "place": 3
+   },
+   {
+    "player": "Скай",
+    "place": 4
+   },
+   {
+    "player": "Хоттабич",
+    "place": 5
+   },
+   {
+    "player": "Tina",
+    "place": 6
+   },
+   {
+    "player": "Найт",
+    "place": 7
+   },
+   {
+    "player": "Залізний",
+    "place": 8
+   },
+   {
+    "player": "Серпень",
+    "place": 9
+   },
+   {
+    "player": "Green",
+    "place": 10
+   },
+   {
+    "player": "RedFox",
+    "place": 11
+   },
+   {
+    "player": "Луиза",
+    "place": 101
+   },
+   {
+    "player": "Try",
+    "place": 102
+   },
+   {
+    "player": "Луна",
+    "place": 103
+   },
+   {
+    "player": "Валькірія",
+    "place": 104
+   },
+   {
+    "player": "Малишка",
+    "place": 105
+   }
+  ]
+ },
+ {
+  "year": 2024,
+  "kind": "tournament",
+  "name": "Poltava Birthday",
+  "date": "2024-02-24",
+  "stars": 4,
+  "participants": 60,
+  "results": [
+   {
+    "player": "Majest",
+    "place": 16
+   },
+   {
+    "player": "Залізний",
+    "place": 29
+   }
+  ]
+ },
+ {
+  "year": 2024,
+  "kind": "series",
+  "name": "High Level",
+  "date": null,
+  "stars": null,
+  "participants": null,
+  "results": [
+   {
+    "player": "Stone Cold",
+    "place": 9
+   },
+   {
+    "player": "Валькірія",
+    "place": 10
+   },
+   {
+    "player": "Seezov",
+    "place": 1
+   }
+  ]
+ },
+ {
+  "year": 2024,
+  "kind": "tournament",
+  "name": "Big Ben Double",
+  "date": "2024-03-15",
+  "stars": 4,
+  "participants": 60,
+  "results": [
+   {
+    "player": "Залізний",
+    "place": 7
+   },
+   {
+    "player": "Stone Cold",
+    "place": 8
+   },
+   {
+    "player": "Majest",
+    "place": 55
+   }
+  ]
+ },
+ {
+  "year": 2024,
+  "kind": "series",
+  "name": "Фінал мінікапів",
+  "date": "2024-03-31",
+  "stars": null,
+  "participants": null,
+  "results": [
+   {
+    "player": "Залізний",
+    "place": 1
+   },
+   {
+    "player": "Хоттабич",
+    "place": 2
+   },
+   {
+    "player": "Floppy",
+    "place": 3
+   },
+   {
+    "player": "Найт",
+    "place": 4
+   },
+   {
+    "player": "Majest",
+    "place": 5
+   },
+   {
+    "player": "Скай",
+    "place": 6
+   },
+   {
+    "player": "RedFox",
+    "place": 7
+   },
+   {
+    "player": "Horizon",
+    "place": 8
+   },
+   {
+    "player": "Tina",
+    "place": 9
+   },
+   {
+    "player": "Венздей",
+    "place": 10
+   }
+  ]
+ },
+ {
+  "year": 2024,
+  "kind": "tournament",
+  "name": "Al Capone",
+  "date": "2024-04-06",
+  "stars": 4,
+  "participants": 40,
+  "results": [
+   {
+    "player": "Залізний",
+    "place": 4
+   },
+   {
+    "player": "Серпень",
+    "place": 32
+   }
+  ]
+ },
+ {
+  "year": 2024,
+  "kind": "tournament",
+  "name": "Вінниця оупен",
+  "date": "2024-04-28",
+  "stars": 3,
+  "participants": 60,
+  "results": [
+   {
+    "player": "Залізний",
+    "place": 23
+   }
+  ]
+ },
+ {
+  "year": 2024,
+  "kind": "series",
+  "name": "БОЕ 1",
+  "date": "2024-05-04",
+  "stars": null,
+  "participants": null,
+  "results": [
+   {
+    "player": "Скай",
+    "place": 5
+   },
+   {
+    "player": "Найт",
+    "place": 6
+   },
+   {
+    "player": "Валькірія",
+    "place": 7
+   },
+   {
+    "player": "Малишка",
+    "place": 8
+   },
+   {
+    "player": "Tina",
+    "place": 9
+   },
+   {
+    "player": "Серпень",
+    "place": 10
+   }
+  ]
+ },
+ {
+  "year": 2024,
+  "kind": "marathon",
+  "name": "Алігатори",
+  "date": "2024-05-19",
+  "stars": null,
+  "participants": null,
+  "results": [
+   {
+    "player": "Аглая",
+    "place": 5
+   },
+   {
+    "player": "Хоттабич",
+    "place": 2
+   },
+   {
+    "player": "Серпень",
+    "place": 6
+   },
+   {
+    "player": "Победун",
+    "place": 7
+   },
+   {
+    "player": "Majest",
+    "place": 9
+   },
+   {
+    "player": "Валькірія",
+    "place": 10
+   },
+   {
+    "player": "Don`Tright",
+    "place": 4
+   },
+   {
+    "player": "Braun",
+    "place": 1
+   },
+   {
+    "player": "Залізний",
+    "place": 6
+   },
+   {
+    "player": "Луиза",
+    "place": 8
+   },
+   {
+    "player": "RedFox",
+    "place": 8
+   },
+   {
+    "player": "Скай",
+    "place": 6
+   }
+  ]
+ },
+ {
+  "year": 2024,
+  "kind": "season",
+  "name": "Весна 24",
+  "date": null,
+  "stars": null,
+  "participants": null,
+  "results": [
+   {
+    "player": "Don`Tright",
+    "place": 1
+   },
+   {
+    "player": "Победун",
+    "place": 2
+   },
+   {
+    "player": "Braun",
+    "place": 3
+   },
+   {
+    "player": "Залізний",
+    "place": 4
+   },
+   {
+    "player": "Green",
+    "place": 5
+   },
+   {
+    "player": "Аглая",
+    "place": 6
+   },
+   {
+    "player": "Хоттабич",
+    "place": 7
+   },
+   {
+    "player": "Серпень",
+    "place": 8
+   },
+   {
+    "player": "Валькірія",
+    "place": 9
+   },
+   {
+    "player": "Найт",
+    "place": 10
+   },
+   {
+    "player": "Tina",
+    "place": 11
+   },
+   {
+    "player": "Скай",
+    "place": 12
+   },
+   {
+    "player": "Muggle",
+    "place": 13
+   },
+   {
+    "player": "RedFox",
+    "place": 101
+   },
+   {
+    "player": "Радо",
+    "place": 102
+   },
+   {
+    "player": "Даяна",
+    "place": 103
+   },
+   {
+    "player": "Малина",
+    "place": 104
+   },
+   {
+    "player": "Zanzarah",
+    "place": 105
+   }
+  ]
+ },
+ {
+  "year": 2024,
+  "kind": "tournament",
+  "name": "FTC2024",
+  "date": "2024-06-01",
+  "stars": 3,
+  "participants": 40,
+  "results": [
+   {
+    "player": "Braun",
+    "place": 4
+   },
+   {
+    "player": "Малишка",
+    "place": 6
+   },
+   {
+    "player": "Серпень",
+    "place": 13
+   },
+   {
+    "player": "Хоттабич",
+    "place": 18
+   },
+   {
+    "player": "Seezov",
+    "place": 19
+   },
+   {
+    "player": "Тян",
+    "place": 23
+   },
+   {
+    "player": "Аглая",
+    "place": 28
+   },
+   {
+    "player": "Stone Cold",
+    "place": 29
+   },
+   {
+    "player": "Don`Tright",
+    "place": 30
+   },
+   {
+    "player": "Валькірія",
+    "place": 35
+   },
+   {
+    "player": "Nemo",
+    "place": 36
+   }
+  ]
+ },
+ {
+  "year": 2024,
+  "kind": "tournament",
+  "name": "BBO 2024",
+  "date": "2024-06-24",
+  "stars": 3,
+  "participants": 90,
+  "results": [
+   {
+    "player": "Аглая",
+    "place": 85
+   },
+   {
+    "player": "Луна",
+    "place": 2
+   },
+   {
+    "player": "Валькірія",
+    "place": 1
+   }
+  ]
+ },
+ {
+  "year": 2024,
+  "kind": "series",
+  "name": "BOe-2",
+  "date": "2024-07-20",
+  "stars": null,
+  "participants": null,
+  "results": [
+   {
+    "player": "Валькірія",
+    "place": 7
+   },
+   {
+    "player": "Дипломат",
+    "place": 4
+   },
+   {
+    "player": "Серпень",
+    "place": 6
+   }
+  ]
+ },
+ {
+  "year": 2024,
+  "kind": "tournament",
+  "name": "КДТ",
+  "date": "2024-08-17",
+  "stars": 3,
+  "participants": 30,
+  "results": [
+   {
+    "player": "Majest",
+    "place": 3
+   },
+   {
+    "player": "Залізний",
+    "place": 6
+   },
+   {
+    "player": "Аглая",
+    "place": 8
+   },
+   {
+    "player": "Тян",
+    "place": 9
+   },
+   {
+    "player": "Победун",
+    "place": 13
+   },
+   {
+    "player": "RedFox",
+    "place": 21
+   },
+   {
+    "player": "Найт",
+    "place": 30
+   },
+   {
+    "player": "Малина",
+    "place": 15
+   },
+   {
+    "player": "Серпень",
+    "place": 24
+   }
+  ]
+ },
+ {
+  "year": 2024,
+  "kind": "tournament",
+  "name": "Командний Аймафыя",
+  "date": "2024-08-22",
+  "stars": 2,
+  "participants": 80,
+  "results": [
+   {
+    "player": "Stone Cold",
+    "place": 15
+   },
+   {
+    "player": "Seezov",
+    "place": 80
+   }
+  ]
+ },
+ {
+  "year": 2024,
+  "kind": "tournament",
+  "name": "LMU",
+  "date": "2024-07-20",
+  "stars": 3,
+  "participants": 50,
+  "results": [
+   {
+    "player": "Seezov",
+    "place": 1
+   },
+   {
+    "player": "Валькірія",
+    "place": 30
+   }
+  ]
+ },
+ {
+  "year": 2024,
+  "kind": "tournament",
+  "name": "UNL",
+  "date": "2024-08-24",
+  "stars": 3,
+  "participants": 250,
+  "results": [
+   {
+    "player": "Stone Cold",
+    "place": 4
+   }
+  ]
+ },
+ {
+  "year": 2024,
+  "kind": "season",
+  "name": "Літо",
+  "date": "2024-09-01",
+  "stars": null,
+  "participants": null,
+  "results": [
+   {
+    "player": "Don`Tright",
+    "place": 1
+   },
+   {
+    "player": "Braun",
+    "place": 2
+   },
+   {
+    "player": "Найт",
+    "place": 3
+   },
+   {
+    "player": "Seezov",
+    "place": 4
+   },
+   {
+    "player": "Хоттабич",
+    "place": 5
+   },
+   {
+    "player": "Anatolich",
+    "place": 6
+   },
+   {
+    "player": "Green",
+    "place": 7
+   },
+   {
+    "player": "Залізний",
+    "place": 8
+   },
+   {
+    "player": "Фурія",
+    "place": 9
+   },
+   {
+    "player": "Серпень",
+    "place": 10
+   },
+   {
+    "player": "Скай",
+    "place": 11
+   },
+   {
+    "player": "Гоа",
+    "place": 12
+   },
+   {
+    "player": "Дипломат",
+    "place": 101
+   },
+   {
+    "player": "Капібара",
+    "place": 102
+   },
+   {
+    "player": "Даяна",
+    "place": 103
+   },
+   {
+    "player": "Победун",
+    "place": 104
+   },
+   {
+    "player": "Hunter",
+    "place": 105
+   }
+  ]
+ },
+ {
+  "year": 2024,
+  "kind": "marathon",
+  "name": "Костюм",
+  "date": "2024-09-08",
+  "stars": null,
+  "participants": null,
+  "results": [
+   {
+    "player": "Хоттабич",
+    "place": 1
+   },
+   {
+    "player": "Аглая",
+    "place": 2
+   },
+   {
+    "player": "Валькірія",
+    "place": 3
+   },
+   {
+    "player": "Найт",
+    "place": 4
+   },
+   {
+    "player": "Don`Tright",
+    "place": 5
+   },
+   {
+    "player": "Серпень",
+    "place": 6
+   },
+   {
+    "player": "Фурія",
+    "place": 7
+   },
+   {
+    "player": "Малина",
+    "place": 8
+   },
+   {
+    "player": "Малишка",
+    "place": 9
+   },
+   {
+    "player": "Nemo",
+    "place": 10
+   }
+  ]
+ },
+ {
+  "year": 2024,
+  "kind": "tournament",
+  "name": "ПФ Хай",
+  "date": "2024-09-07",
+  "stars": 4,
+  "participants": 20,
+  "results": [
+   {
+    "player": "Залізний",
+    "place": 8
+   },
+   {
+    "player": "Seezov",
+    "place": 20
+   }
+  ]
+ },
+ {
+  "year": 2024,
+  "kind": "tournament",
+  "name": "Vinnytsa",
+  "date": "2024-09-14",
+  "stars": 5,
+  "participants": 40,
+  "results": [
+   {
+    "player": "Залізний",
+    "place": 26
+   },
+   {
+    "player": "Seezov",
+    "place": 6
+   },
+   {
+    "player": "Stone Cold",
+    "place": 25
+   }
+  ]
+ },
+ {
+  "year": 2024,
+  "kind": "marathon",
+  "name": "Barbie",
+  "date": "2024-09-15",
+  "stars": null,
+  "participants": null,
+  "results": [
+   {
+    "player": "Малишка",
+    "place": 1
+   },
+   {
+    "player": "Don`Tright",
+    "place": 2
+   },
+   {
+    "player": "Аглая",
+    "place": 3
+   },
+   {
+    "player": "Аватар",
+    "place": 4
+   },
+   {
+    "player": "Скай",
+    "place": 5
+   },
+   {
+    "player": "Даяна",
+    "place": 6
+   },
+   {
+    "player": "Nemo",
+    "place": 7
+   },
+   {
+    "player": "Anatolich",
+    "place": 8
+   },
+   {
+    "player": "Гоа",
+    "place": 9
+   },
+   {
+    "player": "RedFox",
+    "place": 10
+   }
+  ]
+ },
+ {
+  "year": 2024,
+  "kind": "tournament",
+  "name": "Кроп",
+  "date": "2024-10-26",
+  "stars": 3,
+  "participants": 40,
+  "results": [
+   {
+    "player": "Хоттабич",
+    "place": 3
+   },
+   {
+    "player": "Залізний",
+    "place": 4
+   },
+   {
+    "player": "Tina",
+    "place": 6
+   },
+   {
+    "player": "Seezov",
+    "place": 8
+   },
+   {
+    "player": "Тян",
+    "place": 7
+   },
+   {
+    "player": "Найт",
+    "place": 22
+   },
+   {
+    "player": "Аглая",
+    "place": 13
+   },
+   {
+    "player": "Валькірія",
+    "place": 15
+   },
+   {
+    "player": "Малишка",
+    "place": 23
+   },
+   {
+    "player": "Фурія",
+    "place": 29
+   },
+   {
+    "player": "Серпень",
+    "place": 33
+   }
+  ]
+ },
+ {
+  "year": 2024,
+  "kind": "marathon",
+  "name": "Гном",
+  "date": "2024-10-19",
+  "stars": null,
+  "participants": null,
+  "results": [
+   {
+    "player": "Найт",
+    "place": 1
+   },
+   {
+    "player": "Green",
+    "place": 2
+   },
+   {
+    "player": "Серпень",
+    "place": 3
+   },
+   {
+    "player": "Аглая",
+    "place": 4
+   },
+   {
+    "player": "Don`Tright",
+    "place": 5
+   },
+   {
+    "player": "Хоттабич",
+    "place": 6
+   },
+   {
+    "player": "Малишка",
+    "place": 7
+   },
+   {
+    "player": "Hunter",
+    "place": 8
+   },
+   {
+    "player": "Победун",
+    "place": 9
+   },
+   {
+    "player": "Anatolich",
+    "place": 10
+   }
+  ]
+ },
+ {
+  "year": 2024,
+  "kind": "tournament",
+  "name": "Династія",
+  "date": "2024-10-05",
+  "stars": 3,
+  "participants": 44,
+  "results": [
+   {
+    "player": "Залізний",
+    "place": 3
+   },
+   {
+    "player": "Seezov",
+    "place": 43
+   }
+  ]
+ },
+ {
+  "year": 2024,
+  "kind": "tournament",
+  "name": "Hard",
+  "date": "2024-09-21",
+  "stars": 5,
+  "participants": 50,
+  "results": [
+   {
+    "player": "Majest",
+    "place": 50
+   },
+   {
+    "player": "Seezov",
+    "place": 17
+   },
+   {
+    "player": "Stone Cold",
+    "place": 43
+   },
+   {
+    "player": "Залізний",
+    "place": 23
+   }
+  ]
+ },
+ {
+  "year": 2024,
+  "kind": "tournament",
+  "name": "ПФ",
+  "date": "2024-10-16",
+  "stars": 3,
+  "participants": 100,
+  "results": [
+   {
+    "player": "Малина",
+    "place": 1
+   },
+   {
+    "player": "Braun",
+    "place": 7
+   },
+   {
+    "player": "Anatolich",
+    "place": 19
+   },
+   {
+    "player": "Тян",
+    "place": 4
+   },
+   {
+    "player": "Аглая",
+    "place": 6
+   },
+   {
+    "player": "Seezov",
+    "place": 20
+   },
+   {
+    "player": "Победун",
+    "place": 14
+   },
+   {
+    "player": "Найт",
+    "place": 3
+   }
+  ]
+ },
+ {
+  "year": 2024,
+  "kind": "tournament",
+  "name": "High Level Games",
+  "date": "2024-11-25",
+  "stars": 4,
+  "participants": 200,
+  "results": [
+   {
+    "player": "Залізний",
+    "place": 8
+   }
+  ]
+ },
+ {
+  "year": 2024,
+  "kind": "marathon",
+  "name": "Школа",
+  "date": "2024-11-23",
+  "stars": null,
+  "participants": null,
+  "results": [
+   {
+    "player": "Малишка",
+    "place": 1
+   },
+   {
+    "player": "Muggle",
+    "place": 2
+   },
+   {
+    "player": "Аглая",
+    "place": 4
+   },
+   {
+    "player": "Серпень",
+    "place": 3
+   },
+   {
+    "player": "Адріана",
+    "place": 5
+   },
+   {
+    "player": "Фурія",
+    "place": 6
+   },
+   {
+    "player": "Скай",
+    "place": 8
+   },
+   {
+    "player": "RedFox",
+    "place": 7
+   },
+   {
+    "player": "Фрау",
+    "place": 9
+   },
+   {
+    "player": "Найт",
+    "place": 10
+   },
+   {
+    "player": "Zanzarah",
+    "place": 11
+   },
+   {
+    "player": "Аватар",
+    "place": 12
+   }
+  ]
+ },
+ {
+  "year": 2024,
+  "kind": "season",
+  "name": "Сезон 2024",
+  "date": null,
+  "stars": null,
+  "participants": null,
+  "results": [
+   {
+    "player": "Хоттабич",
+    "place": 1
+   },
+   {
+    "player": "Don`Tright",
+    "place": 2
+   },
+   {
+    "player": "Малишка",
+    "place": 3
+   },
+   {
+    "player": "Серпень",
+    "place": 4
+   },
+   {
+    "player": "Braun",
+    "place": 5
+   },
+   {
+    "player": "Аглая",
+    "place": 6
+   },
+   {
+    "player": "Фурія",
+    "place": 7
+   },
+   {
+    "player": "Найт",
+    "place": 8
+   },
+   {
+    "player": "Muggle",
+    "place": 9
+   },
+   {
+    "player": "Green",
+    "place": 10
+   },
+   {
+    "player": "Скай",
+    "place": 11
+   },
+   {
+    "player": "Фрау",
+    "place": 12
+   },
+   {
+    "player": "Гоа",
+    "place": 13
+   },
+   {
+    "player": "Победун",
+    "place": 101
+   },
+   {
+    "player": "Валькірія",
+    "place": 102
+   },
+   {
+    "player": "Залізний",
+    "place": 103
+   },
+   {
+    "player": "Tina",
+    "place": 104
+   },
+   {
+    "player": "Hunter",
+    "place": 105
+   }
+  ]
+ },
+ {
+  "year": 2024,
+  "kind": "tournament",
+  "name": "Беретти",
+  "date": "2024-12-01",
+  "stars": 3,
+  "participants": 30,
+  "results": [
+   {
+    "player": "Seezov",
+    "place": 2
+   },
+   {
+    "player": "Stone Cold",
+    "place": 15
+   },
+   {
+    "player": "Залізний",
+    "place": 16
+   },
+   {
+    "player": "Серпень",
+    "place": 30
+   },
+   {
+    "player": "Braun",
+    "place": 6
+   },
+   {
+    "player": "Tina",
+    "place": 24
+   },
+   {
+    "player": "Аглая",
+    "place": 26
+   },
+   {
+    "player": "Majest",
+    "place": 27
+   },
+   {
+    "player": "Валькірія",
+    "place": 18
+   },
+   {
+    "player": "Скай",
+    "place": 21
+   },
+   {
+    "player": "Найт",
+    "place": 17
+   },
+   {
+    "player": "Тян",
+    "place": 25
+   },
+   {
+    "player": "Floppy",
+    "place": 13
+   },
+   {
+    "player": "Don`Tright",
+    "place": 7
+   }
+  ]
+ },
+ {
+  "year": 2025,
+  "kind": "season",
+  "name": "Зима 2024 - 2025",
+  "date": "2025-02-28",
+  "stars": null,
+  "participants": null,
+  "results": [
+   {
+    "player": "Малишка",
+    "place": 1
+   },
+   {
+    "player": "Хоттабич",
+    "place": 2
+   },
+   {
+    "player": "Braun",
+    "place": 3
+   },
+   {
+    "player": "Seezov",
+    "place": 4
+   },
+   {
+    "player": "Green",
+    "place": 5
+   },
+   {
+    "player": "Залізний",
+    "place": 6
+   },
+   {
+    "player": "Фурія",
+    "place": 7
+   },
+   {
+    "player": "Серпень",
+    "place": 8
+   },
+   {
+    "player": "Скай",
+    "place": 9
+   },
+   {
+    "player": "Сирник",
+    "place": 10
+   },
+   {
+    "player": "Гоа",
+    "place": 11
+   },
+   {
+    "player": "Радо",
+    "place": 12
+   },
+   {
+    "player": "Шпак",
+    "place": 13
+   },
+   {
+    "player": "Скорпіон",
+    "place": 14
+   },
+   {
+    "player": "Don`Tright",
+    "place": 101
+   },
+   {
+    "player": "Аватар",
+    "place": 102
+   },
+   {
+    "player": "Muggle",
+    "place": 103
+   },
+   {
+    "player": "Фрау",
+    "place": 104
+   },
+   {
+    "player": "Німфа",
+    "place": 105
+   }
+  ]
+ },
+ {
+  "year": 2025,
+  "kind": "tournament",
+  "name": "IMafia - Star Wars Cup 2025",
+  "date": "2025-03-02",
+  "stars": 2,
+  "participants": 50,
+  "results": [
+   {
+    "player": "Аватар",
+    "place": 29
+   },
+   {
+    "player": "Seezov",
+    "place": 19
+   },
+   {
+    "player": "Stone Cold",
+    "place": 2
+   }
+  ]
+ },
+ {
+  "year": 2025,
+  "kind": "tournament",
+  "name": "MafGame - Family Mafia Cup",
+  "date": "2025-02-23",
+  "stars": 3,
+  "participants": 30,
+  "results": [
+   {
+    "player": "Рауль",
+    "place": 2
+   },
+   {
+    "player": "Остин",
+    "place": 26
+   }
+  ]
+ },
+ {
+  "year": 2025,
+  "kind": "tournament",
+  "name": "EG - LIFT 2025",
+  "date": "2025-02-15",
+  "stars": 2,
+  "participants": 40,
+  "results": [
+   {
+    "player": "Аватар",
+    "place": 12
+   }
+  ]
+ },
+ {
+  "year": 2025,
+  "kind": "tournament",
+  "name": "EG - Серія Battle of the East",
+  "date": "2025-08-24",
+  "stars": 3,
+  "participants": 100,
+  "results": [
+   {
+    "player": "Аватар",
+    "place": 6
+   },
+   {
+    "player": "Тян",
+    "place": 3
+   },
+   {
+    "player": "Аглая",
+    "place": 10
+   },
+   {
+    "player": "Малишка",
+    "place": 7
+   },
+   {
+    "player": "Хоттабич",
+    "place": 8
+   },
+   {
+    "player": "Braun",
+    "place": 4
+   },
+   {
+    "player": "Seezov",
+    "place": 1
+   },
+   {
+    "player": "Валькірія",
+    "place": 9
+   },
+   {
+    "player": "Tina",
+    "place": 13
+   },
+   {
+    "player": "Kulav",
+    "place": 5
+   },
+   {
+    "player": "Фурія",
+    "place": 18
+   }
+  ]
+ },
+ {
+  "year": 2025,
+  "kind": "series",
+  "name": "MafGame - GMC",
+  "date": "2025-03-01",
+  "stars": null,
+  "participants": null,
+  "results": [
+   {
+    "player": "Рауль",
+    "place": 1
+   }
+  ]
+ },
+ {
+  "year": 2025,
+  "kind": "series",
+  "name": "EG - Серія Battle of the East.2",
+  "date": "2025-03-09",
+  "stars": null,
+  "participants": null,
+  "results": [
+   {
+    "player": "Победун",
+    "place": 10
+   },
+   {
+    "player": "Nemo",
+    "place": 5
+   },
+   {
+    "player": "Найт",
+    "place": 6
+   }
+  ]
+ },
+ {
+  "year": 2025,
+  "kind": "tournament",
+  "name": "MafGame - German Mafia Open",
+  "date": "2025-03-08",
+  "stars": 4,
+  "participants": 40,
+  "results": [
+   {
+    "player": "Рауль",
+    "place": 11
+   }
+  ]
+ },
+ {
+  "year": 2025,
+  "kind": "tournament",
+  "name": "EG - Big Ben Double",
+  "date": "2025-03-15",
+  "stars": 5,
+  "participants": 60,
+  "results": [
+   {
+    "player": "Seezov",
+    "place": 9
+   },
+   {
+    "player": "Stone Cold",
+    "place": 5
+   },
+   {
+    "player": "Залізний",
+    "place": 38
+   }
+  ]
+ },
+ {
+  "year": 2025,
+  "kind": "tournament",
+  "name": "MafiaCl Championship",
+  "date": "2025-03-15",
+  "stars": 4,
+  "participants": 30,
+  "results": [
+   {
+    "player": "Рауль",
+    "place": 3
+   },
+   {
+    "player": "Остин",
+    "place": 14
+   }
+  ]
+ },
+ {
+  "year": 2025,
+  "kind": "tournament",
+  "name": "EG - Битва новачків",
+  "date": "2025-03-22",
+  "stars": 1,
+  "participants": 30,
+  "results": [
+   {
+    "player": "Фурія",
+    "place": 1
+   },
+   {
+    "player": "Аватар",
+    "place": 12
+   },
+   {
+    "player": "Лілі",
+    "place": 19
+   }
+  ]
+ },
+ {
+  "year": 2025,
+  "kind": "tournament",
+  "name": "Mirage Mafia Open 2025",
+  "date": "2025-05-31",
+  "stars": 2,
+  "participants": 84,
+  "results": [
+   {
+    "player": "Tina",
+    "place": 44
+   }
+  ]
+ },
+ {
+  "year": 2025,
+  "kind": "tournament",
+  "name": "La casa papel",
+  "date": "2025-05-24",
+  "stars": 3,
+  "participants": 40,
+  "results": [
+   {
+    "player": "Stone Cold",
+    "place": 28
+   }
+  ]
+ },
+ {
+  "year": 2025,
+  "kind": "tournament",
+  "name": "Турнір каштанів",
+  "date": "2025-04-12",
+  "stars": 3,
+  "participants": 60,
+  "results": [
+   {
+    "player": "Stone Cold",
+    "place": 6
+   },
+   {
+    "player": "Аватар",
+    "place": 14
+   }
+  ]
+ },
+ {
+  "year": 2025,
+  "kind": "tournament",
+  "name": "Травневі перегони",
+  "date": "2025-04-12",
+  "stars": 2,
+  "participants": 50,
+  "results": [
+   {
+    "player": "Stone Cold",
+    "place": 22
+   }
+  ]
+ },
+ {
+  "year": 2025,
+  "kind": "season",
+  "name": "Весна",
+  "date": "2025-05-31",
+  "stars": null,
+  "participants": null,
+  "results": [
+   {
+    "player": "Braun",
+    "place": 1
+   },
+   {
+    "player": "Скай",
+    "place": 2
+   },
+   {
+    "player": "Green",
+    "place": 3
+   },
+   {
+    "player": "Залізний",
+    "place": 4
+   },
+   {
+    "player": "Don`Tright",
+    "place": 5
+   },
+   {
+    "player": "Аватар",
+    "place": 6
+   },
+   {
+    "player": "Seezov",
+    "place": 7
+   },
+   {
+    "player": "Серпень",
+    "place": 8
+   },
+   {
+    "player": "Валькірія",
+    "place": 9
+   },
+   {
+    "player": "Сирник",
+    "place": 10
+   },
+   {
+    "player": "Тян",
+    "place": 11
+   },
+   {
+    "player": "Kulav",
+    "place": 12
+   },
+   {
+    "player": "Таті",
+    "place": 13
+   },
+   {
+    "player": "Фенікс",
+    "place": 14
+   },
+   {
+    "player": "Скорпіон",
+    "place": 15
+   },
+   {
+    "player": "Мідас",
+    "place": 16
+   },
+   {
+    "player": "Гоа",
+    "place": 17
+   },
+   {
+    "player": "Шпак",
+    "place": 18
+   },
+   {
+    "player": "Фрау",
+    "place": 19
+   },
+   {
+    "player": "Німфа",
+    "place": 101
+   },
+   {
+    "player": "Хоттабич",
+    "place": 102
+   },
+   {
+    "player": "Даяна",
+    "place": 103
+   },
+   {
+    "player": "Бард",
+    "place": 104
+   },
+   {
+    "player": "Малишка",
+    "place": 105
+   }
+  ]
+ },
+ {
+  "year": 2025,
+  "kind": "tournament",
+  "name": "Family Team Cup 2025",
+  "date": "2025-05-31",
+  "stars": 3,
+  "participants": 40,
+  "results": [
+   {
+    "player": "Малишка",
+    "place": 3
+   },
+   {
+    "player": "Малина",
+    "place": 11
+   },
+   {
+    "player": "Seezov",
+    "place": 4
+   },
+   {
+    "player": "Stone Cold",
+    "place": 5
+   },
+   {
+    "player": "Don`Tright",
+    "place": 8
+   },
+   {
+    "player": "Floppy",
+    "place": 9
+   },
+   {
+    "player": "Kulav",
+    "place": 13
+   },
+   {
+    "player": "Аглая",
+    "place": 19
+   },
+   {
+    "player": "Валькірія",
+    "place": 21
+   },
+   {
+    "player": "Green",
+    "place": 24
+   },
+   {
+    "player": "Хоттабич",
+    "place": 25
+   },
+   {
+    "player": "Лілі",
+    "place": 26
+   },
+   {
+    "player": "Сирник",
+    "place": 29
+   },
+   {
+    "player": "Найт",
+    "place": 30
+   },
+   {
+    "player": "Залізний",
+    "place": 31
+   },
+   {
+    "player": "Німфа",
+    "place": 35
+   },
+   {
+    "player": "Серпень",
+    "place": 36
+   },
+   {
+    "player": "Аватар",
+    "place": 37
+   },
+   {
+    "player": "Тян",
+    "place": 39
+   }
+  ]
+ },
+ {
+  "year": 2025,
+  "kind": "tournament",
+  "name": "Soprano",
+  "date": "2025-05-17",
+  "stars": 3,
+  "participants": 60,
+  "results": [
+   {
+    "player": "Залізний",
+    "place": 13
+   },
+   {
+    "player": "Валькірія",
+    "place": 52
+   },
+   {
+    "player": "Фурія",
+    "place": 24
+   }
+  ]
+ },
+ {
+  "year": 2025,
+  "kind": "tournament",
+  "name": "Vinnytsia Mafia Unlimited 2025",
+  "date": "2025-05-03",
+  "stars": 3,
+  "participants": 50,
+  "results": [
+   {
+    "player": "Залізний",
+    "place": 21
+   },
+   {
+    "player": "Фурія",
+    "place": 42
+   },
+   {
+    "player": "Серпень",
+    "place": 45
+   },
+   {
+    "player": "Валькірія",
+    "place": 14
+   },
+   {
+    "player": "Аватар",
+    "place": 17
+   },
+   {
+    "player": "Kulav",
+    "place": 18
+   },
+   {
+    "player": "Лілі",
+    "place": 24
+   }
+  ]
+ },
+ {
+  "year": 2025,
+  "kind": "series",
+  "name": "EG - Серія Battle of the East.5",
+  "date": null,
+  "stars": null,
+  "participants": null,
+  "results": [
+   {
+    "player": "Победун",
+    "place": 2
+   },
+   {
+    "player": "Малина",
+    "place": 8
+   },
+   {
+    "player": "Сирник",
+    "place": 9
+   },
+   {
+    "player": "Серпень",
+    "place": 10
+   }
+  ]
+ },
+ {
+  "year": 2025,
+  "kind": "series",
+  "name": "EG - Серія Battle of the East.3",
+  "date": null,
+  "stars": null,
+  "participants": null,
+  "results": [
+   {
+    "player": "Серпень",
+    "place": 6
+   }
+  ]
+ },
+ {
+  "year": 2025,
+  "kind": "series",
+  "name": "5 серія High Level Games",
+  "date": null,
+  "stars": null,
+  "participants": null,
+  "results": [
+   {
+    "player": "Малина",
+    "place": 1
+   },
+   {
+    "player": "Малишка",
+    "place": 2
+   },
+   {
+    "player": "Залізний",
+    "place": 9
+   }
+  ]
+ },
+ {
+  "year": 2025,
+  "kind": "tournament",
+  "name": "MVP Battle",
+  "date": "2025-04-26",
+  "stars": 4,
+  "participants": 30,
+  "results": [
+   {
+    "player": "Рауль",
+    "place": 29
+   }
+  ]
+ },
+ {
+  "year": 2025,
+  "kind": "tournament",
+  "name": "Lviv spring cup 2025",
+  "date": null,
+  "stars": 3,
+  "participants": 50,
+  "results": [
+   {
+    "player": "Kulav",
+    "place": 26
+   },
+   {
+    "player": "Аватар",
+    "place": 18
+   },
+   {
+    "player": "Лілі",
+    "place": 27
+   }
+  ]
+ },
+ {
+  "year": 2025,
+  "kind": "series",
+  "name": "Suprim",
+  "date": null,
+  "stars": null,
+  "participants": null,
+  "results": [
+   {
+    "player": "Kulav",
+    "place": 3
+   }
+  ]
+ },
+ {
+  "year": 2025,
+  "kind": "marathon",
+  "name": "Міраж європа",
+  "date": null,
+  "stars": null,
+  "participants": null,
+  "results": [
+   {
+    "player": "Tina",
+    "place": 5
+   }
+  ]
+ },
+ {
+  "year": 2025,
+  "kind": "tournament",
+  "name": "Big Ben Open",
+  "date": "2025-06-12",
+  "stars": 3,
+  "participants": 70,
+  "results": [
+   {
+    "player": "Stone Cold",
+    "place": 2
+   },
+   {
+    "player": "Залізний",
+    "place": 5
+   },
+   {
+    "player": "Валькірія",
+    "place": 26
+   },
+   {
+    "player": "Сирник",
+    "place": 27
+   },
+   {
+    "player": "Фурія",
+    "place": 44
+   },
+   {
+    "player": "Seezov",
+    "place": 47
+   }
+  ]
+ },
+ {
+  "year": 2025,
+  "kind": "tournament",
+  "name": "Чемпіонат України",
+  "date": "2025-07-11",
+  "stars": 4,
+  "participants": 40,
+  "results": [
+   {
+    "player": "Seezov",
+    "place": 7
+   },
+   {
+    "player": "Аватар",
+    "place": 13
+   },
+   {
+    "player": "Kulav",
+    "place": 25
+   },
+   {
+    "player": "Фурія",
+    "place": 30
+   }
+  ]
+ },
+ {
+  "year": 2025,
+  "kind": "tournament",
+  "name": "IMAFIA - Friends team cup",
+  "date": "2025-08-09",
+  "stars": 3,
+  "participants": 60,
+  "results": [
+   {
+    "player": "Stone Cold",
+    "place": 59
+   }
+  ]
+ },
+ {
+  "year": 2025,
+  "kind": "tournament",
+  "name": "Imafia -Mystery Trio Cup 2025",
+  "date": "2025-08-09",
+  "stars": 3,
+  "participants": 60,
+  "results": [
+   {
+    "player": "Stone Cold",
+    "place": 1
+   }
+  ]
+ },
+ {
+  "year": 2025,
+  "kind": "tournament",
+  "name": "Imafia Lviv Hot Cup 2025",
+  "date": "2025-07-26",
+  "stars": 2,
+  "participants": 30,
+  "results": [
+   {
+    "player": "Tina",
+    "place": 9
+   }
+  ]
+ },
+ {
+  "year": 2025,
+  "kind": "tournament",
+  "name": "Кубок Долини Троянд",
+  "date": "2025-08-16",
+  "stars": 3,
+  "participants": 33,
+  "results": [
+   {
+    "player": "Аглая",
+    "place": 8
+   },
+   {
+    "player": "Тян",
+    "place": 24
+   },
+   {
+    "player": "Seezov",
+    "place": 18
+   },
+   {
+    "player": "Floppy",
+    "place": 6
+   },
+   {
+    "player": "Залізний",
+    "place": 7
+   },
+   {
+    "player": "Шпак",
+    "place": 19
+   },
+   {
+    "player": "Сирник",
+    "place": 9
+   },
+   {
+    "player": "Tina",
+    "place": 13
+   },
+   {
+    "player": "Малина",
+    "place": 11
+   },
+   {
+    "player": "Аватар",
+    "place": 27
+   },
+   {
+    "player": "Kulav",
+    "place": 32
+   },
+   {
+    "player": "Hunter",
+    "place": 29
+   },
+   {
+    "player": "Німфа",
+    "place": 23
+   },
+   {
+    "player": "Найт",
+    "place": 25
+   },
+   {
+    "player": "Скай",
+    "place": 20
+   }
+  ]
+ },
+ {
+  "year": 2025,
+  "kind": "series",
+  "name": "Battle of the east 7 9 10 серії",
+  "date": "2025-08-09",
+  "stars": null,
+  "participants": null,
+  "results": [
+   {
+    "player": "Мідас",
+    "place": 10
+   },
+   {
+    "player": "Фенікс",
+    "place": 6
+   },
+   {
+    "player": "Німфа",
+    "place": 7
+   },
+   {
+    "player": "Сирник",
+    "place": 7
+   },
+   {
+    "player": "Don`Tright",
+    "place": 1
+   },
+   {
+    "player": "Шпак",
+    "place": 5
+   },
+   {
+    "player": "Найт",
+    "place": 6
+   },
+   {
+    "player": "Мідас",
+    "place": 4
+   },
+   {
+    "player": "Floppy",
+    "place": 9
+   },
+   {
+    "player": "Скорпіон",
+    "place": 8
+   },
+   {
+    "player": "Сирник",
+    "place": 5
+   },
+   {
+    "player": "Скай",
+    "place": 10
+   }
+  ]
+ },
+ {
+  "year": 2025,
+  "kind": "marathon",
+  "name": "Шкільний марафон",
+  "date": "2025-08-30",
+  "stars": null,
+  "participants": null,
+  "results": [
+   {
+    "player": "Фрау",
+    "place": 1
+   },
+   {
+    "player": "Скорпіон",
+    "place": 2
+   },
+   {
+    "player": "Таті",
+    "place": 3
+   },
+   {
+    "player": "Гоа",
+    "place": 4
+   },
+   {
+    "player": "Фурія",
+    "place": 5
+   },
+   {
+    "player": "Мідас",
+    "place": 6
+   },
+   {
+    "player": "Шпак",
+    "place": 7
+   },
+   {
+    "player": "Аватар",
+    "place": 8
+   },
+   {
+    "player": "Даяна",
+    "place": 9
+   },
+   {
+    "player": "Сирник",
+    "place": 10
+   },
+   {
+    "player": "Kulav",
+    "place": 11
+   },
+   {
+    "player": "Фенікс",
+    "place": 12
+   },
+   {
+    "player": "Вітамінка",
+    "place": 13
+   }
+  ]
+ },
+ {
+  "year": 2025,
+  "kind": "season",
+  "name": "Сезон Літо",
+  "date": null,
+  "stars": null,
+  "participants": null,
+  "results": [
+   {
+    "player": "Braun",
+    "place": 1
+   },
+   {
+    "player": "Don`Tright",
+    "place": 2
+   },
+   {
+    "player": "Seezov",
+    "place": 3
+   },
+   {
+    "player": "Floppy",
+    "place": 4
+   },
+   {
+    "player": "Kulav",
+    "place": 5
+   },
+   {
+    "player": "Green",
+    "place": 6
+   },
+   {
+    "player": "Малишка",
+    "place": 7
+   },
+   {
+    "player": "Німфа",
+    "place": 8
+   },
+   {
+    "player": "Скай",
+    "place": 9
+   },
+   {
+    "player": "Таті",
+    "place": 10
+   },
+   {
+    "player": "Сирник",
+    "place": 11
+   },
+   {
+    "player": "Хоттабич",
+    "place": 12
+   },
+   {
+    "player": "Аватар",
+    "place": 13
+   },
+   {
+    "player": "Серпень",
+    "place": 14
+   },
+   {
+    "player": "Скорпіон",
+    "place": 15
+   },
+   {
+    "player": "Лисиця",
+    "place": 16
+   },
+   {
+    "player": "Гоа",
+    "place": 17
+   },
+   {
+    "player": "Шпак",
+    "place": 18
+   },
+   {
+    "player": "Фрау",
+    "place": 19
+   }
+  ]
+ },
+ {
+  "year": 2025,
+  "kind": "season",
+  "name": "Сезон літо 2 частина",
+  "date": null,
+  "stars": null,
+  "participants": null,
+  "results": [
+   {
+    "player": "Фенікс",
+    "place": 20
+   },
+   {
+    "player": "Залізний",
+    "place": 21
+   },
+   {
+    "player": "Вітамінка",
+    "place": 22
+   },
+   {
+    "player": "Мідас",
+    "place": 23
+   },
+   {
+    "player": "Muggle",
+    "place": 101
+   },
+   {
+    "player": "Аглая",
+    "place": 102
+   },
+   {
+    "player": "Радо",
+    "place": 103
+   },
+   {
+    "player": "Тян",
+    "place": 104
+   },
+   {
+    "player": "Валькірія",
+    "place": 105
+   }
+  ]
+ },
+ {
+  "year": 2025,
+  "kind": "series",
+  "name": "Soprano Mafia League 2025",
+  "date": "2025-09-29",
+  "stars": null,
+  "participants": null,
+  "results": [
+   {
+    "player": "Floppy",
+    "place": 2
+   },
+   {
+    "player": "Мідас",
+    "place": 3
+   },
+   {
+    "player": "Сирник",
+    "place": 4
+   },
+   {
+    "player": "Seezov",
+    "place": 5
+   },
+   {
+    "player": "Німфа",
+    "place": 6
+   },
+   {
+    "player": "Tina",
+    "place": 7
+   },
+   {
+    "player": "Kulav",
+    "place": 8
+   },
+   {
+    "player": "Победун",
+    "place": 9
+   },
+   {
+    "player": "Скай",
+    "place": 10
+   }
+  ]
+ },
+ {
+  "year": 2025,
+  "kind": "tournament",
+  "name": "Uzhhorod Unlimited 2025",
+  "date": null,
+  "stars": 2,
+  "participants": 20,
+  "results": [
+   {
+    "player": "Фурія",
+    "place": 15
+   }
+  ]
+ },
+ {
+  "year": 2025,
+  "kind": "tournament",
+  "name": "Big Ben Hard Version 2025",
+  "date": null,
+  "stars": 5,
+  "participants": 50,
+  "results": [
+   {
+    "player": "Залізний",
+    "place": 15
+   },
+   {
+    "player": "Stone Cold",
+    "place": 23
+   },
+   {
+    "player": "Малина",
+    "place": 24
+   },
+   {
+    "player": "Seezov",
+    "place": 35
+   }
+  ]
+ },
+ {
+  "year": 2025,
+  "kind": "tournament",
+  "name": "Командний чемпіонат України 2025",
+  "date": null,
+  "stars": 4,
+  "participants": 40,
+  "results": [
+   {
+    "player": "Stone Cold",
+    "place": 1
+   },
+   {
+    "player": "Seezov",
+    "place": 15
+   },
+   {
+    "player": "Малина",
+    "place": 27
+   },
+   {
+    "player": "Kulav",
+    "place": 30
+   },
+   {
+    "player": "Аватар",
+    "place": 32
+   },
+   {
+    "player": "Tina",
+    "place": 36
+   }
+  ]
+ },
+ {
+  "year": 2025,
+  "kind": "tournament",
+  "name": "WubbaLubbaDubDub Mafia Cup 2025",
+  "date": null,
+  "stars": 3,
+  "participants": 40,
+  "results": [
+   {
+    "player": "Stone Cold",
+    "place": 39
+   }
+  ]
+ },
+ {
+  "year": 2025,
+  "kind": "marathon",
+  "name": "Класичний марафон 1",
+  "date": null,
+  "stars": null,
+  "participants": null,
+  "results": [
+   {
+    "player": "Серпень",
+    "place": 1
+   },
+   {
+    "player": "Скорпіон",
+    "place": 2
+   },
+   {
+    "player": "Аватар",
+    "place": 3
+   },
+   {
+    "player": "Tina",
+    "place": 4
+   },
+   {
+    "player": "Kulav",
+    "place": 5
+   },
+   {
+    "player": "Скай",
+    "place": 6
+   },
+   {
+    "player": "Аглая",
+    "place": 7
+   },
+   {
+    "player": "Найт",
+    "place": 8
+   },
+   {
+    "player": "Muggle",
+    "place": 9
+   },
+   {
+    "player": "Гоа",
+    "place": 10
+   }
+  ]
+ },
+ {
+  "year": 2025,
+  "kind": "tournament",
+  "name": "The Draft",
+  "date": null,
+  "stars": 3,
+  "participants": 50,
+  "results": [
+   {
+    "player": "Stone Cold",
+    "place": 16
+   },
+   {
+    "player": "Seezov",
+    "place": 21
+   },
+   {
+    "player": "Малина",
+    "place": 27
+   }
+  ]
+ },
+ {
+  "year": 2025,
+  "kind": "marathon",
+  "name": "3 Фінал мінікапів",
+  "date": null,
+  "stars": null,
+  "participants": null,
+  "results": [
+   {
+    "player": "Don`Tright",
+    "place": 1
+   },
+   {
+    "player": "Найт",
+    "place": 2
+   },
+   {
+    "player": "Braun",
+    "place": 3
+   },
+   {
+    "player": "Фурія",
+    "place": 4
+   },
+   {
+    "player": "Скорпіон",
+    "place": 5
+   },
+   {
+    "player": "Хоттабич",
+    "place": 6
+   },
+   {
+    "player": "Залізний",
+    "place": 7
+   },
+   {
+    "player": "Фрау",
+    "place": 8
+   },
+   {
+    "player": "Tina",
+    "place": 9
+   },
+   {
+    "player": "Гоа",
+    "place": 10
+   }
+  ]
+ },
+ {
+  "year": 2025,
+  "kind": "tournament",
+  "name": "Dynasty Ukraine",
+  "date": null,
+  "stars": 3,
+  "participants": 36,
+  "results": [
+   {
+    "player": "Stone Cold",
+    "place": 18
+   },
+   {
+    "player": "Seezov",
+    "place": 30
+   }
+  ]
+ },
+ {
+  "year": 2025,
+  "kind": "tournament",
+  "name": "Пара Лева 2025",
+  "date": null,
+  "stars": 4,
+  "participants": 50,
+  "results": [
+   {
+    "player": "Залізний",
+    "place": 26
+   }
+  ]
+ },
+ {
+  "year": 2025,
+  "kind": "tournament",
+  "name": "High level games 2025 Півфінал",
+  "date": null,
+  "stars": 3,
+  "participants": 21,
+  "results": [
+   {
+    "player": "Малина",
+    "place": 2
+   }
+  ]
+ },
+ {
+  "year": 2025,
+  "kind": "tournament",
+  "name": "Kropyvnytskyi Unlimited 2025",
+  "date": "2025-10-25",
+  "stars": 3,
+  "participants": 30,
+  "results": [
+   {
+    "player": "Хоттабич",
+    "place": 1
+   },
+   {
+    "player": "Kulav",
+    "place": 8
+   },
+   {
+    "player": "Валькірія",
+    "place": 9
+   },
+   {
+    "player": "Німфа",
+    "place": 12
+   },
+   {
+    "player": "Залізний",
+    "place": 14
+   },
+   {
+    "player": "Шпак",
+    "place": 15
+   },
+   {
+    "player": "Малишка",
+    "place": 21
+   },
+   {
+    "player": "Tina",
+    "place": 22
+   },
+   {
+    "player": "Фенікс",
+    "place": 27
+   },
+   {
+    "player": "Мідас",
+    "place": 30
+   }
+  ]
+ },
+ {
+  "year": 2025,
+  "kind": "series",
+  "name": "Soprano Mafia League 2025 Kyiv #4",
+  "date": "2025-10-26",
+  "stars": null,
+  "participants": null,
+  "results": [
+   {
+    "player": "Stone Cold",
+    "place": 1
+   },
+   {
+    "player": "Seezov",
+    "place": 3
+   }
+  ]
+ },
+ {
+  "year": 2025,
+  "kind": "tournament",
+  "name": "Rocky Mafia Friends",
+  "date": "2025-11-08",
+  "stars": 3,
+  "participants": 40,
+  "results": [
+   {
+    "player": "Seezov",
+    "place": 2
+   },
+   {
+    "player": "Залізний",
+    "place": 24
+   }
+  ]
+ },
+ {
+  "year": 2025,
+  "kind": "tournament",
+  "name": "Soprano Mafia League 2025 фінал",
+  "date": "2025-11-15",
+  "stars": 4,
+  "participants": 45,
+  "results": [
+   {
+    "player": "Floppy",
+    "place": 4
+   },
+   {
+    "player": "Seezov",
+    "place": 11
+   },
+   {
+    "player": "Stone Cold",
+    "place": 14
+   },
+   {
+    "player": "Tina",
+    "place": 41
+   },
+   {
+    "player": "Сирник",
+    "place": 43
+   }
+  ]
+ },
+ {
+  "year": 2026,
+  "kind": "series",
+  "name": "Soprano Mafia League 2026 Dnipro 1",
+  "date": "2026-02-15",
+  "stars": null,
+  "participants": null,
+  "results": [
+   {
+    "player": "Пустой",
+    "place": 7
+   }
+  ]
+ },
+ {
+  "year": 2026,
+  "kind": "series",
+  "name": "Battle of the East 2026 Черкаси Серія 1",
+  "date": "2026-02-21",
+  "stars": null,
+  "participants": null,
+  "results": [
+   {
+    "player": "Floppy",
+    "place": 1
+   },
+   {
+    "player": "Малина",
+    "place": 2
+   },
+   {
+    "player": "Rathma",
+    "place": 3
+   },
+   {
+    "player": "Німфа",
+    "place": 4
+   },
+   {
+    "player": "Пустой",
+    "place": 6
+   },
+   {
+    "player": "Аватар",
+    "place": 8
+   },
+   {
+    "player": "Таті",
+    "place": 9
+   },
+   {
+    "player": "Сирник",
+    "place": 10
+   }
+  ]
+ },
+ {
+  "year": 2026,
+  "kind": "tournament",
+  "name": "Va Banque 2026",
+  "date": "2026-02-28",
+  "stars": 2,
+  "participants": 30,
+  "results": [
+   {
+    "player": "Пустой",
+    "place": 9
+   },
+   {
+    "player": "Фурія",
+    "place": 12
+   },
+   {
+    "player": "Німфа",
+    "place": 23
+   }
+  ]
+ },
+ {
+  "year": 2026,
+  "kind": "series",
+  "name": "Battle of the East 2026 Кременчук Серія 2",
+  "date": "2026-03-07",
+  "stars": null,
+  "participants": null,
+  "results": [
+   {
+    "player": "Залізний",
+    "place": 1
+   },
+   {
+    "player": "Фурія",
+    "place": 2
+   }
+  ]
+ },
+ {
+  "year": 2026,
+  "kind": "series",
+  "name": "Battle of the East 2026 Кропивницький Серія 3",
+  "date": "2026-03-14",
+  "stars": null,
+  "participants": null,
+  "results": [
+   {
+    "player": "Пустой",
+    "place": 7
+   }
+  ]
+ },
+ {
+  "year": 2026,
+  "kind": "series",
+  "name": "ARENA 17 2 серія",
+  "date": "2026-03-21",
+  "stars": null,
+  "participants": null,
+  "results": [
+   {
+    "player": "Залізний",
+    "place": 1
+   }
+  ]
+ },
+ {
+  "year": 2026,
+  "kind": "series",
+  "name": "Battle of the East 2026 Київ Серія 4",
+  "date": null,
+  "stars": null,
+  "participants": null,
+  "results": [
+   {
+    "player": "Пустой",
+    "place": 9
+   }
+  ]
+ },
+ {
+  "year": 2026,
+  "kind": "tournament",
+  "name": "Kyiv Mafia Unlimited 2026",
+  "date": "2026-04-11",
+  "stars": 3,
+  "participants": 40,
+  "results": [
+   {
+    "player": "Фенікс",
+    "place": 18
+   },
+   {
+    "player": "Пустой",
+    "place": 27
+   }
+  ]
+ },
+ {
+  "year": 2026,
+  "kind": "series",
+  "name": "ARENA 17 4 серія",
+  "date": "2026-04-18",
+  "stars": null,
+  "participants": null,
+  "results": [
+   {
+    "player": "Фурія",
+    "place": 9
+   }
+  ]
+ },
+ {
+  "year": 2026,
+  "kind": "series",
+  "name": "Battle of the East 2026 Кропивницький Серія 5",
+  "date": "2026-04-18",
+  "stars": null,
+  "participants": null,
+  "results": [
+   {
+    "player": "Німфа",
+    "place": 10
+   }
+  ]
+ },
+ {
+  "year": 2026,
+  "kind": "tournament",
+  "name": "EG Online Spring 2026",
+  "date": "2026-04-21",
+  "stars": 3,
+  "participants": 30,
+  "results": [
+   {
+    "player": "Пустой",
+    "place": 8
+   }
+  ]
+ },
+ {
+  "year": 2026,
+  "kind": "tournament",
+  "name": "Vinnytsia Mafia Unlimited 2026",
+  "date": "2026-04-25",
+  "stars": 3,
+  "participants": 30,
+  "results": [
+   {
+    "player": "Пустой",
+    "place": 27
+   }
+  ]
+ },
+ {
+  "year": 2026,
+  "kind": "series",
+  "name": "Battle of the East 2026 Черкаси Серія 6",
+  "date": "2026-05-02",
+  "stars": null,
+  "participants": null,
+  "results": [
+   {
+    "player": "Luna",
+    "place": 1
+   },
+   {
+    "player": "Таті",
+    "place": 2
+   },
+   {
+    "player": "Фрау",
+    "place": 3
+   },
+   {
+    "player": "Шпак",
+    "place": 4
+   },
+   {
+    "player": "Німфа",
+    "place": 5
+   },
+   {
+    "player": "Kulav",
+    "place": 6
+   },
+   {
+    "player": "Серпень",
+    "place": 7
+   },
+   {
+    "player": "Хоттабич",
+    "place": 8
+   },
+   {
+    "player": "Сирник",
+    "place": 9
+   }
+  ]
+ },
+ {
+  "year": 2026,
+  "kind": "series",
+  "name": "ARENA 17 6 серія",
+  "date": "2026-05-09",
+  "stars": null,
+  "participants": null,
+  "results": [
+   {
+    "player": "Пустой",
+    "place": 5
+   }
+  ]
+ },
+ {
+  "year": 2026,
+  "kind": "series",
+  "name": "ARENA 17 9 серія",
+  "date": "2026-05-23",
+  "stars": null,
+  "participants": null,
+  "results": [
+   {
+    "player": "Пустой",
+    "place": 9
+   }
+  ]
+ },
+ {
+  "year": 2026,
+  "kind": "series",
+  "name": "Soprano Mafia League 2026 Cherkasy",
+  "date": "2026-05-23",
+  "stars": null,
+  "participants": null,
+  "results": [
+   {
+    "player": "Сирник",
+    "place": 1
+   },
+   {
+    "player": "Seezov",
+    "place": 2
+   },
+   {
+    "player": "Kulav",
+    "place": 3
+   },
+   {
+    "player": "Залізний",
+    "place": 4
+   },
+   {
+    "player": "Німфа",
+    "place": 5
+   },
+   {
+    "player": "Таті",
+    "place": 6
+   },
+   {
+    "player": "Серпень",
+    "place": 7
+   },
+   {
+    "player": "Luna",
+    "place": 8
+   },
+   {
+    "player": "Фрау",
+    "place": 9
+   }
+  ]
+ },
+ {
+  "year": 2026,
+  "kind": "tournament",
+  "name": "BIRDY CUP ONLINE",
+  "date": "2026-05-26",
+  "stars": 2,
+  "participants": 30,
+  "results": [
+   {
+    "player": "Тян",
+    "place": 8
+   }
+  ]
+ },
+ {
+  "year": 2026,
+  "kind": "tournament",
+  "name": "Double Arena 2026",
+  "date": "2026-06-13",
+  "stars": 3,
+  "participants": 30,
+  "results": [
+   {
+    "player": "Пустой",
+    "place": 9
+   },
+   {
+    "player": "Seezov",
+    "place": 10
+   },
+   {
+    "player": "Сирник",
+    "place": 13
+   },
+   {
+    "player": "Залізний",
+    "place": 14
+   },
+   {
+    "player": "Фурія",
+    "place": 19
+   }
+  ]
+ },
+ {
+  "year": 2026,
+  "kind": "tournament",
+  "name": "Chill Cup 2026",
+  "date": "2026-06-13",
+  "stars": 1,
+  "participants": 30,
+  "results": [
+   {
+    "player": "Німфа",
+    "place": 11
+   }
+  ]
+ },
+ {
+  "year": 2026,
+  "kind": "series",
+  "name": "CHUPICK 1 ONLINE",
+  "date": "2026-06-17",
+  "stars": null,
+  "participants": null,
+  "results": [
+   {
+    "player": "Пустой",
+    "place": 10
+   }
+  ]
+ },
+ {
+  "year": 2026,
+  "kind": "series",
+  "name": "SOPRANO MAFIA LEAGUE 2026 KYIV",
+  "date": "2026-06-21",
+  "stars": null,
+  "participants": null,
+  "results": [
+   {
+    "player": "Пустой",
+    "place": 7
+   }
+  ]
+ },
+ {
+  "year": 2026,
+  "kind": "tournament",
+  "name": "CHUPICK 2 ONLINE",
+  "date": "2026-06-24",
+  "stars": 4,
+  "participants": 40,
+  "results": [
+   {
+    "player": "Тян",
+    "place": 2
+   }
+  ]
+ },
+ {
+  "year": 2026,
+  "kind": "tournament",
+  "name": "Чемпіонат України 2026",
+  "date": "2026-06-27",
+  "stars": 4,
+  "participants": 40,
+  "results": [
+   {
+    "player": "Seezov",
+    "place": 10
+   },
+   {
+    "player": "Залізний",
+    "place": 16
+   },
+   {
+    "player": "Сирник",
+    "place": 21
+   },
+   {
+    "player": "Фурія",
+    "place": 28
+   },
+   {
+    "player": "Німфа",
+    "place": 33
+   },
+   {
+    "player": "Пустой",
+    "place": 34
+   }
+  ]
+ },
+ {
+  "year": 2026,
+  "kind": "series",
+  "name": "CHUPICK 3 ONLINE",
+  "date": "2026-07-01",
+  "stars": null,
+  "participants": null,
+  "results": [
+   {
+    "player": "Фурія",
+    "place": 4
+   }
+  ]
+ },
+ {
+  "year": 2026,
+  "kind": "series",
+  "name": "Battle of the East 2026 Cherkasy Серія 7",
+  "date": "2026-07-04",
+  "stars": null,
+  "participants": null,
+  "results": [
+   {
+    "player": "Seezov",
+    "place": 1
+   },
+   {
+    "player": "Хоттабич",
+    "place": 2
+   },
+   {
+    "player": "Малишка",
+    "place": 3
+   },
+   {
+    "player": "Kulav",
+    "place": 4
+   },
+   {
+    "player": "Фрау",
+    "place": 5
+   },
+   {
+    "player": "Німфа",
+    "place": 6
+   },
+   {
+    "player": "Сирник",
+    "place": 8
+   },
+   {
+    "player": "Nemo",
+    "place": 9
+   },
+   {
+    "player": "Вітамінка",
+    "place": 10
+   }
+  ]
+ },
+ {
+  "year": 2026,
+  "kind": "series",
+  "name": "CHUPICK 4 ONLINE",
+  "date": "2026-07-15",
+  "stars": null,
+  "participants": null,
+  "results": [
+   {
+    "player": "Пустой",
+    "place": 1
+   }
+  ]
+ },
+ {
+  "year": 2026,
+  "kind": "series",
+  "name": "Battle of the East 2026 Кропивницький Серія 8",
+  "date": "2026-07-26",
+  "stars": null,
+  "participants": null,
+  "results": [
+   {
+    "player": "Пустой",
+    "place": 2
+   }
+  ]
+ },
+ {
+  "year": 2026,
+  "kind": "tournament",
+  "name": "Свої столи на Swipeal",
+  "date": "2026-08-04",
+  "stars": 2,
+  "participants": 30,
+  "results": [
+   {
+    "player": "Фурія",
+    "place": 10
+   },
+   {
+    "player": "Пустой",
+    "place": 22
+   }
+  ]
+ },
+ {
+  "year": 2026,
+  "kind": "series",
+  "name": "Battle of the East 2026 Київ Серія 10",
+  "date": "2026-08-09",
+  "stars": null,
+  "participants": null,
+  "results": [
+   {
+    "player": "Аватар",
+    "place": 3
+   }
+  ]
+ },
+ {
+  "year": 2026,
+  "kind": "tournament",
+  "name": "Кубок Долини Троянд 2026",
+  "date": "2026-08-15",
+  "stars": 3,
+  "participants": 30,
+  "results": [
+   {
+    "player": "Сирник",
+    "place": 1
+   },
+   {
+    "player": "Малишка",
+    "place": 3
+   },
+   {
+    "player": "Seezov",
+    "place": 4
+   },
+   {
+    "player": "Залізний",
+    "place": 5
+   },
+   {
+    "player": "Валькірія",
+    "place": 9
+   },
+   {
+    "player": "Rathma",
+    "place": 11
+   },
+   {
+    "player": "Kulav",
+    "place": 13
+   },
+   {
+    "player": "Малина",
+    "place": 14
+   },
+   {
+    "player": "Хоттабич",
+    "place": 16
+   },
+   {
+    "player": "Tina",
+    "place": 17
+   },
+   {
+    "player": "Фенікс",
+    "place": 26
+   },
+   {
+    "player": "Таті",
+    "place": 27
+   },
+   {
+    "player": "Німфа",
+    "place": 28
+   },
+   {
+    "player": "Пустой",
+    "place": 29
+   },
+   {
+    "player": "Бард",
+    "place": 30
+   }
+  ]
+ },
+ {
+  "year": 2026,
+  "kind": "marathon",
+  "name": "Вишиванки",
+  "date": "2026-05-30",
+  "stars": null,
+  "participants": null,
+  "results": [
+   {
+    "player": "Німфа",
+    "place": 1
+   },
+   {
+    "player": "Don`Tright",
+    "place": 2
+   },
+   {
+    "player": "Шпак",
+    "place": 3
+   },
+   {
+    "player": "Seezov",
+    "place": 4
+   },
+   {
+    "player": "Rathma",
+    "place": 5
+   },
+   {
+    "player": "Малишка",
+    "place": 6
+   },
+   {
+    "player": "Фурія",
+    "place": 7
+   },
+   {
+    "player": "Серпень",
+    "place": 8
+   },
+   {
+    "player": "Kulav",
+    "place": 9
+   },
+   {
+    "player": "Green",
+    "place": 10
+   },
+   {
+    "player": "Сирник",
+    "place": 11
+   },
+   {
+    "player": "NSpace",
+    "place": 12
+   }
+  ]
+ },
+ {
+  "year": 2026,
+  "kind": "tournament",
+  "name": "Whiplash Cup",
+  "date": "2026-08-22",
+  "stars": 2,
+  "participants": 20,
+  "results": [
+   {
+    "player": "Пустой",
+    "place": 10
+   }
+  ]
+ },
+ {
+  "year": 2026,
+  "kind": "tournament",
+  "name": "Півфінал Battle of the East 2026",
+  "date": null,
+  "stars": 3,
+  "participants": 20,
+  "results": [
+   {
+    "player": "Малина",
+    "place": 1
+   },
+   {
+    "player": "Аватар",
+    "place": 2
+   },
+   {
+    "player": "Малишка",
+    "place": 3
+   },
+   {
+    "player": "Залізний",
+    "place": 4
+   },
+   {
+    "player": "Фурія",
+    "place": 6
+   },
+   {
+    "player": "Хоттабич",
+    "place": 7
+   },
+   {
+    "player": "Seezov",
+    "place": 8
+   },
+   {
+    "player": "Luna",
+    "place": 9
+   },
+   {
+    "player": "Пустой",
+    "place": 10
+   },
+   {
+    "player": "Таті",
+    "place": 12
+   },
+   {
+    "player": "Rathma",
+    "place": 18
+   }
+  ]
+ },
+ {
+  "year": 2026,
+  "kind": "series",
+  "name": "Ліга №1",
+  "date": "2026-07-06",
+  "stars": null,
+  "participants": null,
+  "results": [
+   {
+    "player": "Хоттабич",
+    "place": 1
+   },
+   {
+    "player": "Don`Tright",
+    "place": 2
+   },
+   {
+    "player": "Малина",
+    "place": 3
+   },
+   {
+    "player": "Серпень",
+    "place": 4
+   },
+   {
+    "player": "Seezov",
+    "place": 5
+   },
+   {
+    "player": "Малишка",
+    "place": 6
+   },
+   {
+    "player": "Шпак",
+    "place": 7
+   },
+   {
+    "player": "Бард",
+    "place": 8
+   },
+   {
+    "player": "Kulav",
+    "place": 9
+   },
+   {
+    "player": "Rathma",
+    "place": 10
+   }
+  ]
+ },
+ {
+  "year": 2026,
+  "kind": "tournament",
+  "name": "Фінал Battle of the East 2026",
+  "date": null,
+  "stars": 5,
+  "participants": 20,
+  "results": [
+   {
+    "player": "Хоттабич",
+    "place": 1
+   },
+   {
+    "player": "Малина",
+    "place": 2
+   },
+   {
+    "player": "Малишка",
+    "place": 3
+   },
+   {
+    "player": "Seezov",
+    "place": 4
+   },
+   {
+    "player": "Пустой",
+    "place": 6
+   },
+   {
+    "player": "Аватар",
+    "place": 7
+   },
+   {
+    "player": "Фурія",
+    "place": 9
+   },
+   {
+    "player": "Luna",
+    "place": 10
+   }
+  ]
+ },
+ {
+  "year": 2026,
+  "kind": "tournament",
+  "name": "Арена півфіннал",
+  "date": "2026-09-12",
+  "stars": 3,
+  "participants": 20,
+  "results": [
+   {
+    "player": "Залізний",
+    "place": 2
+   }
+  ]
+ },
+ {
+  "year": 2026,
+  "kind": "tournament",
+  "name": "Hard Version",
+  "date": "2026-09-18",
+  "stars": 4,
+  "participants": 40,
+  "results": [
+   {
+    "player": "Seezov",
+    "place": 33
+   },
+   {
+    "player": "Floppy",
+    "place": 37
+   }
+  ]
+ },
+ {
+  "year": 2026,
+  "kind": "marathon",
+  "name": "Нестандарт",
+  "date": "2026-04-26",
+  "stars": null,
+  "participants": null,
+  "results": [
+   {
+    "player": "Сирник",
+    "place": 1
+   },
+   {
+    "player": "Rathma",
+    "place": 2
+   },
+   {
+    "player": "Вітамінка",
+    "place": 3
+   },
+   {
+    "player": "Малишка",
+    "place": 4
+   },
+   {
+    "player": "Таті",
+    "place": 5
+   },
+   {
+    "player": "Шпак",
+    "place": 6
+   },
+   {
+    "player": "Фенікс",
+    "place": 7
+   },
+   {
+    "player": "Єнотик",
+    "place": 8
+   },
+   {
+    "player": "Kulav",
+    "place": 9
+   },
+   {
+    "player": "Серпень",
+    "place": 10
+   },
+   {
+    "player": "Залізний",
+    "place": 11
+   },
+   {
+    "player": "Німфа",
+    "place": 12
+   }
+  ]
+ },
+ {
+  "year": 2026,
+  "kind": "marathon",
+  "name": "весняний",
+  "date": "2026-03-15",
+  "stars": null,
+  "participants": null,
+  "results": [
+   {
+    "player": "Малина",
+    "place": 1
+   },
+   {
+    "player": "Малишка",
+    "place": 2
+   },
+   {
+    "player": "Don`Tright",
+    "place": 3
+   },
+   {
+    "player": "Сирник",
+    "place": 4
+   },
+   {
+    "player": "Німфа",
+    "place": 5
+   },
+   {
+    "player": "Аватар",
+    "place": 6
+   },
+   {
+    "player": "Хоттабич",
+    "place": 7
+   },
+   {
+    "player": "Таті",
+    "place": 8
+   },
+   {
+    "player": "Red Fox",
+    "place": 9
+   },
+   {
+    "player": "Kulav",
+    "place": 10
+   },
+   {
+    "player": "Фрау",
+    "place": 11
+   },
+   {
+    "player": "Фенікс",
+    "place": 12
+   }
+  ]
+ },
+ {
+  "year": 2026,
+  "kind": "marathon",
+  "name": "закохані",
+  "date": "2026-02-14",
+  "stars": null,
+  "participants": null,
+  "results": [
+   {
+    "player": "Аглая",
+    "place": 1
+   },
+   {
+    "player": "Хоттабич",
+    "place": 2
+   },
+   {
+    "player": "Німфа",
+    "place": 3
+   },
+   {
+    "player": "Floppy",
+    "place": 4
+   },
+   {
+    "player": "Найт",
+    "place": 5
+   },
+   {
+    "player": "Rathma",
+    "place": 6
+   },
+   {
+    "player": "Малишка",
+    "place": 7
+   },
+   {
+    "player": "Серпень",
+    "place": 8
+   },
+   {
+    "player": "Фенікс",
+    "place": 9
+   },
+   {
+    "player": "Шпак",
+    "place": 10
+   }
+  ]
+ }
+]

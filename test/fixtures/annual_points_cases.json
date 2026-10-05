@@ -1,0 +1,1857 @@
+[
+ {
+  "kind": "marathon",
+  "place": 1,
+  "stars": null,
+  "participants": null,
+  "points": 6
+ },
+ {
+  "kind": "marathon",
+  "place": 2,
+  "stars": null,
+  "participants": null,
+  "points": 4
+ },
+ {
+  "kind": "marathon",
+  "place": 3,
+  "stars": null,
+  "participants": null,
+  "points": 3
+ },
+ {
+  "kind": "marathon",
+  "place": 4,
+  "stars": null,
+  "participants": null,
+  "points": 2
+ },
+ {
+  "kind": "marathon",
+  "place": 5,
+  "stars": null,
+  "participants": null,
+  "points": 2
+ },
+ {
+  "kind": "marathon",
+  "place": 6,
+  "stars": null,
+  "participants": null,
+  "points": 1
+ },
+ {
+  "kind": "marathon",
+  "place": 7,
+  "stars": null,
+  "participants": null,
+  "points": 1
+ },
+ {
+  "kind": "marathon",
+  "place": 8,
+  "stars": null,
+  "participants": null,
+  "points": 1
+ },
+ {
+  "kind": "marathon",
+  "place": 9,
+  "stars": null,
+  "participants": null,
+  "points": 1
+ },
+ {
+  "kind": "marathon",
+  "place": 10,
+  "stars": null,
+  "participants": null,
+  "points": 1
+ },
+ {
+  "kind": "marathon",
+  "place": 11,
+  "stars": null,
+  "participants": null,
+  "points": 1
+ },
+ {
+  "kind": "marathon",
+  "place": 12,
+  "stars": null,
+  "participants": null,
+  "points": 1
+ },
+ {
+  "kind": "marathon",
+  "place": 13,
+  "stars": null,
+  "participants": null,
+  "points": 1
+ },
+ {
+  "kind": "season",
+  "place": 1,
+  "stars": null,
+  "participants": null,
+  "points": 18
+ },
+ {
+  "kind": "season",
+  "place": 2,
+  "stars": null,
+  "participants": null,
+  "points": 15
+ },
+ {
+  "kind": "season",
+  "place": 3,
+  "stars": null,
+  "participants": null,
+  "points": 12
+ },
+ {
+  "kind": "season",
+  "place": 4,
+  "stars": null,
+  "participants": null,
+  "points": 9
+ },
+ {
+  "kind": "season",
+  "place": 5,
+  "stars": null,
+  "participants": null,
+  "points": 6
+ },
+ {
+  "kind": "season",
+  "place": 6,
+  "stars": null,
+  "participants": null,
+  "points": 4
+ },
+ {
+  "kind": "season",
+  "place": 7,
+  "stars": null,
+  "participants": null,
+  "points": 4
+ },
+ {
+  "kind": "season",
+  "place": 8,
+  "stars": null,
+  "participants": null,
+  "points": 4
+ },
+ {
+  "kind": "season",
+  "place": 9,
+  "stars": null,
+  "participants": null,
+  "points": 4
+ },
+ {
+  "kind": "season",
+  "place": 10,
+  "stars": null,
+  "participants": null,
+  "points": 4
+ },
+ {
+  "kind": "season",
+  "place": 11,
+  "stars": null,
+  "participants": null,
+  "points": 2
+ },
+ {
+  "kind": "season",
+  "place": 12,
+  "stars": null,
+  "participants": null,
+  "points": 2
+ },
+ {
+  "kind": "season",
+  "place": 13,
+  "stars": null,
+  "participants": null,
+  "points": 2
+ },
+ {
+  "kind": "season",
+  "place": 14,
+  "stars": null,
+  "participants": null,
+  "points": 2
+ },
+ {
+  "kind": "season",
+  "place": 15,
+  "stars": null,
+  "participants": null,
+  "points": 2
+ },
+ {
+  "kind": "season",
+  "place": 16,
+  "stars": null,
+  "participants": null,
+  "points": 2
+ },
+ {
+  "kind": "season",
+  "place": 17,
+  "stars": null,
+  "participants": null,
+  "points": 2
+ },
+ {
+  "kind": "season",
+  "place": 18,
+  "stars": null,
+  "participants": null,
+  "points": 2
+ },
+ {
+  "kind": "season",
+  "place": 19,
+  "stars": null,
+  "participants": null,
+  "points": 2
+ },
+ {
+  "kind": "season",
+  "place": 20,
+  "stars": null,
+  "participants": null,
+  "points": 2
+ },
+ {
+  "kind": "season",
+  "place": 21,
+  "stars": null,
+  "participants": null,
+  "points": 2
+ },
+ {
+  "kind": "season",
+  "place": 22,
+  "stars": null,
+  "participants": null,
+  "points": 2
+ },
+ {
+  "kind": "season",
+  "place": 23,
+  "stars": null,
+  "participants": null,
+  "points": 2
+ },
+ {
+  "kind": "season",
+  "place": 101,
+  "stars": null,
+  "participants": null,
+  "points": 5
+ },
+ {
+  "kind": "season",
+  "place": 102,
+  "stars": null,
+  "participants": null,
+  "points": 4
+ },
+ {
+  "kind": "season",
+  "place": 103,
+  "stars": null,
+  "participants": null,
+  "points": 3
+ },
+ {
+  "kind": "season",
+  "place": 104,
+  "stars": null,
+  "participants": null,
+  "points": 2
+ },
+ {
+  "kind": "season",
+  "place": 105,
+  "stars": null,
+  "participants": null,
+  "points": 1
+ },
+ {
+  "kind": "series",
+  "place": 1,
+  "stars": null,
+  "participants": null,
+  "points": 10
+ },
+ {
+  "kind": "series",
+  "place": 2,
+  "stars": null,
+  "participants": null,
+  "points": 8
+ },
+ {
+  "kind": "series",
+  "place": 3,
+  "stars": null,
+  "participants": null,
+  "points": 6
+ },
+ {
+  "kind": "series",
+  "place": 4,
+  "stars": null,
+  "participants": null,
+  "points": 4
+ },
+ {
+  "kind": "series",
+  "place": 5,
+  "stars": null,
+  "participants": null,
+  "points": 3
+ },
+ {
+  "kind": "series",
+  "place": 6,
+  "stars": null,
+  "participants": null,
+  "points": 2
+ },
+ {
+  "kind": "series",
+  "place": 7,
+  "stars": null,
+  "participants": null,
+  "points": 2
+ },
+ {
+  "kind": "series",
+  "place": 8,
+  "stars": null,
+  "participants": null,
+  "points": 1
+ },
+ {
+  "kind": "series",
+  "place": 9,
+  "stars": null,
+  "participants": null,
+  "points": 1
+ },
+ {
+  "kind": "series",
+  "place": 10,
+  "stars": null,
+  "participants": null,
+  "points": 1
+ },
+ {
+  "kind": "tournament",
+  "place": 1,
+  "stars": 1,
+  "participants": 30,
+  "points": 11
+ },
+ {
+  "kind": "tournament",
+  "place": 1,
+  "stars": 3,
+  "participants": 20,
+  "points": 11.5
+ },
+ {
+  "kind": "tournament",
+  "place": 1,
+  "stars": 3,
+  "participants": 30,
+  "points": 16.5
+ },
+ {
+  "kind": "tournament",
+  "place": 1,
+  "stars": 3,
+  "participants": 50,
+  "points": 26.5
+ },
+ {
+  "kind": "tournament",
+  "place": 1,
+  "stars": 3,
+  "participants": 60,
+  "points": 31.5
+ },
+ {
+  "kind": "tournament",
+  "place": 1,
+  "stars": 3,
+  "participants": 90,
+  "points": 46.5
+ },
+ {
+  "kind": "tournament",
+  "place": 1,
+  "stars": 3,
+  "participants": 100,
+  "points": 51.5
+ },
+ {
+  "kind": "tournament",
+  "place": 1,
+  "stars": 4,
+  "participants": 40,
+  "points": 25.08333333333333
+ },
+ {
+  "kind": "tournament",
+  "place": 1,
+  "stars": 5,
+  "participants": 20,
+  "points": 15.333333333333336
+ },
+ {
+  "kind": "tournament",
+  "place": 2,
+  "stars": 2,
+  "participants": 50,
+  "points": 21.666666666666668
+ },
+ {
+  "kind": "tournament",
+  "place": 2,
+  "stars": 3,
+  "participants": 20,
+  "points": 11
+ },
+ {
+  "kind": "tournament",
+  "place": 2,
+  "stars": 3,
+  "participants": 21,
+  "points": 11.5
+ },
+ {
+  "kind": "tournament",
+  "place": 2,
+  "stars": 3,
+  "participants": 30,
+  "points": 16
+ },
+ {
+  "kind": "tournament",
+  "place": 2,
+  "stars": 3,
+  "participants": 40,
+  "points": 21
+ },
+ {
+  "kind": "tournament",
+  "place": 2,
+  "stars": 3,
+  "participants": 70,
+  "points": 36
+ },
+ {
+  "kind": "tournament",
+  "place": 2,
+  "stars": 3,
+  "participants": 90,
+  "points": 46
+ },
+ {
+  "kind": "tournament",
+  "place": 2,
+  "stars": 4,
+  "participants": 40,
+  "points": 24.499999999999996
+ },
+ {
+  "kind": "tournament",
+  "place": 2,
+  "stars": 5,
+  "participants": 20,
+  "points": 14.666666666666668
+ },
+ {
+  "kind": "tournament",
+  "place": 3,
+  "stars": 3,
+  "participants": 20,
+  "points": 10.5
+ },
+ {
+  "kind": "tournament",
+  "place": 3,
+  "stars": 3,
+  "participants": 30,
+  "points": 15.5
+ },
+ {
+  "kind": "tournament",
+  "place": 3,
+  "stars": 3,
+  "participants": 40,
+  "points": 20.5
+ },
+ {
+  "kind": "tournament",
+  "place": 3,
+  "stars": 3,
+  "participants": 44,
+  "points": 22.5
+ },
+ {
+  "kind": "tournament",
+  "place": 3,
+  "stars": 3,
+  "participants": 100,
+  "points": 50.5
+ },
+ {
+  "kind": "tournament",
+  "place": 3,
+  "stars": 4,
+  "participants": 30,
+  "points": 18.083333333333332
+ },
+ {
+  "kind": "tournament",
+  "place": 3,
+  "stars": 5,
+  "participants": 20,
+  "points": 14
+ },
+ {
+  "kind": "tournament",
+  "place": 4,
+  "stars": 3,
+  "participants": 20,
+  "points": 10
+ },
+ {
+  "kind": "tournament",
+  "place": 4,
+  "stars": 3,
+  "participants": 30,
+  "points": 15
+ },
+ {
+  "kind": "tournament",
+  "place": 4,
+  "stars": 3,
+  "participants": 40,
+  "points": 20
+ },
+ {
+  "kind": "tournament",
+  "place": 4,
+  "stars": 3,
+  "participants": 100,
+  "points": 50
+ },
+ {
+  "kind": "tournament",
+  "place": 4,
+  "stars": 3,
+  "participants": 250,
+  "points": 125
+ },
+ {
+  "kind": "tournament",
+  "place": 4,
+  "stars": 4,
+  "participants": 40,
+  "points": 23.33333333333333
+ },
+ {
+  "kind": "tournament",
+  "place": 4,
+  "stars": 4,
+  "participants": 45,
+  "points": 26.249999999999996
+ },
+ {
+  "kind": "tournament",
+  "place": 4,
+  "stars": 5,
+  "participants": 20,
+  "points": 13.333333333333336
+ },
+ {
+  "kind": "tournament",
+  "place": 5,
+  "stars": 3,
+  "participants": 30,
+  "points": 14.5
+ },
+ {
+  "kind": "tournament",
+  "place": 5,
+  "stars": 3,
+  "participants": 40,
+  "points": 19.5
+ },
+ {
+  "kind": "tournament",
+  "place": 5,
+  "stars": 3,
+  "participants": 70,
+  "points": 34.5
+ },
+ {
+  "kind": "tournament",
+  "place": 5,
+  "stars": 3,
+  "participants": 100,
+  "points": 49.5
+ },
+ {
+  "kind": "tournament",
+  "place": 5,
+  "stars": 5,
+  "participants": 60,
+  "points": 39.333333333333336
+ },
+ {
+  "kind": "tournament",
+  "place": 6,
+  "stars": 3,
+  "participants": 20,
+  "points": 9
+ },
+ {
+  "kind": "tournament",
+  "place": 6,
+  "stars": 3,
+  "participants": 30,
+  "points": 14
+ },
+ {
+  "kind": "tournament",
+  "place": 6,
+  "stars": 3,
+  "participants": 33,
+  "points": 15.5
+ },
+ {
+  "kind": "tournament",
+  "place": 6,
+  "stars": 3,
+  "participants": 40,
+  "points": 19
+ },
+ {
+  "kind": "tournament",
+  "place": 6,
+  "stars": 3,
+  "participants": 60,
+  "points": 29
+ },
+ {
+  "kind": "tournament",
+  "place": 6,
+  "stars": 3,
+  "participants": 100,
+  "points": 49
+ },
+ {
+  "kind": "tournament",
+  "place": 6,
+  "stars": 5,
+  "participants": 20,
+  "points": 12
+ },
+ {
+  "kind": "tournament",
+  "place": 6,
+  "stars": 5,
+  "participants": 40,
+  "points": 25.333333333333336
+ },
+ {
+  "kind": "tournament",
+  "place": 7,
+  "stars": 3,
+  "participants": 20,
+  "points": 8.5
+ },
+ {
+  "kind": "tournament",
+  "place": 7,
+  "stars": 3,
+  "participants": 30,
+  "points": 13.5
+ },
+ {
+  "kind": "tournament",
+  "place": 7,
+  "stars": 3,
+  "participants": 33,
+  "points": 15
+ },
+ {
+  "kind": "tournament",
+  "place": 7,
+  "stars": 3,
+  "participants": 40,
+  "points": 18.5
+ },
+ {
+  "kind": "tournament",
+  "place": 7,
+  "stars": 3,
+  "participants": 100,
+  "points": 48.5
+ },
+ {
+  "kind": "tournament",
+  "place": 7,
+  "stars": 4,
+  "participants": 40,
+  "points": 21.58333333333333
+ },
+ {
+  "kind": "tournament",
+  "place": 7,
+  "stars": 4,
+  "participants": 60,
+  "points": 33.25
+ },
+ {
+  "kind": "tournament",
+  "place": 7,
+  "stars": 5,
+  "participants": 20,
+  "points": 11.333333333333336
+ },
+ {
+  "kind": "tournament",
+  "place": 8,
+  "stars": 2,
+  "participants": 30,
+  "points": 10.833333333333332
+ },
+ {
+  "kind": "tournament",
+  "place": 8,
+  "stars": 3,
+  "participants": 20,
+  "points": 8
+ },
+ {
+  "kind": "tournament",
+  "place": 8,
+  "stars": 3,
+  "participants": 30,
+  "points": 13
+ },
+ {
+  "kind": "tournament",
+  "place": 8,
+  "stars": 3,
+  "participants": 33,
+  "points": 14.5
+ },
+ {
+  "kind": "tournament",
+  "place": 8,
+  "stars": 3,
+  "participants": 40,
+  "points": 18
+ },
+ {
+  "kind": "tournament",
+  "place": 8,
+  "stars": 3,
+  "participants": 100,
+  "points": 48
+ },
+ {
+  "kind": "tournament",
+  "place": 8,
+  "stars": 4,
+  "participants": 20,
+  "points": 9.333333333333332
+ },
+ {
+  "kind": "tournament",
+  "place": 8,
+  "stars": 4,
+  "participants": 60,
+  "points": 32.666666666666664
+ },
+ {
+  "kind": "tournament",
+  "place": 8,
+  "stars": 4,
+  "participants": 200,
+  "points": 114.33333333333331
+ },
+ {
+  "kind": "tournament",
+  "place": 9,
+  "stars": 2,
+  "participants": 30,
+  "points": 10.416666666666666
+ },
+ {
+  "kind": "tournament",
+  "place": 9,
+  "stars": 3,
+  "participants": 20,
+  "points": 7.5
+ },
+ {
+  "kind": "tournament",
+  "place": 9,
+  "stars": 3,
+  "participants": 30,
+  "points": 12.5
+ },
+ {
+  "kind": "tournament",
+  "place": 9,
+  "stars": 3,
+  "participants": 33,
+  "points": 14
+ },
+ {
+  "kind": "tournament",
+  "place": 9,
+  "stars": 3,
+  "participants": 40,
+  "points": 17.5
+ },
+ {
+  "kind": "tournament",
+  "place": 9,
+  "stars": 3,
+  "participants": 100,
+  "points": 47.5
+ },
+ {
+  "kind": "tournament",
+  "place": 9,
+  "stars": 5,
+  "participants": 20,
+  "points": 10
+ },
+ {
+  "kind": "tournament",
+  "place": 9,
+  "stars": 5,
+  "participants": 60,
+  "points": 36.66666666666667
+ },
+ {
+  "kind": "tournament",
+  "place": 10,
+  "stars": 2,
+  "participants": 20,
+  "points": 5.833333333333332
+ },
+ {
+  "kind": "tournament",
+  "place": 10,
+  "stars": 2,
+  "participants": 30,
+  "points": 9.999999999999998
+ },
+ {
+  "kind": "tournament",
+  "place": 10,
+  "stars": 3,
+  "participants": 20,
+  "points": 7
+ },
+ {
+  "kind": "tournament",
+  "place": 10,
+  "stars": 3,
+  "participants": 30,
+  "points": 12
+ },
+ {
+  "kind": "tournament",
+  "place": 10,
+  "stars": 3,
+  "participants": 100,
+  "points": 47
+ },
+ {
+  "kind": "tournament",
+  "place": 10,
+  "stars": 4,
+  "participants": 40,
+  "points": 19.83333333333333
+ },
+ {
+  "kind": "tournament",
+  "place": 10,
+  "stars": 5,
+  "participants": 20,
+  "points": 9.333333333333336
+ },
+ {
+  "kind": "tournament",
+  "place": 11,
+  "stars": 1,
+  "participants": 30,
+  "points": 6.3999999999999995
+ },
+ {
+  "kind": "tournament",
+  "place": 11,
+  "stars": 3,
+  "participants": 30,
+  "points": 9.6
+ },
+ {
+  "kind": "tournament",
+  "place": 11,
+  "stars": 3,
+  "participants": 33,
+  "points": 10.8
+ },
+ {
+  "kind": "tournament",
+  "place": 11,
+  "stars": 3,
+  "participants": 40,
+  "points": 13.6
+ },
+ {
+  "kind": "tournament",
+  "place": 11,
+  "stars": 4,
+  "participants": 40,
+  "points": 15.866666666666664
+ },
+ {
+  "kind": "tournament",
+  "place": 11,
+  "stars": 4,
+  "participants": 45,
+  "points": 18.2
+ },
+ {
+  "kind": "tournament",
+  "place": 12,
+  "stars": 1,
+  "participants": 30,
+  "points": 6.133333333333333
+ },
+ {
+  "kind": "tournament",
+  "place": 12,
+  "stars": 2,
+  "participants": 30,
+  "points": 7.666666666666666
+ },
+ {
+  "kind": "tournament",
+  "place": 12,
+  "stars": 2,
+  "participants": 40,
+  "points": 10.999999999999998
+ },
+ {
+  "kind": "tournament",
+  "place": 12,
+  "stars": 3,
+  "participants": 20,
+  "points": 3.6
+ },
+ {
+  "kind": "tournament",
+  "place": 12,
+  "stars": 3,
+  "participants": 30,
+  "points": 9.2
+ },
+ {
+  "kind": "tournament",
+  "place": 13,
+  "stars": 3,
+  "participants": 30,
+  "points": 8.8
+ },
+ {
+  "kind": "tournament",
+  "place": 13,
+  "stars": 3,
+  "participants": 33,
+  "points": 10
+ },
+ {
+  "kind": "tournament",
+  "place": 13,
+  "stars": 3,
+  "participants": 40,
+  "points": 12.8
+ },
+ {
+  "kind": "tournament",
+  "place": 13,
+  "stars": 3,
+  "participants": 60,
+  "points": 20.8
+ },
+ {
+  "kind": "tournament",
+  "place": 13,
+  "stars": 3,
+  "participants": 100,
+  "points": 36.8
+ },
+ {
+  "kind": "tournament",
+  "place": 13,
+  "stars": 4,
+  "participants": 40,
+  "points": 14.93333333333333
+ },
+ {
+  "kind": "tournament",
+  "place": 14,
+  "stars": 3,
+  "participants": 30,
+  "points": 8.4
+ },
+ {
+  "kind": "tournament",
+  "place": 14,
+  "stars": 3,
+  "participants": 50,
+  "points": 16.4
+ },
+ {
+  "kind": "tournament",
+  "place": 14,
+  "stars": 3,
+  "participants": 60,
+  "points": 20.4
+ },
+ {
+  "kind": "tournament",
+  "place": 14,
+  "stars": 3,
+  "participants": 100,
+  "points": 36.4
+ },
+ {
+  "kind": "tournament",
+  "place": 14,
+  "stars": 4,
+  "participants": 30,
+  "points": 9.799999999999999
+ },
+ {
+  "kind": "tournament",
+  "place": 14,
+  "stars": 4,
+  "participants": 45,
+  "points": 16.799999999999997
+ },
+ {
+  "kind": "tournament",
+  "place": 15,
+  "stars": 2,
+  "participants": 20,
+  "points": 2.5
+ },
+ {
+  "kind": "tournament",
+  "place": 15,
+  "stars": 2,
+  "participants": 80,
+  "points": 23.333333333333332
+ },
+ {
+  "kind": "tournament",
+  "place": 15,
+  "stars": 3,
+  "participants": 30,
+  "points": 5
+ },
+ {
+  "kind": "tournament",
+  "place": 15,
+  "stars": 3,
+  "participants": 40,
+  "points": 12
+ },
+ {
+  "kind": "tournament",
+  "place": 15,
+  "stars": 4,
+  "participants": 40,
+  "points": 14
+ },
+ {
+  "kind": "tournament",
+  "place": 15,
+  "stars": 5,
+  "participants": 50,
+  "points": 21.333333333333336
+ },
+ {
+  "kind": "tournament",
+  "place": 16,
+  "stars": 3,
+  "participants": 30,
+  "points": 4.8
+ },
+ {
+  "kind": "tournament",
+  "place": 16,
+  "stars": 3,
+  "participants": 50,
+  "points": 15.6
+ },
+ {
+  "kind": "tournament",
+  "place": 16,
+  "stars": 4,
+  "participants": 40,
+  "points": 13.533333333333331
+ },
+ {
+  "kind": "tournament",
+  "place": 16,
+  "stars": 4,
+  "participants": 60,
+  "points": 22.866666666666664
+ },
+ {
+  "kind": "tournament",
+  "place": 17,
+  "stars": 1,
+  "participants": 30,
+  "points": 3.0666666666666664
+ },
+ {
+  "kind": "tournament",
+  "place": 17,
+  "stars": 3,
+  "participants": 30,
+  "points": 4.6
+ },
+ {
+  "kind": "tournament",
+  "place": 17,
+  "stars": 3,
+  "participants": 50,
+  "points": 15.2
+ },
+ {
+  "kind": "tournament",
+  "place": 17,
+  "stars": 5,
+  "participants": 50,
+  "points": 20.26666666666667
+ },
+ {
+  "kind": "tournament",
+  "place": 18,
+  "stars": 1,
+  "participants": 30,
+  "points": 2.9333333333333336
+ },
+ {
+  "kind": "tournament",
+  "place": 18,
+  "stars": 3,
+  "participants": 20,
+  "points": 2.4
+ },
+ {
+  "kind": "tournament",
+  "place": 18,
+  "stars": 3,
+  "participants": 30,
+  "points": 4.4
+ },
+ {
+  "kind": "tournament",
+  "place": 18,
+  "stars": 3,
+  "participants": 33,
+  "points": 5
+ },
+ {
+  "kind": "tournament",
+  "place": 18,
+  "stars": 3,
+  "participants": 36,
+  "points": 5.6
+ },
+ {
+  "kind": "tournament",
+  "place": 18,
+  "stars": 3,
+  "participants": 40,
+  "points": 10.8
+ },
+ {
+  "kind": "tournament",
+  "place": 18,
+  "stars": 3,
+  "participants": 50,
+  "points": 14.8
+ },
+ {
+  "kind": "tournament",
+  "place": 18,
+  "stars": 3,
+  "participants": 100,
+  "points": 34.8
+ },
+ {
+  "kind": "tournament",
+  "place": 19,
+  "stars": 1,
+  "participants": 30,
+  "points": 2.8
+ },
+ {
+  "kind": "tournament",
+  "place": 19,
+  "stars": 2,
+  "participants": 50,
+  "points": 11.999999999999998
+ },
+ {
+  "kind": "tournament",
+  "place": 19,
+  "stars": 3,
+  "participants": 30,
+  "points": 4.2
+ },
+ {
+  "kind": "tournament",
+  "place": 19,
+  "stars": 3,
+  "participants": 33,
+  "points": 4.8
+ },
+ {
+  "kind": "tournament",
+  "place": 19,
+  "stars": 3,
+  "participants": 40,
+  "points": 10.4
+ },
+ {
+  "kind": "tournament",
+  "place": 19,
+  "stars": 3,
+  "participants": 100,
+  "points": 34.4
+ },
+ {
+  "kind": "tournament",
+  "place": 20,
+  "stars": 3,
+  "participants": 33,
+  "points": 4.6
+ },
+ {
+  "kind": "tournament",
+  "place": 20,
+  "stars": 3,
+  "participants": 100,
+  "points": 34
+ },
+ {
+  "kind": "tournament",
+  "place": 20,
+  "stars": 4,
+  "participants": 20,
+  "points": 2.333333333333333
+ },
+ {
+  "kind": "tournament",
+  "place": 21,
+  "stars": 3,
+  "participants": 30,
+  "points": 3.8
+ },
+ {
+  "kind": "tournament",
+  "place": 21,
+  "stars": 3,
+  "participants": 40,
+  "points": 5.8
+ },
+ {
+  "kind": "tournament",
+  "place": 21,
+  "stars": 3,
+  "participants": 50,
+  "points": 13.6
+ },
+ {
+  "kind": "tournament",
+  "place": 21,
+  "stars": 4,
+  "participants": 40,
+  "points": 6.766666666666666
+ },
+ {
+  "kind": "tournament",
+  "place": 22,
+  "stars": 2,
+  "participants": 30,
+  "points": 3
+ },
+ {
+  "kind": "tournament",
+  "place": 22,
+  "stars": 2,
+  "participants": 50,
+  "points": 10.999999999999998
+ },
+ {
+  "kind": "tournament",
+  "place": 22,
+  "stars": 3,
+  "participants": 30,
+  "points": 3.6
+ },
+ {
+  "kind": "tournament",
+  "place": 22,
+  "stars": 3,
+  "participants": 40,
+  "points": 5.6
+ },
+ {
+  "kind": "tournament",
+  "place": 23,
+  "stars": 2,
+  "participants": 30,
+  "points": 2.833333333333333
+ },
+ {
+  "kind": "tournament",
+  "place": 23,
+  "stars": 3,
+  "participants": 33,
+  "points": 4
+ },
+ {
+  "kind": "tournament",
+  "place": 23,
+  "stars": 3,
+  "participants": 40,
+  "points": 5.4
+ },
+ {
+  "kind": "tournament",
+  "place": 23,
+  "stars": 3,
+  "participants": 60,
+  "points": 16.8
+ },
+ {
+  "kind": "tournament",
+  "place": 23,
+  "stars": 5,
+  "participants": 50,
+  "points": 17.06666666666667
+ },
+ {
+  "kind": "tournament",
+  "place": 24,
+  "stars": 3,
+  "participants": 30,
+  "points": 3.2
+ },
+ {
+  "kind": "tournament",
+  "place": 24,
+  "stars": 3,
+  "participants": 33,
+  "points": 3.8
+ },
+ {
+  "kind": "tournament",
+  "place": 24,
+  "stars": 3,
+  "participants": 40,
+  "points": 5.2
+ },
+ {
+  "kind": "tournament",
+  "place": 24,
+  "stars": 3,
+  "participants": 50,
+  "points": 12.4
+ },
+ {
+  "kind": "tournament",
+  "place": 24,
+  "stars": 3,
+  "participants": 60,
+  "points": 16.4
+ },
+ {
+  "kind": "tournament",
+  "place": 24,
+  "stars": 5,
+  "participants": 50,
+  "points": 16.533333333333335
+ },
+ {
+  "kind": "tournament",
+  "place": 25,
+  "stars": 3,
+  "participants": 30,
+  "points": 3
+ },
+ {
+  "kind": "tournament",
+  "place": 25,
+  "stars": 3,
+  "participants": 33,
+  "points": 3.6
+ },
+ {
+  "kind": "tournament",
+  "place": 25,
+  "stars": 3,
+  "participants": 40,
+  "points": 5
+ },
+ {
+  "kind": "tournament",
+  "place": 25,
+  "stars": 4,
+  "participants": 40,
+  "points": 5.833333333333332
+ },
+ {
+  "kind": "tournament",
+  "place": 25,
+  "stars": 5,
+  "participants": 40,
+  "points": 6.666666666666668
+ },
+ {
+  "kind": "tournament",
+  "place": 26,
+  "stars": 3,
+  "participants": 30,
+  "points": 2.8
+ },
+ {
+  "kind": "tournament",
+  "place": 26,
+  "stars": 3,
+  "participants": 40,
+  "points": 4.8
+ },
+ {
+  "kind": "tournament",
+  "place": 26,
+  "stars": 3,
+  "participants": 50,
+  "points": 6.8
+ },
+ {
+  "kind": "tournament",
+  "place": 26,
+  "stars": 3,
+  "participants": 70,
+  "points": 19.6
+ },
+ {
+  "kind": "tournament",
+  "place": 26,
+  "stars": 4,
+  "participants": 50,
+  "points": 7.933333333333333
+ },
+ {
+  "kind": "tournament",
+  "place": 26,
+  "stars": 5,
+  "participants": 40,
+  "points": 6.4
+ },
+ {
+  "kind": "tournament",
+  "place": 27,
+  "stars": 3,
+  "participants": 30,
+  "points": 2.6
+ },
+ {
+  "kind": "tournament",
+  "place": 27,
+  "stars": 3,
+  "participants": 33,
+  "points": 3.2
+ },
+ {
+  "kind": "tournament",
+  "place": 27,
+  "stars": 3,
+  "participants": 40,
+  "points": 4.6
+ },
+ {
+  "kind": "tournament",
+  "place": 27,
+  "stars": 3,
+  "participants": 50,
+  "points": 6.6
+ },
+ {
+  "kind": "tournament",
+  "place": 27,
+  "stars": 3,
+  "participants": 70,
+  "points": 19.2
+ },
+ {
+  "kind": "tournament",
+  "place": 27,
+  "stars": 4,
+  "participants": 40,
+  "points": 5.366666666666665
+ },
+ {
+  "kind": "tournament",
+  "place": 28,
+  "stars": 3,
+  "participants": 30,
+  "points": 2.4
+ },
+ {
+  "kind": "tournament",
+  "place": 28,
+  "stars": 3,
+  "participants": 40,
+  "points": 4.4
+ },
+ {
+  "kind": "tournament",
+  "place": 28,
+  "stars": 4,
+  "participants": 40,
+  "points": 5.133333333333333
+ },
+ {
+  "kind": "tournament",
+  "place": 29,
+  "stars": 2,
+  "participants": 50,
+  "points": 5.166666666666666
+ },
+ {
+  "kind": "tournament",
+  "place": 29,
+  "stars": 3,
+  "participants": 30,
+  "points": 2.2
+ },
+ {
+  "kind": "tournament",
+  "place": 29,
+  "stars": 3,
+  "participants": 33,
+  "points": 2.8
+ },
+ {
+  "kind": "tournament",
+  "place": 29,
+  "stars": 3,
+  "participants": 40,
+  "points": 4.2
+ },
+ {
+  "kind": "tournament",
+  "place": 29,
+  "stars": 4,
+  "participants": 30,
+  "points": 2.5666666666666664
+ },
+ {
+  "kind": "tournament",
+  "place": 29,
+  "stars": 4,
+  "participants": 60,
+  "points": 16.799999999999997
+ },
+ {
+  "kind": "tournament",
+  "place": 30,
+  "stars": 3,
+  "participants": 30,
+  "points": 2
+ },
+ {
+  "kind": "tournament",
+  "place": 30,
+  "stars": 3,
+  "participants": 36,
+  "points": 3.2
+ },
+ {
+  "kind": "tournament",
+  "place": 30,
+  "stars": 3,
+  "participants": 40,
+  "points": 4
+ },
+ {
+  "kind": "tournament",
+  "place": 30,
+  "stars": 3,
+  "participants": 50,
+  "points": 6
+ },
+ {
+  "kind": "tournament",
+  "place": 30,
+  "stars": 4,
+  "participants": 40,
+  "points": 4.666666666666666
+ },
+ {
+  "kind": "tournament",
+  "place": 31,
+  "stars": 3,
+  "participants": 40,
+  "points": 3.8
+ },
+ {
+  "kind": "tournament",
+  "place": 32,
+  "stars": 3,
+  "participants": 33,
+  "points": 2.2
+ },
+ {
+  "kind": "tournament",
+  "place": 32,
+  "stars": 4,
+  "participants": 40,
+  "points": 4.199999999999999
+ },
+ {
+  "kind": "tournament",
+  "place": 33,
+  "stars": 3,
+  "participants": 40,
+  "points": 3.4
+ },
+ {
+  "kind": "tournament",
+  "place": 33,
+  "stars": 4,
+  "participants": 40,
+  "points": 3.9666666666666663
+ },
+ {
+  "kind": "tournament",
+  "place": 34,
+  "stars": 3,
+  "participants": 80,
+  "points": 20.4
+ },
+ {
+  "kind": "tournament",
+  "place": 34,
+  "stars": 4,
+  "participants": 40,
+  "points": 3.733333333333333
+ },
+ {
+  "kind": "tournament",
+  "place": 35,
+  "stars": 3,
+  "participants": 40,
+  "points": 3
+ },
+ {
+  "kind": "tournament",
+  "place": 35,
+  "stars": 5,
+  "participants": 50,
+  "points": 6.666666666666668
+ },
+ {
+  "kind": "tournament",
+  "place": 36,
+  "stars": 3,
+  "participants": 40,
+  "points": 2.8
+ },
+ {
+  "kind": "tournament",
+  "place": 36,
+  "stars": 4,
+  "participants": 40,
+  "points": 3.266666666666666
+ },
+ {
+  "kind": "tournament",
+  "place": 37,
+  "stars": 3,
+  "participants": 40,
+  "points": 2.6
+ },
+ {
+  "kind": "tournament",
+  "place": 37,
+  "stars": 4,
+  "participants": 40,
+  "points": 3.033333333333333
+ },
+ {
+  "kind": "tournament",
+  "place": 38,
+  "stars": 5,
+  "participants": 60,
+  "points": 8.533333333333335
+ },
+ {
+  "kind": "tournament",
+  "place": 39,
+  "stars": 3,
+  "participants": 40,
+  "points": 2.2
+ },
+ {
+  "kind": "tournament",
+  "place": 41,
+  "stars": 4,
+  "participants": 45,
+  "points": 3.266666666666666
+ },
+ {
+  "kind": "tournament",
+  "place": 42,
+  "stars": 3,
+  "participants": 50,
+  "points": 3.6
+ },
+ {
+  "kind": "tournament",
+  "place": 43,
+  "stars": 3,
+  "participants": 44,
+  "points": 2.2
+ },
+ {
+  "kind": "tournament",
+  "place": 43,
+  "stars": 4,
+  "participants": 45,
+  "points": 2.8
+ },
+ {
+  "kind": "tournament",
+  "place": 43,
+  "stars": 5,
+  "participants": 50,
+  "points": 4.533333333333333
+ },
+ {
+  "kind": "tournament",
+  "place": 44,
+  "stars": 2,
+  "participants": 84,
+  "points": 8.333333333333332
+ },
+ {
+  "kind": "tournament",
+  "place": 44,
+  "stars": 3,
+  "participants": 70,
+  "points": 7.2
+ },
+ {
+  "kind": "tournament",
+  "place": 45,
+  "stars": 3,
+  "participants": 50,
+  "points": 3
+ },
+ {
+  "kind": "tournament",
+  "place": 47,
+  "stars": 3,
+  "participants": 70,
+  "points": 6.6
+ },
+ {
+  "kind": "tournament",
+  "place": 50,
+  "stars": 5,
+  "participants": 50,
+  "points": 2.666666666666667
+ },
+ {
+  "kind": "tournament",
+  "place": 52,
+  "stars": 3,
+  "participants": 60,
+  "points": 3.6
+ },
+ {
+  "kind": "tournament",
+  "place": 55,
+  "stars": 3,
+  "participants": 80,
+  "points": 7
+ },
+ {
+  "kind": "tournament",
+  "place": 55,
+  "stars": 4,
+  "participants": 60,
+  "points": 3.4999999999999996
+ },
+ {
+  "kind": "tournament",
+  "place": 59,
+  "stars": 3,
+  "participants": 60,
+  "points": 2.2
+ },
+ {
+  "kind": "tournament",
+  "place": 73,
+  "stars": 3,
+  "participants": 80,
+  "points": 3.4
+ },
+ {
+  "kind": "tournament",
+  "place": 80,
+  "stars": 2,
+  "participants": 80,
+  "points": 1.6666666666666665
+ },
+ {
+  "kind": "tournament",
+  "place": 85,
+  "stars": 3,
+  "participants": 90,
+  "points": 3
+ }
+]
