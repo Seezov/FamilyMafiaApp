@@ -1,3 +1,4 @@
+import 'package:family_mafia_app/enums/game_limit_rule.dart';
 import 'package:family_mafia_app/models/game.dart';
 import 'package:family_mafia_app/models/tournament.dart';
 import 'package:family_mafia_app/providers/app_providers.dart';
@@ -44,6 +45,18 @@ Map<String, Object?> debugJson(ExportContext x) {
       'name': 'FamilyMafiaApp',
       'branch': 'feature/flutter_migration',
     },
+    'thresholds': [
+      for (final c in x.seasons.reversed)
+        if (c.gameLimitRule == GameLimitRule.top3 && c.thresholdFormula != null)
+          {
+            'season': c.id,
+            'title': c.title,
+            'formula': c.thresholdFormula,
+            'gameLimit': c.gameLimit,
+            'set': c.gameLimitSet,
+            'live': c.thresholdLive,
+          },
+    ],
     'types': [
       for (final t in TournamentType.values) {'type': t.name, 'label': t.label},
     ],

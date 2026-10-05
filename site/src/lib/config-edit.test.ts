@@ -71,3 +71,21 @@ describe('clubBody', () => {
     expect(body.gameLimits).toEqual({});
   });
 });
+describe('gameLimit ops', () => {
+  it('set, replace and clear a season limit', () => {
+    const f: SeasonConfigFile = { tournaments: [], gameLimits: { '30': 40 } };
+    const set = applyOps(f, [{ kind: 'gameLimit', season: 31, limit: 41 }]);
+    expect(set.gameLimits).toEqual({ '30': 40, '31': 41 });
+    expect(applyOps(set, [{ kind: 'gameLimit', season: 31, limit: 39 }]).gameLimits).toEqual({ '30': 40, '31': 39 });
+    expect(applyOps(set, [{ kind: 'gameLimit', season: 31, limit: null }]).gameLimits).toEqual({ '30': 40 });
+    expect(f.gameLimits).toEqual({ '30': 40 });
+  });
+  it('rejects a bad value', () => {
+    expect(() => applyOps({}, [{ kind: 'gameLimit', season: 31, limit: -1 }])).toThrow();
+    expect(() => applyOps({}, [{ kind: 'gameLimit', season: 31, limit: 1.5 }])).toThrow();
+  });
+  it('clubBody writes the applied limits', () => {
+    const next = applyOps({ tournaments: [] }, [{ kind: 'gameLimit', season: 31, limit: 41 }]);
+    expect(clubBody(next, next.gameLimits).gameLimits).toEqual({ '31': 41 });
+  });
+});

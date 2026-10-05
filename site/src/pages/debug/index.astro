@@ -24,6 +24,14 @@ const seasons = [...new Set([...d.tournaments.map((t) => t.season), ...d.candida
       rebuilds within an hour (or run the <a href={`https://github.com/${d.repo.owner}/${d.repo.name}/actions/workflows/web.yml`} target="_blank" rel="noopener">web workflow</a>).</p>
   </div>
 
+  {d.thresholds.length > 0 && (
+    <section class="panel thresholds">
+      <h2 class="label">Main-league thresholds</h2>
+      <p class="hint">While a season is played the threshold follows the sheet formula (top-3 games × 0.6 − 5). After it ends an admin can set the final value; empty = rounded-up formula.</p>
+      <div id="thresholds"></div>
+    </section>
+  )}
+
   <div class="toolbar">
     <div class="pills" id="filters" role="tablist" aria-label="Show"></div>
     <select id="season" aria-label="Season">
@@ -95,6 +103,11 @@ const seasons = [...new Set([...d.tournaments.map((t) => t.season), ...d.candida
 </style>
 
 <style>
+  .thresholds { margin-bottom: 16px; }
+  .thr { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 12px; padding: 6px 0; }
+  .thr form { display: flex; gap: 6px; }
+  .thr input { width: 6em; }
+  .thr.pending-op { box-shadow: inset 3px 0 0 var(--accent); padding-left: 8px; }
   .access { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius);
     padding: 10px 14px; margin-bottom: 14px; }
   .access .row { display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: baseline; }

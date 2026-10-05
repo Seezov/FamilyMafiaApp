@@ -34,8 +34,10 @@ export async function saveClub(ops: Op[], u: ClubAdmin) {
     const snap = await tx.get(clubRef());
     if (!snap.exists()) throw new Error('config/club does not exist yet — import it first');
     const cur = snap.data() as Partial<ClubDoc>;
-    const next = applyOps({ tournaments: cur.tournaments ?? [], rejectedCandidates: cur.rejectedCandidates ?? [] }, ops);
-    tx.set(clubRef(), { ...clubBody(next, cur.gameLimits ?? {}), ...stamp(u) });
+    const next = applyOps({
+      tournaments: cur.tournaments ?? [], rejectedCandidates: cur.rejectedCandidates ?? [], gameLimits: cur.gameLimits ?? {},
+    }, ops);
+    tx.set(clubRef(), { ...clubBody(next, next.gameLimits ?? {}), ...stamp(u) });
     tx.set(doc(db, 'meta', 'state'), { updatedAt: serverTimestamp() });
   });
 }

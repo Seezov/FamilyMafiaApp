@@ -171,6 +171,21 @@ function card(r: Row): string {
   </article>`;
 }
 
+function thresholdRows(): string {
+  const liveLimits = (live as { gameLimits?: Record<string, number> } | null)?.gameLimits;
+  return data.thresholds.map((t) => {
+    const op = [...ops].reverse().find((o) => o.kind === 'gameLimit' && o.season === t.season) as Extract<Op, { kind: 'gameLimit' }> | undefined;
+    const formula = Math.max(0, Math.ceil(t.formula));
+    const saved = liveLimits ? liveLimits[String(t.season)] ?? null : (t.set ? t.gameLimit : null);
+    const value = op ? op.limit : saved;
+    const state = t.live ? 'live' : value === null ? `${formula} (formula)` : `${value} (admin)`;
+    const edit = t.live ? '<span class="label">editable after the season ends</span>'
+      : `<form class="thr-form" data-season="${t.season}"><input name="limit" type="number" min="0" step="1" value="${value ?? formula}" aria-label="Threshold for S${t.season}">
+         <button class="btn" type="submit">Set</button><button class="btn" type="button" data-reset="${t.season}">Use formula</button></form>`;
+    return `<div class="thr ${op ? 'pending-op' : ''}"><b>S${t.season}</b><span>formula ${t.formula.toFixed(1)} → ${formula}</span><span>now ${esc(state)}</span>${edit}</div>`;
+  }).join('');
+}
+
 function render() {
   const all = rows();
   $('filters').innerHTML = FILTERS.map(([k, label]) => {
@@ -179,6 +194,8 @@ function render() {
   }).join('');
   const shown = all.filter(visible);
   $('list').innerHTML = shown.length ? shown.map(card).join('') : '<p class="empty-list">Nothing here.</p>';
+  const th = document.getElementById('thresholds');
+  if (th) th.innerHTML = thresholdRows();
   const p = $('pending');
   p.hidden = ops.length === 0;
   $('pending-text').textContent = `${ops.length} unsaved change${ops.length === 1 ? '' : 's'}${canSave() ? '' : ' · sign in as an admin to save'}`;
@@ -193,6 +210,19 @@ function render() {
 }
 
 // ── Actions ─────────────────────────────────────────────────────────────────
+const thr = document.getElementById('thresholds');
+thr?.addEventListener('submit', (ev) => {
+  ev.preventDefault();
+  const f = ev.target as HTMLFormElement;
+  const v = (f.elements.namedItem('limit') as HTMLInputElement).valueAsNumber;
+  if (!Number.isInteger(v) || v < 0) return;
+  push({ kind: 'gameLimit', season: +f.dataset.season!, limit: v });
+});
+thr?.addEventListener('click', (ev) => {
+  const b = (ev.target as HTMLElement).closest<HTMLButtonElement>('button[data-reset]');
+  if (b) push({ kind: 'gameLimit', season: +b.dataset.reset!, limit: null });
+});
+
 const armed = new Set<string>();
 function push(op: Op) { ops.push(op); saveOps(); render(); }
 

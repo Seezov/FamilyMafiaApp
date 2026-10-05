@@ -14,6 +14,8 @@ export interface ConfigEntry {
 export interface SeasonConfigFile {
   tournaments?: ConfigEntry[];
   rejectedCandidates?: string[];
+  /** Admins' final thresholds by season id (top3 seasons). */
+  gameLimits?: Record<string, number>;
   [key: string]: unknown;
 }
 
@@ -22,7 +24,8 @@ export type Op =
   | { kind: 'confirm'; key: string }
   | { kind: 'delete'; key: string }
   | { kind: 'add'; id: string; entry: ConfigEntry }
-  | { kind: 'reject'; id: string };
+  | { kind: 'reject'; id: string }
+  | { kind: 'gameLimit'; season: number; limit: number | null };
 
 export const entryKey = (e: { season: number; name: string }) => `${e.season}|${e.name}`;
 
@@ -70,6 +73,7 @@ function insertAt(list: ConfigEntry[], e: ConfigEntry): number {
 export function applyOps(file: SeasonConfigFile, ops: Op[]): SeasonConfigFile {
   const list = [...(file.tournaments ?? [])];
   let rejected = [...(file.rejectedCandidates ?? [])];
+  const limits = { ...(file.gameLimits ?? {}) };
   const find = (key: string) => {
     const i = list.findIndex((t) => entryKey(t) === key);
     if (i < 0) throw new Error(`"${key.split('|')[1]}" (S${key.split('|')[0]}) is no longer in the config`);
@@ -98,12 +102,20 @@ export function applyOps(file: SeasonConfigFile, ops: Op[]): SeasonConfigFile {
         list.splice(insertAt(list, e), 0, e);
         break;
       }
+      case 'gameLimit': {
+        if (op.limit !== null && (!Number.isInteger(op.limit) || op.limit < 0)) {
+          throw new Error(`Threshold must be a whole number ≥ 0, got ${op.limit}`);
+        }
+        if (op.limit === null) delete limits[String(op.season)];
+        else limits[String(op.season)] = op.limit;
+        break;
+      }
       case 'reject':
         if (!rejected.includes(op.id)) rejected = [...rejected, op.id].sort();
         break;
     }
   }
-  const out: SeasonConfigFile = { ...file, tournaments: list };
+  const out: SeasonConfigFile = { ...file, tournaments: list, gameLimits: limits };
   if (rejected.length) out.rejectedCandidates = rejected;
   return out;
 }

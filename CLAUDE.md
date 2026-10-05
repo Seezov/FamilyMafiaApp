@@ -137,6 +137,12 @@ default branch.
    ```
 3. The app fetches the updated config on launch and loads the new season from Sheets
 
+**Main-league threshold:** new seasons use `"gameLimitRule": "top3"` with no `gameLimit`: while the
+season is played (calendar quarter, `seasonInProgress`) the threshold follows the sheet formula
+(top-3 rating-game counts averaged × 0.6 − 5; main league = games ≥ it); after it ends, the admin's
+value from Firestore `config/club.gameLimits` (set on `/debug/`) or the rounded-up formula. Seasons
+without the rule keep their fixed `gameLimit`.
+
 ## Game Rules
 
 The game is Mafia (10-player social deduction). Official tournament rules reference: `.claude/projects/C--Users-user-AndroidStudioProjects-FamilyMafiaApp/memory/game_rules.md`

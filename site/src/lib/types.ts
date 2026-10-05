@@ -83,6 +83,7 @@ export interface DebugEvidence {
 }
 export interface DebugData {
   repo: { owner: string; name: string; branch: string };
+  thresholds: { season: number; title: string; formula: number; gameLimit: number; set: boolean; live: boolean }[];
   types: { type: string; label: string }[];
   tournaments: {
     key: string; season: number; type: string; name: string; games: number; date: string | null;
