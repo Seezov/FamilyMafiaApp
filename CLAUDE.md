@@ -135,6 +135,12 @@ default branch.
   `site/scripts/fetch-profiles.ts` runs before `astro build`, writes `data/profiles.json` and
   `public/avatars/` (gitignored); components show nicks via `PlayerName.astro`. Changes appear
   after the next build (games-watch, ≤ 1 h). Rules for both live in `firestore.rules`.
+- **Appeals:** approved players appeal for an additional point on `/account/` — only their own seat in a
+  rated game of the current club season (Firestore games, 32+). Firestore `appeals/{gameId}_{uid}`
+  (owner + admins read). Admins decide on `/account/admin/` (accept / partial / reject); accept and
+  partial add the points to the seat's `additional` and a «Апеляція: +X» comment in the same
+  transaction, then bump `meta/state`. «Історія» filters by player, host, status, season (URL query)
+  with per-host totals. Logic in `site/src/lib/appeals/`; rules in `firestore.rules`.
 - Running the prefetch locally leaves a ~650 KB snapshot in `assets/prefetched/`
   that also goes into local release APKs (no secrets, just data). Before a
   release APK: `rm assets/prefetched/season*.json assets/prefetched/remote_config.json`.
