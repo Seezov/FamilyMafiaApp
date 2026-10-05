@@ -1,0 +1,50 @@
+---
+import Base from '../../layouts/Base.astro';
+import { loadUnresolved } from '../../lib/data';
+
+const unresolved = loadUnresolved().names;
+---
+<Base title="Edit players" description="Admins add players and glue nicknames." active="players">
+  <div class="pagehead"><h1 class="display">Players list</h1><span class="label" id="state">Loading…</span></div>
+
+  <div class="panel access">
+    <span class="label">Editing</span> <span id="who">Read-only</span>
+    <button type="button" id="sign-in" class="btn primary">Sign in with Google</button>
+    <button type="button" id="sign-out" class="btn" hidden>Sign out</button>
+    <button type="button" id="import" class="btn" hidden>Import from players.json</button>
+    <p class="hint">Admins (hosts with <code>admin: true</code>) can save. A game name counts for a player when it equals the player's name or a nickname (case ignored). The site rebuilds within an hour.</p>
+  </div>
+
+  <div class="toolbar">
+    <input id="q" type="search" placeholder="Search name or nickname" aria-label="Search">
+    <input id="new-name" placeholder="New player" aria-label="New player name">
+    <button type="button" id="add" class="btn" disabled>Add player</button>
+  </div>
+
+  <p id="msg" class="msg" role="status"></p>
+  <div id="list" class="list"></div>
+
+  <h2>Unresolved names</h2>
+  <p class="hint">Names from games (as of the last build) that belong to no player.</p>
+  <div id="unresolved" class="list"></div>
+
+  <datalist id="roster-names"></datalist>
+  <script type="application/json" id="unresolved-data" set:html={JSON.stringify(unresolved).replace(/</g, '\\u003c')} />
+</Base>
+
+<script>
+  import '../../scripts/players-edit';
+</script>
+
+<style>
+  .access, .toolbar { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; margin-bottom: 12px; }
+  .hint { flex-basis: 100%; margin: 0; color: var(--muted); }
+  .msg:empty { display: none; }
+  .msg.error { color: var(--city); }
+  .list .pl, .list .un { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; padding: 8px 0; border-top: 1px solid var(--border); }
+  .list .name { font-weight: 600; }
+  .chip { border: 1px solid var(--border); border-radius: 999px; padding: 1px 8px; }
+  .chip .x { border: 0; background: none; color: var(--muted); cursor: pointer; padding: 0 2px; }
+  .act { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-left: auto; }
+  input { min-width: 0; }
+</style>
