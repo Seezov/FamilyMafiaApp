@@ -34,6 +34,8 @@ class _MemCache implements SeasonCacheService {
   @override Future<String?> getCachedRemoteConfig() async => null;
   @override Future<void> cacheRemoteConfig(String json) async {}
   @override Future<String?> getCachedClubConfig() async => null;
+  @override Future<String?> getCachedPlayers() async => null;
+  @override Future<void> cachePlayers(String json) async {}
   @override Future<void> cacheClubConfig(String json) async {}
 }
 

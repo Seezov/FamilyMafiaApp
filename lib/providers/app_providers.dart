@@ -202,6 +202,33 @@ final clubConfigProvider = FutureProvider<ClubConfig?>((ref) async {
   return null;
 });
 
+/// The roster for the loader (app players.json shape): Firestore
+/// `config/players` live, else the cached copy (the build's snapshot on the
+/// web and in the site export), else the bundled `assets/raw/players.json`.
+final playersJsonProvider = FutureProvider<String>((ref) async {
+  final cache = ref.read(seasonCacheServiceProvider);
+  final firestore = ref.read(firestoreServiceProvider);
+  if (firestore != null) {
+    try {
+      // fetchPlayers validates, so a document Dart can't use never reaches the cache.
+      final json = await firestore.fetchPlayers(kFirebaseProjectId);
+      if (json != null) {
+        await cache.cachePlayers(json);
+        return json;
+      }
+    } catch (e) {
+      debugPrint('Players fetch failed: $e');
+    }
+  }
+  try {
+    final cached = await cache.getCachedPlayers();
+    if (cached != null) return cached;
+  } catch (e) {
+    debugPrint('Cached players unavailable: $e');
+  }
+  return rootBundle.loadString('assets/raw/players.json');
+});
+
 final tournamentsProvider = Provider<List<Tournament>>((ref) =>
     ref.watch(clubConfigProvider).valueOrNull?.tournaments ??
     ref.watch(parsedConfigProvider).valueOrNull?.tournaments ??
@@ -268,7 +295,7 @@ final initialLoadProvider = FutureProvider<void>((ref) async {
   );
 
   // Phase 3: load players + latest season only
-  final playersJson = await rootBundle.loadString('assets/raw/players.json');
+  final playersJson = await ref.read(playersJsonProvider.future);
   final latestConfig = configs.last;
   final latestJson = await dataService.loadSeasonJson(latestConfig);
 

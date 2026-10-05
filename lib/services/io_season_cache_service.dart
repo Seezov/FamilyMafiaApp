@@ -84,4 +84,20 @@ class IoSeasonCacheService implements SeasonCacheService {
     final dir = await _getCacheDir();
     await File('$dir/club_config.json').writeAsString(jsonData);
   }
+
+  // ── Roster cache ────────────────────────────────────────────────────────
+
+  @override
+  Future<String?> getCachedPlayers() async {
+    final dir = await _getCacheDir();
+    final file = File('$dir/players.json');
+    if (await file.exists()) return file.readAsString();
+    return null;
+  }
+
+  @override
+  Future<void> cachePlayers(String jsonData) async {
+    final dir = await _getCacheDir();
+    await File('$dir/players.json').writeAsString(jsonData);
+  }
 }
