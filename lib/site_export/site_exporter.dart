@@ -16,6 +16,7 @@ import 'package:family_mafia_app/site_export/players_export.dart';
 import 'package:family_mafia_app/site_export/records_export.dart';
 import 'package:family_mafia_app/site_export/season_export.dart' as season_export;
 import 'package:family_mafia_app/site_export/tournaments_export.dart';
+import 'package:family_mafia_app/site_export/unresolved_export.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Writes the site's JSON into [out], replacing whatever was there.
@@ -52,6 +53,7 @@ Future<void> writeSiteData(ProviderContainer container, Directory out,
     write('games/${season.id}.json', gamesJson(x, season, browserGames(season.id, json, resolver)));
   }
   write('players.json', playersJson(x));
+  write('unresolved.json', unresolvedJson(x));
   for (final p in x.players) {
     write('player/${x.slugs[p.id]}.json', playerJson(x, p));
   }

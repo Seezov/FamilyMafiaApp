@@ -24,6 +24,8 @@ Map<String, Object?> _summary(ExportContext x, Player p) {
     'id': p.id,
     'slug': x.slugs[p.id],
     'name': p.displayName,
+    // Every spelling that resolves to this player, for the profile matcher.
+    'aliases': {for (final n in [p.displayName, ...?p.nicknames]) n.trim().toLowerCase()}.toList(),
     'initials': initials(p.displayName),
     'games': stats?.games ?? 0,
     'winRate': stats?.winRate ?? 0.0,

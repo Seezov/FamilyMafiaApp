@@ -34,7 +34,9 @@ export interface SeasonData {
 export interface PlayerSummary {
   id: number; slug: string; name: string; initials: string;
   games: number; winRate: number; seasons: number; latestRating: number | null;
+  aliases: string[];
 }
+export interface UnresolvedData { names: { name: string; games: number; lastSeason: number }[] }
 export interface PlayersData { players: PlayerSummary[]; table: SiteTable }
 export interface PlayerData extends PlayerSummary {
   accomplishments: {
