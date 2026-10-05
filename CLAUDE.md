@@ -119,6 +119,13 @@ default branch.
   prefetch snapshots them into `assets/prefetched/annual_events.json`. Club seasons from S28 are added by
   the export once finished (main league 1…N, small league top 5 as 101–105, year of the season's last month).
   2024–2025 came from the sheets once (`tool/import/`).
+- **Player list:** Firestore `config/players` (`{players: [{name, nicknames}]}`, ordered — the app numbers
+  players by position) is the roster; admins edit it on `/players/edit/` (add, nicknames, rename keeps the
+  old name as a nickname, merge, unresolved game names from `site/data/unresolved.json`). Validation in
+  `lib/models/roster.dart` and `site/src/lib/roster/roster.ts` (shared fixture `test/fixtures/roster_cases.json`).
+  Prefetch snapshots it to `assets/prefetched/players.json` in the old `players.json` shape; the app reads it
+  live → cached → bundled `assets/raw/players.json` (now only a fallback). Profiles follow renames through
+  `aliases` in `site/data/players.json`.
 - **Player profiles:** `/account/` (Google sign-in → claim a player → admin approves on
   `/account/admin/` → nick + avatar). Firestore `claims/{uid}` (private) and
   `profiles/{playerKey}` (public; `playerKey` = lower-cased, URI-encoded display name).
