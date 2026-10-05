@@ -22,7 +22,7 @@ const kFixtureTournament = Tournament(
 /// Real bundled seasons loaded through [SeasonLoaderService] into a container,
 /// the way `loadSiteContainer` ends up — without assets or a snapshot.
 Future<ProviderContainer> fixtureContainer(
-    {List<int> seasonIds = const [17, 21]}) async {
+    {List<int> seasonIds = const [17, 21], DateTime Function()? clock}) async {
   final players = PlayersRepository();
   final games = GamesRepository();
   final ratings = RatingRepository();
@@ -55,6 +55,7 @@ Future<ProviderContainer> fixtureContainer(
     seasonRepositoryProvider.overrideWith((ref) => seasons),
     rolePercentilesRepositoryProvider.overrideWith((ref) => percentiles),
     tournamentsProvider.overrideWithValue(const [kFixtureTournament]),
+    if (clock != null) clockProvider.overrideWithValue(clock),
   ]);
   container.read(loadedSeasonConfigsProvider.notifier).state =
       loader.applyThresholds(configs);

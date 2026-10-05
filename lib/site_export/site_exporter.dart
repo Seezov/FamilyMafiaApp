@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:family_mafia_app/models/annual_event.dart';
 import 'package:family_mafia_app/models/season_config.dart';
 import 'package:family_mafia_app/providers/app_providers.dart';
 import 'package:family_mafia_app/screens/home/home_providers.dart';
 import 'package:family_mafia_app/services/season_data_service.dart';
 import 'package:family_mafia_app/services/season_loader.dart';
+import 'package:family_mafia_app/site_export/annual_export.dart';
 import 'package:family_mafia_app/site_export/debug_export.dart';
 import 'package:family_mafia_app/site_export/export_context.dart';
 import 'package:family_mafia_app/site_export/games_export.dart';
@@ -21,7 +23,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 /// [seasonJson] supplies a season's raw JSON for the games pages (default: the
 /// app's own bundled / cached data).
 Future<void> writeSiteData(ProviderContainer container, Directory out,
-    {Future<String?> Function(SeasonConfig)? seasonJson}) async {
+    {Future<String?> Function(SeasonConfig)? seasonJson,
+    List<AnnualEvent> annualEvents = const []}) async {
   final x = ExportContext(container);
   if (out.existsSync()) out.deleteSync(recursive: true);
 
@@ -54,5 +57,6 @@ Future<void> writeSiteData(ProviderContainer container, Directory out,
   }
   write('records.json', recordsJson(x));
   write('tournaments.json', tournamentsJson(x));
+  write('annual.json', annualJson(x, annualEvents));
   write('debug.json', debugJson(x));
 }

@@ -3,7 +3,9 @@
 // Needs the assets/prefetched/ snapshot for remote seasons — see CLAUDE.md.
 import 'dart:io';
 
+import 'package:family_mafia_app/models/annual_event.dart';
 import 'package:family_mafia_app/providers/app_providers.dart';
+import 'package:family_mafia_app/services/prefetch_paths.dart';
 import 'package:family_mafia_app/site_export/load_container.dart';
 import 'package:family_mafia_app/site_export/site_exporter.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -16,7 +18,13 @@ void main() {
     addTearDown(container.dispose);
     final out = Directory(Platform.environment['SITE_DATA_DIR'] ?? 'site/data');
 
-    await writeSiteData(container, out);
+    // CI's prefetch always writes it; a local run without a snapshot shows
+    // the derived season events only.
+    final annualFile = File('$prefetchedDir/$prefetchedAnnualEventsFile');
+    final annualEvents = annualFile.existsSync()
+        ? parseAnnualEvents(annualFile.readAsStringSync())
+        : <AnnualEvent>[];
+    await writeSiteData(container, out, annualEvents: annualEvents);
 
     final configs = container.read(loadedSeasonConfigsProvider);
     for (final c in configs) {
