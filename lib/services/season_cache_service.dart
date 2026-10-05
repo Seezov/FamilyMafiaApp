@@ -13,4 +13,9 @@ abstract interface class SeasonCacheService {
   Future<String?> getCachedRemoteConfig();
 
   Future<void> cacheRemoteConfig(String jsonData);
+
+  /// The last fetched Firestore `config/club` (see ClubConfig).
+  Future<String?> getCachedClubConfig();
+
+  Future<void> cacheClubConfig(String jsonData);
 }

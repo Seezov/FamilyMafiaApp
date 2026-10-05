@@ -1,4 +1,4 @@
-// Snapshots the remote config and every remote (Google Sheets) and firestore season into
+// Snapshots the remote config, Firestore config/club and every remote (Google Sheets) and firestore season into
 // assets/prefetched/ so the web build can show them without an API key.
 //
 // Usage (CI):  SHEETS_API_KEY=... REMOTE_CONFIG_URL=... dart run tool/prefetch_seasons.dart
@@ -78,7 +78,18 @@ Future<List<int>> prefetchSeasons({
     }
   }
 
+  final club = await firestore.fetchClubConfig(kFirebaseProjectId);
+  final configHasTournaments =
+      (jsonDecode(configJson) as Map<String, dynamic>).containsKey('tournaments');
+  if (club == null && !configHasTournaments) {
+    throw const FormatException(
+        'config/club is missing and the config has no tournaments');
+  }
+
   await outDir.create(recursive: true);
+  if (club != null) {
+    await File('${outDir.path}/$prefetchedClubConfigFile').writeAsString(club);
+  }
   await File('${outDir.path}/$prefetchedConfigFile').writeAsString(configJson);
   for (final MapEntry(key: id, value: json) in fetched.entries) {
     await File('${outDir.path}/${prefetchedSeasonFile(id)}').writeAsString(json);

@@ -36,4 +36,10 @@ class AssetSeasonCacheService implements SeasonCacheService {
 
   @override
   Future<void> cacheRemoteConfig(String jsonData) async {}
+
+  @override
+  Future<String?> getCachedClubConfig() => _tryLoad(prefetchedClubConfigFile);
+
+  @override
+  Future<void> cacheClubConfig(String jsonData) async {}
 }

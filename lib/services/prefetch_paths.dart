@@ -6,4 +6,7 @@ const String prefetchedDir = 'assets/prefetched';
 
 const String prefetchedConfigFile = 'remote_config.json';
 
+/// Firestore `config/club` (tournaments, final thresholds).
+const String prefetchedClubConfigFile = 'club_config.json';
+
 String prefetchedSeasonFile(int seasonId) => 'season$seasonId.json';

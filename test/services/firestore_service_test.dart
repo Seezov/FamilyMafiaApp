@@ -33,6 +33,8 @@ class _MemCache implements SeasonCacheService {
   @override Future<void> invalidateSeasonCache(int id) async => data.remove(id);
   @override Future<String?> getCachedRemoteConfig() async => null;
   @override Future<void> cacheRemoteConfig(String json) async {}
+  @override Future<String?> getCachedClubConfig() async => null;
+  @override Future<void> cacheClubConfig(String json) async {}
 }
 
 const _src = FirestoreSource(projectId: 'p1');
@@ -40,6 +42,52 @@ const _config = SeasonConfig(id: 32, title: 'S32', gameLimit: 40,
     smallLeagueMinGames: 15, gamesMultiplier: 0, source: _src);
 
 void main() {
+  group('fetchClubConfig', () {
+    test('decodes config/club, dropping the author fields', () async {
+      final adapter = _FakeAdapter((o) => _json({
+            'name': 'projects/p1/databases/(default)/documents/config/club',
+            'fields': {
+              'tournaments': {'arrayValue': {'values': [
+                {'mapValue': {'fields': {
+                  'season': {'integerValue': '31'}, 'type': {'stringValue': 'minicap'},
+                  'name': {'stringValue': 'Cup'}, 'games': {'integerValue': '4'},
+                  'podium': {'arrayValue': {'values': [{'stringValue': 'A'}]}},
+                }}},
+              ]}},
+              'gameLimits': {'mapValue': {'fields': {'31': {'integerValue': '41'}}}},
+              'updatedAt': {'timestampValue': '2026-10-05T10:00:00Z'},
+              'updatedBy': {'stringValue': 'u'},
+            },
+          }));
+      final service = FirestoreService(dio: Dio()..httpClientAdapter = adapter);
+
+      final json = await service.fetchClubConfig('p1');
+
+      expect(adapter.last!.method, 'GET');
+      expect(adapter.last!.uri.toString(),
+          'https://firestore.googleapis.com/v1/projects/p1/databases/(default)/documents/config/club');
+      expect(jsonDecode(json!), {
+        'tournaments': [
+          {'season': 31, 'type': 'minicap', 'name': 'Cup', 'games': 4, 'podium': ['A']},
+        ],
+        'rejectedCandidates': [],
+        'gameLimits': {'31': 41},
+      });
+    });
+
+    test('a missing document is null', () async {
+      final service = FirestoreService(
+          dio: Dio()..httpClientAdapter = _FakeAdapter((o) => _json({'error': {'code': 404}}, 404)));
+      expect(await service.fetchClubConfig('p1'), isNull);
+    });
+
+    test('other errors throw', () async {
+      final service = FirestoreService(
+          dio: Dio()..httpClientAdapter = _FakeAdapter((o) => _json({'error': 'x'}, 503)));
+      await expectLater(service.fetchClubConfig('p1'), throwsA(isA<DioException>()));
+    });
+  });
+
   test('runQuery filters by season and decodes documents', () async {
     final adapter = _FakeAdapter((o) => _json([
           {'document': {

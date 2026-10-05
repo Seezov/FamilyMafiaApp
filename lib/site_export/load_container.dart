@@ -16,5 +16,6 @@ Future<ProviderContainer> loadSiteContainer() async {
     firestoreServiceProvider.overrideWithValue(null),
   ]);
   await container.read(appDataProvider.future);
+  await container.read(clubConfigProvider.future);
   return container;
 }

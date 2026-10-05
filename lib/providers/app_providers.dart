@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:family_mafia_app/enums/season.dart';
+import 'package:family_mafia_app/models/club_config.dart';
 import 'package:family_mafia_app/models/season_config.dart';
 import 'package:family_mafia_app/models/tournament.dart';
 import 'package:family_mafia_app/repositories/games_repository.dart';
@@ -168,9 +169,38 @@ final seasonConfigsProvider = Provider<List<SeasonConfig>>((ref) {
 });
 
 /// Every tournament held in any season, from the season config JSON.
-final tournamentsProvider = Provider<List<Tournament>>((ref) {
-  return ref.watch(parsedConfigProvider).valueOrNull?.tournaments ?? const [];
+/// Firestore `config/club` (see [ClubConfig]): live, else the cached copy
+/// (the build's snapshot on the web and in the site export), else null —
+/// then the JSON config's tournaments still apply.
+final clubConfigProvider = FutureProvider<ClubConfig?>((ref) async {
+  final cache = ref.read(seasonCacheServiceProvider);
+  final firestore = ref.read(firestoreServiceProvider);
+  if (firestore != null) {
+    try {
+      final json = await firestore.fetchClubConfig(kFirebaseProjectId);
+      if (json != null) {
+        await cache.cacheClubConfig(json);
+        return ClubConfig.fromJson(jsonDecode(json) as Map<String, dynamic>);
+      }
+    } catch (e) {
+      debugPrint('Club config fetch failed: $e');
+    }
+  }
+  try {
+    final cached = await cache.getCachedClubConfig();
+    if (cached != null) {
+      return ClubConfig.fromJson(jsonDecode(cached) as Map<String, dynamic>);
+    }
+  } catch (e) {
+    debugPrint('Cached club config unavailable: $e');
+  }
+  return null;
 });
+
+final tournamentsProvider = Provider<List<Tournament>>((ref) =>
+    ref.watch(clubConfigProvider).valueOrNull?.tournaments ??
+    ref.watch(parsedConfigProvider).valueOrNull?.tournaments ??
+    const []);
 
 // ── Loading phase ─────────────────────────────────────────────────────────
 
@@ -215,6 +245,8 @@ final initialLoadProvider = FutureProvider<void>((ref) async {
   // Phase 1: get configs + API key
   final parsed = await ref.watch(parsedConfigProvider.future);
   final configs = parsed.seasons;
+  // Fetched alongside the seasons; awaited before the background load ends.
+  ref.read(clubConfigProvider.future).ignore();
   final apiKey = ref.read(sheetsApiKeyProvider);
 
   // Phase 2: create sheets service
@@ -339,6 +371,7 @@ final backgroundLoadProvider = FutureProvider<void>((ref) async {
     ref.read(loadedSeasonConfigsProvider.notifier).state = allLoaded;
   }
 
+  await ref.read(clubConfigProvider.future);
   ref.read(loadingPhaseProvider.notifier).state = LoadingPhase.allLoaded;
 });
 
