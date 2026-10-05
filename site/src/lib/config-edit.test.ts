@@ -1,26 +1,6 @@
-import fs from 'node:fs';
-import path from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { applyOps, entryKey, rewriteConfig, startDay, type ConfigEntry, type SeasonConfigFile } from './config-edit';
+import { applyOps, entryKey, clubBody, startDay, type ConfigEntry, type SeasonConfigFile } from './config-edit';
 
-const root = path.resolve(__dirname, '../../..');
-const read = (p: string) => fs.readFileSync(path.join(root, p), 'utf8').replace(/\r\n/g, '\n');
-
-describe('rewriteConfig', () => {
-  for (const file of ['remote_config.json', 'assets/raw/season_config.json']) {
-    it(`reproduces ${file} byte for byte`, () => {
-      const text = read(file);
-      expect(rewriteConfig(text, JSON.parse(text))).toBe(text);
-    });
-  }
-  it('adds, then drops, the rejected list without touching the rest', () => {
-    const text = read('remote_config.json');
-    const withRejected = rewriteConfig(text, { ...JSON.parse(text), rejectedCandidates: ['a', 'b'] });
-    expect(withRejected).toContain('}\n  ],\n  "rejectedCandidates": ["a", "b"]\n}\n');
-    expect(JSON.parse(withRejected).rejectedCandidates).toEqual(['a', 'b']);
-    expect(rewriteConfig(withRejected, JSON.parse(text))).toBe(text);
-  });
-});
 
 const e = (season: number, name: string, date?: string): ConfigEntry =>
   ({ season, type: 'minicap', name, games: 4, ...(date ? { date } : {}), podium: ['A', 'B', 'C'] });
@@ -63,4 +43,31 @@ it('startDay reads every date shape the config uses', () => {
   expect(startDay('31.03–02.04.2024')).toBe(Date.UTC(2024, 2, 31));
   expect(startDay('16–17.12.2023')).toBe(Date.UTC(2023, 11, 16));
   expect(startDay('10.10')).toBeNull();
+});
+
+describe('clubBody', () => {
+  it('normalizes entries and keeps order, rejected and limits', () => {
+    const f: SeasonConfigFile = {
+      tournaments: [
+        { season: 30, type: 'minicap', name: ' A ', games: 3, date: '', podium: ['x', ' '] },
+        { season: 31, type: 'maxicap', name: 'B', games: 5, date: '01.09.2026', status: 'detected', podium: [] },
+      ],
+      rejectedCandidates: ['31|2026-09-08'],
+    };
+    expect(clubBody(f, { '31': 41 })).toEqual({
+      tournaments: [
+        { season: 30, type: 'minicap', name: 'A', games: 3, podium: ['x'] },
+        { season: 31, type: 'maxicap', name: 'B', games: 5, date: '01.09.2026', status: 'detected', podium: [] },
+      ],
+      rejectedCandidates: ['31|2026-09-08'],
+      gameLimits: { '31': 41 },
+    });
+  });
+  it('never emits undefined (Firestore rejects it)', () => {
+    const body = clubBody({ tournaments: [{ season: 1, type: 't', name: 'n', games: 1, podium: [] }] });
+    expect(Object.values(body.tournaments[0]).includes(undefined)).toBe(false);
+    expect(Object.keys(body.tournaments[0])).toEqual(['season', 'type', 'name', 'games', 'podium']);
+    expect(body.rejectedCandidates).toEqual([]);
+    expect(body.gameLimits).toEqual({});
+  });
 });

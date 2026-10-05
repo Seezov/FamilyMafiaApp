@@ -1,5 +1,5 @@
-// Edits to the season config's tournament list, applied to the latest file
-// from GitHub and written back in the file's own layout.
+// Edits to the club's tournament list (Firestore `config/club`), applied to
+// the latest copy.
 
 export interface ConfigEntry {
   season: number;
@@ -108,43 +108,13 @@ export function applyOps(file: SeasonConfigFile, ops: Op[]): SeasonConfigFile {
   return out;
 }
 
-// The file's layout: two-space indent at the top, one array element per line,
-// each element on one line with ", " and ": " separators.
-const inline = (v: unknown): string => {
-  if (Array.isArray(v)) return `[${v.map(inline).join(', ')}]`;
-  if (v && typeof v === 'object') {
-    return `{${Object.entries(v).map(([k, x]) => `${JSON.stringify(k)}: ${inline(x)}`).join(', ')}}`;
-  }
-  return JSON.stringify(v);
-};
+/** Firestore `config/club` minus its author/time fields. */
+export type ClubDoc = { tournaments: ConfigEntry[]; rejectedCandidates: string[]; gameLimits: Record<string, number> };
 
-const block = (list: unknown[]) => `[\n${list.map((x) => `    ${inline(x)}`).join(',\n')}\n  ]`;
-
-/** [text] with its tournament list and rejected candidates replaced by
- * [file]'s; the rest (the season list, with its `0.0`s) stays byte for byte. */
-export function rewriteConfig(text: string, file: SeasonConfigFile): string {
-  const marker = '\n  "tournaments": [';
-  const start = text.indexOf(marker);
-  const close = text.indexOf('\n  ]', start);
-  if (start < 0 || close < 0) throw new Error('Unexpected config layout: no tournaments block');
-  const after = text
-    .slice(close + '\n  ]'.length)
-    .replace(/^,\n {2}"rejectedCandidates": \[[^\n]*\]/, '');
-  const rejected = file.rejectedCandidates?.length
-    ? `,\n  "rejectedCandidates": ${inline(file.rejectedCandidates)}`
-    : '';
-  return `${text.slice(0, start)}${marker.slice(0, -1)}${block(file.tournaments ?? [])}${rejected}${after}`;
-}
-
-/** A short commit message for [ops]. */
-export function describe(ops: Op[]): string {
-  const n = (k: Op['kind']) => ops.filter((o) => o.kind === k).length;
-  const parts = [
-    n('confirm') && `confirm ${n('confirm')}`,
-    n('edit') && `edit ${n('edit')}`,
-    n('add') && `add ${n('add')}`,
-    n('delete') && `delete ${n('delete')}`,
-    n('reject') && `reject ${n('reject')} candidate${n('reject') === 1 ? '' : 's'}`,
-  ].filter(Boolean);
-  return `tournaments (Debug page): ${parts.join(', ')}`;
-}
+/** What /debug/ writes to `config/club`: normalized entries (no undefined
+ * fields — Firestore rejects them) in the file's order. */
+export const clubBody = (file: SeasonConfigFile, gameLimits: Record<string, number> = {}): ClubDoc => ({
+  tournaments: (file.tournaments ?? []).map(normalize),
+  rejectedCandidates: [...(file.rejectedCandidates ?? [])],
+  gameLimits: { ...gameLimits },
+});

@@ -1,7 +1,6 @@
 // The Debug page: the live tournament list from GitHub, the games behind each
 // entry from the build, and edits that are saved back as one commit.
-import { applyOps, describe, entryKey, normalize, rewriteConfig, type ConfigEntry, type Op, type SeasonConfigFile } from '../lib/config-edit';
-import { commitFiles, headSha, readFile, whoAmI } from '../lib/github';
+import { applyOps, entryKey, normalize, type ConfigEntry, type Op, type SeasonConfigFile } from '../lib/config-edit';
 import type { DebugData, DebugEvidence } from '../lib/types';
 
 const data = JSON.parse(document.getElementById('debug-data')!.textContent!) as DebugData;
@@ -235,20 +234,12 @@ $('discard').addEventListener('click', () => { ops = []; saveOps(); render(); })
 
 // ── GitHub ──────────────────────────────────────────────────────────────────
 async function loadLive() {
-  try {
-    liveSha = await headSha(repo, token);
-    live = JSON.parse(await readFile(repo, mainFile, liveSha, token));
-    $('live-state').textContent = `Live config @ ${liveSha.slice(0, 7)}`;
-  } catch (e) {
-    $('live-state').textContent = `Showing the build's copy (${(e as Error).message})`;
-  }
   render();
 }
 
 async function refreshWho() {
   if (!token) { $('who').textContent = 'Read-only'; return; }
-  try { login = await whoAmI(token); $('who').textContent = `Saving as @${login}`; }
-  catch (e) { $('who').textContent = `Token rejected: ${(e as Error).message}`; }
+  $('who').textContent = 'Saving moves to Firestore in the next task';
 }
 
 $('token-form').addEventListener('submit', async (ev) => {
@@ -267,22 +258,7 @@ $('commit').addEventListener('click', async () => {
   const text = $('pending-text');
   text.textContent = 'Saving…';
   try {
-    let sha = '';
-    for (let attempt = 0; ; attempt++) {
-      const parent = await headSha(repo, token);
-      const files = await Promise.all(repo.files.map(async (path) => {
-        const original = await readFile(repo, path, parent, token);
-        return { path, content: rewriteConfig(original, applyOps(JSON.parse(original), ops)) };
-      }));
-      try { sha = await commitFiles(repo, token, parent, files, `${describe(ops)}\n\nSaved by @${login ?? 'unknown'} from the site's Debug page.`); break; }
-      catch (e) { if (attempt >= 1 || !/422|fast forward/i.test((e as Error).message)) throw e; }
-    }
-    ops = []; saveOps();
-    busy = false;
-    await loadLive();
-    text.innerHTML = '';
-    $('live-state').innerHTML = `Saved <a href="https://github.com/${repo.owner}/${repo.name}/commit/${sha}" target="_blank" rel="noopener">${sha.slice(0, 7)}</a>.
-      The site redeploys in ~3 min (<a href="https://github.com/${repo.owner}/${repo.name}/actions" target="_blank" rel="noopener">progress</a>); the games shown update then.`;
+    throw new Error('Saving moves to Firestore in the next task');
   } catch (e) {
     busy = false;
     render();
