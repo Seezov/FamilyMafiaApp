@@ -1,0 +1,30 @@
+---
+import Base from '../../layouts/Base.astro';
+import '../../styles/forms.css';
+---
+<Base title="Заявки гравців" description="Схвалення профілів гравців.">
+  <div class="pagehead"><h1 class="display">Заявки гравців</h1><span class="label" id="who"></span></div>
+  <section id="gate" class="box" hidden>
+    <p id="gate-text">Увійди як адмін.</p>
+    <button class="btn primary" id="sign-in" type="button">Увійти через Google</button>
+  </section>
+  <section id="admin" hidden>
+    <h2 class="label">Заявки</h2>
+    <div id="claims" class="list"></div>
+    <h2 class="label">Привʼязані профілі</h2>
+    <div id="profiles" class="list"></div>
+  </section>
+</Base>
+
+<script>
+  import '../../scripts/account-admin';
+</script>
+
+<style is:global>
+  #gate[hidden], #admin[hidden] { display: none; }
+  .list { display: grid; gap: 6px; margin-bottom: 18px; }
+  .item { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; }
+  .item .grow { flex: 1 1 220px; }
+  .item img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
+  .st-pending { color: var(--mid); } .st-approved { color: var(--good); } .st-rejected { color: var(--muted); }
+</style>
