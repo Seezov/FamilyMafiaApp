@@ -1,0 +1,8 @@
+[
+  {"case": "valid with own name as nickname", "roster": [{"name": "Anatolich", "nicknames": ["Anatolich", "Анатоліч"]}, {"name": "Braun", "nicknames": []}], "clashes": []},
+  {"case": "nickname is another player's name", "roster": [{"name": "A", "nicknames": ["Bee"]}, {"name": "bee", "nicknames": []}], "clashes": ["bee"]},
+  {"case": "same name twice", "roster": [{"name": "Night", "nicknames": []}, {"name": "Night", "nicknames": []}], "clashes": ["night"]},
+  {"case": "junk names are valid", "roster": [{"name": "/", "nicknames": []}, {"name": "", "nicknames": []}, {"name": " ", "nicknames": []}], "clashes": []},
+  {"case": "cyrillic case-insensitive", "roster": [{"name": "Аглая", "nicknames": []}, {"name": "X", "nicknames": ["аГЛАЯ"]}], "clashes": ["аглая"]},
+  {"case": "two clashes sorted", "roster": [{"name": "Volus", "nicknames": ["Zed"]}, {"name": "volus", "nicknames": []}, {"name": "zed", "nicknames": []}], "clashes": ["volus", "zed"]}
+]
