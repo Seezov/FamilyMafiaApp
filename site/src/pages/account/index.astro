@@ -50,6 +50,13 @@ const data = JSON.stringify({ players, base: href('') }).replace(/</g, '\\u003c'
     </div>
   </section>
 
+  <section id="appeals" hidden>
+    <h2 class="label">Апеляції</h2>
+    <p class="label">Не погоджуєшся з дод балами за гру поточного сезону? Опиши, чому, і скільки балів очікуєш — адмін розгляне.</p>
+    <p id="appeals-msg" aria-live="polite"></p>
+    <div id="appeal-games" class="list"></div>
+  </section>
+
   <p class="tools"><a id="admin-link" href={href('account/admin/')} hidden>Заявки гравців (адмін)</a>
     <button class="btn sm" id="sign-out" type="button" hidden>Вийти</button></p>
   <script type="application/json" id="account-data" set:html={data} />
@@ -75,4 +82,13 @@ const data = JSON.stringify({ players, base: href('') }).replace(/</g, '\\u003c'
   .av-tools label { display: flex; gap: 8px; align-items: center; }
   .actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
   .tools { display: flex; gap: 14px; align-items: center; }
+  #appeals[hidden] { display: none; }
+  #appeals .list { display: grid; gap: 6px; }
+  #appeals .item { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; }
+  #appeals .item .grow { flex: 1 1 220px; }
+  .ap-form, .ap-note { flex-basis: 100%; }
+  #ap-text, #ap-req { background: var(--panel-2); border: 1px solid var(--border); border-radius: 6px; color: var(--text);
+    padding: 6px 10px; font: inherit; width: min(520px, 100%); box-sizing: border-box; }
+  #ap-req { width: 120px; }
+  .st-pending { color: var(--mid); } .st-accepted, .st-partial { color: var(--good); } .st-rejected { color: var(--muted); }
 </style>

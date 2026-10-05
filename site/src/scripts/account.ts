@@ -4,6 +4,14 @@ import { cancelClaim, explainAccountError, getClaim, listProfiles, onAccount, sa
 import { accountView, pickList, takenKeys, type Claim, type Profile } from '../lib/account/state';
 import { cropRect, encodeAvatar } from '../lib/account/avatar';
 import { cleanNick, nickError, playerKey } from '../lib/profiles/core';
+import { loadClubSeasons } from '../lib/seasons/store';
+import { hostDefaultSeason } from '../lib/seasons/seasons';
+import { eveningDate } from '../lib/hosting/form';
+import { listSeasonGames } from '../lib/hosting/store';
+import type { GameDoc } from '../lib/hosting/types';
+import { draftError, myGames, parseAmount, type Appeal } from '../lib/appeals/core';
+import { gameTitle, myGameRow } from '../lib/appeals/render';
+import { editAppeal, explainAppealError, fileAppeal, listMyAppeals, withdrawAppeal } from '../lib/appeals/store';
 
 type P = { name: string; slug: string; games: number; seasons: number };
 const page = JSON.parse(document.getElementById('account-data')!.textContent!) as { players: P[]; base: string };
@@ -19,6 +27,29 @@ let profiles: Profile[] = [];
 let mine: Profile | null = null;
 let img: HTMLImageElement | null = null; // newly chosen photo, not saved yet
 let avatar: string | null = null;        // what will be saved
+let rows: { game: GameDoc & { id: string }; seat: number }[] = [];
+let appeals = new Map<string, Appeal>(); // by gameId
+let openGame: string | null = null;
+const appealsMsg = (text: string, kind: 'error' | 'ok' = 'ok') => { $('appeals-msg').className = kind === 'error' ? 'msg-error' : ''; $('appeals-msg').textContent = text; };
+
+async function loadAppeals() {
+  $('appeals').hidden = false;
+  const player = mine!.player; // the claim's player name (the profile mirrors the claim)
+  try {
+    const season = hostDefaultSeason(await loadClubSeasons(), eveningDate(), null);
+    if (season === null) { rows = []; appealsMsg('Апеляції відкриються з першим сезоном, що ведеться на сайті.'); return renderAppeals(); }
+    const [games, own] = await Promise.all([listSeasonGames(season), listMyAppeals(user!.uid)]);
+    rows = myGames(games, player);
+    appeals = new Map(own.filter((a) => a.season === season).map((a) => [a.gameId, a]));
+    appealsMsg(rows.length ? '' : `У сезоні ${season} ще немає твоїх рейтингових ігор.`);
+  } catch (e) { appealsMsg(explainAppealError(e), 'error'); }
+  renderAppeals();
+}
+
+function renderAppeals() {
+  $('appeal-games').innerHTML = rows.map(({ game, seat }) => myGameRow(
+    { gameId: game.id, title: gameTitle(game), host: game.host, seat, appeal: appeals.get(game.id) ?? null }, openGame === game.id)).join('');
+}
 
 function show() {
   const view = accountView(!!user, claim, mine);
@@ -30,6 +61,7 @@ function show() {
   if (view === 'pick' || view === 'rejected') renderPick();
   if (view === 'pending') $('pending-player').textContent = claim!.player;
   if (view === 'settings') renderSettings();
+  if (view === 'settings') loadAppeals(); else $('appeals').hidden = true;
 }
 
 function renderPick() {
@@ -132,6 +164,34 @@ $('save').addEventListener('click', async () => {
     remember({ label: mine.nick ?? mine.player, avatar: mine.avatar });
     msg('Збережено. На сайті зʼявиться протягом години.');
   } catch (e) { msg(explainAccountError(e), 'error'); } finally { $<HTMLButtonElement>('save').disabled = false; }
+});
+
+$('appeal-games').addEventListener('click', async (e) => {
+  const b = (e.target as HTMLElement).closest<HTMLButtonElement>('button[data-act]');
+  const gameId = b?.closest<HTMLElement>('[data-game]')?.dataset.game;
+  if (!b || !gameId || !user || !mine) return;
+  const act = b.dataset.act;
+  if (act === 'open') { openGame = gameId; return renderAppeals(); }
+  if (act === 'close') { openGame = null; return renderAppeals(); }
+  const row = rows.find((r) => r.game.id === gameId)!;
+  const existing = appeals.get(gameId) ?? null;
+  // Withdraw arms on the first tap and runs on the second.
+  if (act === 'withdraw' && !b.dataset.armed) { b.dataset.armed = '1'; b.textContent = 'Точно відкликати?'; return; }
+  b.disabled = true;
+  try {
+    if (act === 'withdraw' && existing) await withdrawAppeal(existing.id);
+    if (act === 'save') {
+      const text = $<HTMLTextAreaElement>('ap-text').value;
+      const req = $<HTMLInputElement>('ap-req').value;
+      const err = draftError(text, req);
+      if (err) { b.disabled = false; return appealsMsg(err, 'error'); }
+      if (existing) await editAppeal(existing.id, text, parseAmount(req));
+      else await fileAppeal(user, mine.player, row.game, row.seat, text, parseAmount(req));
+    }
+    openGame = null;
+    await loadAppeals();
+    appealsMsg(act === 'withdraw' ? 'Апеляцію відкликано.' : 'Апеляцію надіслано. Адмін розгляне її.');
+  } catch (err) { appealsMsg(explainAppealError(err), 'error'); b.disabled = false; }
 });
 
 onAccount((u) => { user = u; refresh(); });
