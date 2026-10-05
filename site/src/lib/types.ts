@@ -93,3 +93,13 @@ export interface DebugData {
     suggested: { type: string; name: string; games: number; date: string | null; podium: string[] };
   }[];
 }
+
+export interface GameSeat { n: number; player?: string; slug?: string; key?: string; role: string; fouls?: number; won?: boolean;
+  add?: number; ad?: number; bm?: number; pen?: number; prAdd?: number; prPen?: number; total?: number }
+export interface ColorGuess { seat: number; black: boolean }
+export interface GameEntry { id: string; n: number; table?: number; label?: string; host?: string;
+  result: 'city' | 'mafia' | 'unrated'; seats: GameSeat[]; firstKilled?: number; bestMove?: number[]; bestMovePoints?: number;
+  supportFive?: ColorGuess[]; protocol?: { killed: number; version?: number; colors: ColorGuess[] }[];
+  comments?: { seats: number[]; text: string }[] }
+export interface GamesData { season: number; autoLabel: string; players: { name: string; key: string }[]; hosts: string[];
+  days: { date: string | null; games: GameEntry[] }[] }
