@@ -1,9 +1,12 @@
 ---
 import Base from '../../layouts/Base.astro';
+import { href } from '../../lib/url';
 import '../../styles/forms.css';
+
+const base = JSON.stringify({ base: href('') }).replace(/</g, '\\u003c');
 ---
-<Base title="Заявки гравців" description="Схвалення профілів гравців.">
-  <div class="pagehead"><h1 class="display">Заявки гравців</h1><span class="label" id="who"></span></div>
+<Base title="Адмін: заявки та апеляції" description="Схвалення профілів гравців і розгляд апеляцій.">
+  <div class="pagehead"><h1 class="display">Заявки та апеляції</h1><span class="label" id="who"></span></div>
   <section id="gate" class="box" hidden>
     <p id="gate-text">Увійди як адмін.</p>
     <button class="btn primary" id="sign-in" type="button">Увійти через Google</button>
@@ -13,7 +16,29 @@ import '../../styles/forms.css';
     <div id="claims" class="list"></div>
     <h2 class="label">Привʼязані профілі</h2>
     <div id="profiles" class="list"></div>
+    <h2 class="label">Апеляції</h2>
+    <div class="tabs" role="tablist">
+      <button class="btn sm" id="tab-new" role="tab" type="button">Нові <span id="new-count"></span></button>
+      <button class="btn sm" id="tab-history" role="tab" type="button">Історія</button>
+    </div>
+    <div id="appeals-new" class="list"></div>
+    <div id="appeals-history" hidden>
+      <div class="filters">
+        <input id="h-player" placeholder="Гравець" aria-label="Гравець" autocomplete="off" />
+        <select id="h-host" aria-label="Ведучий"><option value="">Усі ведучі</option></select>
+        <select id="h-status" aria-label="Статус">
+          <option value="">Усі статуси</option><option value="pending">на розгляді</option><option value="accepted">прийнято</option>
+          <option value="partial">частково</option><option value="rejected">відхилено</option>
+        </select>
+        <select id="h-season" aria-label="Сезон"><option value="">Усі сезони</option></select>
+      </div>
+      <div class="scroll"><table class="tbl"><thead><tr><th>Ведучий</th><th>Усього</th><th>Чекає</th><th>Прийнято</th>
+        <th>Частково</th><th>Відхилено</th><th>Нараховано</th></tr></thead><tbody id="h-totals"></tbody></table></div>
+      <div class="scroll"><table class="tbl"><thead><tr><th>Подано</th><th>Гравець</th><th>Гра</th><th>Ведучий</th><th>Просив</th>
+        <th>Рішення</th><th>Хто</th><th>Коли</th><th>Коментар</th><th>Опис</th></tr></thead><tbody id="h-rows"></tbody></table></div>
+    </div>
   </section>
+  <script type="application/json" id="admin-data" set:html={base} />
 </Base>
 
 <script>
@@ -27,4 +52,18 @@ import '../../styles/forms.css';
   .item .grow { flex: 1 1 220px; }
   .item img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
   .st-pending { color: var(--mid); } .st-approved { color: var(--good); } .st-rejected { color: var(--muted); }
+  #appeals-history[hidden], #appeals-new[hidden] { display: none; }
+  .tabs { display: flex; gap: 6px; margin-bottom: 10px; }
+  .tabs .on { border-color: var(--text); }
+  .filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+  .filters input, .filters select, .ap-comment, .ap-granted { background: var(--panel-2); border: 1px solid var(--border);
+    border-radius: 6px; color: var(--text); padding: 4px 8px; font: inherit; }
+  .ap-comment { width: min(520px, 100%); box-sizing: border-box; margin: 6px 0; }
+  .ap-granted { width: 80px; }
+  .ap-text { white-space: pre-wrap; }
+  .scroll { overflow-x: auto; margin-bottom: 14px; }
+  .tbl { border-collapse: collapse; font-size: 13px; }
+  .tbl th, .tbl td { border-bottom: 1px solid var(--border); padding: 4px 8px; text-align: left; vertical-align: top; }
+  .tbl .num { text-align: right; }
+  .st-accepted, .st-partial { color: var(--good); }
 </style>

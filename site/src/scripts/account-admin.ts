@@ -2,6 +2,10 @@
 import { signIn } from '../lib/firebase';
 import { decideClaim, explainAccountError, listClaims, listProfiles, onAccount, resetProfile, unlink, type AccountUser } from '../lib/account/store';
 import { claimKeyOk, sortClaims, takenKeys, type Claim, type Profile } from '../lib/account/state';
+import { decisionError, filterFromQuery, filterHistory, filterToQuery, hostTotals, parseAmount, type Appeal, type Decision, type HistoryFilter } from '../lib/appeals/core';
+import { historyRow, pendingCard, totalsRows } from '../lib/appeals/render';
+import { decideAppeal, explainAppealError, getGames, listAllAppeals } from '../lib/appeals/store';
+import type { GameDoc } from '../lib/hosting/types';
 
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 const esc = (v: unknown) => String(v ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
@@ -9,6 +13,64 @@ const STATUS = { pending: 'чекає', approved: 'схвалено', rejected: 
 let user: AccountUser | null = null;
 let claims: Claim[] = [];
 let profiles: Profile[] = [];
+const adminPage = JSON.parse(document.getElementById('admin-data')!.textContent!) as { base: string };
+let appeals: Appeal[] = [];
+let games = new Map<string, GameDoc>();
+let tab: 'new' | 'history' = new URLSearchParams(location.search).has('tab') ? 'history' : 'new';
+let hf: HistoryFilter = filterFromQuery(new URLSearchParams(location.search));
+
+async function loadAppeals() {
+  try {
+    appeals = await listAllAppeals();
+    games = await getGames(appeals.filter((a) => a.status === 'pending').map((a) => a.gameId));
+  } catch (e) { $('who').textContent = explainAppealError(e); }
+  renderAppeals();
+}
+
+function renderAppeals() {
+  const pending = appeals.filter((a) => a.status === 'pending').sort((a, b) => (a.createdAt ?? 0) - (b.createdAt ?? 0));
+  $('new-count').textContent = pending.length ? `(${pending.length})` : '';
+  $('tab-new').classList.toggle('on', tab === 'new');
+  $('tab-history').classList.toggle('on', tab === 'history');
+  $('appeals-new').hidden = tab !== 'new';
+  $('appeals-history').hidden = tab !== 'history';
+  $('appeals-new').innerHTML = pending.map((a) => {
+    const g = games.get(a.gameId);
+    const cur = g?.seats.find((s) => s.player === a.player)?.additional ?? (g ? 0 : null);
+    return pendingCard(a, cur, `${adminPage.base}season/${a.season}/games/`);
+  }).join('') || '<p class="label">Нових апеляцій немає.</p>';
+  fillSelect('h-host', [...new Set(appeals.map((a) => a.host))].sort((a, b) => a.localeCompare(b, 'uk')), 'Усі ведучі');
+  fillSelect('h-season', [...new Set(appeals.map((a) => String(a.season)))].sort((a, b) => +b - +a), 'Усі сезони');
+  $<HTMLInputElement>('h-player').value = hf.player;
+  $<HTMLSelectElement>('h-host').value = hf.host;
+  $<HTMLSelectElement>('h-status').value = hf.status;
+  $<HTMLSelectElement>('h-season').value = hf.season;
+  const shown = filterHistory(appeals, hf);
+  $('h-totals').innerHTML = totalsRows(hostTotals(shown));
+  $('h-rows').innerHTML = shown.map(historyRow).join('') || '<tr><td colspan="10" class="label">Нічого не знайдено.</td></tr>';
+}
+
+function fillSelect(id: string, values: string[], all: string) {
+  $(id).innerHTML = `<option value="">${all}</option>` + values.map((v) => `<option value="${esc(v)}">${esc(v)}</option>`).join('');
+}
+
+function syncUrl() {
+  const q = filterToQuery(hf);
+  const params = new URLSearchParams(q);
+  if (tab === 'history') params.set('tab', 'history');
+  history.replaceState(null, '', `${location.pathname}${params.toString() ? `?${params}` : ''}`);
+}
+
+$('tab-new').addEventListener('click', () => { tab = 'new'; syncUrl(); renderAppeals(); });
+$('tab-history').addEventListener('click', () => { tab = 'history'; syncUrl(); renderAppeals(); });
+$('appeals-history').addEventListener('input', () => {
+  hf = { player: $<HTMLInputElement>('h-player').value, host: $<HTMLSelectElement>('h-host').value,
+    status: $<HTMLSelectElement>('h-status').value as HistoryFilter['status'], season: $<HTMLSelectElement>('h-season').value };
+  syncUrl();
+  const shown = filterHistory(appeals, hf); // re-render only the tables so the player input keeps focus
+  $('h-totals').innerHTML = totalsRows(hostTotals(shown));
+  $('h-rows').innerHTML = shown.map(historyRow).join('') || '<tr><td colspan="10" class="label">Нічого не знайдено.</td></tr>';
+});
 
 async function load() {
   try { [claims, profiles] = await Promise.all([listClaims(), listProfiles()]); render(); }
@@ -39,6 +101,7 @@ function render() {
 document.addEventListener('click', async (e) => {
   const b = (e.target as HTMLElement).closest<HTMLButtonElement>('button[data-act]');
   if (!b || !user) return;
+  if (['accept', 'partial', 'reject'].includes(b.dataset.act!)) return decide(b);
   // Destructive actions arm on the first tap and run on the second.
   if (b.dataset.act === 'unlink' && !b.dataset.armed) { b.dataset.armed = '1'; b.textContent = 'Точно відвʼязати?'; return; }
   b.disabled = true;
@@ -57,6 +120,26 @@ document.addEventListener('click', async (e) => {
   }
 });
 
+async function decide(b: HTMLButtonElement) {
+  const a = appeals.find((x) => x.id === b.dataset.id);
+  const card = b.closest<HTMLElement>('.ap-card')!;
+  const out = card.querySelector<HTMLElement>('.ap-msg')!;
+  if (!a || !user) return;
+  const d: Decision = {
+    status: b.dataset.act === 'accept' ? 'accepted' : b.dataset.act === 'partial' ? 'partial' : 'rejected',
+    adminComment: card.querySelector<HTMLInputElement>('.ap-comment')!.value,
+    ...(b.dataset.act === 'partial' ? { granted: parseAmount(card.querySelector<HTMLInputElement>('.ap-granted')!.value) } : {}),
+  };
+  const err = decisionError(a, d);
+  if (err) { out.className = 'ap-msg msg-error'; out.textContent = err; return; }
+  card.querySelectorAll('button').forEach((x) => { x.disabled = true; });
+  try { await decideAppeal(a, d, user); await loadAppeals(); }
+  catch (e) {
+    out.className = 'ap-msg msg-error'; out.textContent = explainAppealError(e);
+    card.querySelectorAll('button').forEach((x) => { x.disabled = false; });
+  }
+}
+
 $('sign-in').addEventListener('click', () => signIn().catch((e) => { $('gate-text').textContent = explainAccountError(e); }));
 onAccount((u) => {
   user = u;
@@ -64,5 +147,5 @@ onAccount((u) => {
   $('gate').hidden = !!u?.admin;
   $('admin').hidden = !u?.admin;
   if (u && !u.admin) { $('gate-text').textContent = 'Немає доступу.'; $('sign-in').hidden = true; }
-  if (u?.admin) load();
+  if (u?.admin) { load(); loadAppeals(); }
 });
