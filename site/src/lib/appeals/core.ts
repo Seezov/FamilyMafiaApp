@@ -43,6 +43,11 @@ export function decisionError(a: Appeal, d: Decision): string | null {
   return null;
 }
 
+/** The stored appeal differs from the one the admin decided on (player edited it, or it was decided). */
+export function appealChanged(shown: Appeal, stored: { text: string; requested: number; status: AppealStatus }): boolean {
+  return stored.status !== 'pending' || stored.text !== shown.text || stored.requested !== shown.requested;
+}
+
 export class SeatGoneError extends Error {}
 
 /** The game after granting: the player's seat is found by name, since the host may have moved it. */

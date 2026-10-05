@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type { GameDoc } from '../hosting/types';
 import {
   appealId, applyGrant, decisionError, draftError, filterFromQuery, filterHistory, filterToQuery, grantedFor,
-  hostTotals, myGames, parseAmount, round2, SeatGoneError, type Appeal,
+  appealChanged, hostTotals, myGames, parseAmount, round2, SeatGoneError, type Appeal,
 } from './core';
 
 const seat = (player: string, additional = 0) => ({ player, role: 'Мирний' as const, fouls: 0, additional, penalty: 0, protocolAdditional: 0, protocolPenalty: 0 });
@@ -111,5 +111,16 @@ describe('history', () => {
     expect(filterFromQuery(new URLSearchParams(filterToQuery(f)))).toEqual(f);
     expect(filterToQuery(none)).toBe('');
     expect(filterFromQuery(new URLSearchParams('status=bogus')).status).toBe('');
+  });
+});
+
+describe('appealChanged', () => {
+  it('false when the stored appeal is what the admin saw', () => {
+    expect(appealChanged(A(), { text: 't', requested: 0.5, status: 'pending' })).toBe(false);
+  });
+  it('true when the player edited the amount or text, or it was decided', () => {
+    expect(appealChanged(A(), { text: 't', requested: 5, status: 'pending' })).toBe(true);
+    expect(appealChanged(A(), { text: 'інше', requested: 0.5, status: 'pending' })).toBe(true);
+    expect(appealChanged(A(), { text: 't', requested: 0.5, status: 'rejected' })).toBe(true);
   });
 });

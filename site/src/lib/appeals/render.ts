@@ -44,10 +44,10 @@ export function pendingCard(a: Appeal, currentAdditional: number | null, gamesHr
     <p class="ap-text">${esc(a.text)}</p>
     <input class="ap-comment" maxlength="${MAX_TEXT}" placeholder="Коментар (необовʼязково)" />
     <div class="actions">
-      <button class="btn sm primary" data-act="accept" data-id="${esc(a.id)}" type="button">Прийняти +${a.requested}</button>
+      <button class="btn sm primary" data-act="ap-accept" data-id="${esc(a.id)}" type="button">Прийняти +${a.requested}</button>
       <input class="ap-granted" inputmode="decimal" placeholder="скільки" aria-label="Скільки нарахувати" />
-      <button class="btn sm" data-act="partial" data-id="${esc(a.id)}" type="button">Частково</button>
-      <button class="btn sm" data-act="reject" data-id="${esc(a.id)}" type="button">Відхилити</button>
+      <button class="btn sm" data-act="ap-partial" data-id="${esc(a.id)}" type="button">Частково</button>
+      <button class="btn sm" data-act="ap-reject" data-id="${esc(a.id)}" type="button">Відхилити</button>
       <span class="ap-msg" aria-live="polite"></span>
     </div></div>`;
 }

@@ -5,7 +5,7 @@ import {
 import { db } from '../firebase';
 import type { AccountUser } from '../account/store';
 import type { GameDoc } from '../hosting/types';
-import { appealId, applyGrant, grantedFor, round2, SeatGoneError, type Appeal, type Decision } from './core';
+import { appealChanged, appealId, applyGrant, grantedFor, round2, SeatGoneError, type Appeal, type Decision } from './core';
 
 export class StaleAppealError extends Error {}
 
@@ -60,8 +60,8 @@ export async function decideAppeal(a: Appeal, d: Decision, admin: AccountUser) {
   await runTransaction(db, async (tx) => {
     const cur = await tx.get(aRef);
     const g = await tx.get(gRef);
-    if (!cur.exists() || cur.data().status !== 'pending') throw new StaleAppealError();
-    const granted = grantedFor(toAppeal(cur.id, cur.data()), d);
+    if (!cur.exists() || appealChanged(a, toAppeal(cur.id, cur.data()))) throw new StaleAppealError();
+    const granted = grantedFor(a, d); // what the admin saw
     if (granted !== null) {
       if (!g.exists()) throw new SeatGoneError(a.player);
       tx.update(gRef, { ...applyGrant(g.data() as GameDoc, a.player, granted), updatedBy: admin.uid, updatedAt: serverTimestamp() });
@@ -76,7 +76,7 @@ export async function decideAppeal(a: Appeal, d: Decision, admin: AccountUser) {
 }
 
 export function explainAppealError(e: unknown): string {
-  if (e instanceof StaleAppealError) return 'Апеляцію вже розглянули або відкликали — онови сторінку.';
+  if (e instanceof StaleAppealError) return 'Апеляцію змінили, розглянули або відкликали — онови сторінку.';
   if (e instanceof SeatGoneError) return 'Гравця вже немає в цій грі — перевір гру на /host/.';
   const code = (e as { code?: string }).code ?? '';
   if (code === 'permission-denied') return 'Немає прав (сезон закінчився, гру змінили або апеляцію вже розглянули).';

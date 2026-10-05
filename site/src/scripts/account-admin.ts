@@ -101,7 +101,7 @@ function render() {
 document.addEventListener('click', async (e) => {
   const b = (e.target as HTMLElement).closest<HTMLButtonElement>('button[data-act]');
   if (!b || !user) return;
-  if (['accept', 'partial', 'reject'].includes(b.dataset.act!)) return decide(b);
+  if (['ap-accept', 'ap-partial', 'ap-reject'].includes(b.dataset.act!)) return decide(b);
   // Destructive actions arm on the first tap and run on the second.
   if (b.dataset.act === 'unlink' && !b.dataset.armed) { b.dataset.armed = '1'; b.textContent = 'Точно відвʼязати?'; return; }
   b.disabled = true;
@@ -126,9 +126,9 @@ async function decide(b: HTMLButtonElement) {
   const out = card.querySelector<HTMLElement>('.ap-msg')!;
   if (!a || !user) return;
   const d: Decision = {
-    status: b.dataset.act === 'accept' ? 'accepted' : b.dataset.act === 'partial' ? 'partial' : 'rejected',
+    status: b.dataset.act === 'ap-accept' ? 'accepted' : b.dataset.act === 'ap-partial' ? 'partial' : 'rejected',
     adminComment: card.querySelector<HTMLInputElement>('.ap-comment')!.value,
-    ...(b.dataset.act === 'partial' ? { granted: parseAmount(card.querySelector<HTMLInputElement>('.ap-granted')!.value) } : {}),
+    ...(b.dataset.act === 'ap-partial' ? { granted: parseAmount(card.querySelector<HTMLInputElement>('.ap-granted')!.value) } : {}),
   };
   const err = decisionError(a, d);
   if (err) { out.className = 'ap-msg msg-error'; out.textContent = err; return; }

@@ -50,7 +50,8 @@ describe('player row', () => {
 describe('admin', () => {
   it('pending card has the three decisions and the current additional', () => {
     const html = pendingCard(A(), 0.3, '/season/32/games/');
-    for (const act of ['accept', 'partial', 'reject']) expect(html).toContain(`data-act="${act}"`);
+    // ap-* so the claim cards' data-act="reject" is not routed to appeals
+    for (const act of ['ap-accept', 'ap-partial', 'ap-reject']) expect(html).toContain(`data-act="${act}"`);
     expect(html).toContain('зараз дод 0.3');
     expect(html).toContain('href="/season/32/games/"');
   });
