@@ -98,7 +98,7 @@ contents are validated by the build (rules cannot loop over a list). Tests in
   a pure-Dart checker (kind, year, results shape, tournament has stars + participants), and
   writes `assets/prefetched/annual_events.json`. A malformed document fails the build with its
   id. An empty collection is valid (writes `[]`).
-- The app's site export reads the snapshot through a new provider, adds derived season events,
+- The export tool reads the snapshot and passes it to `writeSiteData`, which adds derived season events,
   computes points and the per-year table, and writes `site/data/annual.json`:
   `{ years: [ { year, table: SiteTable, players: {<key>: [{eventId, points, counted}]},
   events: [{id, kind, name, date, stars, participants, results: [{player, link?, place, points}]}] } ] }`.
