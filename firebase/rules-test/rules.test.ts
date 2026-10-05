@@ -256,3 +256,37 @@ describe('meta/state by players', () => {
     await assertFails(setDoc(doc(as(PLAYER), 'meta', 'state'), { updatedAt: serverTimestamp() }));
   });
 });
+
+describe('config/club', () => {
+  const body = (who: User, extra: Record<string, unknown> = {}) => ({
+    tournaments: [{ season: 31, type: 'minicap', name: 'Cup', games: 4, podium: ['A'] }],
+    rejectedCandidates: [], gameLimits: {},
+    updatedAt: serverTimestamp(), updatedBy: who.uid, updatedByEmail: who.email, ...extra,
+  });
+  const club = (db: ReturnType<typeof as>) => doc(db, 'config', 'club');
+
+  it('anyone reads', async () => {
+    await assertSucceeds(getDoc(club(env.unauthenticatedContext().firestore())));
+  });
+  it('admin writes', async () => {
+    await assertSucceeds(setDoc(club(as(ADMIN)), body(ADMIN)));
+  });
+  it('a host who is not an admin cannot', async () => {
+    await assertFails(setDoc(club(as(HOST)), body(HOST)));
+  });
+  it('a signed-in stranger and anonymous cannot', async () => {
+    await assertFails(setDoc(club(as(STRANGER)), body(STRANGER)));
+    await assertFails(setDoc(club(env.unauthenticatedContext().firestore()), body(ADMIN)));
+  });
+  it('extra keys, wrong types or a forged author are denied', async () => {
+    await assertFails(setDoc(club(as(ADMIN)), body(ADMIN, { seasons: [] })));
+    await assertFails(setDoc(club(as(ADMIN)), body(ADMIN, { tournaments: 'x' })));
+    await assertFails(setDoc(club(as(ADMIN)), body(ADMIN, { gameLimits: [] })));
+    await assertFails(setDoc(club(as(ADMIN)), body(ADMIN, { updatedBy: HOST.uid })));
+    await assertFails(setDoc(club(as(ADMIN)), body(ADMIN, { updatedByEmail: HOST.email })));
+  });
+  it('admin cannot delete it', async () => {
+    await env.withSecurityRulesDisabled((ctx) => setDoc(doc(ctx.firestore(), 'config', 'club'), { tournaments: [] }));
+    await assertFails(deleteDoc(club(as(ADMIN))));
+  });
+});

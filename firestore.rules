@@ -121,6 +121,20 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
+    // The club's tournament list and final thresholds, edited on /debug/.
+    match /config/club {
+      allow read: if true;
+      allow create, update: if isAdmin()
+        && request.resource.data.keys().hasOnly(['tournaments', 'rejectedCandidates', 'gameLimits',
+             'updatedAt', 'updatedBy', 'updatedByEmail'])
+        && request.resource.data.tournaments is list
+        && request.resource.data.rejectedCandidates is list
+        && request.resource.data.gameLimits is map
+        && request.resource.data.updatedAt == request.time
+        && request.resource.data.updatedBy == request.auth.uid
+        && request.resource.data.updatedByEmail == email();
+    }
+
     match /meta/state {
       allow read: if true;
       allow write: if (isHost() || approvedPlayer())
