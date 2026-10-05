@@ -19,9 +19,9 @@ void main() {
     expect(parseTournaments({'seasons': []}), isEmpty);
   });
 
-  test('bundled config lists the collected tournaments', () {
+  test('the migrated tournament list (fixture) has the collected tournaments', () {
     final json = jsonDecode(
-        File('assets/raw/season_config.json').readAsStringSync());
+        File('test/fixtures/club_config.json').readAsStringSync());
     final all = parseTournaments(json as Map<String, dynamic>);
     expect(all.where((t) => t.seasonId == 25 && t.type == TournamentType.minicap).length, 5);
     expect(all.where((t) => t.seasonId == 25 && t.type == TournamentType.maxicap).length, 3);
@@ -29,9 +29,9 @@ void main() {
         ['Марафон 04.07.2026', 'Ліга №1', 'Марафон 30.08.2026']);
   });
 
-  test('every bundled tournament has a top-3 podium', () {
+  test('every migrated tournament (fixture) has a top-3 podium', () {
     final json = jsonDecode(
-        File('assets/raw/season_config.json').readAsStringSync());
+        File('test/fixtures/club_config.json').readAsStringSync());
     final all = parseTournaments(json as Map<String, dynamic>);
     expect(all.where((t) => t.podium.length != 3), isEmpty);
     expect(all.firstWhere((t) => t.name == 'Мінікап 11.03').podium, ['Braun', 'Скай', 'Фрау']);

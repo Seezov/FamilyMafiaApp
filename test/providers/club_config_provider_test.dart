@@ -64,12 +64,11 @@ void main() {
     expect(c.read(tournamentsProvider).map((t) => t.name), ['Cached cup']);
   });
 
-  test('no club config: the JSON config tournaments still apply', () async {
+  test('no club config: no tournaments (the JSON config no longer has them)', () async {
     final c = _container(_MemCache(), null);
     await c.read(parsedConfigProvider.future);
     expect(await c.read(clubConfigProvider.future), isNull);
-    expect(c.read(tournamentsProvider), isNotEmpty,
-        reason: 'the bundled season_config.json still has its tournaments block');
+    expect(c.read(tournamentsProvider), isEmpty);
   });
 
   test('an unparsable live document is not cached; the cached copy wins', () async {

@@ -93,12 +93,12 @@ void main() {
     expect(eveningMatches(found.single, _t('17.11.2023')), isFalse);
   });
 
-  test('S21 minicaps: the computed top 3 is the config podium', () async {
+  test('S21 minicaps: the computed top 3 is the recorded podium', () async {
     final c = await fixtureContainer();
     final games = c.read(gamesRepositoryProvider);
     final resolver = c.read(playerResolverProvider);
     final all = parseTournaments(
-        jsonDecode(File('assets/raw/season_config.json').readAsStringSync())
+        jsonDecode(File('test/fixtures/club_config.json').readAsStringSync())
             as Map<String, dynamic>);
     // 25.04.2024 is left out: the game list has 4 of its 5 games.
     for (final name in ['Мінікап 26.03.2024', 'Мінікап 03.04.2024']) {
