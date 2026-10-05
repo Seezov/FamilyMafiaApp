@@ -111,7 +111,14 @@ default branch.
   rejected candidates, final thresholds (`gameLimits`); rules in `firestore.rules`. The app reads it
   over REST (`FirestoreService.fetchClubConfig`, cached); the build reads the
   `assets/prefetched/club_config.json` snapshot. Saves bump `meta/state`, so the site rebuilds within
-  an hour. Until the one-time import, the config JSON's `tournaments` block still applies.
+  an hour.
+- **Annual rating:** `/annual/` (+ `/annual/<year>/`) from `site/data/annual.json`
+  (`lib/site_export/annual_export.dart`, formulas in `lib/services/stats/annual_rating.dart`, TS port in
+  `site/src/lib/annual/points.ts`, both checked against `test/fixtures/annual_points_cases.json`). External
+  tournaments, series and marathons are Firestore `events/{id}`, edited by admins on `/annual/edit/`;
+  prefetch snapshots them into `assets/prefetched/annual_events.json`. Club seasons from S28 are added by
+  the export once finished (main league 1…N, small league top 5 as 101–105, year of the season's last month).
+  2024–2025 came from the sheets once (`tool/import/`).
 - **Player profiles:** `/account/` (Google sign-in → claim a player → admin approves on
   `/account/admin/` → nick + avatar). Firestore `claims/{uid}` (private) and
   `profiles/{playerKey}` (public; `playerKey` = lower-cased, URI-encoded display name).
