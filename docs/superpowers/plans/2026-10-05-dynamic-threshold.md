@@ -4,7 +4,7 @@
 
 **Goal:** A `top3` season's main-league threshold follows the sheet's formula while the season is played, freezes when it ends, and an admin can override the final value on `/debug/`.
 
-**Architecture:** A pure `effectiveThreshold` (Dart) decides the limit from the season's rating-game counts, its game dates and a clock. The loader isolate resolves it per season right after parsing, before any rating or stats code reads `gameLimit`, and returns it; the app/site loaders write it back into `SeasonConfig` (`gameLimit`, `thresholdFormula`, `thresholdLive`), so every existing consumer sees the effective int limit unchanged. The site shows the live value and an admin edit writes `gameLimit` into both config files.
+**Architecture:** A pure `effectiveThreshold` (Dart) decides the limit from the season's rating-game counts, its game dates and a clock. The loader isolate resolves it per season right after parsing, before any rating or stats code reads `gameLimit`, and returns it; the app/site loaders write it back into `SeasonConfig` (`gameLimit`, `thresholdFormula`, `thresholdLive`), so every existing consumer sees the effective int limit unchanged. The site shows the live value; an admin's final value lives in Firestore `config/club.gameLimits` (see the club-config plan, already shipped) and is merged into the season configs before loading.
 
 **Tech Stack:** Dart/Flutter + Riverpod, `flutter_test`; Astro + TypeScript, vitest.
 
@@ -15,7 +15,7 @@
 - Formula: `(g1 + g2 + g3) / 3 × 0.6 − 5`, g = rating-game counts of the 3 most active players; missing players count 0.
 - Main league: `gamesPlayed >= threshold` ⇒ int limit = `ceil(threshold)`, never below 0. Round the formula to 6 decimals before `ceil` (float noise: 55.0 must stay 55).
 - In progress = `seasonInProgress(gameDates, now: now)` from `lib/services/stats/accomplishments.dart` (existing).
-- Ended `top3` season: config `gameLimit` if present, else `ceil(formula)`.
+- Ended `top3` season: the admin's value from `config/club.gameLimits["<id>"]` if present, else `ceil(formula)`. The season JSON config never holds the admin value.
 - `fixed` seasons (default; S0–30) behave exactly as today.
 - Config: `"gameLimitRule": "top3"`; S31 in both `remote_config.json` and `assets/raw/season_config.json` gets it and loses `"gameLimit": 40`.
 - Site chrome is English (match surrounding copy). Numbers shown with one decimal (`15.4`).
@@ -26,7 +26,7 @@
 1. Float noise at an exact integer (S28: 300/3·0.6−5) — must give 55, not 56. Pinned in Task 1.
 2. A `top3` season with < 3 players or no dated games (first evening, typo dates) — no crash; no dates ⇒ not in progress. Pinned in Task 1.
 3. The initial load (latest season only) and background load use different loader instances — the latest season must keep its effective limit after the background load replaces `loadedSeasonConfigsProvider`. Pinned in Task 3 (both configs come from `withThreshold`).
-4. `/debug/` edit must change only that season's line; other seasons' `0.0`s and the tournament block stay byte for byte. Pinned in Task 5.
+4. An admin value in `config/club.gameLimits` must reach the loader for the latest season too (initial load), not only the background load. Pinned in Task 3 (`applyAdminLimits` used by both).
 5. Sheet-path seasons (< 31) use `meta.gameLimit` in `_seasonData`'s main-league merge — it must be the effective limit. Pinned in Task 3 (S28 loader test).
 
 ---
@@ -204,6 +204,8 @@ git commit -m "feat: sheet threshold formula and effective game limit"
   - `final bool gameLimitSet;` (config JSON had `gameLimit`; default `true`)
   - `final double? thresholdFormula;` `final bool thresholdLive;` (default `null` / `false`)
   - `SeasonConfig withThreshold(SeasonThreshold t)` — same config with `gameLimit: t.gameLimit`, `thresholdFormula: t.formula`, `thresholdLive: t.live`.
+  - `SeasonConfig withAdminLimit(int limit)` — same config with `gameLimit: limit`, `gameLimitSet: true`.
+  - top-level `List<SeasonConfig> applyAdminLimits(List<SeasonConfig> configs, Map<int, int> limits)` — each `top3` config with an entry in [limits] → `withAdminLimit`; others unchanged (a `fixed` season ignores club limits).
 
 - [ ] **Step 1: Write the failing test**
 
@@ -236,6 +238,15 @@ void main() {
     expect(c.gameLimitRule, GameLimitRule.fixed);
     expect(c.toJson().containsKey('gameLimitRule'), isFalse);
     expect(() => SeasonConfig.fromJson(json({})), throwsFormatException);
+  });
+
+  test('admin limits from config/club apply to top3 seasons only', () {
+    final top3 = SeasonConfig.fromJson(json({'gameLimitRule': 'top3'}));
+    final fixed = SeasonConfig.fromJson(json({'id': 30, 'gameLimit': 40}));
+    final out = applyAdminLimits([top3, fixed], {31: 41, 30: 99});
+    expect((out[0].gameLimit, out[0].gameLimitSet), (41, true));
+    expect(out[1].gameLimit, 40);
+    expect(applyAdminLimits([top3], {}).single.gameLimitSet, isFalse);
   });
 
   test('withThreshold', () {
@@ -275,6 +286,20 @@ void main() {
         source: source, gameLimitRule: gameLimitRule, gameLimitSet: gameLimitSet,
         thresholdFormula: t.formula, thresholdLive: t.live,
       );
+```
+
+  - `withAdminLimit` (like `withThreshold`, but `gameLimit: limit, gameLimitSet: true`, threshold fields kept) and
+
+```dart
+/// [configs] with admins' final thresholds from `config/club.gameLimits`;
+/// only top3 seasons take them.
+List<SeasonConfig> applyAdminLimits(List<SeasonConfig> configs, Map<int, int> limits) => [
+      for (final c in configs)
+        if (c.gameLimitRule == GameLimitRule.top3 && limits[c.id] != null)
+          c.withAdminLimit(limits[c.id]!)
+        else
+          c,
+    ];
 ```
 
   - Check `SeasonConfig(` call sites still compile (`grep -rn "SeasonConfig(" lib test tool`); `Season.toConfig()` needs no change (fixed default).
@@ -457,6 +482,7 @@ SeasonMeta seasonMetaFor(SeasonConfig c, DateTime now) => SeasonMeta(
 ```
 
 - [ ] **Step 7: `app_providers.dart`.** Move `clockProvider` here (same code and doc comment: `/// The clock the in-progress checks read; overridden in tests.` `final clockProvider = Provider<DateTime Function()>((ref) => DateTime.now);`); delete it from `players_providers.dart` (that file already imports app_providers). Fix any test importing `clockProvider` from players_providers (`grep -rn clockProvider test`). Then:
+  - both loads: the configs from `parsedConfigProvider` carry no admin values. In the initial load, right after `parsed.seasons`, replace the `.ignore()` early start with `final club = await ref.read(clubConfigProvider.future);` and `final configs = applyAdminLimits(parsed.seasons, club?.gameLimits ?? const {});`. Store that merged list as `_InitialLoadResult.allConfigs`, so the background load (which reads `shared.allConfigs`) gets the limits too.
   - initial load: `final now = ref.read(clockProvider)();` → `metas: [seasonMetaFor(latestConfig, now)]`; after loading `final latest = loader.applyThresholds([latestConfig]).single;` and use `latest` for `loadedSeasonConfigsProvider`, `selectedSeasonProvider` and `_InitialLoadResult.loadedConfigs: [latest]`.
   - background load: both `metas:` lists → `loadedRemainingConfigs.map((c) => seasonMetaFor(c, now))` with `final now = ref.read(clockProvider)();`; `allLoaded = [...shared.loadedConfigs, ...loader.applyThresholds(loadedRemainingConfigs)]`.
 - [ ] **Step 8: `test/site_export/fixture.dart`** — `metas: [for (final c in configs) seasonMetaFor(c, DateTime.now())]` and `container.read(loadedSeasonConfigsProvider.notifier).state = loader.applyThresholds(configs);`.
@@ -542,84 +568,58 @@ git commit -m "feat(site): live game threshold on season and player pages"
 
 **Files:**
 - Modify: `lib/site_export/debug_export.dart` (thresholds list)
-- Modify: `site/src/lib/config-edit.ts` (op + `setGameLimit` + `describe`)
+- Modify: `site/src/lib/config-edit.ts` (`gameLimit` op in `applyOps`)
 - Modify: `site/src/lib/config-edit.test.ts`
+- Modify: `site/src/lib/club/store.ts` (`saveClub` applies limits)
 - Modify: `site/src/lib/types.ts` (`DebugData.thresholds`)
 - Modify: `site/src/scripts/debug.ts`, `site/src/pages/debug/index.astro`
 
 **Interfaces:**
-- Consumes: `SeasonConfig.gameLimitRule`, `gameLimitSet`, `gameLimit`, `thresholdFormula`, `thresholdLive`.
+- Consumes: `SeasonConfig.gameLimitRule`, `gameLimitSet`, `gameLimit`, `thresholdFormula`, `thresholdLive`; shipped `clubBody`, `applyOps`, `saveClub`.
 - Produces:
   - Debug JSON `thresholds: { season: number; title: string; formula: number; gameLimit: number; set: boolean; live: boolean }[]` — top3 seasons only, newest first.
   - `Op` gains `{ kind: 'gameLimit'; season: number; limit: number | null }`.
-  - `setGameLimit(text: string, season: number, limit: number | null): string`
-  - `applyGameLimits(text: string, ops: Op[]): string` — applies every `gameLimit` op in order.
+  - `SeasonConfigFile` gains `gameLimits?: Record<string, number>`; `applyOps` applies `gameLimit` ops to it (set, or delete on null) and throws on a limit that is not an integer ≥ 0.
 
 - [ ] **Step 1: Failing vitest** in `config-edit.test.ts`:
 
 ```ts
-describe('setGameLimit', () => {
-  const text = [
-    '{', '  "configVersion": 1,', '  "seasons": [',
-    '    {"id": 30, "title": "Season 30", "gameLimit": 40, "gamesMultiplier": 0.0, "source": "remote"},',
-    '    {"id": 31, "title": "Season 31", "gameLimitRule": "top3", "gamesMultiplier": 0.0, "source": "remote"}',
-    '  ],', '  "tournaments": [', '  ]', '}', '',
-  ].join('\n');
-
-  it('adds the admin value after the title, nothing else changes', () => {
-    const out = setGameLimit(text, 31, 41);
-    expect(out).toBe(text.replace('"Season 31", ', '"Season 31", "gameLimit": 41, '));
+describe('gameLimit ops', () => {
+  it('set, replace and clear a season limit', () => {
+    const f: SeasonConfigFile = { tournaments: [], gameLimits: { '30': 40 } };
+    const set = applyOps(f, [{ kind: 'gameLimit', season: 31, limit: 41 }]);
+    expect(set.gameLimits).toEqual({ '30': 40, '31': 41 });
+    expect(applyOps(set, [{ kind: 'gameLimit', season: 31, limit: 39 }]).gameLimits).toEqual({ '30': 40, '31': 39 });
+    expect(applyOps(set, [{ kind: 'gameLimit', season: 31, limit: null }]).gameLimits).toEqual({ '30': 40 });
+    expect(f.gameLimits).toEqual({ '30': 40 });
   });
-  it('replaces and removes', () => {
-    const set = setGameLimit(text, 31, 41);
-    expect(setGameLimit(set, 31, 39)).toBe(text.replace('"Season 31", ', '"Season 31", "gameLimit": 39, '));
-    expect(setGameLimit(set, 31, null)).toBe(text);
+  it('rejects a bad value', () => {
+    expect(() => applyOps({}, [{ kind: 'gameLimit', season: 31, limit: -1 }])).toThrow();
+    expect(() => applyOps({}, [{ kind: 'gameLimit', season: 31, limit: 1.5 }])).toThrow();
   });
-  it('rejects a missing season or a bad value', () => {
-    expect(() => setGameLimit(text, 99, 10)).toThrow(/99/);
-    expect(() => setGameLimit(text, 31, -1)).toThrow();
-    expect(() => setGameLimit(text, 31, 1.5)).toThrow();
-  });
-  it('applyGameLimits + describe', () => {
-    const ops: Op[] = [{ kind: 'gameLimit', season: 31, limit: 41 }];
-    expect(applyGameLimits(text, ops)).toBe(setGameLimit(text, 31, 41));
-    expect(describe(ops)).toContain('threshold S31 → 41');
-    expect(describe([{ kind: 'gameLimit', season: 31, limit: null }])).toContain('threshold S31 → formula');
+  it('clubBody writes the applied limits', () => {
+    const next = applyOps({ tournaments: [] }, [{ kind: 'gameLimit', season: 31, limit: 41 }]);
+    expect(clubBody(next, next.gameLimits).gameLimits).toEqual({ '31': 41 });
   });
 });
 ```
 
 - [ ] **Step 2: Run** `cd site && npx vitest run src/lib/config-edit.test.ts` → FAIL.
-- [ ] **Step 3: `config-edit.ts`.** Add the op variant to `Op`. Add:
+- [ ] **Step 3: `config-edit.ts`.** Add the op variant and `gameLimits?: Record<string, number>` on `SeasonConfigFile`. In `applyOps` start `let limits = { ...(file.gameLimits ?? {}) };`, add
 
 ```ts
-/** [text] with season [season]'s "gameLimit" set to [limit] (an admin's final
- * threshold), or removed when null (back to the formula). Only that season's
- * line changes. */
-export function setGameLimit(text: string, season: number, limit: number | null): string {
-  if (limit !== null && (!Number.isInteger(limit) || limit < 0)) throw new Error(`Threshold must be a whole number ≥ 0, got ${limit}`);
-  const re = new RegExp(`^( *\\{"id": ${season}, "title": "[^"]*")(, "gameLimit": \\d+)?`, 'm');
-  if (!re.test(text)) throw new Error(`Season ${season} is not in the config`);
-  return text.replace(re, (_, head: string) => `${head}${limit === null ? '' : `, "gameLimit": ${limit}`}`);
-}
-
-export const applyGameLimits = (text: string, ops: Op[]) =>
-  ops.reduce((t, o) => (o.kind === 'gameLimit' ? setGameLimit(t, o.season, o.limit) : t), text);
+      case 'gameLimit': {
+        if (op.limit !== null && (!Number.isInteger(op.limit) || op.limit < 0)) throw new Error(`Threshold must be a whole number ≥ 0, got ${op.limit}`);
+        if (op.limit === null) delete limits[String(op.season)];
+        else limits[String(op.season)] = op.limit;
+        break;
+      }
 ```
 
-In `applyOps`, the switch must not throw on `gameLimit` (no case = no-op; leave it). In `describe`: add the threshold parts and make the prefix generic:
-
-```ts
-  const limits = ops.filter((o): o is Extract<Op, { kind: 'gameLimit' }> => o.kind === 'gameLimit')
-    .map((o) => `threshold S${o.season} → ${o.limit ?? 'formula'}`);
-  ...
-  return `config (Debug page): ${[...parts, ...limits].join(', ')}`;
-```
-
-Update existing `describe` expectations from `tournaments (Debug page)` to `config (Debug page)`.
-
-- [ ] **Step 4: Run** vitest → PASS.
-- [ ] **Step 5: Debug export.** In `debugJson` add:
+and return `{ ...file, tournaments: list, gameLimits: limits }` (rejected as today).
+- [ ] **Step 4: `club/store.ts` `saveClub`:** `const next = applyOps({ tournaments: cur.tournaments ?? [], rejectedCandidates: cur.rejectedCandidates ?? [], gameLimits: cur.gameLimits ?? {} }, ops);` and `tx.set(clubRef(), { ...clubBody(next, next.gameLimits ?? {}), ...stamp(u) });`.
+- [ ] **Step 5: Run** vitest → PASS.
+- [ ] **Step 6: Debug export.** In `debugJson` add:
 
 ```dart
     'thresholds': [
@@ -636,41 +636,42 @@ Update existing `describe` expectations from `tournaments (Debug page)` to `conf
     ],
 ```
 
-and `DebugData` in `types.ts`: `thresholds: { season: number; title: string; formula: number; gameLimit: number; set: boolean; live: boolean }[];`.
+and in `types.ts` `DebugData`: `thresholds: { season: number; title: string; formula: number; gameLimit: number; set: boolean; live: boolean }[];`.
 
-- [ ] **Step 6: Page.** In `debug/index.astro`, before the toolbar:
+- [ ] **Step 7: Page.** In `debug/index.astro`, before the toolbar:
 
 ```astro
   {d.thresholds.length > 0 && (
     <section class="panel thresholds">
       <h2 class="label">Main-league thresholds</h2>
-      <p class="hint">While a season is played the threshold follows the sheet formula (top-3 games × 0.6 − 5). After it ends you can set the final value; empty = rounded-up formula.</p>
+      <p class="hint">While a season is played the threshold follows the sheet formula (top-3 games × 0.6 − 5). After it ends an admin can set the final value; empty = rounded-up formula.</p>
       <div id="thresholds"></div>
     </section>
   )}
 ```
 
-Style (in the global block): `.thresholds { margin-bottom: 16px; } .thr { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 12px; padding: 6px 0; } .thr input { width: 6em; }`.
+Global style: `.thresholds { margin-bottom: 16px; } .thr { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 12px; padding: 6px 0; } .thr input { width: 6em; }`.
 
-- [ ] **Step 7: Script** (`debug.ts`). Import `applyGameLimits`. Add after `card`:
+- [ ] **Step 8: Script** (`debug.ts`). Add after `card`:
 
 ```ts
 function thresholdRows(): string {
+  const liveLimits = (live as { gameLimits?: Record<string, number> } | null)?.gameLimits;
   return data.thresholds.map((t) => {
     const op = [...ops].reverse().find((o) => o.kind === 'gameLimit' && o.season === t.season) as Extract<Op, { kind: 'gameLimit' }> | undefined;
     const formula = Math.max(0, Math.ceil(t.formula));
-    const current = op ? (op.limit ?? formula) : t.gameLimit;
-    const source = op ? (op.limit === null ? 'formula' : 'admin') : t.set ? 'admin' : 'formula';
-    const state = t.live ? 'live' : `${current} (${source})`;
+    const saved = liveLimits ? liveLimits[String(t.season)] ?? null : (t.set ? t.gameLimit : null);
+    const value = op ? op.limit : saved;
+    const state = t.live ? 'live' : value === null ? `${formula} (formula)` : `${value} (admin)`;
     const edit = t.live ? '<span class="label">editable after the season ends</span>'
-      : `<form class="thr-form" data-season="${t.season}"><input name="limit" type="number" min="0" step="1" value="${current}" aria-label="Threshold for S${t.season}">
+      : `<form class="thr-form" data-season="${t.season}"><input name="limit" type="number" min="0" step="1" value="${value ?? formula}" aria-label="Threshold for S${t.season}">
          <button class="btn" type="submit">Set</button><button class="btn" type="button" data-reset="${t.season}">Use formula</button></form>`;
     return `<div class="thr ${op ? 'pending-op' : ''}"><b>S${t.season}</b><span>formula ${t.formula.toFixed(1)} → ${formula}</span><span>now ${esc(state)}</span>${edit}</div>`;
   }).join('');
 }
 ```
 
-In `render()`: `const th = document.getElementById('thresholds'); if (th) th.innerHTML = thresholdRows();`. Listeners (guarded by `document.getElementById('thresholds')`):
+In `render()`: `const th = document.getElementById('thresholds'); if (th) th.innerHTML = thresholdRows();`. Listeners:
 
 ```ts
 const thr = document.getElementById('thresholds');
@@ -687,11 +688,10 @@ thr?.addEventListener('click', (ev) => {
 });
 ```
 
-In the commit handler, wrap the content: `content: applyGameLimits(rewriteConfig(original, applyOps(JSON.parse(original), ops)), ops)`. Update the page's head/description copy only if it now misleads ("Tournament review" stays; fine).
-
-- [ ] **Step 8: Verify.** `flutter test`, `cd site && npm run check && npm test && npm run build` → PASS. With an exported `site/data/`, `/debug/` lists S31 as `live` (editable after the season ends).
-- [ ] **Step 9: Docs.** `CLAUDE.md` → "Adding a New Season" remote example: add `"gameLimitRule": "top3"` and a line: "`top3` seasons: threshold follows the sheet formula while the season is played; after it ends `gameLimit` (set on `/debug/`) or the rounded-up formula." Add a sentence to the Web site section about `/debug/` thresholds.
-- [ ] **Step 10: Commit**
+`rows()` already ignores ops without `key`/`id`/`entry`; the existing Save sends `gameLimit` ops through `saveClub`.
+- [ ] **Step 9: Verify.** `flutter test`, `cd site && npm run check && npm test && npm run build` → PASS. With an exported `site/data/`, `/debug/` lists S31 as `live`.
+- [ ] **Step 10: Docs.** `CLAUDE.md` → "Adding a New Season" remote example: add `"gameLimitRule": "top3"` and: "`top3` seasons: threshold follows the sheet formula while the season is played; after it ends the admin's value from `config/club.gameLimits` (set on `/debug/`) or the rounded-up formula."
+- [ ] **Step 11: Commit**
 
 ```bash
 git add lib/site_export/debug_export.dart site/src CLAUDE.md

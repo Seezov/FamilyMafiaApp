@@ -28,10 +28,10 @@ S31 today → 15.4 (sheet shows 15,4). A player is in the main league when
 |---|---|
 | Which seasons | Those with `"gameLimitRule": "top3"` in the config: S31 and every new season. S0–30 keep their fixed `gameLimit` (they already match the sheets). |
 | In progress | `seasonInProgress(gameDates, now)` (calendar quarters, already used for accomplishments). While true: threshold = formula, unrounded. |
-| Season ended | `gameLimit` from the config if set (admin's value), else `ceil(formula)` from the final data. |
+| Season ended | The admin's value from Firestore `config/club.gameLimits` if set, else `ceil(formula)` from the final data. |
 | Integer limit | Every existing consumer keeps comparing against the int `gameLimit`; for a formula season it is `ceil(threshold)` (same split as `>= 15.4`). Below 0 → 0. |
 | Display | Season page: «Поточний поріг: 15,4» while in progress; «Поріг: 41» after. Player profile (current season, below threshold): «До основної ліги: ще N ігор». |
-| Admin | `/debug/` gets a «Пороги» section: each ended `top3` season shows the formula value and an input; saving writes `gameLimit` into `remote_config.json` and `assets/raw/season_config.json` in one commit, like tournament edits. Clearing the input removes `gameLimit` (back to the formula). |
+| Admin | `/debug/` gets a «Пороги» section: each ended `top3` season shows the formula value and an input; saving writes `config/club.gameLimits["<id>"]` (Google sign-in, admins only, like tournament edits). Clearing removes it (back to the formula). |
 | Small league | Unchanged: `smallLeagueMinGames` ≤ games < `gameLimit`. Early in a season it can be empty, as in the sheet. |
 | App | Gets the same effective `gameLimit` through `loadedSeasonConfigsProvider`; its screens need no change. The manual `gameLimitOverrideProvider` slider still overrides on top. |
 
