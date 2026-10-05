@@ -23,23 +23,34 @@ export function parseRestPage(json: unknown): { docs: RestProfile[]; next?: stri
   return { docs, next: body.nextPageToken };
 }
 
-export function selectProfiles(names: string[], docs: RestProfile[]) {
+export function selectProfiles(names: string[], docs: RestProfile[], aliases: Record<string, string> = {}) {
   const byKey = new Map(names.map((n) => [playerKey(n), n]));
+  // An old spelling (renamed or merged player) → the player's current name.
+  const owner = (player: string) => byKey.get(playerKey(player)) ?? aliases[player.trim().toLowerCase()];
   const profiles: Record<string, SiteProfile> = {};
   const files: { path: string; bytes: Uint8Array }[] = [];
   const warnings: string[] = [];
   const taken = new Set(names.map((n) => n.trim().toLowerCase()));
-  // Code-point order, so the first-come nick is deterministic on every machine.
-  const sorted = [...docs].sort((a, b) => (playerKey(a.player) < playerKey(b.player) ? -1 : 1));
+  const used = new Map<string, string>();
+  // A profile made under the display name first, then code-point order, so the
+  // winner is deterministic on every machine.
+  const exact = (d: RestProfile) => (byKey.has(playerKey(d.player)) ? 0 : 1);
+  const sorted = [...docs].sort((a, b) => exact(a) - exact(b) || (playerKey(a.player) < playerKey(b.player) ? -1 : 1));
   for (const d of sorted) {
-    const key = playerKey(d.player);
-    const name = byKey.get(key);
+    const name = owner(d.player);
     if (!name) continue;
-    // The id comes from the claim the admin approved; only the key of the player itself is trusted.
-    if (d.id !== key && safeDecode(d.id) !== key) {
+    // The id comes from the claim the admin approved; only the key of the name it was made for is trusted.
+    const docKey = playerKey(d.player);
+    if (d.id !== docKey && safeDecode(d.id) !== docKey) {
       warnings.push(`profile ${name}: ignored — document id "${d.id}" is not this player's key`);
       continue;
     }
+    const key = playerKey(name);
+    if (used.has(key)) {
+      warnings.push(`profile ${d.player}: ignored — ${name} already has the profile made for "${used.get(key)}"`);
+      continue;
+    }
+    used.set(key, d.player);
     const out: SiteProfile = {};
     if (d.nick !== undefined) {
       const nick = cleanNick(d.nick);

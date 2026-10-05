@@ -24,6 +24,22 @@ describe('parseRestPage', () => {
 
 describe('selectProfiles', () => {
   const names = ['Braun', 'Залізний', 'Floppy'];
+  it('a profile made under an old name follows the rename', () => {
+    const out = selectProfiles(['Rathma'], [{ id: playerKey('Скай'), player: 'Скай', nick: 'Sky' }], { 'скай': 'Rathma' });
+    expect(out.profiles[playerKey('Rathma')]).toEqual({ nick: 'Sky' });
+  });
+  it('two profiles on one player after a merge: the display-name one wins, the other warns', () => {
+    const out = selectProfiles(['Braun'], [
+      { id: playerKey('Браун'), player: 'Браун', nick: 'Old' },
+      { id: playerKey('Braun'), player: 'Braun', nick: 'New' },
+    ], { 'браун': 'Braun' });
+    expect(out.profiles.braun).toEqual({ nick: 'New' });
+    expect(out.warnings.some((w) => w.includes('Браун'))).toBe(true);
+  });
+  it('the document id must still be the key of the name it was made for', () => {
+    const out = selectProfiles(['Rathma'], [{ id: playerKey('Rathma'), player: 'Скай', nick: 'Sky' }], { 'скай': 'Rathma' });
+    expect(out.profiles).toEqual({});
+  });
   it('maps by player key and writes avatars as files', () => {
     const out = selectProfiles(names, [{ id: playerKey('Braun'), player: 'Braun', nick: ' Big  Boss ', avatar: WEBP }]);
     expect(out.profiles.braun.nick).toBe('Big Boss');

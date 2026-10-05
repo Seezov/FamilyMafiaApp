@@ -21,8 +21,10 @@ export async function fetchProfiles(opts: { fetch: typeof fetch; dataDir: string
       docs.push(...page.docs);
       token = page.next;
     } while (token);
-    const { players } = JSON.parse(fs.readFileSync(path.join(opts.dataDir, 'players.json'), 'utf8')) as { players: { name: string }[] };
-    const { profiles, files, warnings } = selectProfiles(players.map((p) => p.name), docs);
+    const { players } = JSON.parse(fs.readFileSync(path.join(opts.dataDir, 'players.json'), 'utf8')) as { players: { name: string; aliases?: string[] }[] };
+    const aliases: Record<string, string> = {};
+    for (const p of players) for (const a of p.aliases ?? []) aliases[a] ??= p.name;
+    const { profiles, files, warnings } = selectProfiles(players.map((p) => p.name), docs, aliases);
     warnings.forEach((w) => opts.log(`fetch-profiles: ${w}`));
     for (const f of files) {
       fs.mkdirSync(path.dirname(path.join(opts.publicDir, f.path)), { recursive: true });
