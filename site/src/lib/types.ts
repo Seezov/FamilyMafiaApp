@@ -81,7 +81,7 @@ export interface DebugEvidence {
   standings: (SiteCell & { pts: number; w: number; g: number })[];
 }
 export interface DebugData {
-  repo: { owner: string; name: string; branch: string; files: string[] };
+  repo: { owner: string; name: string; branch: string };
   types: { type: string; label: string }[];
   tournaments: {
     key: string; season: number; type: string; name: string; games: number; date: string | null;

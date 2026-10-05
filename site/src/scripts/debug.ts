@@ -1,12 +1,12 @@
-// The Debug page: the live tournament list from GitHub, the games behind each
-// entry from the build, and edits that are saved back as one commit.
+// The Debug page: the live tournament list from Firestore `config/club`, the
+// games behind each entry from the build, and edits admins save back.
 import { applyOps, entryKey, normalize, type ConfigEntry, type Op, type SeasonConfigFile } from '../lib/config-edit';
+import { importClub, loadClub, onClubUser, saveClub, signIn, signOutUser, type ClubAdmin } from '../lib/club/store';
 import type { DebugData, DebugEvidence } from '../lib/types';
 
 const data = JSON.parse(document.getElementById('debug-data')!.textContent!) as DebugData;
 const base = document.getElementById('base')!.dataset.base!;
 const repo = data.repo;
-const [mainFile] = repo.files;
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 
 // ── Browser storage (all optional: the page works without it) ──────────────
@@ -16,18 +16,17 @@ const store = {
     try { if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch { /* private mode */ }
   },
 };
-const TOKEN = 'fm-debug-token';
 const OPS = 'fm-debug-ops';
 
-let token = store.get(TOKEN);
-let login: string | null = null;
+let user: ClubAdmin | null | 'not-host' = null;
+let clubMissing = false;
 let ops: Op[] = (() => { try { return JSON.parse(store.get(OPS) ?? '[]'); } catch { return []; } })();
 let live: SeasonConfigFile | null = null;
-let liveSha: string | null = null;
 let busy = false;
 const editing = new Set<string>();
 
 const saveOps = () => store.set(OPS, ops.length ? JSON.stringify(ops) : null);
+const canSave = () => typeof user === 'object' && user !== null && user.admin;
 
 // ── Evidence from the build, found by key, else by season + date ────────────
 const evidenceByKey = new Map(data.tournaments.map((t) => [t.key, t]));
@@ -182,8 +181,15 @@ function render() {
   $('list').innerHTML = shown.length ? shown.map(card).join('') : '<p class="empty-list">Nothing here.</p>';
   const p = $('pending');
   p.hidden = ops.length === 0;
-  $('pending-text').textContent = `${ops.length} unsaved change${ops.length === 1 ? '' : 's'}${token ? '' : ' · add a GitHub token to save'}`;
-  $<HTMLButtonElement>('commit').disabled = !token || busy;
+  $('pending-text').textContent = `${ops.length} unsaved change${ops.length === 1 ? '' : 's'}${canSave() ? '' : ' · sign in as an admin to save'}`;
+  $<HTMLButtonElement>('commit').disabled = !canSave() || busy || clubMissing;
+  $('who').textContent = user === null ? 'Read-only'
+    : user === 'not-host' ? 'Signed in, not a host — read-only'
+    : user.admin ? `Saving as ${user.name}` : `${user.name} is not an admin — read-only`;
+  $('sign-in').hidden = user !== null;
+  $('sign-out').hidden = user === null;
+  $('import').hidden = !(canSave() && clubMissing);
+  $<HTMLButtonElement>('import').disabled = busy;
 }
 
 // ── Actions ─────────────────────────────────────────────────────────────────
@@ -232,40 +238,56 @@ $('season').addEventListener('change', render);
 $('q').addEventListener('input', render);
 $('discard').addEventListener('click', () => { ops = []; saveOps(); render(); });
 
-// ── GitHub ──────────────────────────────────────────────────────────────────
+// ── Firestore ───────────────────────────────────────────────────────────────
 async function loadLive() {
+  try {
+    const club = await loadClub();
+    clubMissing = club === null;
+    live = club;
+    $('live-state').textContent = club ? 'Live list from Firestore' : "Not imported yet — showing the build's copy";
+  } catch (e) {
+    $('live-state').textContent = `Showing the build's copy (${(e as Error).message})`;
+  }
   render();
 }
 
-async function refreshWho() {
-  if (!token) { $('who').textContent = 'Read-only'; return; }
-  $('who').textContent = 'Saving moves to Firestore in the next task';
-}
-
-$('token-form').addEventListener('submit', async (ev) => {
-  ev.preventDefault();
-  token = $<HTMLInputElement>('token').value.trim() || null;
-  $<HTMLInputElement>('token').value = '';
-  store.set(TOKEN, token);
-  await refreshWho();
-  render();
+$('sign-in').addEventListener('click', () => {
+  signIn().catch((e) => { $('who').textContent = (e as Error).message; });
 });
-$('forget').addEventListener('click', () => { token = null; login = null; store.set(TOKEN, null); refreshWho(); render(); });
+$('sign-out').addEventListener('click', () => { signOutUser(); });
+onClubUser((u) => { user = u; render(); });
+
+$('import').addEventListener('click', async () => {
+  if (!canSave() || busy) return;
+  busy = true; render();
+  try {
+    const raw = await fetch(`https://raw.githubusercontent.com/${repo.owner}/${repo.name}/${repo.branch}/remote_config.json`, { cache: 'no-store' });
+    if (!raw.ok) throw new Error(`config file: HTTP ${raw.status}`);
+    await importClub(await raw.json(), user as ClubAdmin);
+    busy = false;
+    await loadLive();
+    $('live-state').textContent = 'Imported. The site rebuilds within an hour.';
+  } catch (e) {
+    busy = false; render();
+    $('live-state').textContent = `Not imported: ${(e as Error).message}`;
+  }
+});
 
 $('commit').addEventListener('click', async () => {
-  if (!token || busy || !ops.length) return;
+  if (!canSave() || busy || !ops.length) return;
   busy = true; render();
-  const text = $('pending-text');
-  text.textContent = 'Saving…';
+  $('pending-text').textContent = 'Saving…';
   try {
-    throw new Error('Saving moves to Firestore in the next task');
-  } catch (e) {
+    await saveClub(ops, user as ClubAdmin);
+    ops = []; saveOps();
     busy = false;
-    render();
+    await loadLive();
+    $('live-state').textContent = 'Saved. The site rebuilds within an hour.';
+  } catch (e) {
+    busy = false; render();
     $('pending-text').textContent = `Not saved: ${(e as Error).message}`;
   }
 });
 
 render();
-refreshWho();
 loadLive();

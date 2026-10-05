@@ -43,7 +43,6 @@ Map<String, Object?> debugJson(ExportContext x) {
       'owner': 'Seezov',
       'name': 'FamilyMafiaApp',
       'branch': 'feature/flutter_migration',
-      'files': ['remote_config.json', 'assets/raw/season_config.json'],
     },
     'types': [
       for (final t in TournamentType.values) {'type': t.name, 'label': t.label},

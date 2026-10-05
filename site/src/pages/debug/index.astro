@@ -13,20 +13,16 @@ const seasons = [...new Set([...d.tournaments.map((t) => t.season), ...d.candida
     <span class="label" id="live-state">Loading the live config…</span>
   </div>
 
-  <details class="panel access" id="access">
-    <summary><span class="label">GitHub access</span> <span id="who" class="who">Read-only</span></summary>
-    <p class="hint">
-      Saving writes <code>remote_config.json</code> and <code>assets/raw/season_config.json</code> as one commit on
-      <code>{d.repo.branch}</code>; the site redeploys in about 3 minutes and the app picks it up on next launch.
-      It needs a <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">fine-grained token</a>
-      for <b>{d.repo.owner}/{d.repo.name}</b> only, with <b>Contents: read and write</b>. It stays in this browser.
-    </p>
-    <form id="token-form" class="row">
-      <input id="token" type="password" autocomplete="off" placeholder="github_pat_…" aria-label="GitHub token" />
-      <button type="submit" class="btn primary">Save token</button>
-      <button type="button" id="forget" class="btn">Forget</button>
-    </form>
-  </details>
+  <div class="panel access" id="access">
+    <div class="row">
+      <span class="label">Editing</span> <span id="who" class="who">Read-only</span>
+      <button type="button" id="sign-in" class="btn primary">Sign in with Google</button>
+      <button type="button" id="sign-out" class="btn" hidden>Sign out</button>
+      <button type="button" id="import" class="btn" hidden>Import from the config file</button>
+    </div>
+    <p class="hint">Admins (hosts with <code>admin: true</code>) can save. Changes go to Firestore at once; the site
+      rebuilds within an hour (or run the <a href={`https://github.com/${d.repo.owner}/${d.repo.name}/actions/workflows/web.yml`} target="_blank" rel="noopener">web workflow</a>).</p>
+  </div>
 
   <div class="toolbar">
     <div class="pills" id="filters" role="tablist" aria-label="Show"></div>
@@ -42,7 +38,7 @@ const seasons = [...new Set([...d.tournaments.map((t) => t.season), ...d.candida
   <div class="pending" id="pending" hidden>
     <span id="pending-text"></span>
     <button type="button" class="btn" id="discard">Discard</button>
-    <button type="button" class="btn primary" id="commit">Save to GitHub</button>
+    <button type="button" class="btn primary" id="commit">Save</button>
   </div>
 
   <script type="application/json" id="debug-data" set:html={json} />
@@ -84,7 +80,7 @@ const seasons = [...new Set([...d.tournaments.map((t) => t.season), ...d.candida
   .edit { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; align-items: end; }
   .edit label { display: grid; gap: 3px; font-size: 12px; color: var(--muted); }
   .edit .wide { grid-column: span 2; }
-  .dbg-input, .edit input, .edit select, #season, #q, #token {
+  .dbg-input, .edit input, .edit select, #season, #q {
     background: var(--panel-2); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text);
     padding: 6px 9px; font: inherit; min-width: 0; }
   .btn { background: var(--panel-2); border: 1px solid var(--border); color: var(--text); border-radius: var(--radius);
@@ -101,12 +97,11 @@ const seasons = [...new Set([...d.tournaments.map((t) => t.season), ...d.candida
 <style>
   .access { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius);
     padding: 10px 14px; margin-bottom: 14px; }
-  .access summary { cursor: pointer; display: flex; gap: 10px; align-items: baseline; }
+  .access .row { display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: baseline; }
   .who { font-size: 13px; color: var(--muted); }
   .hint { color: var(--muted); font-size: 13px; max-width: 90ch; }
   .hint a { text-decoration: underline; }
   .row { display: flex; gap: 8px; flex-wrap: wrap; }
-  #token { flex: 1 1 260px; }
   .toolbar { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; margin-bottom: 14px; }
   .toolbar .pills { flex: 1 1 auto; }
   #q { width: 200px; }

@@ -107,6 +107,11 @@ default branch.
   REST by `FirestoreService`; `games-watch.yml` rebuilds the site hourly when
   `meta/state.updatedAt` changed. Hosts are managed in the Firestore console
   (`hosts/{email}` = `{name, admin}`). Rules are published from the console's Rules tab.
+- **Tournaments:** `/debug/` (admins, Google sign-in) edits Firestore `config/club` — tournaments,
+  rejected candidates, final thresholds (`gameLimits`); rules in `firestore.rules`. The app reads it
+  over REST (`FirestoreService.fetchClubConfig`, cached); the build reads the
+  `assets/prefetched/club_config.json` snapshot. Saves bump `meta/state`, so the site rebuilds within
+  an hour. Until the one-time import, the config JSON's `tournaments` block still applies.
 - **Player profiles:** `/account/` (Google sign-in → claim a player → admin approves on
   `/account/admin/` → nick + avatar). Firestore `claims/{uid}` (private) and
   `profiles/{playerKey}` (public; `playerKey` = lower-cased, URI-encoded display name).
