@@ -1,3 +1,5 @@
+import 'package:family_mafia_app/models/player.dart';
+import 'package:family_mafia_app/models/rating_player_stats.dart';
 import 'package:family_mafia_app/services/rating_formulas.dart';
 import 'package:family_mafia_app/services/season_loader.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -400,6 +402,31 @@ void main() {
     test('five black guesses, three hit → 0.9 + (mMiss5 - mMiss3) = 0.9 - 2.0', () {
       expect(calculateSupportFivePoints([-5, -7, -9, -1, -2], roles),
           closeTo(0.9 + (-2.45 - -0.45), 1e-9));
+    });
+  });
+  // ── compareByRating ──────────────────────────────────────────────────────
+
+  group('compareByRating', () {
+    RatingPlayerStats stats(String name, double rating, double winRate) =>
+        RatingPlayerStats(
+          seasonId: 15,
+          player: Player(id: name.hashCode, displayName: name),
+          ratingCoefficient: rating,
+          winRate: winRate,
+        );
+
+    test('higher rating first', () {
+      final sorted = [stats('a', 77.2, 0.6), stats('b', 81.8, 0.5)]
+        ..sort(compareByRating);
+      expect(sorted.map((p) => p.player.displayName), ['b', 'a']);
+    });
+
+    // Season 15: Braun and Хоттабыч both finished on 83.2; the club's sheet
+    // ranks Braun first on the higher win rate (55.17% vs 51.64%).
+    test('equal rating: higher win rate first', () {
+      final sorted = [stats('Хоттабич', 83.2, 0.5164), stats('Braun', 83.2, 0.5517)]
+        ..sort(compareByRating);
+      expect(sorted.map((p) => p.player.displayName), ['Braun', 'Хоттабич']);
     });
   });
 }

@@ -3,10 +3,18 @@ import 'dart:math';
 import 'package:family_mafia_app/constants/season_constants.dart';
 import 'package:family_mafia_app/enums/role.dart';
 import 'package:family_mafia_app/extensions/double_extensions.dart';
+import 'package:family_mafia_app/models/rating_player_stats.dart';
 import 'package:family_mafia_app/services/season_loader.dart';
 
 // ── Pure rating formula functions ─────────────────────────────────────────
 // Extracted from SeasonLoaderService for reuse and testability.
+
+/// Standings order: higher rating first; on equal rating the higher win rate
+/// ranks higher, as the club's sheets do (season 15: Braun over Хоттабыч on 83.2).
+int compareByRating(RatingPlayerStats a, RatingPlayerStats b) {
+  final byRating = b.ratingCoefficient.compareTo(a.ratingCoefficient);
+  return byRating != 0 ? byRating : b.winRate.compareTo(a.winRate);
+}
 
 int calculateWinByRole(int seasonId, String role, int wins) {
   if (seasonId <= kOldFormatMaxSeason) {

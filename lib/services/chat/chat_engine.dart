@@ -9,6 +9,7 @@ import 'package:family_mafia_app/models/query_intent.dart';
 import 'package:family_mafia_app/models/rating_player_stats.dart';
 import 'package:family_mafia_app/models/season_config.dart';
 import 'package:family_mafia_app/models/season_stats.dart';
+import 'package:family_mafia_app/services/rating_formulas.dart';
 
 part 'src/player_resolver.dart';
 part 'src/query_parser.dart';

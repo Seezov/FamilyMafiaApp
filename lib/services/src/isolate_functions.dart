@@ -66,7 +66,7 @@ _PartialLoadOutput _computePartialData(_LoadInput input) {
 
     ratingsBySeason[meta.id] = ratings;
 
-    final sorted = ratings.sortedByDescending((r) => r.ratingCoefficient);
+    final sorted = [...ratings]..sort(compareByRating);
     statsBySeason[meta.id] =
         _generateSeasonStats(sorted, meta.gameLimit);
   }
@@ -115,7 +115,7 @@ _LoadOutput _computeAllData(_LoadInput input) {
 
     ratingsBySeason[meta.id] = ratings;
 
-    final sorted = ratings.sortedByDescending((r) => r.ratingCoefficient);
+    final sorted = [...ratings]..sort(compareByRating);
     statsBySeason[meta.id] =
         _generateSeasonStats(sorted, meta.gameLimit);
   }

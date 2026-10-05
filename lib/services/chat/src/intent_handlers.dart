@@ -151,7 +151,7 @@ extension _IntentHandlers on ChatEngine {
     final sorted = seasonRatings
         .where((r) => config == null || r.gamesPlayed >= config.gameLimit)
         .toList()
-      ..sort((a, b) => b.ratingCoefficient.compareTo(a.ratingCoefficient));
+      ..sort(compareByRating);
     final rank = sorted.indexWhere((r) => r.player.id == player.id) + 1;
 
     final buf = StringBuffer('${player.displayName} — Season $seasonId\n');
@@ -382,7 +382,7 @@ extension _IntentHandlers on ChatEngine {
       final qualified = seasonRatings
           .where((r) => config == null || r.gamesPlayed >= config.gameLimit)
           .toList()
-        ..sort((a, b) => b.ratingCoefficient.compareTo(a.ratingCoefficient));
+        ..sort(compareByRating);
 
       final top = qualified.take(n).toList();
       final buf = StringBuffer('Top $n — Season $seasonId\n');
