@@ -1,7 +1,7 @@
 // /account/admin/: approve or reject player claims; reset or unlink profiles. Rules re-check everything.
 import { signIn } from '../lib/firebase';
 import { decideClaim, explainAccountError, listClaims, listProfiles, onAccount, resetProfile, unlink, type AccountUser } from '../lib/account/store';
-import { sortClaims, takenKeys, type Claim, type Profile } from '../lib/account/state';
+import { claimKeyOk, sortClaims, takenKeys, type Claim, type Profile } from '../lib/account/state';
 
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 const esc = (v: unknown) => String(v ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
@@ -18,11 +18,13 @@ async function load() {
 function render() {
   const taken = takenKeys(profiles);
   $('claims').innerHTML = sortClaims(claims).map((c) => {
+    const forged = !claimKeyOk(c);
     const busy = c.status !== 'approved' && taken.has(c.playerKey);
+    const block = forged ? 'підроблена заявка' : busy ? 'вже привʼязаний' : '';
     return `<div class="box item"><span class="grow"><b>${esc(c.player)}</b> ← ${esc(c.googleName)} &lt;${esc(c.email)}&gt;
       <span class="label">${c.createdAt ? new Date(c.createdAt).toLocaleDateString('uk-UA') : ''}</span></span>
       <span class="st-${c.status}">${STATUS[c.status]}</span>
-      ${c.status === 'pending' ? `<button class="btn sm primary" data-act="approve" data-uid="${esc(c.uid)}" ${busy ? 'disabled title="вже привʼязаний"' : ''}>${busy ? 'вже привʼязаний' : 'Схвалити'}</button>
+      ${c.status === 'pending' ? `<button class="btn sm primary" data-act="approve" data-uid="${esc(c.uid)}" ${block ? `disabled title="${block}"` : ''}>${block || 'Схвалити'}</button>
       <button class="btn sm" data-act="reject" data-uid="${esc(c.uid)}">Відхилити</button>` : ''}</div>`;
   }).join('') || '<p class="label">Заявок немає.</p>';
   $('profiles').innerHTML = profiles.map((p) => `<div class="box item">

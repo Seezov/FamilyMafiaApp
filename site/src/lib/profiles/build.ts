@@ -2,11 +2,11 @@
 import { createHash } from 'node:crypto';
 import { cleanNick, isAvatar, nickError, playerKey } from './core.ts';
 
-export interface RestProfile { player: string; nick?: string; avatar?: string }
+export interface RestProfile { id: string; player: string; nick?: string; avatar?: string }
 export interface SiteProfile { nick?: string; avatar?: string }
 
 type RestValue = { stringValue?: string };
-type RestDoc = { fields?: Record<string, RestValue> };
+type RestDoc = { name?: string; fields?: Record<string, RestValue> };
 
 export function parseRestPage(json: unknown): { docs: RestProfile[]; next?: string } {
   const body = (json ?? {}) as { documents?: RestDoc[]; nextPageToken?: string };
@@ -15,7 +15,7 @@ export function parseRestPage(json: unknown): { docs: RestProfile[]; next?: stri
     const f = d.fields ?? {};
     const player = f.player?.stringValue;
     if (!player) continue;
-    const p: RestProfile = { player };
+    const p: RestProfile = { id: (d.name ?? '').split('/').pop() ?? '', player };
     if (f.nick?.stringValue !== undefined) p.nick = f.nick.stringValue;
     if (f.avatar?.stringValue !== undefined) p.avatar = f.avatar.stringValue;
     docs.push(p);
@@ -35,6 +35,11 @@ export function selectProfiles(names: string[], docs: RestProfile[]) {
     const key = playerKey(d.player);
     const name = byKey.get(key);
     if (!name) continue;
+    // The id comes from the claim the admin approved; only the key of the player itself is trusted.
+    if (d.id !== key && safeDecode(d.id) !== key) {
+      warnings.push(`profile ${name}: ignored — document id "${d.id}" is not this player's key`);
+      continue;
+    }
     const out: SiteProfile = {};
     if (d.nick !== undefined) {
       const nick = cleanNick(d.nick);
@@ -60,4 +65,8 @@ export function selectProfiles(names: string[], docs: RestProfile[]) {
     if (out.nick || out.avatar) profiles[key] = out;
   }
   return { profiles, files, warnings };
+}
+
+function safeDecode(s: string) {
+  try { return decodeURIComponent(s); } catch { return s; }
 }

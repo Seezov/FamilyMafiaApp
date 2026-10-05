@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { accountView, pickList, sortClaims, takenKeys, type Claim, type Profile } from './state.ts';
+import { accountView, claimKeyOk, pickList, sortClaims, takenKeys, type Claim, type Profile } from './state.ts';
 
 const claim = (status: Claim['status']): Claim => ({ uid: 'u', player: 'Braun', playerKey: 'braun', email: 'a@b.c', googleName: 'A', status });
 const profile: Profile = { key: 'braun', player: 'Braun', uid: 'u' };
@@ -47,5 +47,13 @@ describe('sortClaims', () => {
     const c = (uid: string, status: Claim['status'], createdAt: number): Claim => ({ ...claim(status), uid, createdAt });
     expect(sortClaims([c('a', 'rejected', 3), c('b', 'pending', 1), c('c', 'pending', 2), c('d', 'approved', 4)]).map((x) => x.uid))
       .toEqual(['c', 'b', 'd', 'a']);
+  });
+});
+
+describe('claimKeyOk', () => {
+  it('trusts only a key that is the key of the claimed player', () => {
+    expect(claimKeyOk(claim('pending'))).toBe(true);
+    expect(claimKeyOk({ ...claim('pending'), playerKey: 'x' })).toBe(false);
+    expect(claimKeyOk({ ...claim('pending'), player: 'Залізний', playerKey: encodeURIComponent('залізний') })).toBe(true);
   });
 });

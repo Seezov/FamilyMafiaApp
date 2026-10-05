@@ -30,3 +30,6 @@ export function pickList(
 
 export const sortClaims = (claims: Claim[]) => [...claims].sort((a, b) =>
   Number(b.status === 'pending') - Number(a.status === 'pending') || (b.createdAt ?? 0) - (a.createdAt ?? 0));
+
+/** Rules cannot recompute the key, so a claim written outside /account/ may carry someone else's. */
+export const claimKeyOk = (c: Claim) => c.playerKey === playerKey(c.player);

@@ -17,8 +17,8 @@ describe('fetchProfiles', () => {
   it('writes profiles.json and avatar files, following page tokens', async () => {
     const dirs = tmp();
     const pages = [
-      { documents: [{ fields: { player: { stringValue: 'Braun' }, avatar: { stringValue: 'data:image/webp;base64,UklGRg==' } } }], nextPageToken: 'p2' },
-      { documents: [{ fields: { player: { stringValue: 'Ghost' } } }] },
+      { documents: [{ name: 'projects/p/databases/(default)/documents/profiles/braun', fields: { player: { stringValue: 'Braun' }, avatar: { stringValue: 'data:image/webp;base64,UklGRg==' } } }], nextPageToken: 'p2' },
+      { documents: [{ name: 'projects/p/databases/(default)/documents/profiles/ghost', fields: { player: { stringValue: 'Ghost' } } }] },
     ];
     const urls: string[] = [];
     await fetchProfiles({ ...dirs, log: () => {}, fetch: (async (u: string) => { urls.push(u); return json(pages.shift()); }) as typeof fetch });
