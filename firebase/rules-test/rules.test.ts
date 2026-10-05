@@ -402,3 +402,135 @@ describe('config/seasons', () => {
     await assertFails(deleteDoc(ref(as(ADMIN))));
   });
 });
+
+describe('appeals', () => {
+  // Braun (PLAYER, approved) sits in seat 1 of G1, season 32 which started and is the newest.
+  const AID = `${G1}_${PLAYER.uid}`;
+  const seasons = (list: { id: number; startDate: string }[]) =>
+    env.withSecurityRulesDisabled((ctx) => setDoc(doc(ctx.firestore(), 'config', 'seasons'),
+      { seasons: list.map((s) => ({ ...s, title: `Season ${s.id}`, smallLeagueMinGames: 15 })) }));
+  const seedGame = (extra: Record<string, unknown> = {}) =>
+    env.withSecurityRulesDisabled((ctx) => {
+      const g = game(HOST, extra);
+      g.seats[0] = seat('Braun', 'Мирний');
+      return setDoc(doc(ctx.firestore(), 'games', G1), { ...g, createdAt: new Date(), updatedAt: new Date() });
+    });
+  const appeal = (extra: Record<string, unknown> = {}) => ({
+    gameId: G1, season: 32, date: '2026-12-03', table: 1, gameNumber: 1, host: 'Серпень', seat: 1,
+    player: 'Braun', uid: PLAYER.uid, email: PLAYER.email, text: 'Знайшов шерифа', requested: 0.5,
+    status: 'pending', createdAt: serverTimestamp(), updatedAt: serverTimestamp(), ...extra,
+  });
+  const file = (u: User, extra: Record<string, unknown> = {}, id = AID) => setDoc(doc(as(u), 'appeals', id), appeal(extra));
+  const decide = (u: User, d: Record<string, unknown>) =>
+    updateDoc(doc(as(u), 'appeals', AID), { decidedBy: u.email, decidedAt: serverTimestamp(), updatedAt: serverTimestamp(), ...d });
+  const grant = (u: User, d: Record<string, unknown>, additional = 0.5) => {
+    const db = as(u);
+    const b = writeBatch(db);
+    const seats = game(HOST).seats.map((s, i) => (i === 0 ? { ...seat('Braun', 'Мирний'), additional } : s));
+    b.update(doc(db, 'games', G1), { seats, updatedBy: u.uid, updatedAt: serverTimestamp() });
+    b.update(doc(db, 'appeals', AID), { decidedBy: u.email, decidedAt: serverTimestamp(), updatedAt: serverTimestamp(), ...d });
+    return b.commit();
+  };
+
+  beforeEach(async () => {
+    await seasons([{ id: 32, startDate: '2026-01-01' }]);
+    await seedGame();
+    await seedApproved(PLAYER);
+  });
+
+  it('an approved player files on their own current-season game', async () => {
+    await assertSucceeds(file(PLAYER));
+  });
+  it('id must be gameId_uid', async () => {
+    await assertFails(file(PLAYER, {}, `${G1}_${RIVAL.uid}`));
+    await assertFails(file(PLAYER, {}, 'whatever'));
+  });
+  it('not for someone else’s seat or name', async () => {
+    await assertFails(file(PLAYER, { seat: 2 }));
+    await assertFails(file(PLAYER, { player: 'P2', seat: 2 }));
+  });
+  it('not without an approved claim', async () => {
+    await setDoc(doc(as(RIVAL), 'claims', RIVAL.uid), claim(RIVAL));
+    await assertFails(file(RIVAL, { uid: RIVAL.uid, email: RIVAL.email }, `${G1}_${RIVAL.uid}`));
+  });
+  it('not on an unrated game', async () => {
+    await seedGame({ result: 'unrated' });
+    await assertFails(file(PLAYER));
+  });
+  it('not on a past or not-yet-started season', async () => {
+    await seasons([{ id: 32, startDate: '2026-01-01' }, { id: 33, startDate: '2026-02-01' }]);
+    await assertFails(file(PLAYER));
+    await seasons([{ id: 32, startDate: '2099-01-01' }]);
+    await assertFails(file(PLAYER));
+  });
+  it('snapshot must match the game', async () => {
+    await assertFails(file(PLAYER, { host: 'Інший' }));
+    await assertFails(file(PLAYER, { gameNumber: 2 }));
+    await assertFails(file(PLAYER, { season: 33 }));
+  });
+  it('bad text, amount, status or extra fields are denied', async () => {
+    for (const extra of [{ text: '' }, { text: 'x'.repeat(1001) }, { requested: 0 }, { requested: 5.5 },
+      { requested: '1' }, { status: 'accepted' }, { granted: 1 }, { extra: 1 }, { email: RIVAL.email }])
+      await assertFails(file(PLAYER, extra));
+  });
+  it('owner and admins read; others do not', async () => {
+    await file(PLAYER);
+    await assertSucceeds(getDoc(doc(as(PLAYER), 'appeals', AID)));
+    await assertSucceeds(getDoc(doc(as(ADMIN), 'appeals', AID)));
+    await assertFails(getDoc(doc(as(RIVAL), 'appeals', AID)));
+    await assertFails(getDoc(doc(as(HOST), 'appeals', AID)));
+  });
+  it('owner edits text and amount while pending, nothing else', async () => {
+    await file(PLAYER);
+    const ref = doc(as(PLAYER), 'appeals', AID);
+    await assertSucceeds(updateDoc(ref, { text: 'Інакше', requested: 0.3, updatedAt: serverTimestamp() }));
+    await assertFails(updateDoc(ref, { seat: 2, updatedAt: serverTimestamp() }));
+    await assertFails(updateDoc(ref, { status: 'accepted', updatedAt: serverTimestamp() }));
+    await assertFails(updateDoc(ref, { requested: 9, updatedAt: serverTimestamp() }));
+  });
+  it('owner withdraws while pending; not after a decision', async () => {
+    await file(PLAYER);
+    await assertSucceeds(deleteDoc(doc(as(PLAYER), 'appeals', AID)));
+    await file(PLAYER);
+    await decide(ADMIN, { status: 'rejected' });
+    await assertFails(deleteDoc(doc(as(PLAYER), 'appeals', AID)));
+    await assertFails(updateDoc(doc(as(PLAYER), 'appeals', AID), { text: 'x', updatedAt: serverTimestamp() }));
+  });
+  it('admin rejects, with a comment; not with granted or a forged decidedBy', async () => {
+    await file(PLAYER);
+    await assertFails(decide(ADMIN, { status: 'rejected', granted: 0.5 }));
+    await assertFails(decide(ADMIN, { status: 'rejected', decidedBy: HOST.email }));
+    await assertSucceeds(decide(ADMIN, { status: 'rejected', adminComment: 'Ні' }));
+  });
+  it('non-admins cannot decide', async () => {
+    await file(PLAYER);
+    await assertFails(decide(HOST, { status: 'rejected' }));
+    await assertFails(decide(PLAYER, { status: 'rejected' }));
+  });
+  it('admin accepts with the game written in the same batch', async () => {
+    await file(PLAYER);
+    await assertFails(decide(ADMIN, { status: 'accepted', granted: 0.5 }));
+    await assertFails(grant(ADMIN, { status: 'accepted', granted: 0.4 }));
+    await assertSucceeds(grant(ADMIN, { status: 'accepted', granted: 0.5 }));
+  });
+  it('partial: 0 < granted < requested', async () => {
+    await file(PLAYER);
+    await assertFails(grant(ADMIN, { status: 'partial', granted: 0.5 }));
+    await assertFails(grant(ADMIN, { status: 'partial', granted: 0 }));
+    await assertSucceeds(grant(ADMIN, { status: 'partial', granted: 0.2 }, 0.2));
+  });
+  it('a decided appeal cannot be decided again', async () => {
+    await file(PLAYER);
+    await decide(ADMIN, { status: 'rejected' });
+    await assertFails(grant(ADMIN, { status: 'accepted', granted: 0.5 }));
+  });
+  it('admin decides on a past season', async () => {
+    await file(PLAYER);
+    await seasons([{ id: 32, startDate: '2026-01-01' }, { id: 33, startDate: '2026-02-01' }]);
+    await assertSucceeds(decide(ADMIN, { status: 'rejected' }));
+  });
+  it('admin may delete any appeal', async () => {
+    await file(PLAYER);
+    await assertSucceeds(deleteDoc(doc(as(ADMIN), 'appeals', AID)));
+  });
+});

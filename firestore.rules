@@ -122,6 +122,61 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
+    // Appeals for an additional point (season 32+ games). Id = gameId + '_' + uid: one per player per game.
+    match /appeals/{id} {
+      function gameAt(gid) { return get(/databases/$(database)/documents/games/$(gid)).data; }
+      function seasonStart(s) {
+        let p = s.startDate.split('-');
+        return timestamp.date(int(p[0]), int(p[1]), int(p[2]));
+      }
+      // config/seasons is ordered by id and contiguous. Keep in sync with hostDefaultSeason (seasons.ts).
+      function isCurrentSeason(season) {
+        let list = get(/databases/$(database)/documents/config/seasons).data.seasons;
+        let i = season - list[0].id;
+        return i >= 0 && i < list.size() && list[i].id == season && seasonStart(list[i]) <= request.time
+          && (i == list.size() - 1 || seasonStart(list[i + 1]) > request.time);
+      }
+      function validAmount(n) { return (n is int || n is float) && n > 0 && n <= 5; }
+      function validText(t) { return t is string && t.size() >= 1 && t.size() <= 1000; }
+      function claimPlayer() { return get(/databases/$(database)/documents/claims/$(request.auth.uid)).data.player; }
+      function validFiling(d) {
+        let fields = ['gameId', 'season', 'date', 'table', 'gameNumber', 'host', 'seat', 'player', 'uid', 'email',
+          'text', 'requested', 'status', 'createdAt', 'updatedAt'];
+        return d.keys().hasOnly(fields) && d.keys().hasAll(fields)
+          && d.gameId is string && d.gameId.matches('^[A-Za-z0-9]{20}$')
+          && id == d.gameId + '_' + request.auth.uid
+          && d.uid == request.auth.uid && d.email == email() && d.player == claimPlayer()
+          && d.seat is int && d.seat >= 1 && d.seat <= 10
+          && gameAt(d.gameId).seats[d.seat - 1].player == d.player
+          && d.season == gameAt(d.gameId).season && d.date == gameAt(d.gameId).date
+          && d.table == gameAt(d.gameId).table && d.gameNumber == gameAt(d.gameId).gameNumber
+          && d.host == gameAt(d.gameId).host
+          && gameAt(d.gameId).result != 'unrated' && isCurrentSeason(d.season)
+          && validText(d.text) && validAmount(d.requested)
+          && d.status == 'pending' && d.createdAt == request.time && d.updatedAt == request.time;
+      }
+      function playerEdit(d) {
+        return resource.data.uid == request.auth.uid && resource.data.status == 'pending'
+          && d.diff(resource.data).affectedKeys().hasOnly(['text', 'requested', 'updatedAt'])
+          && validText(d.text) && validAmount(d.requested) && d.updatedAt == request.time
+          && isCurrentSeason(resource.data.season);
+      }
+      function gameWritten(gid) { return getAfter(/databases/$(database)/documents/games/$(gid)).data.updatedAt == request.time; }
+      function decision(d) {
+        return isAdmin() && resource.data.status == 'pending'
+          && d.diff(resource.data).affectedKeys().hasOnly(['status', 'granted', 'adminComment', 'decidedBy', 'decidedAt', 'updatedAt'])
+          && d.decidedBy == email() && d.decidedAt == request.time && d.updatedAt == request.time
+          && (!('adminComment' in d) || (d.adminComment is string && d.adminComment.size() <= 1000))
+          && ((d.status == 'rejected' && !('granted' in d))
+            || (d.status == 'accepted' && d.get('granted', null) == d.requested && gameWritten(d.gameId))
+            || (d.status == 'partial' && validAmount(d.get('granted', null)) && d.granted < d.requested && gameWritten(d.gameId)));
+      }
+      allow read: if (signedIn() && resource.data.uid == request.auth.uid) || isAdmin();
+      allow create: if approvedPlayer() && validFiling(request.resource.data);
+      allow update: if (approvedPlayer() && playerEdit(request.resource.data)) || decision(request.resource.data);
+      allow delete: if (signedIn() && resource.data.uid == request.auth.uid && resource.data.status == 'pending') || isAdmin();
+    }
+
     // The club's tournament list and final thresholds, edited on /debug/.
     match /config/club {
       allow read: if true;
