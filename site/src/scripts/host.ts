@@ -4,6 +4,8 @@ import { supportFivePoints } from '../lib/hosting/points';
 import { explainError, listSeasonGames, millis, onUser, saveGame, signIn, signOutUser, type HostUser } from '../lib/hosting/store';
 import { ROLES, type FormState, type GameDoc, type Role } from '../lib/hosting/types';
 import { validate } from '../lib/hosting/validate';
+import { loadRoster } from '../lib/roster/store';
+import { aliasPairs, autocompleteNames } from '../lib/roster/roster';
 
 const page = JSON.parse(document.getElementById('host-data')!.textContent!) as { names: string[]; defaultSeason: number | null; aliases: [string, string][] };
 const aliases = new Map(page.aliases);
@@ -17,6 +19,15 @@ const esc = (v: unknown) => String(v ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&
 const ROLE_LETTER: Record<Role, string> = { 'Мирний': 'М', 'Мафія': 'Ч', 'Дон': 'Д', 'Шериф': 'Ш' };
 const nextRole = (r: Role) => ROLES[(ROLES.indexOf(r) + 1) % ROLES.length];
 const isNew = (name: string) => !!name.trim() && !page.names.includes(name.trim());
+
+// The baked list is as of the last build; a player an admin just added shows up here at once.
+void loadRoster().then((r) => {
+  if (!r) return;
+  page.names = autocompleteNames(r);
+  aliases.clear();
+  for (const [k, v] of aliasPairs(r)) aliases.set(k, v);
+  document.getElementById('names')!.innerHTML = page.names.map((n) => `<option value="${esc(n)}">`).join('');
+}).catch(() => { /* keep the baked list */ });
 
 let user: HostUser | null = null;
 let games: (GameDoc & { id: string })[] = [];

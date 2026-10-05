@@ -3,19 +3,21 @@ import fs from 'node:fs';
 import path from 'node:path';
 import Base from '../../layouts/Base.astro';
 import '../../styles/forms.css';
+import { aliasPairs, autocompleteNames, dedupeRoster, fromAppJson } from '../../lib/roster/roster';
 
-// Player names for autocomplete: the app's roster with nicknames, junk filtered.
+// Player names for autocomplete: the build's roster snapshot (config/players), else the bundled file.
+// The page also reads the live list on load (scripts/host.ts).
 const root = path.resolve(process.cwd(), '..');
-const roster = JSON.parse(fs.readFileSync(path.join(root, 'assets/raw/players.json'), 'utf8')) as { displayName: string; nicknames?: string[] }[];
-const names = [...new Set(roster.flatMap((p) => [p.displayName, ...(p.nicknames ?? [])])
-  .map((n) => n.trim()).filter((n) => n.length >= 2 && !/^[\d/\\.]+$/.test(n)))].sort((a, b) => a.localeCompare(b, 'uk'));
+const snapshot = path.join(root, 'assets/prefetched/players.json');
+const rosterFile = fs.existsSync(snapshot) ? snapshot : path.join(root, 'assets/raw/players.json');
+const roster = dedupeRoster(fromAppJson(JSON.parse(fs.readFileSync(rosterFile, 'utf8'))));
+const names = autocompleteNames(roster);
 // Default season: the latest firestore season in the live config, else none.
 const config = JSON.parse(fs.readFileSync(path.join(root, 'remote_config.json'), 'utf8')) as { seasons: { id: number; source: string }[] };
 const defaultSeason = config.seasons.filter((s) => s.source === 'firestore').map((s) => s.id).sort((a, b) => b - a)[0] ?? null;
 // Lower-cased name or nickname → display name, so validation can catch one player
 // entered twice under different names.
-const aliases = roster.flatMap((p) => [p.displayName, ...(p.nicknames ?? [])].map((n) => [n.trim().toLowerCase(), p.displayName.trim()]))
-  .filter(([k]) => k.length >= 2);
+const aliases = aliasPairs(roster);
 const data = JSON.stringify({ names, defaultSeason, aliases }).replace(/</g, '\\u003c');
 ---
 <Base title="Провести гру" description="Запис ігор клубу для ведучих." active="host">
