@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { hostDefaultSeason, nextSeason, seasonErrors, toSeasons, type ClubSeason } from './seasons';
+import { followDefault, hostDefaultSeason, nextSeason, nextSeasonId, seasonErrors, toSeasons, type ClubSeason } from './seasons';
 
 const cases = JSON.parse(fs.readFileSync(new URL('../../../../test/fixtures/club_season_cases.json', import.meta.url), 'utf8')) as
   { case: string; lastJsonId: number; seasons: ClubSeason[]; valid: boolean }[];
@@ -40,5 +40,26 @@ describe('toSeasons', () => {
   it('reads Firestore data and drops malformed entries', () => {
     expect(toSeasons([S(32, '2026-12-01'), { id: '33' }, null])).toEqual([S(32, '2026-12-01')]);
     expect(toSeasons(undefined)).toEqual([]);
+  });
+});
+
+describe('nextSeasonId', () => {
+  it('the id the admin saw on the form', () => {
+    expect(nextSeasonId([], 31, 32)).toBe(32);
+    expect(nextSeasonId([S(32, '2026-12-01')], 31, 33)).toBe(33);
+  });
+  it('another admin created it first: refuse instead of taking the next id', () => {
+    expect(() => nextSeasonId([S(32, '2026-12-01')], 31, 32)).toThrow(/32.*reload/);
+  });
+});
+
+describe('followDefault', () => {
+  it('a form still on the old default follows the live one', () => {
+    expect(followDefault(31, 31, 32, false)).toBe(32);
+    expect(followDefault(null, null, 32, false)).toBe(32);
+  });
+  it('a form the host opened or a season they picked stays', () => {
+    expect(followDefault(31, 31, 32, true)).toBe(31);
+    expect(followDefault(30, 31, 32, false)).toBe(30);
   });
 });

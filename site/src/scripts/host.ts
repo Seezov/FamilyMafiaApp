@@ -7,7 +7,7 @@ import { validate } from '../lib/hosting/validate';
 import { loadRoster } from '../lib/roster/store';
 import { aliasPairs, autocompleteNames } from '../lib/roster/roster';
 import { loadClubSeasons } from '../lib/seasons/store';
-import { hostDefaultSeason } from '../lib/seasons/seasons';
+import { followDefault, hostDefaultSeason } from '../lib/seasons/seasons';
 
 const page = JSON.parse(document.getElementById('host-data')!.textContent!) as { names: string[]; defaultSeason: number | null; aliases: [string, string][] };
 const aliases = new Map(page.aliases);
@@ -36,12 +36,13 @@ let games: (GameDoc & { id: string })[] = [];
 let form: FormState = emptyForm(page.defaultSeason, today());
 // The live default: the newest club season whose start date has come (config/seasons),
 // else the build's. A form still on the old default follows it.
+let formOpened = false; // a form the host opened, or a season they picked, keeps its season
 const seasonReady = loadClubSeasons().then((list) => {
   const d = hostDefaultSeason(list, today(), page.defaultSeason);
   if (d === page.defaultSeason) return;
   const old = page.defaultSeason;
   page.defaultSeason = d;
-  if (form.season === old) form.season = d;
+  form.season = followDefault(form.season, old, d, formOpened);
 }).catch(() => { /* keep the build's default */ });
 let editing: { id: string; updatedAtMillis: number } | null = null;
 
@@ -266,6 +267,7 @@ $('game-form').addEventListener('submit', async (e) => {
 
 // ── Opening a game ────────────────────────────────────────────────────────
 function openNew() {
+  formOpened = true;
   editing = null;
   form = loadDraft(null, null) ?? emptyForm(form.season ?? page.defaultSeason, today());
   if (form.gameNumber === null) form.gameNumber = nextGameNumber(games, form.date, form.table);
@@ -273,6 +275,7 @@ function openNew() {
 }
 
 function openExisting(g: GameDoc & { id: string }) {
+  formOpened = true;
   editing = { id: g.id, updatedAtMillis: millis(g.updatedAt) };
   const draft = loadDraft(g.id, editing.updatedAtMillis);
   const stale = !draft && store.get(draftKey(g.id)) !== null;
@@ -284,6 +287,7 @@ function openExisting(g: GameDoc & { id: string }) {
 
 $('new-game').addEventListener('click', openNew);
 $('l-season').addEventListener('change', async (e) => {
+  formOpened = true;
   form.season = Number((e.target as HTMLInputElement).value) || page.defaultSeason;
   await refreshList();
 });
@@ -302,8 +306,8 @@ onUser(async (u) => {
   if (u === 'not-host') { user = null; return show('not-host'); }
   user = u;
   $('who').textContent = `${u.name}${u.admin ? ' · адмін' : ''}`;
+  await seasonReady; // before the list: a game must not start on the old default
   show('list-view');
-  await seasonReady;
   $<HTMLInputElement>('l-season').value = (form.season ?? page.defaultSeason)?.toString() ?? '';
   try { await refreshList(); } catch (e) { $('games').innerHTML = `<p class="msg-error">${esc(explainError(e))}</p>`; }
 });

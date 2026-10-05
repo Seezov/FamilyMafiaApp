@@ -2,7 +2,7 @@
 import { collection, doc, getCountFromServer, getDoc, query, runTransaction, serverTimestamp, where } from 'firebase/firestore';
 import { db } from '../firebase';
 import type { ClubAdmin } from '../club/store';
-import { seasonErrors, toSeasons, type ClubSeason } from './seasons';
+import { nextSeasonId, seasonErrors, toSeasons, type ClubSeason } from './seasons';
 
 const ref = () => doc(db, 'config', 'seasons');
 const stamp = (u: ClubAdmin) => ({ updatedAt: serverTimestamp(), updatedBy: u.uid, updatedByEmail: u.email });
@@ -17,11 +17,11 @@ export async function gamesCount(season: number): Promise<number> {
 }
 
 /** Appends the next season (id from the fresh document, so two admins never reuse one) and bumps meta/state. */
-export async function createSeason(draft: Omit<ClubSeason, 'id'>, lastJsonId: number, u: ClubAdmin): Promise<ClubSeason[]> {
+export async function createSeason(draft: Omit<ClubSeason, 'id'>, expectedId: number, lastJsonId: number, u: ClubAdmin): Promise<ClubSeason[]> {
   return runTransaction(db, async (tx) => {
     const snap = await tx.get(ref());
     const cur = snap.exists() ? toSeasons(snap.data().seasons) : [];
-    const id = (cur.at(-1)?.id ?? lastJsonId) + 1;
+    const id = nextSeasonId(cur, lastJsonId, expectedId);
     const list = [...cur, { id, title: draft.title.trim(), smallLeagueMinGames: draft.smallLeagueMinGames, startDate: draft.startDate }];
     const errors = seasonErrors(list, lastJsonId);
     if (errors.length) throw new Error(errors.join('; '));

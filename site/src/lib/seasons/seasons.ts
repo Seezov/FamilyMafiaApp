@@ -46,3 +46,14 @@ export function toSeasons(raw: unknown): ClubSeason[] {
       && Number.isInteger(s.smallLeagueMinGames) && typeof s.startDate === 'string')
     .map((s) => ({ id: s.id, title: s.title, smallLeagueMinGames: s.smallLeagueMinGames, startDate: s.startDate }));
 }
+
+/** The new season's id, which must be the one the admin saw: another admin may have just created it. */
+export function nextSeasonId(list: ClubSeason[], lastJsonId: number, expectedId: number): number {
+  const id = (list.at(-1)?.id ?? lastJsonId) + 1;
+  if (id !== expectedId) throw new Error(`Season ${expectedId} was just created by someone else — reload`);
+  return id;
+}
+
+/** /host/'s form season after the live default arrives: only an untouched form on the old default follows. */
+export const followDefault = (formSeason: number | null, oldDefault: number | null, newDefault: number | null, opened: boolean) =>
+  !opened && formSeason === oldDefault ? newDefault : formSeason;

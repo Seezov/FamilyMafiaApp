@@ -75,8 +75,9 @@ $('create').addEventListener('submit', (ev) => {
   if (!isAdmin() || busy) return;
   const f = ev.target as HTMLFormElement;
   const v = (n: string) => (f.elements.namedItem(n) as HTMLInputElement).value;
-  void run(() => createSeason({ title: v('title'), smallLeagueMinGames: Number(v('min')), startDate: v('start') }, page.lastJsonId, user as ClubAdmin),
-    `Season ${nextSeason(club, page.lastJsonId, page.jsonMinGames, today()).id} created.`);
+  const id = Number(f.dataset.for);
+  void run(() => createSeason({ title: v('title'), smallLeagueMinGames: Number(v('min')), startDate: v('start') }, id, page.lastJsonId, user as ClubAdmin),
+    `Season ${id} created.`);
 });
 
 document.addEventListener('click', (ev) => {
