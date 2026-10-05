@@ -1,0 +1,78 @@
+---
+import Base from '../../layouts/Base.astro';
+import { loadPlayers } from '../../lib/data';
+import { href } from '../../lib/url';
+import '../../styles/forms.css';
+
+const players = loadPlayers().players.map((p) => ({ name: p.name, slug: p.slug, games: p.games, seasons: p.seasons }));
+const data = JSON.stringify({ players, base: href('') }).replace(/</g, '\\u003c');
+---
+<Base title="Мій профіль" description="Профіль гравця Family Mafia Club.">
+  <div class="pagehead"><h1 class="display">Мій профіль</h1><span class="label" id="who"></span></div>
+
+  <section data-view="signed-out" class="box" hidden>
+    <p>Увійди, щоб привʼязати свій акаунт до гравця клубу.</p>
+    <button class="btn primary" id="sign-in" type="button">Увійти через Google</button>
+  </section>
+
+  <section data-view="pick" class="box" hidden>
+    <p id="rejected-note" class="msg-warn" hidden>Попередню заявку відхилено. Можеш обрати гравця ще раз.</p>
+    <p>Хто ти в таблицях клубу? Після вибору адмін підтвердить заявку.</p>
+    <input id="pick-q" type="search" placeholder="Пошук гравця…" aria-label="Пошук гравця" autocomplete="off" />
+    <ul id="pick-list" class="pick"></ul>
+  </section>
+
+  <section data-view="pending" class="box" hidden>
+    <p>Заявку на гравця <b id="pending-player"></b> надіслано. Чекає схвалення адміна.</p>
+    <button class="btn" id="cancel-claim" type="button">Скасувати заявку</button>
+  </section>
+
+  <section data-view="settings" hidden>
+    <div class="box">
+      <p>Ти — <a id="my-page"></a>. Зміни зʼявляться на сайті протягом години.</p>
+      <label class="field">Нік на сайті
+        <input id="nick" maxlength="24" autocomplete="off" />
+        <span class="label">Порожньо — показувати імʼя з таблиць.</span>
+      </label>
+      <div class="field">Аватарка
+        <div class="av-row">
+          <canvas id="av-preview" width="128" height="128"></canvas>
+          <div class="av-tools">
+            <input id="av-file" type="file" accept="image/*" />
+            <label>Масштаб <input id="av-zoom" type="range" min="1" max="3" step="0.05" value="1" /></label>
+            <label>Зсув ↔ <input id="av-dx" type="range" min="-1" max="1" step="0.05" value="0" /></label>
+            <label>Зсув ↕ <input id="av-dy" type="range" min="-1" max="1" step="0.05" value="0" /></label>
+            <button class="btn sm" id="av-remove" type="button">Видалити аватарку</button>
+          </div>
+        </div>
+      </div>
+      <div class="actions"><button class="btn primary" id="save" type="button">Зберегти</button><span id="msg" aria-live="polite"></span></div>
+    </div>
+  </section>
+
+  <p class="tools"><a id="admin-link" href={href('account/admin/')} hidden>Заявки гравців (адмін)</a>
+    <button class="btn sm" id="sign-out" type="button" hidden>Вийти</button></p>
+  <script type="application/json" id="account-data" set:html={data} />
+</Base>
+
+<script>
+  import '../../scripts/account';
+</script>
+
+<style is:global>
+  [data-view][hidden], #admin-link[hidden], #sign-out[hidden], #rejected-note[hidden] { display: none; }
+  #pick-q, #nick { background: var(--panel-2); border: 1px solid var(--border); border-radius: 6px; color: var(--text);
+    padding: 6px 10px; font: inherit; width: min(360px, 100%); }
+  .pick { list-style: none; padding: 0; margin: 10px 0 0; display: grid; gap: 4px; }
+  .pick button { all: unset; cursor: pointer; display: flex; gap: 10px; justify-content: space-between; width: 100%;
+    padding: 6px 10px; border: 1px solid var(--border); border-radius: 6px; box-sizing: border-box; }
+  .pick button:hover:not(:disabled) { border-color: var(--muted); }
+  .pick button:disabled { opacity: .5; cursor: not-allowed; }
+  .field { display: grid; gap: 6px; margin: 14px 0; color: var(--muted); }
+  .av-row { display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-start; }
+  #av-preview { width: 128px; height: 128px; border-radius: 50%; background: var(--panel-2); border: 1px solid var(--border); }
+  .av-tools { display: grid; gap: 8px; }
+  .av-tools label { display: flex; gap: 8px; align-items: center; }
+  .actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .tools { display: flex; gap: 14px; align-items: center; }
+</style>
