@@ -1,4 +1,3 @@
-// site/src/lib/profiles/build.test.ts
 import { describe, expect, it } from 'vitest';
 import { parseRestPage, selectProfiles } from './build.ts';
 

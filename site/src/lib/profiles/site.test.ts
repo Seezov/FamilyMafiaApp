@@ -1,4 +1,3 @@
-// site/src/lib/profiles/site.test.ts
 import { describe, expect, it } from 'vitest';
 import { indexBySlug } from './site.ts';
 

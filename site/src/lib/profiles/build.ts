@@ -1,4 +1,3 @@
-// site/src/lib/profiles/build.ts
 // Turns the public `profiles` collection into site data. Pure: no I/O.
 import { createHash } from 'node:crypto';
 import { cleanNick, isAvatar, nickError, playerKey } from './core.ts';

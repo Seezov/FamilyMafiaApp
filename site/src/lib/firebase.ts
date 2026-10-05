@@ -1,4 +1,3 @@
-// site/src/lib/firebase.ts
 // One Firebase app per page for /host/ and /account/. Access control lives in firestore.rules.
 import { initializeApp } from 'firebase/app';
 import { GoogleAuthProvider, getAuth, signInWithPopup, signInWithRedirect, signOut } from 'firebase/auth';

@@ -1,4 +1,3 @@
-// site/src/lib/profiles/core.ts
 // Profile rules shared by the account pages, the build script and the site.
 // Keep in sync with firestore.rules (nick length, avatar pattern and size).
 export const NICK_MIN = 2;

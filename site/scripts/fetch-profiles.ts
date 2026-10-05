@@ -1,4 +1,3 @@
-// site/scripts/fetch-profiles.ts
 // Pre-build: public `profiles` from Firestore → data/profiles.json + public/avatars/.
 // Never fails the build: on any error the site is built with sheet names.
 import fs from 'node:fs';

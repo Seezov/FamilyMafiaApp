@@ -1,4 +1,3 @@
-// site/src/lib/profiles/site.ts
 // Build-time display of player profiles (nick + avatar) written by scripts/fetch-profiles.ts.
 import fs from 'node:fs';
 import path from 'node:path';

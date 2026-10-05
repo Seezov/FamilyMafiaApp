@@ -1,4 +1,3 @@
-// site/src/lib/account/avatar.ts
 // Square crop + 256×256 WebP (JPEG where the browser cannot encode WebP), small enough for Firestore.
 import { AVATAR_MAX_CHARS } from '../profiles/core';
 

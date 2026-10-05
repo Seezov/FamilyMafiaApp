@@ -1,4 +1,3 @@
-// site/src/lib/account/store.ts
 // Firestore calls for /account/ and /account/admin/. Shapes must match firestore.rules.
 import { onAuthStateChanged } from 'firebase/auth';
 import {

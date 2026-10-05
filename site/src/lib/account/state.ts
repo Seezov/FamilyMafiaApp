@@ -1,4 +1,3 @@
-// site/src/lib/account/state.ts
 // Pure account logic for /account/ (unit-tested); Firestore calls live in store.ts.
 export interface Claim {
   uid: string; player: string; playerKey: string; email: string; googleName: string;

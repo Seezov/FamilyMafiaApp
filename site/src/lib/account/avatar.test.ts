@@ -1,4 +1,3 @@
-// site/src/lib/account/avatar.test.ts
 import { describe, expect, it } from 'vitest';
 import { cropRect, encodeAvatar, type Canvasish } from './avatar.ts';
 

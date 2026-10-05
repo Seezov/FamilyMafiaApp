@@ -1,4 +1,3 @@
-// site/src/lib/profiles/core.test.ts
 import { describe, expect, it } from 'vitest';
 import { AVATAR_MAX_CHARS, cleanNick, isAvatar, matchesFilter, nickError, playerKey } from './core.ts';
 
