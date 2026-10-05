@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:family_mafia_app/enums/season.dart';
 import 'package:family_mafia_app/models/club_config.dart';
+import 'package:family_mafia_app/models/club_season.dart';
 import 'package:family_mafia_app/models/season_config.dart';
 import 'package:family_mafia_app/models/tournament.dart';
 import 'package:family_mafia_app/repositories/games_repository.dart';
@@ -11,6 +12,7 @@ import 'package:family_mafia_app/repositories/rating_repository.dart';
 import 'package:family_mafia_app/repositories/role_percentiles_repository.dart';
 import 'package:family_mafia_app/repositories/season_repository.dart';
 import 'package:family_mafia_app/services/asset_season_cache_service.dart';
+import 'package:family_mafia_app/services/empty_seasons.dart';
 import 'package:family_mafia_app/services/firestore_service.dart';
 import 'package:family_mafia_app/services/io_season_cache_service.dart';
 import 'package:family_mafia_app/services/season_cache_service.dart';
@@ -81,9 +83,11 @@ List<Tournament> tournamentsWithBundledFallback(
   }
 }
 
-_ParsedConfig _parseConfig(String json, {String? bundledJsonForTournamentsFallback}) {
+_ParsedConfig _parseConfig(String json,
+    {String? bundledJsonForTournamentsFallback, List<ClubSeason> clubSeasons = const []}) {
   final map = jsonDecode(json) as Map<String, dynamic>;
-  final seasons = (map['seasons'] as List).cast<Map<String, dynamic>>();
+  final jsonSeasons = (map['seasons'] as List).cast<Map<String, dynamic>>();
+  final seasons = appendClubSeasons(jsonSeasons, _validFor(jsonSeasons, clubSeasons));
   final tournaments = bundledJsonForTournamentsFallback == null
       ? parseTournaments(map)
       : tournamentsWithBundledFallback(map, bundledJsonForTournamentsFallback);
@@ -91,6 +95,40 @@ _ParsedConfig _parseConfig(String json, {String? bundledJsonForTournamentsFallba
     seasons.map((e) => SeasonConfig.fromJson(e)).toList(),
     tournaments,
   );
+}
+
+/// Club seasons only when they continue this JSON's ids; a config with them
+/// already merged (the build's snapshot) keeps its own copy.
+List<ClubSeason> _validFor(List<Map<String, dynamic>> jsonSeasons, List<ClubSeason> club) {
+  if (club.isEmpty) return club;
+  final last = lastSeasonId(jsonSeasons);
+  if (club.first.id <= last) return const []; // already in this config
+  final errors = clubSeasonErrors(club, lastJsonId: last);
+  if (errors.isEmpty) return club;
+  debugPrint('config/seasons ignored: ${errors.join('; ')}');
+  return const [];
+}
+
+/// Firestore `config/seasons`: live (cached when it parses), else the cached
+/// copy, else none.
+Future<List<ClubSeason>> _clubSeasons(Ref ref) async {
+  final cache = ref.read(seasonCacheServiceProvider);
+  final firestore = ref.read(firestoreServiceProvider);
+  if (firestore != null) {
+    try {
+      final live = await firestore.fetchClubSeasons(kFirebaseProjectId);
+      if (live != null) return live;
+    } catch (e) {
+      debugPrint('Club seasons fetch failed: $e');
+    }
+  }
+  try {
+    final cached = await cache.getCachedClubSeasons();
+    if (cached != null) return parseClubSeasons(jsonDecode(cached));
+  } catch (e) {
+    debugPrint('Cached club seasons unavailable: $e');
+  }
+  return const [];
 }
 
 /// Best-effort read of the bundled season config, for the tournaments
@@ -117,6 +155,7 @@ final parsedConfigProvider = FutureProvider<_ParsedConfig>((ref) async {
   final cacheService = ref.read(seasonCacheServiceProvider);
   final dio = ref.read(dioProvider);
   final env = await ref.watch(envJsonProvider.future);
+  final club = await _clubSeasons(ref);
 
   final configUrl = _dartDefineConfigUrl.isNotEmpty
       ? _dartDefineConfigUrl
@@ -127,7 +166,11 @@ final parsedConfigProvider = FutureProvider<_ParsedConfig>((ref) async {
       final response = await dio.get<String>(configUrl);
       final json = response.data!;
       await cacheService.cacheRemoteConfig(json);
-      return _parseConfig(json, bundledJsonForTournamentsFallback: await _tryLoadBundledConfigJson());
+      final parsed = _parseConfig(json, bundledJsonForTournamentsFallback: await _tryLoadBundledConfigJson(), clubSeasons: club);
+      if (club.isNotEmpty && parsed.seasons.any((s) => s.id == club.first.id)) {
+        await cacheService.cacheClubSeasons(jsonEncode([for (final s in club) s.toJson()]));
+      }
+      return parsed;
     } catch (e) {
       debugPrint('Remote config fetch failed: $e');
     }
@@ -140,7 +183,11 @@ final parsedConfigProvider = FutureProvider<_ParsedConfig>((ref) async {
   try {
     final cached = await cacheService.getCachedRemoteConfig();
     if (cached != null) {
-      return _parseConfig(cached, bundledJsonForTournamentsFallback: await _tryLoadBundledConfigJson());
+      final parsed = _parseConfig(cached, bundledJsonForTournamentsFallback: await _tryLoadBundledConfigJson(), clubSeasons: club);
+      if (club.isNotEmpty && parsed.seasons.any((s) => s.id == club.first.id)) {
+        await cacheService.cacheClubSeasons(jsonEncode([for (final s in club) s.toJson()]));
+      }
+      return parsed;
     }
   } catch (e) {
     debugPrint('Cached remote config unavailable: $e');
@@ -148,7 +195,11 @@ final parsedConfigProvider = FutureProvider<_ParsedConfig>((ref) async {
 
   try {
     final json = await rootBundle.loadString('assets/raw/season_config.json');
-    return _parseConfig(json);
+    final parsed = _parseConfig(json, clubSeasons: club);
+    if (club.isNotEmpty && parsed.seasons.any((s) => s.id == club.first.id)) {
+      await cacheService.cacheClubSeasons(jsonEncode([for (final s in club) s.toJson()]));
+    }
+    return parsed;
   } catch (e) {
     debugPrint('Bundled season_config.json load failed: $e');
   }
@@ -296,12 +347,12 @@ final initialLoadProvider = FutureProvider<void>((ref) async {
 
   // Phase 3: load players + latest season only
   final playersJson = await ref.read(playersJsonProvider.future);
-  final latestConfig = configs.last;
-  final latestJson = await dataService.loadSeasonJson(latestConfig);
-
-  if (latestJson == null) {
-    throw Exception('Failed to load latest season: ${latestConfig.title}');
+  // The newest season with games: one just created on /seasons/edit/ has none yet.
+  final latestLoad = await latestWithGames(configs, dataService.loadSeasonJson);
+  if (latestLoad == null) {
+    throw Exception('Failed to load latest season: ${configs.last.title}');
   }
+  final (latestConfig, latestJson) = latestLoad;
 
   final loader = _createLoader(ref);
   await loader.loadSeasons(
@@ -363,7 +414,7 @@ final backgroundLoadProvider = FutureProvider<void>((ref) async {
 
   for (final config in remote) {
     final json = await shared.dataService.loadSeasonJson(config);
-    if (json != null) {
+    if (json != null && !isEmptyFirestoreSnapshot(json)) {
       remainingJsons.add(json);
       loadedRemainingConfigs.add(config);
     }

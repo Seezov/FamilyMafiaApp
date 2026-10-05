@@ -48,4 +48,10 @@ class AssetSeasonCacheService implements SeasonCacheService {
 
   @override
   Future<void> cachePlayers(String jsonData) async {}
+
+  @override
+  Future<String?> getCachedClubSeasons() async => null;
+
+  @override
+  Future<void> cacheClubSeasons(String jsonData) async {}
 }

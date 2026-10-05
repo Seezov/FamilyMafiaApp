@@ -17,6 +17,8 @@ class _MemCache implements SeasonCacheService {
   @override Future<void> cacheClubConfig(String json) async {}
   @override Future<String?> getCachedPlayers() async => players;
   @override Future<void> cachePlayers(String json) async => players = json;
+  @override Future<String?> getCachedClubSeasons() async => null;
+  @override Future<void> cacheClubSeasons(String json) async {}
 }
 
 class _FakeFirestore extends FirestoreService {

@@ -37,6 +37,8 @@ class _MemCache implements SeasonCacheService {
   @override Future<String?> getCachedPlayers() async => null;
   @override Future<void> cachePlayers(String json) async {}
   @override Future<void> cacheClubConfig(String json) async {}
+  @override Future<String?> getCachedClubSeasons() async => null;
+  @override Future<void> cacheClubSeasons(String json) async {}
 }
 
 const _src = FirestoreSource(projectId: 'p1');
