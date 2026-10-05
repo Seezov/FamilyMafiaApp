@@ -27,7 +27,25 @@ void main() {
     expect(slugs[1], 'sasha-1');
     expect(slugs[2], 'sasha-2');
     expect(slugs[3], 'olia');
-    expect(slugs[4], 'player-4');
+    expect(slugs[4], 'player-1');
     expect(slugs.values.toSet(), hasLength(4));
+  });
+
+  test('colliding slugs do not depend on list positions', () {
+    // Ids are list positions; a merge or the import's dedupe shifts them.
+    final before = assignSlugs(const [
+      Player(id: 10, displayName: 'Leon'),
+      Player(id: 20, displayName: 'Mery'),
+      Player(id: 30, displayName: 'Leon'),
+      Player(id: 40, displayName: '???'),
+    ]);
+    final after = assignSlugs(const [
+      Player(id: 9, displayName: 'Leon'),
+      Player(id: 19, displayName: 'Mery'),
+      Player(id: 28, displayName: 'Leon'),
+      Player(id: 37, displayName: '???'),
+    ]);
+    expect([before[10], before[20], before[30], before[40]], ['leon-1', 'mery', 'leon-2', 'player-1']);
+    expect([after[9], after[19], after[28], after[37]], ['leon-1', 'mery', 'leon-2', 'player-1']);
   });
 }

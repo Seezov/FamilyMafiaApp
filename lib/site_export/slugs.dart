@@ -24,21 +24,23 @@ String slugify(String name) {
       .replaceAll(RegExp(r'^-+|-+$'), '');
 }
 
-/// Player id → URL slug. Colliding or empty slugs get `-<id>` appended, so the
-/// result is unique; throws if it somehow is not.
+/// Player id → URL slug. Empty slugs become `player-<n>` and colliding ones
+/// `<slug>-<n>`, n counting from 1 in list order: ids are list positions, which
+/// a merge or the roster import shifts, so they must not reach the URL.
+/// Throws if the result is somehow not unique.
 Map<int, String> assignSlugs(List<Player> players) {
-  final base = {for (final p in players) p.id: slugify(p.displayName)};
+  final base = {
+    for (final p in [...players]..sort((a, b) => a.id.compareTo(b.id)))
+      p.id: slugify(p.displayName).isEmpty ? 'player' : slugify(p.displayName),
+  };
   final counts = <String, int>{};
   for (final s in base.values) {
     counts[s] = (counts[s] ?? 0) + 1;
   }
+  final seen = <String, int>{};
   final slugs = {
     for (final MapEntry(key: id, value: s) in base.entries)
-      id: s.isEmpty
-          ? 'player-$id'
-          : counts[s]! > 1
-              ? '$s-$id'
-              : s,
+      id: s == 'player' || counts[s]! > 1 ? '$s-${seen[s] = (seen[s] ?? 0) + 1}' : s,
   };
   if (slugs.values.toSet().length != slugs.length) {
     throw StateError('Duplicate player slugs: $slugs');

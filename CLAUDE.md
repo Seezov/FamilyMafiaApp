@@ -126,6 +126,9 @@ default branch.
   Prefetch snapshots it to `assets/prefetched/players.json` in the old `players.json` shape; the app reads it
   live → cached → bundled `assets/raw/players.json` (now only a fallback). Profiles follow renames through
   `aliases` in `site/data/players.json`.
+  Edit it only on `/players/edit/`: the rule accepts any list, but the build fails on a clash or a
+  malformed entry, so a console edit can stop every deploy. Colliding player slugs are `<slug>-<n>` (n by
+  list order), never the id, so merges do not move URLs.
 - **Player profiles:** `/account/` (Google sign-in → claim a player → admin approves on
   `/account/admin/` → nick + avatar). Firestore `claims/{uid}` (private) and
   `profiles/{playerKey}` (public; `playerKey` = lower-cased, URI-encoded display name).
