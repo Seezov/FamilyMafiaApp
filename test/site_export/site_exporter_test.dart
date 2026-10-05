@@ -12,9 +12,10 @@ void main() {
     addTearDown(() => out.deleteSync(recursive: true));
     File('${out.path}/player/stale.json').createSync(recursive: true);
 
-    await writeSiteData(await fixtureContainer(), out);
+    await writeSiteData(await fixtureContainer(), out,
+        seasonJson: (c) async => File('assets/raw/season${c.id}.json').readAsStringSync());
 
-    for (final f in ['index.json', 'players.json', 'records.json', 'tournaments.json', 'season/17.json', 'season/21.json']) {
+    for (final f in ['index.json', 'players.json', 'records.json', 'tournaments.json', 'season/17.json', 'season/21.json', 'games/17.json', 'games/21.json']) {
       expect(File('${out.path}/$f').existsSync(), isTrue, reason: f);
     }
     expect(File('${out.path}/player/stale.json').existsSync(), isFalse);
