@@ -290,3 +290,38 @@ describe('config/club', () => {
     await assertFails(deleteDoc(club(as(ADMIN))));
   });
 });
+
+describe('events', () => {
+  const body = (who: User, extra: Record<string, unknown> = {}) => ({
+    year: 2026, kind: 'tournament', name: 'Cup', date: '2026-02-28', stars: 2, participants: 30,
+    results: [{ player: 'A', place: 1 }],
+    updatedAt: serverTimestamp(), updatedBy: who.uid, updatedByEmail: who.email, ...extra,
+  });
+  const ev = (db: ReturnType<typeof as>, id = 'E1') => doc(db, 'events', id);
+
+  it('anyone reads', async () => {
+    await assertSucceeds(getDoc(ev(env.unauthenticatedContext().firestore())));
+  });
+  it('admin creates, updates and deletes', async () => {
+    await assertSucceeds(setDoc(ev(as(ADMIN)), body(ADMIN)));
+    await assertSucceeds(setDoc(ev(as(ADMIN)), body(ADMIN, { kind: 'series', stars: null, participants: null, date: null })));
+    await assertSucceeds(deleteDoc(ev(as(ADMIN))));
+  });
+  it('a season event without optional fields is fine', async () => {
+    const { date, stars, participants, ...rest } = body(ADMIN, { kind: 'season' });
+    await assertSucceeds(setDoc(ev(as(ADMIN)), rest));
+  });
+  it('a host who is not an admin, a stranger and anonymous cannot', async () => {
+    await assertFails(setDoc(ev(as(HOST)), body(HOST)));
+    await assertFails(setDoc(ev(as(STRANGER)), body(STRANGER)));
+    await assertFails(setDoc(ev(env.unauthenticatedContext().firestore()), body(ADMIN)));
+    await env.withSecurityRulesDisabled((ctx) => setDoc(doc(ctx.firestore(), 'events', 'E2'), { year: 2026 }));
+    await assertFails(deleteDoc(ev(as(HOST), 'E2')));
+  });
+  it('bad fields or a forged author are denied', async () => {
+    for (const extra of [
+      { kind: 'cup' }, { year: '2026' }, { name: '' }, { results: 'x' }, { stars: '2' },
+      { participants: 1.5 }, { date: 5 }, { extra: 1 }, { updatedBy: HOST.uid }, { updatedByEmail: HOST.email },
+    ]) await assertFails(setDoc(ev(as(ADMIN)), body(ADMIN, extra)));
+  });
+});

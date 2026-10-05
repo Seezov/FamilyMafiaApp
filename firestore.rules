@@ -6,6 +6,7 @@ service cloud.firestore {
     function email() { return request.auth.token.email; }
     function isHost() { return signedIn() && exists(/databases/$(database)/documents/hosts/$(email())); }
     function isAdmin() { return isHost() && get(/databases/$(database)/documents/hosts/$(email())).data.admin == true; }
+    function optInt(d, k) { return !(k in d) || d[k] == null || d[k] is int; }
     function approvedPlayer() {
       return signedIn() && exists(/databases/$(database)/documents/claims/$(request.auth.uid))
         && get(/databases/$(database)/documents/claims/$(request.auth.uid)).data.status == 'approved';
@@ -135,6 +136,21 @@ service cloud.firestore {
         && request.resource.data.updatedByEmail == email();
     }
 
+    match /events/{id} {
+      allow read: if true;
+      allow create, update: if isAdmin()
+        && request.resource.data.keys().hasOnly(['year', 'kind', 'name', 'date', 'stars', 'participants', 'results', 'updatedAt', 'updatedBy', 'updatedByEmail'])
+        && request.resource.data.year is int
+        && request.resource.data.kind in ['tournament', 'series', 'marathon', 'season']
+        && request.resource.data.name is string && request.resource.data.name.size() > 0 && request.resource.data.name.size() <= 200
+        && request.resource.data.results is list && request.resource.data.results.size() <= 300
+        && (!('date' in request.resource.data) || request.resource.data.date == null || request.resource.data.date is string)
+        && optInt(request.resource.data, 'stars') && optInt(request.resource.data, 'participants')
+        && request.resource.data.updatedAt == request.time
+        && request.resource.data.updatedBy == request.auth.uid
+        && request.resource.data.updatedByEmail == email();
+      allow delete: if isAdmin();
+    }
     match /meta/state {
       allow read: if true;
       allow write: if (isHost() || approvedPlayer())
