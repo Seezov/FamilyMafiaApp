@@ -103,4 +103,5 @@ site/data/
 site/dist/
 site/node_modules/
 site/.astro/
+site/public/avatars/
 firebase/rules-test/node_modules/

@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build && node scripts/check-dist.mjs",
+    "build": "node scripts/fetch-profiles.ts && astro build && node scripts/check-dist.mjs",
     "preview": "astro preview",
     "check": "astro check",
     "test": "vitest run"

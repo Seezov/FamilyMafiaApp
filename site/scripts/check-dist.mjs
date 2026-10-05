@@ -37,6 +37,18 @@ for (const p of players) {
   if (!fs.existsSync(path.join(dist, 'players', p.slug, 'index.html'))) errors.push(`No page for player ${p.slug}`);
 }
 
+// Profiles: only nick/avatar may reach the site (no uid, no claim data).
+const profilesFile = path.join(dataDir, 'profiles.json');
+if (fs.existsSync(profilesFile)) {
+  for (const [key, p] of Object.entries(JSON.parse(fs.readFileSync(profilesFile, 'utf8')))) {
+    const extra = Object.keys(p).filter((k) => k !== 'nick' && k !== 'avatar');
+    if (extra.length) errors.push(`profiles.json ${key} has ${extra.join(', ')}`);
+  }
+}
+for (const file of files.filter((f) => f.endsWith('.html'))) {
+  if (/[\w.+-]+@gmail\.com/i.test(fs.readFileSync(file, 'utf8'))) errors.push(`email address in ${path.relative(dist, file)}`);
+}
+
 if (errors.length) {
   console.error(`check-dist: ${errors.length} problem(s)\n` + errors.slice(0, 50).join('\n'));
   process.exit(1);
