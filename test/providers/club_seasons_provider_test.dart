@@ -78,4 +78,14 @@ void main() {
     await c.read(parsedConfigProvider.future);
     expect(c.read(seasonConfigsProvider).last.id, 31);
   });
+
+  test('an invalid live list keeps the valid cached one', () async {
+    final cache = _MemCache()..seasons = jsonEncode([_s32.toJson()]);
+    final c = _container(cache, _FakeFirestore(() async => const [
+          ClubSeason(id: 40, title: 'Gap', smallLeagueMinGames: 15, startDate: '2026-12-01'),
+        ]));
+    await c.read(parsedConfigProvider.future);
+    expect(c.read(seasonConfigsProvider).last.id, 32);
+    expect(jsonDecode(cache.seasons!), [_s32.toJson()]);
+  });
 }

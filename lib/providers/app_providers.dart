@@ -64,7 +64,10 @@ class _ParsedConfig {
   final List<SeasonConfig> seasons;
   final List<Tournament> tournaments;
 
-  const _ParsedConfig(this.seasons, [this.tournaments = const []]);
+  /// The club seasons appended (validated), for the cache.
+  final List<ClubSeason> clubSeasons;
+
+  const _ParsedConfig(this.seasons, [this.tournaments = const [], this.clubSeasons = const []]);
 }
 
 /// The remote/cached config only carries tournaments when it explicitly has
@@ -84,51 +87,57 @@ List<Tournament> tournamentsWithBundledFallback(
 }
 
 _ParsedConfig _parseConfig(String json,
-    {String? bundledJsonForTournamentsFallback, List<ClubSeason> clubSeasons = const []}) {
+    {String? bundledJsonForTournamentsFallback, List<List<ClubSeason>> clubSeasons = const []}) {
   final map = jsonDecode(json) as Map<String, dynamic>;
   final jsonSeasons = (map['seasons'] as List).cast<Map<String, dynamic>>();
-  final seasons = appendClubSeasons(jsonSeasons, _validFor(jsonSeasons, clubSeasons));
+  final club = _validFor(jsonSeasons, clubSeasons);
+  final seasons = appendClubSeasons(jsonSeasons, club);
   final tournaments = bundledJsonForTournamentsFallback == null
       ? parseTournaments(map)
       : tournamentsWithBundledFallback(map, bundledJsonForTournamentsFallback);
   return _ParsedConfig(
     seasons.map((e) => SeasonConfig.fromJson(e)).toList(),
     tournaments,
+    club,
   );
 }
 
-/// Club seasons only when they continue this JSON's ids; a config with them
-/// already merged (the build's snapshot) keeps its own copy.
-List<ClubSeason> _validFor(List<Map<String, dynamic>> jsonSeasons, List<ClubSeason> club) {
-  if (club.isEmpty) return club;
+/// The first candidate (live, then cached) that continues this JSON's ids; a
+/// config with them already merged (the build's snapshot) keeps its own copy.
+List<ClubSeason> _validFor(List<Map<String, dynamic>> jsonSeasons, List<List<ClubSeason>> candidates) {
   final last = lastSeasonId(jsonSeasons);
-  if (club.first.id <= last) return const []; // already in this config
-  final errors = clubSeasonErrors(club, lastJsonId: last);
-  if (errors.isEmpty) return club;
-  debugPrint('config/seasons ignored: ${errors.join('; ')}');
+  for (final club in candidates) {
+    if (club.isEmpty) return club;
+    if (club.first.id <= last) return const []; // already in this config
+    final errors = clubSeasonErrors(club, lastJsonId: last);
+    if (errors.isEmpty) return club;
+    debugPrint('config/seasons ignored: ${errors.join('; ')}');
+  }
   return const [];
 }
 
-/// Firestore `config/seasons`: live (cached when it parses), else the cached
-/// copy, else none.
-Future<List<ClubSeason>> _clubSeasons(Ref ref) async {
+/// Firestore `config/seasons` candidates in order of preference: the live
+/// list (when it parses), then the cached copy. Validated by [_validFor],
+/// where the JSON's last id is known.
+Future<List<List<ClubSeason>>> _clubSeasons(Ref ref) async {
   final cache = ref.read(seasonCacheServiceProvider);
   final firestore = ref.read(firestoreServiceProvider);
+  final out = <List<ClubSeason>>[];
   if (firestore != null) {
     try {
       final live = await firestore.fetchClubSeasons(kFirebaseProjectId);
-      if (live != null) return live;
+      if (live != null) out.add(live);
     } catch (e) {
       debugPrint('Club seasons fetch failed: $e');
     }
   }
   try {
     final cached = await cache.getCachedClubSeasons();
-    if (cached != null) return parseClubSeasons(jsonDecode(cached));
+    if (cached != null) out.add(parseClubSeasons(jsonDecode(cached)));
   } catch (e) {
     debugPrint('Cached club seasons unavailable: $e');
   }
-  return const [];
+  return out;
 }
 
 /// Best-effort read of the bundled season config, for the tournaments
@@ -167,8 +176,8 @@ final parsedConfigProvider = FutureProvider<_ParsedConfig>((ref) async {
       final json = response.data!;
       await cacheService.cacheRemoteConfig(json);
       final parsed = _parseConfig(json, bundledJsonForTournamentsFallback: await _tryLoadBundledConfigJson(), clubSeasons: club);
-      if (club.isNotEmpty && parsed.seasons.any((s) => s.id == club.first.id)) {
-        await cacheService.cacheClubSeasons(jsonEncode([for (final s in club) s.toJson()]));
+      if (parsed.clubSeasons.isNotEmpty) {
+        await cacheService.cacheClubSeasons(jsonEncode([for (final s in parsed.clubSeasons) s.toJson()]));
       }
       return parsed;
     } catch (e) {
@@ -184,8 +193,8 @@ final parsedConfigProvider = FutureProvider<_ParsedConfig>((ref) async {
     final cached = await cacheService.getCachedRemoteConfig();
     if (cached != null) {
       final parsed = _parseConfig(cached, bundledJsonForTournamentsFallback: await _tryLoadBundledConfigJson(), clubSeasons: club);
-      if (club.isNotEmpty && parsed.seasons.any((s) => s.id == club.first.id)) {
-        await cacheService.cacheClubSeasons(jsonEncode([for (final s in club) s.toJson()]));
+      if (parsed.clubSeasons.isNotEmpty) {
+        await cacheService.cacheClubSeasons(jsonEncode([for (final s in parsed.clubSeasons) s.toJson()]));
       }
       return parsed;
     }
@@ -196,8 +205,8 @@ final parsedConfigProvider = FutureProvider<_ParsedConfig>((ref) async {
   try {
     final json = await rootBundle.loadString('assets/raw/season_config.json');
     final parsed = _parseConfig(json, clubSeasons: club);
-    if (club.isNotEmpty && parsed.seasons.any((s) => s.id == club.first.id)) {
-      await cacheService.cacheClubSeasons(jsonEncode([for (final s in club) s.toJson()]));
+    if (parsed.clubSeasons.isNotEmpty) {
+      await cacheService.cacheClubSeasons(jsonEncode([for (final s in parsed.clubSeasons) s.toJson()]));
     }
     return parsed;
   } catch (e) {
