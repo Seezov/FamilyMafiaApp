@@ -27,7 +27,7 @@ Map<String, dynamic> _entry(Map<String, dynamic> name, [List<String> nicks = con
     };
 
 void main() {
-  test('returns the app players.json shape, empty nicknames left out', () async {
+  test('returns the app players.json shape: own name kept among nicknames, empty ones left out', () async {
     final json = await _svc(200, {'fields': {
       'players': {'arrayValue': {'values': [
         _entry({'stringValue': 'Braun'}, ['Браун']),
@@ -36,7 +36,7 @@ void main() {
       'updatedByEmail': {'stringValue': 'a@x.com'},
     }}).fetchPlayers('p');
     expect(jsonDecode(json!), [
-      {'id': 0, 'displayName': 'Braun', 'nicknames': ['Браун']},
+      {'id': 0, 'displayName': 'Braun', 'nicknames': ['Braun', 'Браун']},
       {'id': 0, 'displayName': 'Joi'},
     ]);
   });

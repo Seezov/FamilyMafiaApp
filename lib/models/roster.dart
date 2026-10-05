@@ -80,8 +80,15 @@ List<RosterEntry> rosterFromAppJson(String json) => [
     ];
 
 /// The app's `players.json` shape. Empty nickname lists are left out: the app
-/// hides a player whose `nicknames` is an empty list.
+/// hides a player whose `nicknames` is an empty list. A non-empty list always
+/// holds the display name itself: percentiles, best moves and first-killed
+/// match the (canonical) game names against `nicknames ?? [displayName]` only.
 String rosterAppJson(List<RosterEntry> roster) => jsonEncode([
       for (final e in roster)
-        {'id': 0, 'displayName': e.name, if (e.nicknames.isNotEmpty) 'nicknames': e.nicknames},
+        {
+          'id': 0,
+          'displayName': e.name,
+          if (e.nicknames.isNotEmpty)
+            'nicknames': e.nicknames.contains(e.name) ? e.nicknames : [e.name, ...e.nicknames],
+        },
     ]);

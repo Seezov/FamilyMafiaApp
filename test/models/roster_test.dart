@@ -37,8 +37,34 @@ void main() {
     final json = rosterAppJson([const RosterEntry('A'), const RosterEntry('B', ['b2'])]);
     expect(jsonDecode(json), [
       {'id': 0, 'displayName': 'A'},
-      {'id': 0, 'displayName': 'B', 'nicknames': ['b2']},
+      {'id': 0, 'displayName': 'B', 'nicknames': ['B', 'b2']},
     ]);
+  });
+
+  test('rosterAppJson keeps the display name among non-empty nicknames', () {
+    // percentiles, best moves and first-killed match canonical game names
+    // against `nicknames ?? [displayName]` only, exactly.
+    final out = (jsonDecode(rosterAppJson([
+      const RosterEntry('Braun', ['Браун']),
+      const RosterEntry('RATHMA', ['Скай']),
+      const RosterEntry('Red Fox', ['RedFox', 'Red Fox']),
+    ])) as List).map((e) => e['nicknames']).toList();
+    expect(out, [
+      ['Braun', 'Браун'],
+      ['RATHMA', 'Скай'],
+      ['RedFox', 'Red Fox'],
+    ]);
+  });
+
+  test('the imported roster gives back the bundled players.json entries unchanged', () {
+    final raw = File('assets/raw/players.json').readAsStringSync();
+    final before = (jsonDecode(raw) as List).cast<Map<String, dynamic>>();
+    final after = (jsonDecode(rosterAppJson(dedupeRoster(rosterFromAppJson(raw)))) as List).cast<Map<String, dynamic>>();
+    final kept = before.where((p) => after.any((a) => a['displayName'] == p['displayName'])).toList();
+    for (final a in after) {
+      final b = kept.firstWhere((p) => p['displayName'] == a['displayName']);
+      expect(a['nicknames'], b['nicknames'], reason: a['displayName'] as String);
+    }
   });
 
   group('the real assets/raw/players.json', () {
