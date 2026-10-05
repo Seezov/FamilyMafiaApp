@@ -1,17 +1,14 @@
 // Firebase client for the /host/ page. Thin on purpose: all game logic lives in
 // form.ts / validate.ts (unit-tested); access control lives in firestore.rules.
-import { initializeApp } from 'firebase/app';
-import { GoogleAuthProvider, getAuth, onAuthStateChanged, signInWithPopup, signInWithRedirect, signOut } from 'firebase/auth';
+import { onAuthStateChanged } from 'firebase/auth';
 import {
-  collection, doc, getDoc, getDocs, getFirestore, query, runTransaction, serverTimestamp, where, type Timestamp,
+  collection, doc, getDoc, getDocs, query, runTransaction, serverTimestamp, where, type Timestamp,
 } from 'firebase/firestore';
-import { firebaseConfig } from './firebase-config';
+import { auth, db, signIn, signOutUser } from '../firebase';
 import type { DocBody } from './form';
 import type { GameDoc } from './types';
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+export { signIn, signOutUser };
 
 export type HostUser = { uid: string; email: string; name: string; admin: boolean };
 export class StaleGameError extends Error {}
@@ -24,18 +21,6 @@ export function onUser(cb: (u: HostUser | null | 'not-host') => void) {
     cb({ uid: u.uid, email: u.email, name: String(host.data().name ?? u.email), admin: host.data().admin === true });
   });
 }
-
-export async function signIn() {
-  const provider = new GoogleAuthProvider();
-  try {
-    await signInWithPopup(auth, provider);
-  } catch (e) {
-    if ((e as { code?: string }).code === 'auth/popup-blocked') await signInWithRedirect(auth, provider);
-    else throw e;
-  }
-}
-
-export const signOutUser = () => signOut(auth);
 
 export async function listSeasonGames(season: number) {
   const snap = await getDocs(query(collection(db, 'games'), where('season', '==', season)));

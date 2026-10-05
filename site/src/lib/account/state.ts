@@ -1,0 +1,18 @@
+// site/src/lib/account/state.ts
+// Pure account logic for /account/ (unit-tested); Firestore calls live in store.ts.
+export interface Claim {
+  uid: string; player: string; playerKey: string; email: string; googleName: string;
+  status: 'pending' | 'approved' | 'rejected'; createdAt?: number;
+}
+export interface Profile { key: string; player: string; uid: string; nick?: string; avatar?: string }
+export type AccountView = 'signed-out' | 'pick' | 'pending' | 'rejected' | 'settings';
+
+export function accountView(signedIn: boolean, claim: Claim | null, profile: Profile | null): AccountView {
+  if (!signedIn) return 'signed-out';
+  if (!claim) return 'pick';
+  if (claim.status === 'pending') return 'pending';
+  if (claim.status === 'rejected') return 'rejected';
+  return profile ? 'settings' : 'pick';
+}
+
+export const takenKeys = (profiles: Profile[]) => new Set(profiles.map((p) => p.key));
