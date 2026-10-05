@@ -103,9 +103,6 @@ final filteredPlayersProvider = Provider<List<Player>>((ref) {
       .toList();
 });
 
-/// The clock the in-progress check reads; overridden in tests.
-final clockProvider = Provider<DateTime Function()>((ref) => DateTime.now);
-
 /// Seasons still being played today (see [seasonInProgress]).
 final seasonsInProgressProvider = Provider<Set<int>>((ref) {
   final dates = <int, List<DateTime>>{};

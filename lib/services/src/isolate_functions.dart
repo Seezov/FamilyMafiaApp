@@ -48,12 +48,34 @@ bool _sheetCountsIrregular(Game g) =>
         ?.any((e) => e.$1 == g.date && e.$2 == g.host) ??
     false;
 
+/// [meta]'s effective threshold from its rating games (see [effectiveThreshold]).
+SeasonThreshold _threshold(SeasonMeta meta, List<Game> games) {
+  final counts = <String, int>{};
+  for (final g in games) {
+    for (final p in g.players) {
+      if (!p.startsWith('_blank_')) counts[p] = (counts[p] ?? 0) + 1;
+    }
+  }
+  return effectiveThreshold(
+    rule: meta.rule,
+    configured: meta.gameLimitSet ? meta.gameLimit : null,
+    ratingGames: counts.values,
+    gameDates: [for (final g in games) if (g.date != null) g.date!],
+    now: meta.now ?? DateTime.now(),
+  );
+}
+
 /// One season's games and rating rows. The main league is the season sheet's
 /// own count, quirks included, so its standings equal the sheet; every other
 /// row, and the games behind the rest of the stats, follow the club's rules.
-({List<Game> games, List<RatingPlayerStats> ratings}) _seasonData(
-    SeasonMeta meta, String json, PlayerResolver resolver, List<Player> players) {
-  final games = _ratingGames(meta.id, json, resolver);
+({List<Game> games, List<RatingPlayerStats> ratings, SeasonThreshold threshold})
+    _seasonData(SeasonMeta season, String json, PlayerResolver resolver,
+        List<Player> players) {
+  final games = _ratingGames(season.id, json, resolver);
+  final threshold = _threshold(season, games);
+  // Everything below (ratings, the sheet's main-league merge) reads the
+  // effective limit.
+  final meta = season.withGameLimit(threshold.gameLimit);
 
   Map<String, RatingPlayerStats> rate(List<Game> gs, {required bool sheet}) => {
         for (final name in gs.getPlayersList(meta.id))
@@ -61,7 +83,7 @@ bool _sheetCountsIrregular(Game g) =>
       };
   final byRules = rate(games, sheet: false);
   if (meta.id >= kExactRatingStartSeason) {
-    return (games: games, ratings: byRules.values.toList());
+    return (games: games, ratings: byRules.values.toList(), threshold: threshold);
   }
   final sheetGames = _ratingGames(meta.id, json, resolver, sheet: true);
   final bySheet = rate(sheetGames, sheet: true);
@@ -76,7 +98,7 @@ bool _sheetCountsIrregular(Game g) =>
       else
         byRules[name]!,
   ];
-  return (games: games, ratings: ratings);
+  return (games: games, ratings: ratings, threshold: threshold);
 }
 
 // Top-level function: partial load (no percentiles)
@@ -93,19 +115,22 @@ _PartialLoadOutput _computePartialData(_LoadInput input) {
   final allGames = <Game>[];
   final ratingsBySeason = <int, List<RatingPlayerStats>>{};
   final statsBySeason = <int, SeasonStats>{};
+  final thresholds = <int, SeasonThreshold>{};
 
   for (int si = 0; si < input.seasonMetas.length; si++) {
     final meta = input.seasonMetas[si];
     final json = input.seasonJsons[si];
 
-    final (:games, :ratings) = _seasonData(meta, json, resolver, players);
+    final (:games, :ratings, :threshold) =
+        _seasonData(meta, json, resolver, players);
     allGames.addAll(games);
 
     ratingsBySeason[meta.id] = ratings;
+    thresholds[meta.id] = threshold;
 
     final sorted = sortByRating(ratings);
     statsBySeason[meta.id] =
-        _generateSeasonStats(sorted, meta.gameLimit);
+        _generateSeasonStats(sorted, threshold.gameLimit);
   }
 
   return _PartialLoadOutput(
@@ -113,6 +138,7 @@ _PartialLoadOutput _computePartialData(_LoadInput input) {
     allGames: allGames,
     ratingsBySeason: ratingsBySeason,
     statsBySeason: statsBySeason,
+    thresholds: thresholds,
   );
 }
 
@@ -135,19 +161,22 @@ _LoadOutput _computeAllData(_LoadInput input) {
   final allGames = <Game>[];
   final ratingsBySeason = <int, List<RatingPlayerStats>>{};
   final statsBySeason = <int, SeasonStats>{};
+  final thresholds = <int, SeasonThreshold>{};
 
   for (int si = 0; si < input.seasonMetas.length; si++) {
     final meta = input.seasonMetas[si];
     final json = input.seasonJsons[si];
 
-    final (:games, :ratings) = _seasonData(meta, json, resolver, players);
+    final (:games, :ratings, :threshold) =
+        _seasonData(meta, json, resolver, players);
     allGames.addAll(games);
 
     ratingsBySeason[meta.id] = ratings;
+    thresholds[meta.id] = threshold;
 
     final sorted = sortByRating(ratings);
     statsBySeason[meta.id] =
-        _generateSeasonStats(sorted, meta.gameLimit);
+        _generateSeasonStats(sorted, threshold.gameLimit);
   }
 
   final percentiles =
@@ -159,5 +188,6 @@ _LoadOutput _computeAllData(_LoadInput input) {
     ratingsBySeason: ratingsBySeason,
     statsBySeason: statsBySeason,
     percentiles: percentiles,
+    thresholds: thresholds,
   );
 }

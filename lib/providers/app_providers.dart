@@ -169,6 +169,9 @@ final seasonConfigsProvider = Provider<List<SeasonConfig>>((ref) {
 });
 
 /// Every tournament held in any season, from the season config JSON.
+/// The clock the in-progress checks read; overridden in tests.
+final clockProvider = Provider<DateTime Function()>((ref) => DateTime.now);
+
 /// Firestore `config/club` (see [ClubConfig]): live, else the cached copy
 /// (the build's snapshot on the web and in the site export), else null —
 /// then the JSON config's tournaments still apply.
@@ -246,9 +249,10 @@ SeasonLoaderService _createLoader(Ref ref) => SeasonLoaderService(
 final initialLoadProvider = FutureProvider<void>((ref) async {
   // Phase 1: get configs + API key
   final parsed = await ref.watch(parsedConfigProvider.future);
-  final configs = parsed.seasons;
-  // Fetched alongside the seasons; awaited before the background load ends.
-  ref.read(clubConfigProvider.future).ignore();
+  // Admins' final thresholds (config/club) apply before any season loads.
+  final club = await ref.read(clubConfigProvider.future);
+  final configs = applyAdminLimits(parsed.seasons, club?.gameLimits ?? const {});
+  final now = ref.read(clockProvider)();
   final apiKey = ref.read(sheetsApiKeyProvider);
 
   // Phase 2: create sheets service
@@ -274,13 +278,14 @@ final initialLoadProvider = FutureProvider<void>((ref) async {
 
   final loader = _createLoader(ref);
   await loader.loadSeasons(
-    metas: [SeasonMeta(latestConfig.id, latestConfig.gameLimit, latestConfig.gamesMultiplier)],
+    metas: [seasonMetaFor(latestConfig, now)],
     playersJson: playersJson,
     seasonJsons: [latestJson],
   );
 
-  ref.read(loadedSeasonConfigsProvider.notifier).state = [latestConfig];
-  ref.read(selectedSeasonProvider.notifier).state = latestConfig;
+  final latest = loader.applyThresholds([latestConfig]).single;
+  ref.read(loadedSeasonConfigsProvider.notifier).state = [latest];
+  ref.read(selectedSeasonProvider.notifier).state = latest;
   ref.read(loadingPhaseProvider.notifier).state = LoadingPhase.latestLoaded;
 
   // Store shared resources for background load
@@ -288,7 +293,7 @@ final initialLoadProvider = FutureProvider<void>((ref) async {
     playersJson: playersJson,
     dataService: dataService,
     allConfigs: configs,
-    loadedConfigs: [latestConfig],
+    loadedConfigs: [latest],
   );
 });
 
@@ -339,12 +344,13 @@ final backgroundLoadProvider = FutureProvider<void>((ref) async {
 
   if (remainingJsons.isNotEmpty) {
     final loader = _createLoader(ref);
+    final now = ref.read(clockProvider)();
     if (kIsWeb) {
       // compute() runs on the UI thread on the web: load one season at a
       // time and let a frame through in between, so the page stays usable.
       await loader.loadSeasonsOneByOne(
         metas: loadedRemainingConfigs
-            .map((c) => SeasonMeta(c.id, c.gameLimit, c.gamesMultiplier))
+            .map((c) => seasonMetaFor(c, now))
             .toList(),
         playersJson: shared.playersJson,
         seasonJsons: remainingJsons,
@@ -353,7 +359,7 @@ final backgroundLoadProvider = FutureProvider<void>((ref) async {
     } else {
       await loader.loadSeasons(
         metas: loadedRemainingConfigs
-            .map((c) => SeasonMeta(c.id, c.gameLimit, c.gamesMultiplier))
+            .map((c) => seasonMetaFor(c, now))
             .toList(),
         playersJson: shared.playersJson,
         seasonJsons: remainingJsons,
@@ -368,12 +374,14 @@ final backgroundLoadProvider = FutureProvider<void>((ref) async {
     );
 
     // Update loaded configs (sorted by id)
-    final allLoaded = [...shared.loadedConfigs, ...loadedRemainingConfigs]
+    final allLoaded = [
+      ...shared.loadedConfigs,
+      ...loader.applyThresholds(loadedRemainingConfigs),
+    ]
       ..sort((a, b) => a.id.compareTo(b.id));
     ref.read(loadedSeasonConfigsProvider.notifier).state = allLoaded;
   }
 
-  await ref.read(clubConfigProvider.future);
   ref.read(loadingPhaseProvider.notifier).state = LoadingPhase.allLoaded;
 });
 

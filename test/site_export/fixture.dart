@@ -37,7 +37,7 @@ Future<ProviderContainer> fixtureContainer(
     ..sort((a, b) => a.id.compareTo(b.id));
   await loader.loadSeasons(
     metas: [
-      for (final c in configs) SeasonMeta(c.id, c.gameLimit, c.gamesMultiplier)
+      for (final c in configs) seasonMetaFor(c, DateTime.now())
     ],
     playersJson: File('assets/raw/players.json').readAsStringSync(),
     seasonJsons: [
@@ -56,7 +56,8 @@ Future<ProviderContainer> fixtureContainer(
     rolePercentilesRepositoryProvider.overrideWith((ref) => percentiles),
     tournamentsProvider.overrideWithValue(const [kFixtureTournament]),
   ]);
-  container.read(loadedSeasonConfigsProvider.notifier).state = configs;
+  container.read(loadedSeasonConfigsProvider.notifier).state =
+      loader.applyThresholds(configs);
   addTearDown(container.dispose);
   return container;
 }

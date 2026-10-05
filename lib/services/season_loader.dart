@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:family_mafia_app/constants/season_constants.dart';
+import 'package:family_mafia_app/enums/game_limit_rule.dart';
 import 'package:family_mafia_app/enums/game_values.dart';
 import 'package:family_mafia_app/enums/role.dart';
 import 'package:family_mafia_app/extensions/list_extensions.dart';
@@ -10,6 +11,7 @@ import 'package:family_mafia_app/models/games_data_season.dart';
 import 'package:family_mafia_app/models/protocol_entry.dart';
 import 'package:family_mafia_app/models/player.dart';
 import 'package:family_mafia_app/models/rating_player_stats.dart';
+import 'package:family_mafia_app/models/season_config.dart';
 import 'package:family_mafia_app/models/season_stats.dart';
 import 'package:family_mafia_app/repositories/games_repository.dart';
 import 'package:family_mafia_app/repositories/players_repository.dart';
@@ -21,6 +23,7 @@ import 'package:family_mafia_app/services/rating_formulas.dart';
 import 'package:family_mafia_app/services/sheet_game_extras.dart';
 import 'package:family_mafia_app/services/stats/game_points.dart';
 import 'package:family_mafia_app/services/stats/player_resolver.dart';
+import 'package:family_mafia_app/services/stats/threshold.dart';
 import 'package:flutter/foundation.dart';
 
 part 'src/isolate_io.dart';
@@ -67,6 +70,11 @@ List<RatingPlayerStats> seasonStandingsForTest(
         .statsBySeason[meta.id]!
         .playerStats;
 
+/// The isolate's view of [c]; [now] decides whether a top3 season is live.
+SeasonMeta seasonMetaFor(SeasonConfig c, DateTime now) => SeasonMeta(
+    c.id, c.gameLimit, c.gamesMultiplier,
+    rule: c.gameLimitRule, gameLimitSet: c.gameLimitSet, now: now);
+
 // ── Service ─────────────────────────────────────────────────────────────────
 
 class SeasonLoaderService {
@@ -83,6 +91,15 @@ class SeasonLoaderService {
     this._seasonRepo,
     this._rolePercRepo,
   );
+
+  /// Each loaded season's effective threshold (see [effectiveThreshold]).
+  final Map<int, SeasonThreshold> thresholds = {};
+
+  /// [configs] with the thresholds this loader resolved.
+  List<SeasonConfig> applyThresholds(List<SeasonConfig> configs) => [
+        for (final c in configs)
+          if (thresholds[c.id] case final t?) c.withThreshold(t) else c,
+      ];
 
   /// [configs] describes every season to load. [playersJson] is the raw
   /// players.json content. [seasonJsons] is parallel to [configs] — the raw
@@ -108,6 +125,7 @@ class SeasonLoaderService {
       _seasonRepo.addSeason(entry.key, entry.value);
     }
     _rolePercRepo.setPercentiles(out.percentiles);
+    thresholds.addAll(out.thresholds);
   }
 
   /// Incremental load: computes ratings for the given seasons without percentiles.
@@ -130,6 +148,7 @@ class SeasonLoaderService {
     for (final entry in out.statsBySeason.entries) {
       _seasonRepo.addSeason(entry.key, entry.value);
     }
+    thresholds.addAll(out.thresholds);
     return out.allGames;
   }
 
