@@ -1,3 +1,8 @@
+/// A season's effective main-league threshold: the int limit every league
+/// split compares against, the formula value (top3 seasons only) and whether
+/// it is still moving (season in progress). See `effectiveThreshold`.
+typedef SeasonThreshold = ({int gameLimit, double? formula, bool live});
+
 /// How a season's main-league threshold is set.
 enum GameLimitRule {
   /// `gameLimit` from the config.

@@ -1,12 +1,8 @@
 import 'dart:math';
 
+export 'package:family_mafia_app/enums/game_limit_rule.dart' show SeasonThreshold;
 import 'package:family_mafia_app/enums/game_limit_rule.dart';
 import 'package:family_mafia_app/services/stats/accomplishments.dart';
-
-/// A season's effective main-league threshold: the int limit every league
-/// split compares against, the formula value (top3 seasons only) and whether
-/// it is still moving (season in progress).
-typedef SeasonThreshold = ({int gameLimit, double? formula, bool live});
 
 /// The sheet's «Поточний поріг»: the three highest rating-game counts,
 /// averaged, × 0.6 − 5 (missing players count 0). Rounded to 6 decimals so

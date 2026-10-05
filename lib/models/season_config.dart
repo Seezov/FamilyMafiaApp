@@ -1,4 +1,5 @@
 import 'package:family_mafia_app/constants/season_constants.dart';
+import 'package:family_mafia_app/enums/game_limit_rule.dart';
 
 /// Describes a season and where its data comes from (bundled asset or Google Sheets).
 class SeasonConfig {
@@ -8,6 +9,16 @@ class SeasonConfig {
   final int smallLeagueMinGames;
   final double gamesMultiplier;
   final SeasonSource source;
+  final GameLimitRule gameLimitRule;
+
+  /// Whether [gameLimit] is a set value: from the config, or for a top3
+  /// season the admin's final value (`config/club.gameLimits`).
+  final bool gameLimitSet;
+
+  /// Filled by the loader (see `effectiveThreshold`): the formula value of a
+  /// top3 season, and whether the season is still being played.
+  final double? thresholdFormula;
+  final bool thresholdLive;
 
   const SeasonConfig({
     required this.id,
@@ -16,9 +27,18 @@ class SeasonConfig {
     required this.smallLeagueMinGames,
     required this.gamesMultiplier,
     required this.source,
+    this.gameLimitRule = GameLimitRule.fixed,
+    this.gameLimitSet = true,
+    this.thresholdFormula,
+    this.thresholdLive = false,
   });
 
   factory SeasonConfig.fromJson(Map<String, dynamic> json) {
+    final rule = GameLimitRule.parse(json['gameLimitRule'] as String?);
+    final limit = json['gameLimit'] as int?;
+    if (limit == null && rule == GameLimitRule.fixed) {
+      throw FormatException('Season ${json['id']}: gameLimit is missing');
+    }
     final sourceType = json['source'] as String;
     final SeasonSource source = switch (sourceType) {
       'remote' => RemoteSource(
@@ -33,7 +53,9 @@ class SeasonConfig {
     return SeasonConfig(
       id: json['id'] as int,
       title: json['title'] as String,
-      gameLimit: json['gameLimit'] as int,
+      gameLimit: limit ?? 0,
+      gameLimitRule: rule,
+      gameLimitSet: limit != null,
       smallLeagueMinGames: json['smallLeagueMinGames'] as int? ??
           kDefaultSmallLeagueMinGames,
       gamesMultiplier: (json['gamesMultiplier'] as num).toDouble(),
@@ -45,7 +67,8 @@ class SeasonConfig {
     final map = <String, dynamic>{
       'id': id,
       'title': title,
-      'gameLimit': gameLimit,
+      if (gameLimitSet) 'gameLimit': gameLimit,
+      if (gameLimitRule == GameLimitRule.top3) 'gameLimitRule': 'top3',
       'smallLeagueMinGames': smallLeagueMinGames,
       'gamesMultiplier': gamesMultiplier,
     };
@@ -64,6 +87,35 @@ class SeasonConfig {
     }
     return map;
   }
+
+  SeasonConfig _copy({required int gameLimit, required bool gameLimitSet,
+          required double? thresholdFormula, required bool thresholdLive}) =>
+      SeasonConfig(
+        id: id,
+        title: title,
+        gameLimit: gameLimit,
+        smallLeagueMinGames: smallLeagueMinGames,
+        gamesMultiplier: gamesMultiplier,
+        source: source,
+        gameLimitRule: gameLimitRule,
+        gameLimitSet: gameLimitSet,
+        thresholdFormula: thresholdFormula,
+        thresholdLive: thresholdLive,
+      );
+
+  /// This config with the loader's effective threshold.
+  SeasonConfig withThreshold(SeasonThreshold t) => _copy(
+      gameLimit: t.gameLimit,
+      gameLimitSet: gameLimitSet,
+      thresholdFormula: t.formula,
+      thresholdLive: t.live);
+
+  /// This config with an admin's final threshold.
+  SeasonConfig withAdminLimit(int limit) => _copy(
+      gameLimit: limit,
+      gameLimitSet: true,
+      thresholdFormula: thresholdFormula,
+      thresholdLive: thresholdLive);
 
   @override
   bool operator ==(Object other) =>
@@ -104,3 +156,15 @@ class FirestoreSource extends SeasonSource {
   final String projectId;
   const FirestoreSource({required this.projectId});
 }
+
+/// [configs] with admins' final thresholds from `config/club.gameLimits`;
+/// only top3 seasons take them.
+List<SeasonConfig> applyAdminLimits(
+        List<SeasonConfig> configs, Map<int, int> limits) =>
+    [
+      for (final c in configs)
+        if (c.gameLimitRule == GameLimitRule.top3 && limits[c.id] != null)
+          c.withAdminLimit(limits[c.id]!)
+        else
+          c,
+    ];

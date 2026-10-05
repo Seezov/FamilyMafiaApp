@@ -85,7 +85,8 @@ void main() {
   group('season config sources', () {
     test('the lower bound is below the game limit in every JSON config', () {
       for (final path in _configPaths) {
-        for (final config in _loadConfigFile(path)) {
+        // A top3 season without a set value gets its limit at load time.
+        for (final config in _loadConfigFile(path).where((c) => c.gameLimitSet)) {
           expect(config.smallLeagueMinGames, lessThan(config.gameLimit),
               reason: 'season ${config.id} in $path');
         }
