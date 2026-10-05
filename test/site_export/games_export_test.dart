@@ -97,4 +97,19 @@ void main() {
     expect(out.single['label'], 'real');
     expect(out.single['id'], endsWith('-1'));
   });
+
+  test('host spellings of one player collapse to the display name', () {
+    final gs = load(21);
+    final player = x.players.firstWhere((p) => x.read(playerResolverProvider).resolve(p.displayName).id >= 0);
+    final name = player.displayName;
+    final odd = name.toUpperCase() == name ? name.toLowerCase() : name.toUpperCase();
+    expect(x.read(playerResolverProvider).resolve(odd).id, player.id, reason: 'resolver is case-insensitive');
+    final a = gs[0].copyWith(host: odd);
+    final b = gs[1].copyWith(host: name);
+    final c = gs[2].copyWith(host: 'Nobody Unknown Host');
+    final j = jsonDecode(jsonEncode(gamesJson(x, x.seasons.firstWhere((s) => s.id == 21), [a, b, c]))) as Map;
+    final out = games(j);
+    expect(out.map((g) => g['host']), [name, name, 'Nobody Unknown Host']);
+    expect(j['hosts'], unorderedEquals([name, 'Nobody Unknown Host']));
+  });
 }

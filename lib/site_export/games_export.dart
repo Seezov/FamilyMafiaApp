@@ -41,6 +41,14 @@ Map<String, Object?> gamesJson(ExportContext x, SeasonConfig season, List<Game> 
     return onSite.contains(p.id) ? x.slugs[p.id] : null;
   }
 
+  /// Host as the player's display name when the resolver knows them (S9 has
+  /// both «Katsun» and «KatSun»), else as written.
+  String? hostOf(String? h) {
+    if (h == null) return null;
+    final p = resolver.resolve(h);
+    return p.id >= 0 ? p.displayName : h;
+  }
+
   Map<String, Object?> seat(Game g, int i) {
     final raw = g.players[i];
     final blank = raw.startsWith('_blank_');
@@ -81,7 +89,7 @@ Map<String, Object?> gamesJson(ExportContext x, SeasonConfig season, List<Game> 
                 'n': n,
                 'table': g.table,
                 'label': g.label,
-                'host': g.host,
+                'host': hostOf(g.host),
                 'result': switch (g.cityWon) { true => 'city', false => 'mafia', null => 'unrated' },
                 'seats': [for (var i = 0; i < g.players.length; i++) seat(g, i)],
                 'firstKilled': g.firstKilled == 0 ? null : g.firstKilled,
@@ -126,7 +134,7 @@ Map<String, Object?> gamesJson(ExportContext x, SeasonConfig season, List<Game> 
       for (final e in players.entries.toList()..sort((a, b) => a.value.toLowerCase().compareTo(b.value.toLowerCase())))
         {'name': e.value, 'key': e.key},
     ],
-    'hosts': ({for (final g in games) if (g.host != null) g.host!}.toList()
+    'hosts': ({for (final g in games) if (g.host != null) hostOf(g.host)!}.toList()
       ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()))),
     'days': days,
   };

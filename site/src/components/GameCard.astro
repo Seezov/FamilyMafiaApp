@@ -55,10 +55,9 @@ const keys = g.seats.map((s) => s.key).filter(Boolean).join('|');
         </tbody>
       </table>
     </div>
-    {g.firstKilled && <p><b>First killed:</b> {g.firstKilled} · {seatName(g.firstKilled)}
-      {g.bestMove && <> · <b>Best move:</b> {g.bestMove.join(', ')}</>}
-      {g.supportFive && <> · <b>Support 5:</b> {guesses(g.supportFive)}</>}
-      {g.bestMovePoints !== undefined && <> ({fmtPts(g.bestMovePoints)})</>}</p>}
+    {g.firstKilled && <p><b>First killed:</b> {g.firstKilled} · {seatName(g.firstKilled)}</p>}
+    {g.bestMove && <p><b>Best move:</b> {g.bestMove.join(', ')}{g.bestMovePoints !== undefined && <> ({fmtPts(g.bestMovePoints)})</>}</p>}
+    {g.supportFive && <p><b>Support 5:</b> {guesses(g.supportFive)}</p>}
     {g.protocol && (
       <div><b>Protocol</b>
         <ol>{g.protocol.map((p) => (

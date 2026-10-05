@@ -18,7 +18,14 @@ function apply(f: GameFilters) {
     for (const p of g.querySelectorAll<HTMLElement>('.pick')) p.hidden = p.dataset.k !== f.player;
   }
   for (const group of document.querySelectorAll<HTMLElement>('.table-group, .day')) {
-    group.hidden = !group.querySelector('details.game:not([hidden])');
+    const n = group.querySelectorAll('details.game:not([hidden])').length;
+    group.hidden = n === 0;
+    const c = group.querySelector('.day-count');
+    if (c) {
+      c.textContent = String(n);
+      const u = group.querySelector('.day-unit');
+      if (u) u.textContent = n === 1 ? 'game' : 'games';
+    }
   }
   count.textContent = `${shown} ${shown === 1 ? 'game' : 'games'}`;
   input.value = players.find((p) => p.key === f.player)?.name ?? '';

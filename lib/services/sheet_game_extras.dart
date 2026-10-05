@@ -37,7 +37,7 @@ List<int>? parseSeatList(String cell) {
   var s = cell.trim();
   if (RegExp(r'^\d{1,2}\.0$').hasMatch(s)) s = s.substring(0, s.length - 2);
   if (!_seatList.hasMatch(s)) return null;
-  final seats = s.split(RegExp(r'\s*[.,]\s*')).map(int.parse).toList();
+  final seats = s.split(RegExp(r'\s*[.,]\s*')).map(int.parse).toSet().toList();
   return seats.every((n) => n >= 1 && n <= 10) ? seats : null;
 }
 

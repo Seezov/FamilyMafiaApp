@@ -38,6 +38,9 @@ const ticks = [0, Math.round(max / 2), max];
     <text x={x(i)} y={H - 8} text-anchor="middle">S{t.seasonId}</text>
   ))}
 </svg>
+<p class="games-row label">Games: {played.map((t, k) => (
+  <>{k > 0 && ' · '}<a href={gamesHref(t.seasonId, slug)} aria-label={`${t.title}: ${t.games} games`}>S{t.seasonId}</a></>
+))}</p>
 <div class="legend label">
   <span><i style="background:var(--city)" />Main league</span>
   <span><i style="background:var(--mid)" />Small league</span>
@@ -45,6 +48,11 @@ const ticks = [0, Math.round(max / 2), max];
 </div>
 
 <style>
+  circle { transition: stroke-width .12s; }
+  a:hover circle, a:focus-visible circle { stroke: var(--accent, var(--city)); stroke-width: 3.5; }
+  a:focus-visible { outline: none; }
+  .games-row { margin-top: 8px; }
+  .games-row a { text-decoration: underline; }
   svg { width: 100%; height: auto; display: block; }
   text { fill: var(--muted); font-size: 11px; font-family: var(--font-body); }
   .legend { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 8px; }

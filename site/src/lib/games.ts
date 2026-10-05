@@ -44,3 +44,17 @@ export function dayLabel(date: string | null): string {
   const wd = new Date(Date.UTC(y, m - 1, d)).getUTCDay();
   return `${days[wd]}, ${d} ${months[m - 1]} ${y}`;
 }
+
+/** A day's games grouped by table, in order of first appearance. An unknown
+ * table counts as table 1 (the export's ids do), so both share one group.
+ * `table` is null when the day has a single group (no heading needed). */
+export function tableGroups<T extends { table?: number }>(games: T[]): { table: number | null; games: T[] }[] {
+  const order: number[] = [];
+  const by = new Map<number, T[]>();
+  for (const g of games) {
+    const t = g.table || 1;
+    if (!by.has(t)) { by.set(t, []); order.push(t); }
+    by.get(t)!.push(g);
+  }
+  return order.map((t) => ({ table: order.length > 1 ? t : null, games: by.get(t)! }));
+}

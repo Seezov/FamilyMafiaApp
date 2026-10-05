@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { dayLabel, filtersToSearch, fmtPts, gameIdFromHash, initialView, matchesFilters, parseFilters } from './games';
+import { tableGroups, dayLabel, filtersToSearch, fmtPts, gameIdFromHash, initialView, matchesFilters, parseFilters } from './games';
 
 describe('filters', () => {
   it('round-trips through the query string', () => {
@@ -45,5 +45,22 @@ describe('format', () => {
   it('labels a day', () => {
     expect(dayLabel('2026-09-01')).toBe('Tue, 1 Sep 2026');
     expect(dayLabel(null)).toBe('No date');
+  });
+});
+
+describe('tableGroups', () => {
+  it('has no heading for a single group', () => {
+    expect(tableGroups([{ n: 1 }, { n: 2 }]).map((g) => g.table)).toEqual([null]);
+    expect(tableGroups([{ table: 2 }]).map((g) => g.table)).toEqual([null]);
+  });
+  it('labels unknown tables as Table 1 when the day has several tables', () => {
+    const g = tableGroups([{ n: 1 }, { n: 2, table: 2 }, { n: 3 }]);
+    expect(g.map((x) => x.table)).toEqual([1, 2]);
+    expect(g[0].games.map((x: any) => x.n)).toEqual([1, 3]);
+  });
+  it('merges unknown and real table 1 in sheet order', () => {
+    const g = tableGroups([{ n: 1, table: 1 }, { n: 2, table: 2 }, { n: 3 }, { n: 4, table: 1 }]);
+    expect(g.map((x) => x.table)).toEqual([1, 2]);
+    expect(g[0].games.map((x: any) => x.n)).toEqual([1, 3, 4]);
   });
 });

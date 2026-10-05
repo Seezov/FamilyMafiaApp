@@ -32,6 +32,8 @@ void main() {
       expect(parseSeatList('6.9'), [6, 9]);
       expect(parseSeatList('3,6'), [3, 6]);
       expect(parseSeatList('3, 6'), [3, 6]);
+      expect(parseSeatList('1, 1'), [1]);
+      expect(parseSeatList('3,6,3'), [3, 6]);
     });
     test('not seats: dates, out of range, text, empty', () {
       expect(parseSeatList('2025-05-06T21:00:00.000Z'), isNull);
