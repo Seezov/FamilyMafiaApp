@@ -98,10 +98,16 @@ default branch.
   repo activity; if the nightly build stops, re-enable it in the Actions tab.
 - **Game hosting (season 32+):** hosts record games on `/host/` (Firebase Auth + Firestore,
   project `familymafiaapp`, rules in `firestore.rules`, tests in `firebase/rules-test/` — run
-  with `JAVA_HOME` = Android Studio's `jbr`). Seasons with `"source": "firestore"` are read over
+  with `JAVA_HOME="/c/Program Files/Android/AndroidStudio/jbr"` and its `bin` on `PATH`). Seasons with `"source": "firestore"` are read over
   REST by `FirestoreService`; `games-watch.yml` rebuilds the site hourly when
   `meta/state.updatedAt` changed. Hosts are managed in the Firestore console
   (`hosts/{email}` = `{name, admin}`). Rules are published from the console's Rules tab.
+- **Player profiles:** `/account/` (Google sign-in → claim a player → admin approves on
+  `/account/admin/` → nick + avatar). Firestore `claims/{uid}` (private) and
+  `profiles/{playerKey}` (public; `playerKey` = lower-cased, URI-encoded display name).
+  `site/scripts/fetch-profiles.ts` runs before `astro build`, writes `data/profiles.json` and
+  `public/avatars/` (gitignored); components show nicks via `PlayerName.astro`. Changes appear
+  after the next build (games-watch, ≤ 1 h). Rules for both live in `firestore.rules`.
 - Running the prefetch locally leaves a ~650 KB snapshot in `assets/prefetched/`
   that also goes into local release APKs (no secrets, just data). Before a
   release APK: `rm assets/prefetched/season*.json assets/prefetched/remote_config.json`.
