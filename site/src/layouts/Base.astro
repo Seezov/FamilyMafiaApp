@@ -63,6 +63,7 @@ const fullTitle = title === site ? title : `${title} · ${site}`;
             <a href={n.url} aria-current={n.key === active ? 'page' : undefined}>{n.label}</a>
           ))}
         </nav>
+        <a class="account" href={href('account/')} aria-label="Мій профіль" title="Мій профіль"><span>Увійти</span></a>
         <button class="theme" type="button" aria-label="Switch light / dark theme" title="Switch light / dark theme">
           <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 3a9 9 0 0 0 0 18z" /></svg>
         </button>
@@ -82,6 +83,24 @@ const fullTitle = title === site ? title : `${title} · ${site}`;
         root.dataset.theme = light ? 'dark' : 'light';
         try { localStorage.setItem('theme', root.dataset.theme); } catch {}
       });
+      try {
+        const acc = JSON.parse(localStorage.getItem('fm-account') || 'null');
+        const a = document.querySelector('.account');
+        if (acc && a) {
+          a.textContent = '';
+          if (acc.avatar) {
+            const img = document.createElement('img');
+            img.src = acc.avatar; img.alt = ''; img.width = 28; img.height = 28;
+            a.append(img);
+          } else {
+            const s = document.createElement('span');
+            s.className = 'initial';
+            s.textContent = (acc.label || '?').slice(0, 1).toUpperCase();
+            a.append(s);
+          }
+          a.title = acc.label || 'Мій профіль';
+        }
+      } catch {}
     </script>
   </body>
 </html>
@@ -98,9 +117,15 @@ const fullTitle = title === site ? title : `${title} · ${site}`;
   .tabs a { display: flex; align-items: center; padding: 0 12px; color: var(--muted);
     border-bottom: 2px solid transparent; font-weight: 500; white-space: nowrap; }
   .tabs a[aria-current='page'] { color: var(--text); border-bottom-color: var(--accent); }
-  .theme { margin-left: auto; display: grid; place-items: center; width: 32px; height: 32px; padding: 0;
+  .theme { display: grid; place-items: center; width: 32px; height: 32px; padding: 0;
     background: none; border: 1px solid var(--border); border-radius: var(--radius); color: var(--muted); cursor: pointer; }
   .theme:hover { color: var(--text); }
+  .account { margin-left: auto; display: grid; place-items: center; min-width: 32px; height: 32px; padding: 0 10px;
+    border: 1px solid var(--border); border-radius: var(--radius); color: var(--muted); font-size: 13px; white-space: nowrap; }
+  .account:hover { color: var(--text); }
+  .account:has(img), .account:has(.initial) { padding: 0; width: 32px; border-radius: 50%; overflow: hidden; }
+  .account img { width: 100%; height: 100%; object-fit: cover; }
+  .account .initial { font-weight: 600; color: var(--text); }
   .theme svg { width: 16px; height: 16px; fill: currentColor; stroke: currentColor; stroke-width: 2; }
   .theme svg circle { fill: none; }
   .search input { width: 220px; background: var(--panel); border: 1px solid var(--border);
