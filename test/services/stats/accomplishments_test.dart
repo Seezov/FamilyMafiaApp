@@ -97,4 +97,48 @@ void main() {
         'podium': ['A', 'B', 'C']}).podium, ['A', 'B', 'C']);
     expect(Tournament.fromJson({'season': 1, 'type': 'minicap', 'name': 'm', 'games': 4}).podium, isEmpty);
   });
+
+  test('a season still in progress gives no places or awards', () {
+    final acc = computeAccomplishments(
+      me,
+      {
+        1: _s([r(me, 45)], mostKilled: [me.id]),
+        2: _s([r(me, 45), r(a, 20)], mostKilled: [me.id]), // still being played
+      },
+      [_c(1), _c(2)],
+      const [],
+      resolver,
+      inProgress: const {2},
+    );
+    expect(acc.firsts, 1);
+    expect(acc.mostKilled, 1);
+    expect(acc.where, {'main:0': ['S1'], 'killed': ['S1']});
+  });
+
+  group('seasonInProgress', () {
+    DateTime d(int y, int m, int day) => DateTime.utc(y, m, day);
+    final s31 = [d(2026, 9, 1), d(2026, 9, 20), d(2026, 10, 3)];
+
+    test('Sep–Nov season runs until 1 December', () {
+      expect(seasonInProgress(s31, now: d(2026, 10, 5)), isTrue);
+      expect(seasonInProgress(s31, now: d(2026, 11, 30)), isTrue);
+      expect(seasonInProgress(s31, now: d(2026, 12, 1)), isFalse);
+    });
+
+    test('Dec–Feb season crosses the year', () {
+      final winter = [d(2025, 12, 2), d(2026, 1, 15), d(2026, 2, 20)];
+      expect(seasonInProgress(winter, now: d(2026, 2, 28)), isTrue);
+      expect(seasonInProgress(winter, now: d(2026, 3, 1)), isFalse);
+      // A season whose median game is in December.
+      expect(seasonInProgress([d(2025, 12, 2), d(2025, 12, 9), d(2026, 1, 5)], now: d(2026, 2, 1)), isTrue);
+    });
+
+    test('a typo date does not end the season early', () {
+      expect(seasonInProgress([d(1900, 1, 1), ...s31, d(2026, 10, 4)], now: d(2026, 10, 5)), isTrue);
+    });
+
+    test('a season without dates counts as finished', () {
+      expect(seasonInProgress(const [], now: d(2026, 10, 5)), isFalse);
+    });
+  });
 }

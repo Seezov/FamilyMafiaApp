@@ -9,13 +9,16 @@ import 'package:family_mafia_app/services/stats/player_resolver.dart';
 /// league in each season, season awards, and tournament prize places.
 ///
 /// [seasons] player stats must already be sorted by rating, best first.
+/// Seasons in [inProgress] are still being played: their standings and
+/// awards aren't final, so they give no places or awards yet.
 PlayerAccomplishments computeAccomplishments(
   Player player,
   Map<int, SeasonStats> seasons,
   List<SeasonConfig> configs,
   List<Tournament> tournaments,
-  PlayerResolver resolver,
-) {
+  PlayerResolver resolver, {
+  Set<int> inProgress = const {},
+}) {
   final key = personKey(player);
   final configById = {for (final c in configs) c.id: c};
   final acc = PlayerAccomplishments(player);
@@ -29,7 +32,7 @@ PlayerAccomplishments computeAccomplishments(
   for (final seasonId in seasons.keys.toList()..sort()) {
     final stats = seasons[seasonId]!;
     final config = configById[seasonId];
-    if (config == null) continue;
+    if (config == null || inProgress.contains(seasonId)) continue;
     final s = 'S$seasonId';
 
     final main = stats.playerStats
@@ -98,4 +101,21 @@ PlayerAccomplishments computeAccomplishments(
   }
 
   return acc;
+}
+
+/// Whether a season with these game dates is still being played at [now].
+/// Club seasons follow the quarters Dec–Feb, Mar–May, Jun–Aug and Sep–Nov;
+/// the season's quarter is the one of its median game, so a typo date
+/// (1900, 0202) can't move it. No dates → treated as finished.
+bool seasonInProgress(List<DateTime> gameDates, {required DateTime now}) {
+  if (gameDates.isEmpty) return false;
+  final sorted = [...gameDates]..sort();
+  final median = sorted[sorted.length ~/ 2];
+  final m = median.month;
+  final end = switch (m) {
+    12 => DateTime.utc(median.year + 1, 3),
+    <= 2 => DateTime.utc(median.year, 3),
+    _ => DateTime.utc(median.year, ((m - 3) ~/ 3) * 3 + 6),
+  };
+  return now.isBefore(end);
 }

@@ -103,6 +103,22 @@ final filteredPlayersProvider = Provider<List<Player>>((ref) {
       .toList();
 });
 
+/// The clock the in-progress check reads; overridden in tests.
+final clockProvider = Provider<DateTime Function()>((ref) => DateTime.now);
+
+/// Seasons still being played today (see [seasonInProgress]).
+final seasonsInProgressProvider = Provider<Set<int>>((ref) {
+  final dates = <int, List<DateTime>>{};
+  for (final g in ref.watch(gamesRepositoryProvider)) {
+    if (g.date != null) (dates[g.seasonId] ??= []).add(g.date!);
+  }
+  final now = ref.watch(clockProvider)();
+  return {
+    for (final e in dates.entries)
+      if (seasonInProgress(e.value, now: now)) e.key,
+  };
+});
+
 /// Counts all-time accomplishments (placements + awards) for a given player.
 final playerAccomplishmentsProvider =
     Provider.family<PlayerAccomplishments, Player>((ref, player) {
@@ -112,6 +128,7 @@ final playerAccomplishmentsProvider =
     ref.watch(loadedSeasonConfigsProvider),
     ref.watch(tournamentsProvider),
     PlayerResolver(ref.watch(playersRepositoryProvider)),
+    inProgress: ref.watch(seasonsInProgressProvider),
   );
 });
 
