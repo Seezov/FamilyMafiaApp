@@ -5,9 +5,10 @@ import 'package:family_mafia_app/models/annual_event.dart';
 import 'package:family_mafia_app/models/roster.dart';
 import 'package:family_mafia_app/models/season_config.dart';
 import 'package:family_mafia_app/services/firestore_rest.dart';
+import 'package:family_mafia_app/services/firestore_service_ids.dart';
 
 /// The Firebase project behind /host/ and config/club.
-const kFirebaseProjectId = 'familymafiaapp';
+const kFirebaseProjectId = kFirebaseProjectIdForSeasons;
 
 /// Reads a season's games from Firestore over REST. Games are publicly
 /// readable (firestore.rules), so no key or sign-in is needed.

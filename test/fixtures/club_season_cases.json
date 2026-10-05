@@ -1,0 +1,13 @@
+[
+  {"case": "no club seasons", "lastJsonId": 31, "seasons": [], "valid": true},
+  {"case": "the next season", "lastJsonId": 31, "seasons": [{"id": 32, "title": "Season 32", "smallLeagueMinGames": 15, "startDate": "2026-12-01"}], "valid": true},
+  {"case": "two in order", "lastJsonId": 31, "seasons": [{"id": 32, "title": "Season 32", "smallLeagueMinGames": 15, "startDate": "2026-12-01"}, {"id": 33, "title": "Season 33", "smallLeagueMinGames": 12, "startDate": "2027-03-01"}], "valid": true},
+  {"case": "a gap", "lastJsonId": 31, "seasons": [{"id": 33, "title": "Season 33", "smallLeagueMinGames": 15, "startDate": "2026-12-01"}], "valid": false},
+  {"case": "id the JSON has", "lastJsonId": 32, "seasons": [{"id": 32, "title": "Season 32", "smallLeagueMinGames": 15, "startDate": "2026-12-01"}], "valid": false},
+  {"case": "blank title", "lastJsonId": 31, "seasons": [{"id": 32, "title": "   ", "smallLeagueMinGames": 15, "startDate": "2026-12-01"}], "valid": false},
+  {"case": "title of 41 characters", "lastJsonId": 31, "seasons": [{"id": 32, "title": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "smallLeagueMinGames": 15, "startDate": "2026-12-01"}], "valid": false},
+  {"case": "min games 0", "lastJsonId": 31, "seasons": [{"id": 32, "title": "Season 32", "smallLeagueMinGames": 0, "startDate": "2026-12-01"}], "valid": false},
+  {"case": "min games 101", "lastJsonId": 31, "seasons": [{"id": 32, "title": "Season 32", "smallLeagueMinGames": 101, "startDate": "2026-12-01"}], "valid": false},
+  {"case": "no such day", "lastJsonId": 31, "seasons": [{"id": 32, "title": "Season 32", "smallLeagueMinGames": 15, "startDate": "2026-02-30"}], "valid": false},
+  {"case": "short date", "lastJsonId": 31, "seasons": [{"id": 32, "title": "Season 32", "smallLeagueMinGames": 15, "startDate": "2026-2-1"}], "valid": false}
+]
