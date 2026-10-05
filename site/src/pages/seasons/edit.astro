@@ -1,0 +1,55 @@
+---
+import fs from 'node:fs';
+import path from 'node:path';
+import Base from '../../layouts/Base.astro';
+
+// The JSON config's seasons (0–31): fixed, shown read-only. Club seasons come live from Firestore.
+const root = path.resolve(process.cwd(), '..');
+const config = JSON.parse(fs.readFileSync(path.join(root, 'remote_config.json'), 'utf8')) as
+  { seasons: { id: number; title: string; source: string; smallLeagueMinGames?: number }[] };
+const SOURCE: Record<string, string> = { bundled: 'App', remote: 'Sheet', firestore: 'Firestore' };
+const json = config.seasons.map((s) => ({ id: s.id, title: s.title, source: SOURCE[s.source] ?? s.source }));
+const last = config.seasons.reduce((a, b) => (b.id > a.id ? b : a));
+const data = JSON.stringify({ json, lastJsonId: last.id, jsonMinGames: last.smallLeagueMinGames ?? 15 }).replace(/</g, '\\u003c');
+---
+<Base title="Edit seasons" description="Admins open new club seasons." active="season">
+  <div class="pagehead"><h1 class="display">Seasons</h1><span class="label" id="state">Loading…</span></div>
+
+  <div class="panel access">
+    <span class="label">Editing</span> <span id="who">Read-only</span>
+    <button type="button" id="sign-in" class="btn primary">Sign in with Google</button>
+    <button type="button" id="sign-out" class="btn" hidden>Sign out</button>
+    <p class="hint">Admins (hosts with <code>admin: true</code>) can create a season. From its start date hosts get it by default on /host/; it appears on the site after its first game and the next rebuild (within an hour).</p>
+  </div>
+
+  <form id="create" class="panel form" hidden>
+    <h2 id="create-title">Create season</h2>
+    <div class="fields">
+      <label>Title <input name="title" maxlength="40" required></label>
+      <label>Small league: min games <input name="min" type="number" min="1" max="100" required></label>
+      <label>Start date <input name="start" type="date" required></label>
+      <button type="submit" class="btn primary">Create</button>
+    </div>
+  </form>
+
+  <p id="msg" class="msg" role="status"></p>
+  <table class="list"><thead><tr><th>#</th><th>Title</th><th>Source</th><th>Start</th><th>Games</th><th></th></tr></thead><tbody id="rows"></tbody></table>
+
+  <script type="application/json" id="seasons-data" set:html={data} />
+</Base>
+
+<script>
+  import '../../scripts/seasons-edit';
+</script>
+
+<style>
+  .access { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; margin-bottom: 12px; }
+  .hint { flex-basis: 100%; margin: 0; color: var(--muted); }
+  .msg:empty { display: none; }
+  .msg.error { color: var(--city); }
+  .form { display: grid; gap: 8px; margin-bottom: 16px; }
+  .form .fields { display: flex; flex-wrap: wrap; gap: 8px; align-items: end; }
+  .list { width: 100%; border-collapse: collapse; }
+  .list td, .list th { padding: 6px 8px; border-top: 1px solid var(--border); text-align: left; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; }
+</style>
