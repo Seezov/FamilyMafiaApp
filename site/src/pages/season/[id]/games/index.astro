@@ -1,0 +1,47 @@
+---
+import Base from '../../../../layouts/Base.astro';
+import GameCard from '../../../../components/GameCard.astro';
+import SeasonHead from '../../../../components/SeasonHead.astro';
+import { loadGames, loadIndex, loadSeason } from '../../../../lib/data';
+import { dayLabel } from '../../../../lib/games';
+
+export function getStaticPaths() {
+  return loadIndex().seasons.map((s) => ({ params: { id: String(s.id) } }));
+}
+const id = Number(Astro.params.id);
+const season = loadSeason(id);
+const data = loadGames(id);
+const total = data.days.reduce((n, d) => n + d.games.length, 0);
+const tables = (games: typeof data.days[number]['games']) =>
+  [...new Set(games.map((g) => g.table ?? 0))].map((t) => ({ t, games: games.filter((g) => (g.table ?? 0) === t) }));
+---
+<Base title={`${season.title} · Games`} description={`${season.title}: all ${total} games`} active="season">
+  <SeasonHead id={id} tab="games" />
+  <div class="toolbar">
+    <input id="f-player" list="players" placeholder="Player" autocomplete="off" />
+    <datalist id="players">{data.players.map((p) => <option value={p.name} data-key={p.key} />)}</datalist>
+    <select id="f-host"><option value="">All hosts</option>{data.hosts.map((h) => <option>{h}</option>)}</select>
+    <span id="count" class="label">{total} games</span>
+  </div>
+  {data.days.map((d) => (
+    <section class="day">
+      <h2 class="label">{dayLabel(d.date)} · {d.games.length} {d.games.length === 1 ? 'game' : 'games'}</h2>
+      {tables(d.games).map(({ t, games }) => (
+        <div class="table-group">
+          {t > 0 && tables(d.games).length > 1 && <h3 class="label">Table {t}</h3>}
+          {games.map((g) => <GameCard game={g} autoLabel={data.autoLabel} seasonId={id} />)}
+        </div>
+      ))}
+    </section>
+  ))}
+  <script type="application/json" id="games-players" set:html={JSON.stringify(data.players).replace(/</g, '\\u003c')} />
+</Base>
+
+<script>
+  import '../../../../scripts/games';
+</script>
+
+<style>
+  .toolbar { display: flex; gap: 12px; flex-wrap: wrap; margin: 16px 0; align-items: center; }
+  .day h2 { margin: 24px 0 4px; }
+</style>

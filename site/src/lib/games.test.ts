@@ -24,6 +24,7 @@ describe('deep links', () => {
     expect(gameIdFromHash('#g-x-0')).toBe('g-x-0');
     expect(gameIdFromHash('#top')).toBeNull();
     expect(gameIdFromHash('')).toBeNull();
+    expect(gameIdFromHash('#g-%E0%A4%A')).toBeNull();
   });
   it('initialView clears filters that hide the target', () => {
     const f = { player: 'seezov', host: null };

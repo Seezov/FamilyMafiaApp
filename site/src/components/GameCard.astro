@@ -1,0 +1,91 @@
+---
+import PlayerName from './PlayerName.astro';
+import type { GameEntry, ColorGuess } from '../lib/types';
+import { fmtPts } from '../lib/games';
+
+interface Props { game: GameEntry; autoLabel: string; seasonId: number }
+const { game: g, autoLabel } = Astro.props;
+const roleLabel: Record<string, string> = { civilian: 'Civilian', sheriff: 'Sheriff', mafia: 'Mafia', don: 'Don' };
+const result = { city: 'City', mafia: 'Mafia', unrated: 'Unrated' }[g.result];
+const cols = [
+  { k: 'fouls', label: 'Fouls', tip: 'Фоли' },
+  { k: 'won', label: 'Win', tip: 'Бал: 1 for a win' },
+  { k: 'add', label: 'Add.', tip: 'Доп — additional points from the host' },
+  { k: 'ad', label: 'Auto', tip: 'АД — automatic additional points' },
+  { k: 'bm', label: 'Best move', tip: `${autoLabel} — points of the first killed` },
+  { k: 'pen', label: 'Penalty', tip: 'Штраф' },
+  { k: 'prAdd', label: 'Prot. +', tip: 'ПрДод — protocol bonus' },
+  { k: 'prPen', label: 'Prot. −', tip: 'ПрШтраф — protocol penalty' },
+] as const;
+const shown = cols.filter((c) => g.seats.some((s) => s[c.k] !== undefined));
+const cell = (s: GameEntry['seats'][number], k: (typeof cols)[number]['k']) =>
+  k === 'won' ? (s.won ? '1' : '') : k === 'fouls' ? (s.fouls ? String(s.fouls) : '') : fmtPts(s[k]);
+const seatName = (n: number) => g.seats[n - 1]?.player ?? '—';
+const guesses = (cs: ColorGuess[]) => cs.map((c) => `${c.seat}${c.black ? '●' : '○'}`).join(' ');
+const keys = g.seats.map((s) => s.key).filter(Boolean).join('|');
+---
+<details class="game" id={g.id} data-keys={keys} data-host={g.host ?? ''}>
+  <summary>
+    <span class="num">#{g.n}</span>
+    <span class="host">{g.host ?? '—'}</span>
+    <span class={`res ${g.result}`}>{result}</span>
+    {g.label && <span class="label">{g.label}</span>}
+    {g.seats.filter((s) => s.key).map((s) => (
+      <span class="pick" data-k={s.key} hidden>{roleLabel[s.role] ?? s.role} · {fmtPts(s.total) || '0'}</span>
+    ))}
+  </summary>
+  <div class="body">
+    <div class="scroll">
+      <table>
+        <thead><tr>
+          <th>#</th><th>Player</th><th>Role</th>
+          {shown.map((c) => <th title={c.tip}>{c.label}</th>)}
+          <th title="Sum of the columns (no СІ top-up)">Total</th>
+        </tr></thead>
+        <tbody>
+          {g.seats.map((s) => (
+            <tr>
+              <td>{s.n}</td>
+              <td>{s.player ? (s.slug ? <PlayerName slug={s.slug} name={s.player} /> : s.player) : '—'}</td>
+              <td class={`role ${s.role}`}>{roleLabel[s.role] ?? s.role}</td>
+              {shown.map((c) => <td class="num">{cell(s, c.k)}</td>)}
+              <td class="num total">{fmtPts(s.total)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    {g.firstKilled && <p><b>First killed:</b> {g.firstKilled} · {seatName(g.firstKilled)}
+      {g.bestMove && <> · <b>Best move:</b> {g.bestMove.join(', ')}</>}
+      {g.supportFive && <> · <b>Support 5:</b> {guesses(g.supportFive)}</>}
+      {g.bestMovePoints !== undefined && <> ({fmtPts(g.bestMovePoints)})</>}</p>}
+    {g.protocol && (
+      <div><b>Protocol</b>
+        <ol>{g.protocol.map((p) => (
+          <li>{p.killed} · {seatName(p.killed)}{p.version && <> — sheriff {p.version}</>}{p.colors.length > 0 && <> — {guesses(p.colors)}</>}</li>
+        ))}</ol>
+      </div>
+    )}
+    {g.comments && (
+      <ul class="comments">{g.comments.map((c) => (
+        <li>{c.seats.length > 0 && <b>{c.seats.join(', ')} — </b>}<span>{c.text}</span></li>
+      ))}</ul>
+    )}
+    <button type="button" class="copy" data-id={g.id}>Copy link</button>
+  </div>
+</details>
+
+<style>
+  .game { border-bottom: 1px solid var(--border); }
+  .game summary { display: flex; gap: 12px; align-items: baseline; padding: 8px 0; cursor: pointer; flex-wrap: wrap; }
+  .res.city { color: var(--city); } .res.mafia { color: var(--mafia); } .res.unrated { color: var(--muted); }
+  .label, .pick { color: var(--muted); font-size: .9em; }
+  .scroll { overflow-x: auto; }
+  table { border-collapse: collapse; min-width: 100%; }
+  th, td { padding: 4px 8px; text-align: left; white-space: nowrap; }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .role.civilian { color: var(--civilian); } .role.sheriff { color: var(--sheriff); }
+  .role.mafia { color: var(--mafia); } .role.don { color: var(--don); }
+  .comments span { white-space: pre-line; }
+  .body { padding: 0 0 12px; }
+</style>

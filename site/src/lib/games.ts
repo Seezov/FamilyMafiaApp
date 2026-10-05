@@ -18,7 +18,8 @@ export const matchesFilters = (keys: string[], host: string | undefined, f: Game
   (!f.player || keys.includes(f.player)) && (!f.host || host === f.host);
 
 export function gameIdFromHash(hash: string): string | null {
-  const id = decodeURIComponent(hash.replace(/^#/, ''));
+  let id: string;
+  try { id = decodeURIComponent(hash.replace(/^#/, '')); } catch { return null; }
   return /^g-[\w-]+$/.test(id) ? id : null;
 }
 

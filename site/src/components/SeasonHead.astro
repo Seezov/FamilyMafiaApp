@@ -1,0 +1,36 @@
+---
+import { loadIndex, loadSeason } from '../lib/data';
+import { gamesHref, seasonHref } from '../lib/url';
+
+interface Props { id: number; tab: 'main' | 'small' | 'games' }
+const { id, tab } = Astro.props;
+const season = loadSeason(id);
+const seasons = [...loadIndex().seasons].reverse();
+const link = (sid: number) => (tab === 'games' ? gamesHref(sid) : seasonHref(sid, tab === 'small'));
+---
+<div class="pagehead">
+  <details class="picker">
+    <summary class="display">{season.title} <span aria-hidden="true">▾</span></summary>
+    <ul>
+      {seasons.map((x) => <li><a href={link(x.id)} aria-current={x.id === id ? 'page' : undefined}>{x.title}</a></li>)}
+    </ul>
+  </details>
+  <nav class="pills" aria-label="Section">
+    <a class="pill" href={seasonHref(id)} aria-current={tab === 'main' ? 'true' : undefined}>Main league</a>
+    <a class="pill" href={seasonHref(id, true)} aria-current={tab === 'small' ? 'true' : undefined}>Small league</a>
+    <a class="pill" href={gamesHref(id)} aria-current={tab === 'games' ? 'true' : undefined}>Games</a>
+  </nav>
+  <slot />
+</div>
+
+<style>
+  .picker { position: relative; }
+  .picker summary { list-style: none; cursor: pointer; font-size: clamp(22px, 3vw, 32px); }
+  .picker summary::-webkit-details-marker { display: none; }
+  .picker summary span { color: var(--muted); font-size: .6em; }
+  .picker ul { position: absolute; z-index: 20; margin: 6px 0 0; padding: 6px; list-style: none;
+    background: var(--panel-2); border: 1px solid var(--border); border-radius: var(--radius);
+    max-height: 60vh; overflow-y: auto; min-width: 180px; }
+  .picker li a { display: block; padding: 6px 10px; border-radius: 6px; }
+  .picker li a[aria-current='page'] { color: var(--accent); }
+</style>

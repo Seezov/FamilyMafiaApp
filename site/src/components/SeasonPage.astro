@@ -4,13 +4,12 @@ import DataTable from './DataTable.astro';
 import Kpi from './Kpi.astro';
 import Panel from './Panel.astro';
 import RankedList from './RankedList.astro';
-import { loadIndex, loadSeason } from '../lib/data';
+import SeasonHead from './SeasonHead.astro';
+import { loadSeason } from '../lib/data';
 import { pct } from '../lib/format';
-import { seasonHref } from '../lib/url';
 
 interface Props { id: number; small: boolean }
 const { id, small } = Astro.props;
-const index = loadIndex();
 const season = loadSeason(id);
 const league = small ? season.leagues.small : season.leagues.main;
 const s = season.summary;
@@ -18,28 +17,15 @@ const dash = '—';
 const description = s
   ? `${season.title}: ${s.games} games, ${s.players} players, city won ${pct(s.cityWR)}.`
   : season.title;
-const seasons = [...index.seasons].reverse();
 ---
 <Base title={`${season.title}${small ? ' · Small league' : ''}`} description={description} active="season">
-  <div class="pagehead">
-    <details class="picker">
-      <summary class="display">{season.title} <span aria-hidden="true">▾</span></summary>
-      <ul>
-        {seasons.map((x) => (
-          <li><a href={seasonHref(x.id, small)} aria-current={x.id === id ? 'page' : undefined}>{x.title}</a></li>
-        ))}
-      </ul>
-    </details>
-    <nav class="pills" aria-label="League">
-      <a class="pill" href={seasonHref(id)} aria-current={!small ? 'true' : undefined}>Main league</a>
-      <a class="pill" href={seasonHref(id, true)} aria-current={small ? 'true' : undefined}>Small league</a>
-    </nav>
+  <SeasonHead id={id} tab={small ? 'small' : 'main'}>
     {season.tournamentCounts.length > 0 && (
       <div class="pills">
         {season.tournamentCounts.map((t) => <span class="pill">{t.count} {t.label.toLowerCase()}{t.count === 1 ? '' : 's'}</span>)}
       </div>
     )}
-  </div>
+  </SeasonHead>
 
   <div class="kpis">
     <Kpi label="Games" value={s ? String(s.games) : dash} />
@@ -74,15 +60,6 @@ const seasons = [...index.seasons].reverse();
 </Base>
 
 <style>
-  .picker { position: relative; }
-  .picker summary { list-style: none; cursor: pointer; font-size: clamp(22px, 3vw, 32px); }
-  .picker summary::-webkit-details-marker { display: none; }
-  .picker summary span { color: var(--muted); font-size: .6em; }
-  .picker ul { position: absolute; z-index: 20; margin: 6px 0 0; padding: 6px; list-style: none;
-    background: var(--panel-2); border: 1px solid var(--border); border-radius: var(--radius);
-    max-height: 60vh; overflow-y: auto; min-width: 180px; }
-  .picker li a { display: block; padding: 6px 10px; border-radius: 6px; }
-  .picker li a[aria-current='page'] { color: var(--accent); }
   .kpis { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; margin-bottom: 16px; }
   @media (max-width: 899px) { .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   .lists { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr)); gap: 20px 28px; }
