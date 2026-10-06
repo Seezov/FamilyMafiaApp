@@ -1,0 +1,38 @@
+---
+import Base from '../layouts/Base.astro';
+import DataTable from './DataTable.astro';
+import NominationCards from './NominationCards.astro';
+import Panel from './Panel.astro';
+import type { AllstarsData, AllstarsEventData } from '../lib/types';
+import { ukCount } from '../lib/format';
+import { href } from '../lib/url';
+
+const players = ['гравець', 'гравці', 'гравців'] as const;
+const games = ['гра', 'гри', 'ігор'] as const;
+
+interface Props { data: AllstarsData; e: AllstarsEventData }
+const { data, e } = Astro.props;
+const meta = [e.date, e.host && `${e.hostLabel}: ${e.host}`, `${ukCount(e.players, players)} · ${ukCount(e.games, games)}`].filter(Boolean);
+---
+<Base title={`${e.name} — Річні турніри`} description={`${e.name}: переможець ${e.podium[0]?.t ?? '—'}, підсумкова таблиця і номінації.`} active="allstars">
+  <div class="pagehead">
+    <h1 class="display">{e.name}</h1>
+    <p class="meta">{meta.join(' · ')}{e.source && <> · <a href={e.source} rel="noopener">Результати на emotion.games</a></>}</p>
+    <nav class="years">
+      <a href={href('allstars/')}>Усі роки</a>
+      {data.events.map((o) => (
+        <a href={href(`allstars/${o.year}/`)} aria-current={o.year === e.year ? 'page' : undefined}>{o.year}</a>
+      ))}
+    </nav>
+  </div>
+  <div class="grid">
+    <Panel title="Номінації" class="span-12"><NominationCards nominations={e.nominations} /></Panel>
+    <Panel title="Підсумкова таблиця" class="span-12"><DataTable table={e.table} /></Panel>
+  </div>
+</Base>
+
+<style>
+  .meta { color: var(--muted); margin: 4px 0 0; }
+  .years { display: flex; flex-wrap: wrap; gap: 6px 12px; margin-top: 10px; }
+  .years a[aria-current] { font-weight: 700; color: var(--text); }
+</style>

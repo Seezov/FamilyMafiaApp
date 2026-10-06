@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import type { AnnualData, DebugData, GamesData, IndexData, PlayerData, PlayersData, RecordsData, SeasonData, TournamentsData, UnresolvedData } from './types';
+import type { AllstarsData, AnnualData, DebugData, GamesData, IndexData, PlayerData, PlayersData, RecordsData, SeasonData, TournamentsData, UnresolvedData } from './types';
 
 // Written by `flutter test tool/export_site_data_test.dart` (repo root).
 const dir = process.env.SITE_DATA_DIR ?? path.resolve(process.cwd(), 'data');
@@ -21,5 +21,6 @@ export const loadPlayer = (slug: string) => read<PlayerData>(`player/${slug}.jso
 export const loadRecords = () => read<RecordsData>('records.json');
 export const loadTournaments = () => read<TournamentsData>('tournaments.json');
 export const loadAnnual = () => read<AnnualData>('annual.json');
+export const loadAllstars = () => read<AllstarsData>('allstars.json');
 export const loadDebug = () => read<DebugData>('debug.json');
 export const loadGames = (id: number) => read<GamesData>(`games/${id}.json`);

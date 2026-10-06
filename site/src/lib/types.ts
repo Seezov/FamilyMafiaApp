@@ -118,3 +118,14 @@ export interface AnnualEvent {
 }
 export interface AnnualYear { year: number; standings: AnnualStanding[]; events: AnnualEvent[] }
 export interface AnnualData { years: AnnualYear[] }
+
+export interface AllstarsNomination {
+  key: 'mvp' | 'firstKilled' | 'bestRed' | 'bestMafia';
+  icon: string; label: string; official: boolean;
+  rows: { player: SiteCell; value: string }[];
+}
+export interface AllstarsEventData {
+  year: number; name: string; date?: string; hostLabel: string; host?: string; source?: string;
+  players: number; games: number; podium: SiteCell[]; table: SiteTable; nominations: AllstarsNomination[];
+}
+export interface AllstarsData { events: AllstarsEventData[]; champions: SiteTable }

@@ -1,0 +1,49 @@
+---
+import Base from '../../layouts/Base.astro';
+import DataTable from '../../components/DataTable.astro';
+import Panel from '../../components/Panel.astro';
+import { loadAllstars } from '../../lib/data';
+import { ukCount } from '../../lib/format';
+import { href } from '../../lib/url';
+
+const players = ['гравець', 'гравці', 'гравців'] as const;
+const games = ['гра', 'гри', 'ігор'] as const;
+
+const d = loadAllstars();
+---
+<Base title="Річні турніри" description="Royal Battle і Family All Stars: переможці, підсумкові таблиці й номінації кожного року." active="allstars">
+  <div class="pagehead"><h1 class="display">Річні турніри</h1></div>
+  <div class="years">
+    {d.events.map((e) => (
+      <a class="year" href={href(`allstars/${e.year}/`)}>
+        <div class="top"><span class="display y">{e.year}</span><span class="label">{e.name}</span></div>
+        <ol class="podium">
+          {e.podium.map((p, k) => (
+            <li class={`p${k + 1}`}><i aria-hidden="true">{k + 1}</i>{p.t}</li>
+          ))}
+        </ol>
+        <div class="meta">{[e.date, e.host && `${e.hostLabel}: ${e.host}`, `${ukCount(e.players, players)} · ${ukCount(e.games, games)}`].filter(Boolean).join(' · ')}</div>
+      </a>
+    ))}
+  </div>
+  <div class="grid">
+    <Panel title="Чемпіони" note="За перемогами, далі за 2-ми і 3-ми місцями" class="span-12">
+      <DataTable table={d.champions} compact />
+    </Panel>
+  </div>
+</Base>
+
+<style>
+  .years { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; margin-bottom: 16px; }
+  .year { display: grid; gap: 8px; padding: 14px 16px; border: 1px solid var(--border); border-radius: var(--radius);
+    background: var(--panel); color: inherit; text-decoration: none; min-width: 0; }
+  .year:hover { border-color: var(--gold); }
+  .top { display: flex; align-items: baseline; gap: 10px; }
+  .y { font-size: 22px; }
+  .podium { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+  .podium li { display: flex; gap: 8px; align-items: center; color: var(--muted); }
+  .podium li.p1 { color: var(--text); font-weight: 700; font-size: 17px; }
+  .podium i { font-style: normal; width: 18px; height: 18px; border-radius: 50%; display: grid; place-items: center; font-size: 11px; }
+  .p1 i { background: var(--gold); } .p2 i { background: var(--silver); } .p3 i { background: var(--bronze); color: var(--text); }
+  .meta { color: var(--muted); font-size: 12px; }
+</style>

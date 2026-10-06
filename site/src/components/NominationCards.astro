@@ -1,0 +1,39 @@
+---
+import type { AllstarsNomination } from '../lib/types';
+import PlayerName from './PlayerName.astro';
+
+interface Props { nominations: AllstarsNomination[] }
+const { nominations } = Astro.props;
+---
+<div class="cards">
+  {nominations.map((n) => (
+    <article class={`card n-${n.key}`}>
+      <div class="title"><span class="icon" aria-hidden="true">{n.icon}</span><span>{n.label}</span></div>
+      <ol>
+        {n.rows.map((r, i) => (
+          <li class={i === 0 ? 'first' : undefined}>
+            <span class="who">{r.player.link ? <PlayerName slug={r.player.link} name={r.player.t} /> : r.player.t}</span>
+            <span class="num">{r.value}</span>
+          </li>
+        ))}
+      </ol>
+      {!n.official && <div class="note">пораховано з ігор</div>}
+    </article>
+  ))}
+</div>
+
+<style>
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+  .n-mvp { --c: var(--award-mvp); } .n-firstKilled { --c: var(--city); }
+  .n-bestRed { --c: var(--award-civilian); } .n-bestMafia { --c: var(--mafia); }
+  .card { border: 1px solid color-mix(in srgb, var(--c) 35%, var(--border)); border-radius: 10px;
+    background: linear-gradient(160deg, color-mix(in srgb, var(--c) 13%, var(--panel)) 0%, var(--panel) 70%);
+    padding: 12px 14px; display: grid; gap: 8px; align-content: start; min-width: 0; }
+  .title { display: flex; gap: 8px; align-items: center; font-weight: 600; }
+  .icon { font-size: 18px; }
+  ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+  li { display: flex; justify-content: space-between; gap: 8px; color: var(--muted); }
+  li.first { color: var(--text); font-weight: 600; }
+  .who { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .note { color: var(--muted); font-size: 11px; }
+</style>

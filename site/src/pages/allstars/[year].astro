@@ -1,0 +1,11 @@
+---
+import AllstarsEvent from '../../components/AllstarsEvent.astro';
+import { loadAllstars } from '../../lib/data';
+
+export function getStaticPaths() {
+  const data = loadAllstars();
+  return data.events.map((e) => ({ params: { year: String(e.year) }, props: { data, e } }));
+}
+const { data, e } = Astro.props;
+---
+<AllstarsEvent data={data} e={e} />
