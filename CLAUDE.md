@@ -119,6 +119,13 @@ default branch.
   prefetch snapshots them into `assets/prefetched/annual_events.json`. Club seasons from S28 are added by
   the export once finished (main league 1…N, small league top 5 as 101–105, year of the season's last month).
   2024–2025 came from the sheets once (`tool/import/`).
+- **All-star tournaments («Річні турніри»):** `/allstars/` (+ `/allstars/<year>/`) from
+  `site/data/allstars.json` (`lib/site_export/allstars_export.dart`). Source is the committed
+  `assets/raw/allstars.json`: Royal Battle '19 and FAS 2022–2023 written once from the sheets by
+  `tool/import/make_allstars.py` (final table as is + games for the nominations, computed by
+  `lib/services/stats/allstars_nominations.dart` the federation's way); FAS 2024+ copied by hand from
+  emotion.games results pages with their official nominations, names in the roster's spelling. A new
+  year = append an entry by hand (`"games": []`, `"nominations"` from the federation page).
 - **Player list:** Firestore `config/players` (`{players: [{name, nicknames}]}`, ordered — the app numbers
   players by position) is the roster; admins edit it on `/players/edit/` (add, nicknames, rename keeps the
   old name as a nickname, merge, unresolved game names from `site/data/unresolved.json`). Validation in
