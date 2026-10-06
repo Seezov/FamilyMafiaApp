@@ -1,0 +1,4950 @@
+{
+ "events": [
+  {
+   "year": 2019,
+   "name": "Royal Battle '19",
+   "date": null,
+   "hostLabel": "Ведучий",
+   "host": null,
+   "source": null,
+   "gameCount": 15,
+   "columns": [
+    {
+     "label": "Балы"
+    },
+    {
+     "label": "Игр сыграно"
+    },
+    {
+     "label": "Допы"
+    },
+    {
+     "label": "ЛХ"
+    },
+    {
+     "label": "ПУ"
+    },
+    {
+     "label": "ПУ (Город проиграл)"
+    },
+    {
+     "label": "Ш"
+    },
+    {
+     "label": "Д"
+    },
+    {
+     "label": "Мирн."
+    },
+    {
+     "label": "Маф."
+    },
+    {
+     "label": "WR(%)"
+    }
+   ],
+   "standings": [
+    {
+     "player": "Рауль",
+     "values": [
+      "16.2",
+      "15",
+      "1.7",
+      "0.5",
+      "3",
+      "0",
+      "1/1 100%",
+      "0/0 0%",
+      "10/11 90.9%",
+      "3/3 100%",
+      "93.33"
+     ]
+    },
+    {
+     "player": "Остин",
+     "values": [
+      "12.57",
+      "15",
+      "1.5",
+      "0",
+      "1",
+      "1",
+      "2/3 66.7%",
+      "1/2 50%",
+      "8/10 80%",
+      "0/0 0%",
+      "73.33"
+     ]
+    },
+    {
+     "player": "Braun",
+     "values": [
+      "11.27",
+      "15",
+      "1.2",
+      "0",
+      "1",
+      "1",
+      "2/3 66.7%",
+      "1/2 50%",
+      "7/9 77.8%",
+      "0/1 0%",
+      "66.67"
+     ]
+    },
+    {
+     "player": "Joi",
+     "values": [
+      "10.95",
+      "15",
+      "0.7",
+      "0.25",
+      "1",
+      "0",
+      "2/4 50%",
+      "1/2 50%",
+      "7/8 87.5%",
+      "0/1 0%",
+      "66.67"
+     ]
+    },
+    {
+     "player": "Красная Борода",
+     "values": [
+      "10.8",
+      "15",
+      "0.8",
+      "0",
+      "0",
+      "0",
+      "0/0 0%",
+      "1/1 100%",
+      "7/8 87.5%",
+      "2/6 33.3%",
+      "66.67"
+     ]
+    },
+    {
+     "player": "Seezov",
+     "values": [
+      "9.45",
+      "15",
+      "0.2",
+      "0.25",
+      "1",
+      "0",
+      "1/1 100%",
+      "0/0 0%",
+      "8/12 66.7%",
+      "0/2 0%",
+      "60"
+     ]
+    },
+    {
+     "player": "Аглая",
+     "values": [
+      "7.4",
+      "15",
+      "0.4",
+      "0",
+      "1",
+      "0",
+      "1/1 100%",
+      "0/1 0%",
+      "5/8 62.5%",
+      "1/5 20%",
+      "46.67"
+     ]
+    },
+    {
+     "player": "Sam",
+     "values": [
+      "6.27",
+      "15",
+      "0.2",
+      "0",
+      "1",
+      "1",
+      "0/0 0%",
+      "0/2 0%",
+      "6/10 60%",
+      "0/3 0%",
+      "40"
+     ]
+    },
+    {
+     "player": "Кантариан",
+     "values": [
+      "6",
+      "15",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0/0 0%",
+      "0/3 0%",
+      "6/10 60%",
+      "0/2 0%",
+      "40"
+     ]
+    },
+    {
+     "player": "Тян",
+     "values": [
+      "5.7",
+      "15",
+      "-0.3",
+      "0",
+      "0",
+      "0",
+      "2/2 100%",
+      "0/2 0%",
+      "2/4 50%",
+      "2/7 28.6%",
+      "40"
+     ]
+    }
+   ],
+   "nominations": null,
+   "games": [
+    {
+     "firstKilled": null,
+     "seats": [
+      {
+       "player": "Тян",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Аглая",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Seezov",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Joi",
+       "role": "don",
+       "add": 0.3,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Рауль",
+       "role": "mafia",
+       "add": 0.2,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Кантариан",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Остин",
+       "role": "sheriff",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Braun",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Sam",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Красная Борода",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      }
+     ]
+    },
+    {
+     "firstKilled": 5,
+     "seats": [
+      {
+       "player": "Аглая",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Красная Борода",
+       "role": "civilian",
+       "add": 0.3,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Кантариан",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Тян",
+       "role": "civilian",
+       "add": -0.5,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Рауль",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Joi",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Остин",
+       "role": "sheriff",
+       "add": 0.4,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Braun",
+       "role": "don",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Sam",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Seezov",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      }
+     ]
+    },
+    {
+     "firstKilled": null,
+     "seats": [
+      {
+       "player": "Seezov",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Рауль",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Тян",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Кантариан",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Joi",
+       "role": "don",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Аглая",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Остин",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Красная Борода",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Sam",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Braun",
+       "role": "sheriff",
+       "add": 0.0,
+       "bestMove": 0.0
+      }
+     ]
+    },
+    {
+     "firstKilled": 10,
+     "seats": [
+      {
+       "player": "Braun",
+       "role": "civilian",
+       "add": 0.2,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Рауль",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Красная Борода",
+       "role": "civilian",
+       "add": 0.2,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Остин",
+       "role": "don",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Sam",
+       "role": "civilian",
+       "add": 0.2,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Тян",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Joi",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Seezov",
+       "role": "sheriff",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Кантариан",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Аглая",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      }
+     ]
+    },
+    {
+     "firstKilled": 6,
+     "seats": [
+      {
+       "player": "Аглая",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Braun",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Красная Борода",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Sam",
+       "role": "don",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Кантариан",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Seezov",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.25
+      },
+      {
+       "player": "Рауль",
+       "role": "sheriff",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Joi",
+       "role": "civilian",
+       "add": 0.2,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Тян",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Остин",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      }
+     ]
+    },
+    {
+     "firstKilled": 2,
+     "seats": [
+      {
+       "player": "Seezov",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Рауль",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.25
+      },
+      {
+       "player": "Тян",
+       "role": "don",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Braun",
+       "role": "civilian",
+       "add": 0.3,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Остин",
+       "role": "sheriff",
+       "add": 0.5,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Joi",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Аглая",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Sam",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Кантариан",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Красная Борода",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      }
+     ]
+    },
+    {
+     "firstKilled": 7,
+     "seats": [
+      {
+       "player": "Остин",
+       "role": "don",
+       "add": 0.3,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Красная Борода",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Seezov",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Рауль",
+       "role": "mafia",
+       "add": 0.4,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Joi",
+       "role": "sheriff",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Аглая",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Sam",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Тян",
+       "role": "mafia",
+       "add": 0.2,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Braun",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Кантариан",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      }
+     ]
+    },
+    {
+     "firstKilled": 9,
+     "seats": [
+      {
+       "player": "Joi",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Красная Борода",
+       "role": "don",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Рауль",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Остин",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Sam",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Кантариан",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Тян",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Аглая",
+       "role": "mafia",
+       "add": 0.4,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Braun",
+       "role": "sheriff",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Seezov",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      }
+     ]
+    },
+    {
+     "firstKilled": null,
+     "seats": [
+      {
+       "player": "Кантариан",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Аглая",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Braun",
+       "role": "sheriff",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Seezov",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Sam",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Тян",
+       "role": "don",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Рауль",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Остин",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Красная Борода",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Joi",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      }
+     ]
+    },
+    {
+     "firstKilled": 9,
+     "seats": [
+      {
+       "player": "Кантариан",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Рауль",
+       "role": "mafia",
+       "add": 0.2,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Красная Борода",
+       "role": "mafia",
+       "add": 0.3,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Joi",
+       "role": "sheriff",
+       "add": 0.2,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Seezov",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Тян",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Аглая",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Sam",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Остин",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Braun",
+       "role": "don",
+       "add": 0.3,
+       "bestMove": 0.0
+      }
+     ]
+    },
+    {
+     "firstKilled": 6,
+     "seats": [
+      {
+       "player": "Joi",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Sam",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Красная Борода",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Аглая",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Кантариан",
+       "role": "don",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Рауль",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.25
+      },
+      {
+       "player": "Braun",
+       "role": "civilian",
+       "add": 0.4,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Остин",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Seezov",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Тян",
+       "role": "sheriff",
+       "add": 0.0,
+       "bestMove": 0.0
+      }
+     ]
+    },
+    {
+     "firstKilled": null,
+     "seats": [
+      {
+       "player": "Аглая",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Остин",
+       "role": "civilian",
+       "add": 0.3,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Seezov",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Рауль",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Sam",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Joi",
+       "role": "sheriff",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Красная Борода",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Кантариан",
+       "role": "don",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Braun",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Тян",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      }
+     ]
+    },
+    {
+     "firstKilled": null,
+     "seats": [
+      {
+       "player": "Кантариан",
+       "role": "don",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Рауль",
+       "role": "civilian",
+       "add": 0.2,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Аглая",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Joi",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Braun",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Тян",
+       "role": "sheriff",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Красная Борода",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Sam",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Остин",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Seezov",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      }
+     ]
+    },
+    {
+     "firstKilled": 5,
+     "seats": [
+      {
+       "player": "Аглая",
+       "role": "don",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Красная Борода",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Остин",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Рауль",
+       "role": "civilian",
+       "add": 0.3,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Joi",
+       "role": "sheriff",
+       "add": 0.0,
+       "bestMove": 0.25
+      },
+      {
+       "player": "Кантариан",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Braun",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Sam",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Тян",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Seezov",
+       "role": "civilian",
+       "add": 0.2,
+       "bestMove": 0.0
+      }
+     ]
+    },
+    {
+     "firstKilled": null,
+     "seats": [
+      {
+       "player": "Sam",
+       "role": "don",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Красная Борода",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Аглая",
+       "role": "sheriff",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Рауль",
+       "role": "civilian",
+       "add": 0.4,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Braun",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Остин",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Тян",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Joi",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Кантариан",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Seezov",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "year": 2022,
+   "name": "Family All Stars 2022",
+   "date": "14–15.01.2023",
+   "hostLabel": "Ведучий",
+   "host": "Саймон",
+   "source": null,
+   "gameCount": 18,
+   "columns": [
+    {
+     "label": "Балы"
+    },
+    {
+     "label": "Игр сыграно"
+    },
+    {
+     "label": "Допы"
+    },
+    {
+     "label": "ЛХ"
+    },
+    {
+     "label": "Ci"
+    },
+    {
+     "label": "ПУ"
+    },
+    {
+     "label": "ПУ (Город проиграл)"
+    },
+    {
+     "label": "Ш"
+    },
+    {
+     "label": "Д"
+    },
+    {
+     "label": "Мирн."
+    },
+    {
+     "label": "Маф."
+    },
+    {
+     "label": "WR(%)"
+    }
+   ],
+   "standings": [
+    {
+     "player": "Луна",
+     "values": [
+      "11.44",
+      "15",
+      "0.9",
+      "0",
+      "0.54",
+      "4",
+      "2",
+      "1/2 50%",
+      "1/1 100%",
+      "4/6 66.7%",
+      "4/6 66.7%",
+      "66.67"
+     ]
+    },
+    {
+     "player": "Fate",
+     "values": [
+      "11.33",
+      "15",
+      "0.2",
+      "0",
+      "0.13",
+      "2",
+      "1",
+      "0/0 0%",
+      "3/4 75%",
+      "6/9 66.7%",
+      "2/2 100%",
+      "73.33"
+     ]
+    },
+    {
+     "player": "Braun",
+     "values": [
+      "10.02",
+      "15",
+      "1.5",
+      "0.25",
+      "0.27",
+      "4",
+      "1",
+      "1/2 50%",
+      "0/0 0%",
+      "6/10 60%",
+      "1/3 33.3%",
+      "53.33"
+     ]
+    },
+    {
+     "player": "Floppy",
+     "values": [
+      "9.33",
+      "15",
+      "1.2",
+      "0",
+      "0.13",
+      "2",
+      "1",
+      "1/2 50%",
+      "0/0 0%",
+      "7/13 53.8%",
+      "0/0 0%",
+      "53.33"
+     ]
+    },
+    {
+     "player": "Majest",
+     "values": [
+      "9.3",
+      "15",
+      "1.3",
+      "0",
+      "0",
+      "1",
+      "0",
+      "0/1 0%",
+      "0/2 0%",
+      "5/9 55.6%",
+      "3/3 100%",
+      "53.33"
+     ]
+    },
+    {
+     "player": "Тян",
+     "values": [
+      "8.77",
+      "15",
+      "0.7",
+      "0",
+      "0.07",
+      "1",
+      "1",
+      "1/1 100%",
+      "1/1 100%",
+      "5/11 45.5%",
+      "1/2 50%",
+      "53.33"
+     ]
+    },
+    {
+     "player": "Хоттабыч",
+     "values": [
+      "8.6",
+      "15",
+      "0.6",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0/1 0%",
+      "0/1 0%",
+      "7/11 63.6%",
+      "1/2 50%",
+      "53.33"
+     ]
+    },
+    {
+     "player": "Железный",
+     "values": [
+      "8.27",
+      "15",
+      "1.2",
+      "0",
+      "0.07",
+      "1",
+      "1",
+      "2/6 33.3%",
+      "0/1 0%",
+      "2/3 66.7%",
+      "3/5 60%",
+      "46.67"
+     ]
+    },
+    {
+     "player": "Seezov",
+     "values": [
+      "7.32",
+      "15",
+      "1",
+      "0.25",
+      "0.07",
+      "1",
+      "1",
+      "2/2 100%",
+      "1/3 33.3%",
+      "2/7 28.6%",
+      "1/3 33.3%",
+      "40"
+     ]
+    },
+    {
+     "player": "Победун",
+     "values": [
+      "5.5",
+      "15",
+      "0.5",
+      "0",
+      "0",
+      "1",
+      "0",
+      "0/0 0%",
+      "1/1 100%",
+      "3/9 33.3%",
+      "1/5 20%",
+      "33.33"
+     ]
+    },
+    {
+     "player": "RedFox",
+     "values": [
+      "5.37",
+      "15",
+      "0.3",
+      "0",
+      "0.07",
+      "1",
+      "1",
+      "1/1 100%",
+      "1/2 50%",
+      "2/9 22.2%",
+      "1/3 33.3%",
+      "33.33"
+     ]
+    },
+    {
+     "player": "Аглая",
+     "values": [
+      "5.3",
+      "8",
+      "0.3",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0/0 0%",
+      "1/1 100%",
+      "4/6 66.7%",
+      "0/1 0%",
+      "62.5"
+     ]
+    },
+    {
+     "player": "Кори",
+     "values": [
+      "1.2",
+      "7",
+      "0.2",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0/0 0%",
+      "0/1 0%",
+      "1/5 20%",
+      "0/1 0%",
+      "14.29"
+     ]
+    }
+   ],
+   "nominations": null,
+   "games": [
+    {
+     "firstKilled": 1,
+     "seats": [
+      {
+       "player": "RedFox",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Тян",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Floppy",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Железный",
+       "role": "mafia",
+       "add": 0.3,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Fate",
+       "role": "don",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Луна",
+       "role": "sheriff",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Braun",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Хоттабыч",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Победун",
+       "role": "mafia",
+       "add": 0.2,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Majest",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      }
+     ]
+    },
+    {
+     "firstKilled": 7,
+     "seats": [
+      {
+       "player": "Majest",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Braun",
+       "role": "mafia",
+       "add": 0.3,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Fate",
+       "role": "don",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Seezov",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Кори",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Хоттабыч",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Железный",
+       "role": "sheriff",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "RedFox",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Тян",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Победун",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      }
+     ]
+    },
+    {
+     "firstKilled": 7,
+     "seats": [
+      {
+       "player": "Железный",
+       "role": "sheriff",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Хоттабыч",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Кори",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Победун",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Луна",
+       "role": "mafia",
+       "add": 0.2,
+       "bestMove": 0.0
+      },
+      {
+       "player": "RedFox",
+       "role": "don",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Floppy",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Majest",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Fate",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Seezov",
+       "role": "mafia",
+       "add": 0.3,
+       "bestMove": 0.0
+      }
+     ]
+    },
+    {
+     "firstKilled": 10,
+     "seats": [
+      {
+       "player": "Луна",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Seezov",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Braun",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Majest",
+       "role": "civilian",
+       "add": 0.2,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Тян",
+       "role": "sheriff",
+       "add": 0.3,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Floppy",
+       "role": "civilian",
+       "add": 0.2,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Кори",
+       "role": "don",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Победун",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Хоттабыч",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Fate",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      }
+     ]
+    },
+    {
+     "firstKilled": 2,
+     "seats": [
+      {
+       "player": "Кори",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Braun",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Majest",
+       "role": "mafia",
+       "add": 0.3,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Floppy",
+       "role": "sheriff",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Тян",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Победун",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Seezov",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "RedFox",
+       "role": "civilian",
+       "add": 0.2,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Луна",
+       "role": "don",
+       "add": 0.2,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Железный",
+       "role": "mafia",
+       "add": 0.2,
+       "bestMove": 0.0
+      }
+     ]
+    },
+    {
+     "firstKilled": 8,
+     "seats": [
+      {
+       "player": "Seezov",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Победун",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Floppy",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Fate",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Хоттабыч",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Кори",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Тян",
+       "role": "don",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Луна",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Железный",
+       "role": "sheriff",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "RedFox",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      }
+     ]
+    },
+    {
+     "firstKilled": 4,
+     "seats": [
+      {
+       "player": "Braun",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Fate",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Seezov",
+       "role": "don",
+       "add": 0.4,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Луна",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "RedFox",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Железный",
+       "role": "mafia",
+       "add": 0.2,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Победун",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Floppy",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Majest",
+       "role": "sheriff",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Тян",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      }
+     ]
+    },
+    {
+     "firstKilled": 10,
+     "seats": [
+      {
+       "player": "Победун",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Majest",
+       "role": "civilian",
+       "add": 0.4,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Хоттабыч",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Железный",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Floppy",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "RedFox",
+       "role": "sheriff",
+       "add": 0.2,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Seezov",
+       "role": "don",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Кори",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Fate",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Braun",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.25
+      }
+     ]
+    },
+    {
+     "firstKilled": 2,
+     "seats": [
+      {
+       "player": "Floppy",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Луна",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Кори",
+       "role": "civilian",
+       "add": 0.2,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Железный",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Тян",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Braun",
+       "role": "sheriff",
+       "add": 0.3,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Majest",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Победун",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Seezov",
+       "role": "don",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Хоттабыч",
+       "role": "civilian",
+       "add": 0.2,
+       "bestMove": 0.0
+      }
+     ]
+    },
+    {
+     "firstKilled": 10,
+     "seats": [
+      {
+       "player": "Braun",
+       "role": "civilian",
+       "add": 0.4,
+       "bestMove": 0.0
+      },
+      {
+       "player": "RedFox",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Majest",
+       "role": "don",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Аглая",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Хоттабыч",
+       "role": "civilian",
+       "add": 0.2,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Тян",
+       "role": "civilian",
+       "add": 0.2,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Победун",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Железный",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Seezov",
+       "role": "sheriff",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Floppy",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      }
+     ]
+    },
+    {
+     "firstKilled": 4,
+     "seats": [
+      {
+       "player": "Fate",
+       "role": "don",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Луна",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Победун",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Seezov",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.25
+      },
+      {
+       "player": "Аглая",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Braun",
+       "role": "sheriff",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Тян",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Хоттабыч",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "RedFox",
+       "role": "civilian",
+       "add": -0.5,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Majest",
+       "role": "mafia",
+       "add": 0.4,
+       "bestMove": 0.0
+      }
+     ]
+    },
+    {
+     "firstKilled": 5,
+     "seats": [
+      {
+       "player": "Seezov",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Braun",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Floppy",
+       "role": "civilian",
+       "add": 0.3,
+       "bestMove": 0.0
+      },
+      {
+       "player": "RedFox",
+       "role": "civilian",
+       "add": 0.2,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Победун",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Fate",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Хоттабыч",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Луна",
+       "role": "sheriff",
+       "add": 0.3,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Железный",
+       "role": "don",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Тян",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      }
+     ]
+    },
+    {
+     "firstKilled": 7,
+     "seats": [
+      {
+       "player": "Железный",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "RedFox",
+       "role": "mafia",
+       "add": 0.2,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Fate",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Majest",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Хоттабыч",
+       "role": "sheriff",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Floppy",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Тян",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Победун",
+       "role": "don",
+       "add": 0.3,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Луна",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Аглая",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      }
+     ]
+    },
+    {
+     "firstKilled": 7,
+     "seats": [
+      {
+       "player": "Fate",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Floppy",
+       "role": "sheriff",
+       "add": 0.4,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Аглая",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Железный",
+       "role": "civilian",
+       "add": 0.2,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Хоттабыч",
+       "role": "don",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Тян",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Braun",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Луна",
+       "role": "civilian",
+       "add": 0.2,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Победун",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Seezov",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      }
+     ]
+    },
+    {
+     "firstKilled": 5,
+     "seats": [
+      {
+       "player": "Тян",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Fate",
+       "role": "don",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "RedFox",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Аглая",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Majest",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Хоттабыч",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Луна",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Железный",
+       "role": "sheriff",
+       "add": 0.3,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Победун",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Braun",
+       "role": "civilian",
+       "add": 0.2,
+       "bestMove": 0.0
+      }
+     ]
+    },
+    {
+     "firstKilled": 6,
+     "seats": [
+      {
+       "player": "Seezov",
+       "role": "sheriff",
+       "add": 0.3,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Floppy",
+       "role": "civilian",
+       "add": 0.3,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Луна",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "RedFox",
+       "role": "don",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Majest",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Braun",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Fate",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Тян",
+       "role": "civilian",
+       "add": 0.2,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Аглая",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Хоттабыч",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      }
+     ]
+    },
+    {
+     "firstKilled": 1,
+     "seats": [
+      {
+       "player": "Луна",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Majest",
+       "role": "don",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Braun",
+       "role": "civilian",
+       "add": 0.3,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Железный",
+       "role": "sheriff",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Floppy",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "RedFox",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Хоттабыч",
+       "role": "civilian",
+       "add": 0.2,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Аглая",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Seezov",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Fate",
+       "role": "civilian",
+       "add": 0.2,
+       "bestMove": 0.0
+      }
+     ]
+    },
+    {
+     "firstKilled": 1,
+     "seats": [
+      {
+       "player": "Fate",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Аглая",
+       "role": "don",
+       "add": 0.3,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Floppy",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "RedFox",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Seezov",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Железный",
+       "role": "sheriff",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Тян",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Braun",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Majest",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Луна",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "year": 2023,
+   "name": "Family All Stars 2023",
+   "date": "12.2023",
+   "hostLabel": "Ведучий",
+   "host": "Катана",
+   "source": null,
+   "gameCount": 21,
+   "columns": [
+    {
+     "label": "Бал"
+    },
+    {
+     "label": "Перемоги"
+    },
+    {
+     "label": "Ігри"
+    },
+    {
+     "label": "WR(%)"
+    },
+    {
+     "label": "ДБ"
+    },
+    {
+     "label": "АД"
+    },
+    {
+     "label": "КХ"
+    },
+    {
+     "label": "ПУ"
+    },
+    {
+     "label": "ПУП"
+    },
+    {
+     "label": "CI/I"
+    },
+    {
+     "label": "СІ"
+    },
+    {
+     "label": "MVP"
+    },
+    {
+     "label": "Шериф"
+    },
+    {
+     "label": "Дон"
+    },
+    {
+     "label": "Мирний"
+    },
+    {
+     "label": "Мафія"
+    }
+   ],
+   "standings": [
+    {
+     "player": "Seezov",
+     "values": [
+      "16",
+      "9",
+      "15",
+      "60",
+      "2.8",
+      "4.2",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0.187",
+      "1/1 100% 0.6",
+      "1/2 50% 0.5",
+      "4/8 50% 0.8",
+      "3/4 75% 0.9"
+     ]
+    },
+    {
+     "player": "Majest",
+     "values": [
+      "15.8",
+      "9",
+      "15",
+      "60",
+      "2",
+      "4.5",
+      "0.3",
+      "1",
+      "0",
+      "0.067",
+      "0",
+      "0.153",
+      "1/1 100% 0.3",
+      "0/1 0% 0",
+      "4/8 50% 0.5",
+      "4/5 80% 1.2"
+     ]
+    },
+    {
+     "player": "Red Fox",
+     "values": [
+      "15.433",
+      "10",
+      "15",
+      "66.67",
+      "1.4",
+      "3.9",
+      "0",
+      "2",
+      "1",
+      "0.133",
+      "0.133",
+      "0.093",
+      "0/2 0% 0",
+      "3/3 100% 0.5",
+      "6/8 75% 0.9",
+      "1/2 50% 0"
+     ]
+    },
+    {
+     "player": "Тян",
+     "values": [
+      "14.8",
+      "9",
+      "15",
+      "60",
+      "1.6",
+      "4.2",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0.107",
+      "0/1 0% 0",
+      "1/1 100% 0.3",
+      "7/12 58.33% 1.3",
+      "1/1 100% 0"
+     ]
+    },
+    {
+     "player": "Don`Tright",
+     "values": [
+      "14.6",
+      "8",
+      "15",
+      "53.33",
+      "1.6",
+      "4.5",
+      "0.3",
+      "3",
+      "1",
+      "0.2",
+      "0.2",
+      "0.127",
+      "0/0 0% 0",
+      "0/0 0% 0",
+      "6/11 54.55% 1.3",
+      "2/4 50% 0.3"
+     ]
+    },
+    {
+     "player": "Железный",
+     "values": [
+      "14.267",
+      "7",
+      "15",
+      "46.67",
+      "2.4",
+      "4.5",
+      "0.3",
+      "1",
+      "1",
+      "0.067",
+      "0.067",
+      "0.18",
+      "0/0 0% 0",
+      "0/0 0% 0",
+      "4/8 50% 1.4",
+      "3/7 42.86% 1"
+     ]
+    },
+    {
+     "player": "StoneCold",
+     "values": [
+      "14.1",
+      "7",
+      "15",
+      "46.67",
+      "2.1",
+      "4.2",
+      "0.6",
+      "3",
+      "1",
+      "0.2",
+      "0.2",
+      "0.18",
+      "2/3 66.67% 0",
+      "0/0 0% 0",
+      "5/11 45.45% 2.1",
+      "0/1 0% 0"
+     ]
+    },
+    {
+     "player": "Кори",
+     "values": [
+      "13.7",
+      "9",
+      "15",
+      "60",
+      "0.5",
+      "4.2",
+      "0",
+      "1",
+      "0",
+      "0.067",
+      "0",
+      "0.033",
+      "2/4 50% -0.9",
+      "1/2 50% 0.4",
+      "3/5 60% 0.7",
+      "3/4 75% 0.3"
+     ]
+    },
+    {
+     "player": "TIna",
+     "values": [
+      "12.666",
+      "7",
+      "15",
+      "46.67",
+      "0.9",
+      "4.2",
+      "0.3",
+      "2",
+      "2",
+      "0.133",
+      "0.266",
+      "0.08",
+      "1/3 33.33% 0",
+      "0/0 0% 0",
+      "5/10 50% 0.9",
+      "1/2 50% 0"
+     ]
+    },
+    {
+     "player": "Floppy",
+     "values": [
+      "12",
+      "6",
+      "15",
+      "40",
+      "1.8",
+      "4.2",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0.12",
+      "1/1 100% 0.3",
+      "1/2 50% 0.5",
+      "3/8 37.5% 0.6",
+      "1/4 25% 0.4"
+     ]
+    },
+    {
+     "player": "Победун",
+     "values": [
+      "11.4",
+      "6",
+      "15",
+      "40",
+      "0.9",
+      "4.5",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0.06",
+      "1/1 100% 0",
+      "0/1 0% 0",
+      "5/13 38.46% 0.9",
+      "0/0 0% 0"
+     ]
+    },
+    {
+     "player": "Луна",
+     "values": [
+      "11.266",
+      "6",
+      "15",
+      "40",
+      "0.5",
+      "4.5",
+      "0",
+      "2",
+      "2",
+      "0.133",
+      "0.266",
+      "0.033",
+      "0/0 0% 0",
+      "1/3 33.33% 0.5",
+      "4/9 44.44% 0",
+      "1/3 33.33% 0"
+     ]
+    },
+    {
+     "player": "Light",
+     "values": [
+      "9.7",
+      "6",
+      "15",
+      "40",
+      "0.7",
+      "3",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0.047",
+      "0/1 0% 0",
+      "2/4 50% 0.4",
+      "2/7 28.57% 0.3",
+      "2/3 66.67% 0"
+     ]
+    },
+    {
+     "player": "Green",
+     "values": [
+      "8.7",
+      "4",
+      "15",
+      "26.67",
+      "0.6",
+      "3.6",
+      "0.5",
+      "1",
+      "0",
+      "0.067",
+      "0",
+      "0.073",
+      "1/3 33.33% 0.3",
+      "0/1 0% 0",
+      "2/8 25% 0.3",
+      "1/3 33.33% 0"
+     ]
+    }
+   ],
+   "nominations": null,
+   "games": [
+    {
+     "firstKilled": 8,
+     "seats": [
+      {
+       "player": "Don`Tright",
+       "role": "civilian",
+       "add": 0.4,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Tina",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Green",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Red Fox",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Победун",
+       "role": "don",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Тян",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Floppy",
+       "role": "civilian",
+       "add": 0.3,
+       "bestMove": 0.0
+      },
+      {
+       "player": "StoneCold",
+       "role": "sheriff",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Железный",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Луна",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      }
+     ]
+    },
+    {
+     "firstKilled": 1,
+     "seats": [
+      {
+       "player": "Red Fox",
+       "role": "sheriff",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Победун",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Floppy",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Green",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Железный",
+       "role": "civilian",
+       "add": 0.2,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Tina",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Тян",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Don`Tright",
+       "role": "civilian",
+       "add": 0.2,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Seezov",
+       "role": "don",
+       "add": 0.5,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Majest",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      }
+     ]
+    },
+    {
+     "firstKilled": 7,
+     "seats": [
+      {
+       "player": "Red Fox",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Железный",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Луна",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Тян",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Seezov",
+       "role": "civilian",
+       "add": 0.5,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Floppy",
+       "role": "don",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Majest",
+       "role": "civilian",
+       "add": 0.2,
+       "bestMove": 0.3
+      },
+      {
+       "player": "StoneCold",
+       "role": "civilian",
+       "add": 0.5,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Победун",
+       "role": "sheriff",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Don`Tright",
+       "role": "civilian",
+       "add": 0.3,
+       "bestMove": 0.0
+      }
+     ]
+    },
+    {
+     "firstKilled": 10,
+     "seats": [
+      {
+       "player": "Green",
+       "role": "sheriff",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Red Fox",
+       "role": "civilian",
+       "add": 0.3,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Железный",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Луна",
+       "role": "don",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "StoneCold",
+       "role": "civilian",
+       "add": 0.5,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Majest",
+       "role": "civilian",
+       "add": 0.3,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Seezov",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Floppy",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Тян",
+       "role": "civilian",
+       "add": 0.3,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Don`Tright",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      }
+     ]
+    },
+    {
+     "firstKilled": 2,
+     "seats": [
+      {
+       "player": "StoneCold",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Железный",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.3
+      },
+      {
+       "player": "Луна",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Red Fox",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Тян",
+       "role": "sheriff",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Floppy",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Seezov",
+       "role": "mafia",
+       "add": 0.4,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Green",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Light",
+       "role": "don",
+       "add": 0.4,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Majest",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      }
+     ]
+    },
+    {
+     "firstKilled": null,
+     "seats": [
+      {
+       "player": "Железный",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Tina",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Луна",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Тян",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Light",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Seezov",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Red Fox",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Majest",
+       "role": "mafia",
+       "add": 0.4,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Floppy",
+       "role": "don",
+       "add": 0.5,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Кори",
+       "role": "sheriff",
+       "add": 0.0,
+       "bestMove": 0.0
+      }
+     ]
+    },
+    {
+     "firstKilled": 3,
+     "seats": [
+      {
+       "player": "Железный",
+       "role": "civilian",
+       "add": 0.5,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Seezov",
+       "role": "civilian",
+       "add": 0.3,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Green",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.5
+      },
+      {
+       "player": "Majest",
+       "role": "sheriff",
+       "add": 0.3,
+       "bestMove": 0.0
+      },
+      {
+       "player": "StoneCold",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "TIna",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Floppy",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Кори",
+       "role": "civilian",
+       "add": 0.3,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Луна",
+       "role": "don",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Тян",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      }
+     ]
+    },
+    {
+     "firstKilled": null,
+     "seats": [
+      {
+       "player": "Green",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Majest",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Победун",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "StoneCold",
+       "role": "sheriff",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Тян",
+       "role": "civilian",
+       "add": 0.4,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Кори",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Red Fox",
+       "role": "civilian",
+       "add": 0.3,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Железный",
+       "role": "mafia",
+       "add": 0.2,
+       "bestMove": 0.0
+      },
+      {
+       "player": "TIna",
+       "role": "civilian",
+       "add": 0.5,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Light",
+       "role": "don",
+       "add": 0.0,
+       "bestMove": 0.0
+      }
+     ]
+    },
+    {
+     "firstKilled": null,
+     "seats": [
+      {
+       "player": "Majest",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Red Fox",
+       "role": "don",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Тян",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Tina",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Железный",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Seezov",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Light",
+       "role": "sheriff",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Кори",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Победун",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Green",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      }
+     ]
+    },
+    {
+     "firstKilled": 6,
+     "seats": [
+      {
+       "player": "Light",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Red Fox",
+       "role": "don",
+       "add": 0.5,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Тян",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Majest",
+       "role": "mafia",
+       "add": 0.5,
+       "bestMove": 0.0
+      },
+      {
+       "player": "StoneCold",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Луна",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Seezov",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Green",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "TIna",
+       "role": "sheriff",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Победун",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      }
+     ]
+    },
+    {
+     "firstKilled": 4,
+     "seats": [
+      {
+       "player": "Don`Tright",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "TIna",
+       "role": "civilian",
+       "add": 0.4,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Луна",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Кори",
+       "role": "sheriff",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Победун",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Тян",
+       "role": "civilian",
+       "add": 0.3,
+       "bestMove": 0.0
+      },
+      {
+       "player": "StoneCold",
+       "role": "civilian",
+       "add": 0.6,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Green",
+       "role": "don",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Majest",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Floppy",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      }
+     ]
+    },
+    {
+     "firstKilled": null,
+     "seats": [
+      {
+       "player": "Победун",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Seezov",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "TIna",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Red Fox",
+       "role": "sheriff",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Light",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Green",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "StoneCold",
+       "role": "civilian",
+       "add": 0.2,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Don`Tright",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Тян",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Кори",
+       "role": "don",
+       "add": 0.4,
+       "bestMove": 0.0
+      }
+     ]
+    },
+    {
+     "firstKilled": null,
+     "seats": [
+      {
+       "player": "Тян",
+       "role": "civilian",
+       "add": 0.3,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Победун",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Луна",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Floppy",
+       "role": "sheriff",
+       "add": 0.3,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Red Fox",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Light",
+       "role": "don",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Don`Tright",
+       "role": "civilian",
+       "add": 0.4,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Seezov",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Majest",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Кори",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      }
+     ]
+    },
+    {
+     "firstKilled": 10,
+     "seats": [
+      {
+       "player": "Кори",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Победун",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Light",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Луна",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Green",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Floppy",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Majest",
+       "role": "mafia",
+       "add": 0.3,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Don`Tright",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Тян",
+       "role": "don",
+       "add": 0.3,
+       "bestMove": 0.0
+      },
+      {
+       "player": "StoneCold",
+       "role": "sheriff",
+       "add": 0.0,
+       "bestMove": 0.3
+      }
+     ]
+    },
+    {
+     "firstKilled": 2,
+     "seats": [
+      {
+       "player": "Light",
+       "role": "don",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Don`Tright",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.3
+      },
+      {
+       "player": "Железный",
+       "role": "mafia",
+       "add": 0.3,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Победун",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "StoneCold",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Green",
+       "role": "sheriff",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Кори",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Тян",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Луна",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Tina",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      }
+     ]
+    },
+    {
+     "firstKilled": 9,
+     "seats": [
+      {
+       "player": "Green",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Floppy",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Кори",
+       "role": "mafia",
+       "add": 0.3,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Light",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Seezov",
+       "role": "mafia",
+       "add": 0.5,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Железный",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Don`Tright",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Red Fox",
+       "role": "don",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Tina",
+       "role": "sheriff",
+       "add": 0.0,
+       "bestMove": 0.3
+      },
+      {
+       "player": "Победун",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      }
+     ]
+    },
+    {
+     "firstKilled": 2,
+     "seats": [
+      {
+       "player": "Seezov",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "TIna",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Floppy",
+       "role": "mafia",
+       "add": 0.4,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Majest",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Луна",
+       "role": "don",
+       "add": 0.5,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Red Fox",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "StoneCold",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Don`Tright",
+       "role": "mafia",
+       "add": 0.3,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Light",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Кори",
+       "role": "sheriff",
+       "add": -0.9,
+       "bestMove": 0.0
+      }
+     ]
+    },
+    {
+     "firstKilled": 8,
+     "seats": [
+      {
+       "player": "Don`Tright",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Floppy",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Победун",
+       "role": "civilian",
+       "add": 0.4,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Green",
+       "role": "sheriff",
+       "add": 0.3,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Majest",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Кори",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Light",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Луна",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "StoneCold",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Железный",
+       "role": "mafia",
+       "add": 0.5,
+       "bestMove": 0.0
+      }
+     ]
+    },
+    {
+     "firstKilled": 1,
+     "seats": [
+      {
+       "player": "Don`Tright",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Кори",
+       "role": "don",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Light",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Red Fox",
+       "role": "civilian",
+       "add": 0.3,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Железный",
+       "role": "civilian",
+       "add": 0.4,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Seezov",
+       "role": "sheriff",
+       "add": 0.6,
+       "bestMove": 0.0
+      },
+      {
+       "player": "TIna",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "StoneCold",
+       "role": "civilian",
+       "add": 0.3,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Победун",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Луна",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      }
+     ]
+    },
+    {
+     "firstKilled": 4,
+     "seats": [
+      {
+       "player": "Tina",
+       "role": "sheriff",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Floppy",
+       "role": "civilian",
+       "add": 0.3,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Seezov",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Red Fox",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Кори",
+       "role": "civilian",
+       "add": 0.4,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Железный",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Majest",
+       "role": "don",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Light",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Don`Tright",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Победун",
+       "role": "civilian",
+       "add": 0.5,
+       "bestMove": 0.0
+      }
+     ]
+    },
+    {
+     "firstKilled": 4,
+     "seats": [
+      {
+       "player": "Железный",
+       "role": "civilian",
+       "add": 0.3,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Seezov",
+       "role": "don",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Луна",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "StoneCold",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.3
+      },
+      {
+       "player": "Green",
+       "role": "civilian",
+       "add": 0.3,
+       "bestMove": 0.0
+      },
+      {
+       "player": "TIna",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Don`Tright",
+       "role": "civilian",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Light",
+       "role": "civilian",
+       "add": 0.3,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Кори",
+       "role": "sheriff",
+       "add": 0.0,
+       "bestMove": 0.0
+      },
+      {
+       "player": "Floppy",
+       "role": "mafia",
+       "add": 0.0,
+       "bestMove": 0.0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "year": 2024,
+   "name": "Family All Stars 2024",
+   "date": "17–19.01.2025",
+   "hostLabel": "Суддя",
+   "host": "Jf",
+   "source": "https://emotion.games/ua/tournament/385/results",
+   "gameCount": 21,
+   "columns": [
+    {
+     "label": "Σ",
+     "tip": "Сума балів турніру"
+    },
+    {
+     "label": "W/G",
+     "tip": "Перемоги / ігри"
+    },
+    {
+     "label": "Σap",
+     "tip": "Сума +, − і КХ"
+    },
+    {
+     "label": "+",
+     "tip": "Додаткові бали"
+    },
+    {
+     "label": "−",
+     "tip": "Штрафи і дисциплінарні штрафи"
+    },
+    {
+     "label": "BM",
+     "tip": "Бали за кращий хід"
+    },
+    {
+     "label": "Ci",
+     "tip": "Компенсація за першу смерть"
+    },
+    {
+     "label": "L/K",
+     "tip": "Програні ігри / убитий першим"
+    }
+   ],
+   "standings": [
+    {
+     "player": "Braun",
+     "values": [
+      "14.83",
+      "10/15",
+      "4.5",
+      "4.5",
+      "0",
+      "0",
+      "0.33",
+      "2/2"
+     ]
+    },
+    {
+     "player": "Stone Cold",
+     "values": [
+      "13.87",
+      "9/15",
+      "4.2",
+      "4.1",
+      "0.3",
+      "0.4",
+      "0.67",
+      "2/4"
+     ]
+    },
+    {
+     "player": "Тян",
+     "values": [
+      "13.4",
+      "10/15",
+      "3.4",
+      "3.4",
+      "0",
+      "0",
+      "0",
+      "0/0"
+     ]
+    },
+    {
+     "player": "Малина",
+     "values": [
+      "10.87",
+      "8/15",
+      "2.7",
+      "3",
+      "0.3",
+      "0",
+      "0.17",
+      "1/2"
+     ]
+    },
+    {
+     "player": "Валькірія",
+     "values": [
+      "10.7",
+      "8/15",
+      "2.7",
+      "3",
+      "0.3",
+      "0",
+      "0",
+      "0/0"
+     ]
+    },
+    {
+     "player": "Аглая",
+     "values": [
+      "10",
+      "8/15",
+      "2",
+      "2.8",
+      "0.8",
+      "0",
+      "0",
+      "0/2"
+     ]
+    },
+    {
+     "player": "Don`Tright",
+     "values": [
+      "9.87",
+      "7/15",
+      "2.7",
+      "3",
+      "0.3",
+      "0",
+      "0.17",
+      "1/2"
+     ]
+    },
+    {
+     "player": "Залізний",
+     "values": [
+      "9.5",
+      "6/15",
+      "3",
+      "2.6",
+      "0",
+      "0.4",
+      "0.5",
+      "2/3"
+     ]
+    },
+    {
+     "player": "Хоттабич",
+     "values": [
+      "9.1",
+      "7/15",
+      "2.1",
+      "2",
+      "0.3",
+      "0.4",
+      "0",
+      "0/2"
+     ]
+    },
+    {
+     "player": "Малишка",
+     "values": [
+      "8.7",
+      "8/15",
+      "0.7",
+      "0.7",
+      "0",
+      "0",
+      "0",
+      "0/0"
+     ]
+    },
+    {
+     "player": "Seezov",
+     "values": [
+      "8.28",
+      "6/15",
+      "2.2",
+      "2.2",
+      "0",
+      "0",
+      "0.08",
+      "1/1"
+     ]
+    },
+    {
+     "player": "Серпень",
+     "values": [
+      "8.1",
+      "8/15",
+      "0.1",
+      "0.4",
+      "0.3",
+      "0",
+      "0",
+      "0/0"
+     ]
+    },
+    {
+     "player": "Majest",
+     "values": [
+      "7.88",
+      "6/15",
+      "1.8",
+      "2.4",
+      "1",
+      "0.4",
+      "0.08",
+      "1/1"
+     ]
+    },
+    {
+     "player": "Найт",
+     "values": [
+      "6.2",
+      "6/15",
+      "0.2",
+      "1",
+      "0.8",
+      "0",
+      "0",
+      "0/0"
+     ]
+    }
+   ],
+   "nominations": [
+    {
+     "key": "mvp",
+     "top": [
+      {
+       "player": "Braun",
+       "value": "4.50"
+      },
+      {
+       "player": "Stone Cold",
+       "value": "4.20"
+      },
+      {
+       "player": "Тян",
+       "value": "3.40"
+      }
+     ]
+    },
+    {
+     "key": "firstKilled",
+     "top": [
+      {
+       "player": "Stone Cold",
+       "value": "4"
+      },
+      {
+       "player": "Залізний",
+       "value": "3"
+      },
+      {
+       "player": "Малина",
+       "value": "2"
+      }
+     ]
+    },
+    {
+     "key": "bestRed",
+     "top": [
+      {
+       "player": "Stone Cold",
+       "value": "3.50"
+      },
+      {
+       "player": "Braun",
+       "value": "3.20"
+      },
+      {
+       "player": "Тян",
+       "value": "2.60"
+      }
+     ]
+    },
+    {
+     "key": "bestMafia",
+     "top": [
+      {
+       "player": "Braun",
+       "value": "1.30"
+      },
+      {
+       "player": "Don`Tright",
+       "value": "1.10"
+      },
+      {
+       "player": "Малина",
+       "value": "1.00"
+      }
+     ]
+    }
+   ],
+   "games": []
+  },
+  {
+   "year": 2025,
+   "name": "Family All Stars 2025",
+   "date": "16–18.01.2026",
+   "hostLabel": "Суддя",
+   "host": "Темна Фурія",
+   "source": "https://emotion.games/ua/tournament/572/results",
+   "gameCount": 21,
+   "columns": [
+    {
+     "label": "Σ",
+     "tip": "Сума балів турніру"
+    },
+    {
+     "label": "W/G",
+     "tip": "Перемоги / ігри"
+    },
+    {
+     "label": "Σap",
+     "tip": "Сума +, − і КХ"
+    },
+    {
+     "label": "+",
+     "tip": "Додаткові бали"
+    },
+    {
+     "label": "−",
+     "tip": "Штрафи і дисциплінарні штрафи"
+    },
+    {
+     "label": "BM",
+     "tip": "Бали за кращий хід"
+    },
+    {
+     "label": "Ci",
+     "tip": "Компенсація за першу смерть"
+    },
+    {
+     "label": "L/K",
+     "tip": "Програні ігри / убитий першим"
+    }
+   ],
+   "standings": [
+    {
+     "player": "Tina",
+     "values": [
+      "11.3",
+      "7/15",
+      "4.3",
+      "4.3",
+      "0",
+      "0",
+      "0",
+      "0/0"
+     ]
+    },
+    {
+     "player": "Хоттабич",
+     "values": [
+      "10.33",
+      "6/15",
+      "4",
+      "4",
+      "0",
+      "0",
+      "0.33",
+      "2/2"
+     ]
+    },
+    {
+     "player": "Floppy",
+     "values": [
+      "10.1",
+      "7/15",
+      "3.1",
+      "4.2",
+      "1.1",
+      "0",
+      "0",
+      "0/1"
+     ]
+    },
+    {
+     "player": "Фурія",
+     "values": [
+      "9.98",
+      "7/15",
+      "2.9",
+      "2.9",
+      "0",
+      "0",
+      "0.08",
+      "1/1"
+     ]
+    },
+    {
+     "player": "Малина",
+     "values": [
+      "9.75",
+      "6/15",
+      "3",
+      "2.9",
+      "0.3",
+      "0.4",
+      "0.75",
+      "3/3"
+     ]
+    },
+    {
+     "player": "Аватар",
+     "values": [
+      "9.33",
+      "5/15",
+      "4",
+      "4",
+      "0",
+      "0",
+      "0.33",
+      "2/2"
+     ]
+    },
+    {
+     "player": "Валькірія",
+     "values": [
+      "9.27",
+      "6/15",
+      "3.1",
+      "3",
+      "0.3",
+      "0.4",
+      "0.17",
+      "1/2"
+     ]
+    },
+    {
+     "player": "Аглая",
+     "values": [
+      "9",
+      "7/15",
+      "2",
+      "3.3",
+      "1.3",
+      "0",
+      "0",
+      "0/0"
+     ]
+    },
+    {
+     "player": "Сирник",
+     "values": [
+      "8.67",
+      "6/15",
+      "2.5",
+      "2.5",
+      "0",
+      "0",
+      "0.17",
+      "1/2"
+     ]
+    },
+    {
+     "player": "Малишка",
+     "values": [
+      "8.38",
+      "5/15",
+      "3.3",
+      "2.9",
+      "0",
+      "0.4",
+      "0.08",
+      "1/1"
+     ]
+    },
+    {
+     "player": "Seezov",
+     "values": [
+      "7.55",
+      "5/15",
+      "1.8",
+      "1.7",
+      "0.3",
+      "0.4",
+      "0.75",
+      "3/3"
+     ]
+    },
+    {
+     "player": "Фрау",
+     "values": [
+      "7.2",
+      "7/15",
+      "0.2",
+      "1.1",
+      "0.9",
+      "0",
+      "0",
+      "0/0"
+     ]
+    },
+    {
+     "player": "Kulav",
+     "values": [
+      "5.78",
+      "5/15",
+      "0.7",
+      "2.2",
+      "1.9",
+      "0.4",
+      "0.08",
+      "1/1"
+     ]
+    },
+    {
+     "player": "Залізний",
+     "values": [
+      "4.77",
+      "4/15",
+      "0.6",
+      "1.4",
+      "0.8",
+      "0",
+      "0.17",
+      "1/2"
+     ]
+    }
+   ],
+   "nominations": [
+    {
+     "key": "mvp",
+     "top": [
+      {
+       "player": "Tina",
+       "value": "4.30"
+      },
+      {
+       "player": "Хоттабич",
+       "value": "4.00"
+      },
+      {
+       "player": "Аватар",
+       "value": "4.00"
+      }
+     ]
+    },
+    {
+     "key": "firstKilled",
+     "top": [
+      {
+       "player": "Малина",
+       "value": "3"
+      },
+      {
+       "player": "Seezov",
+       "value": "3"
+      },
+      {
+       "player": "Хоттабич",
+       "value": "2"
+      }
+     ]
+    },
+    {
+     "key": "bestRed",
+     "top": [
+      {
+       "player": "Tina",
+       "value": "3.00"
+      },
+      {
+       "player": "Аватар",
+       "value": "2.40"
+      },
+      {
+       "player": "Фурія",
+       "value": "2.30"
+      }
+     ]
+    },
+    {
+     "key": "bestMafia",
+     "top": [
+      {
+       "player": "Аглая",
+       "value": "2.90"
+      },
+      {
+       "player": "Хоттабич",
+       "value": "2.40"
+      },
+      {
+       "player": "Малишка",
+       "value": "2.40"
+      }
+     ]
+    }
+   ],
+   "games": []
+  }
+ ]
+}
