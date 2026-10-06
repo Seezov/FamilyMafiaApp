@@ -60,6 +60,7 @@ class SiteTable {
     this.desc = true,
     this.showRank = false,
     this.collapsed,
+    this.sortable = true,
   });
 
   final List<SiteColumn> columns;
@@ -77,6 +78,10 @@ class SiteTable {
   /// Rows shown before "Show all".
   final int? collapsed;
 
+  /// False for a table whose order is the result (a final table): no
+  /// clickable headers.
+  final bool sortable;
+
   Map<String, Object?> toJson() {
     assert(rows.every((r) => r.length == columns.length),
         'every row needs ${columns.length} cells');
@@ -91,6 +96,7 @@ class SiteTable {
       'desc': desc,
       'showRank': showRank,
       if (collapsed != null) 'collapsed': collapsed,
+      if (!sortable) 'sortable': false,
     };
   }
 }

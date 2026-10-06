@@ -45,10 +45,10 @@ const colCount = columns.length + (showRank ? 1 : 0);
               <th
                 class:list={[{ num: c.numeric, ph: c.phone === false, sorted: i === table.sortColumn }]}
                 title={c.tip}
-                data-col={i}
+                data-col={table.sortable === false ? undefined : i}
                 data-numeric={c.numeric ? '1' : undefined}
                 aria-sort={i === table.sortColumn ? (table.desc ? 'descending' : 'ascending') : undefined}
-              ><button type="button">{c.label}</button></th>
+              >{table.sortable === false ? c.label : <button type="button">{c.label}</button>}</th>
             ))}
           </tr>
         </thead>

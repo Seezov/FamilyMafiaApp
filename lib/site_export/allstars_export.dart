@@ -41,6 +41,7 @@ Map<String, Object?> _event(AllstarsEvent e, SiteCell Function(String) cell) => 
       'podium': [for (final s in e.standings.take(3)) cell(s.player).toJson()],
       'table': SiteTable(
         showRank: true,
+        sortable: false,
         columns: [
           const SiteColumn('Гравець', numeric: false),
           for (final c in e.columns) SiteColumn(c.label, tip: c.tip),

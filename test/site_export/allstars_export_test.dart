@@ -76,6 +76,7 @@ void main() {
   test('the final table keeps its order and is not re-sortable', () {
     final table = (json['events'] as List)[1]['table'] as Map;
     expect(table.containsKey('sortColumn'), isFalse);
+    expect(table['sortable'], isFalse);
     expect(table['showRank'], isTrue);
     expect([for (final r in table['rows'] as List) r[0]['t']], ['Залізний', 'Nobody Known', 'Аглая']);
   });

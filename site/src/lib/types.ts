@@ -2,7 +2,7 @@ export interface SiteColumn { label: string; numeric: boolean; tip?: string; gro
 export interface SiteCell { t: string; s?: number; link?: string; tone?: 'wr' | 'pos' | 'neg' }
 export interface SiteTable {
   title?: string; empty?: string; columns: SiteColumn[]; rows: SiteCell[][];
-  sortColumn?: number; desc: boolean; showRank: boolean; collapsed?: number;
+  sortColumn?: number; desc: boolean; showRank: boolean; collapsed?: number; sortable?: false;
 }
 
 export type RoleKey = 'civilian' | 'sheriff' | 'mafia' | 'don';
