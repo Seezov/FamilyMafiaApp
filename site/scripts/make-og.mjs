@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import { Resvg } from '@resvg/resvg-js';
 
 const logo = fs.readFileSync(new URL('../public/logo.svg', import.meta.url), 'utf8')
-  .replace('<svg ', '<svg x="120" y="135" width="260" height="360" ');
+  .replace('<svg ', '<svg x="120" y="135" width="300" height="360" ');
 const svg = `
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
   <rect width="1200" height="630" fill="#0A0A0A"/>

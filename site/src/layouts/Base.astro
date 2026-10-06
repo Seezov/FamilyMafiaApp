@@ -24,8 +24,9 @@ const nav = [
 ];
 const site = 'Family Mafia Club';
 // Inline so the monogram follows the theme (--logo-* in global.css).
+const [, , logoW, logoH] = logoSvg.match(/viewBox="([^"]+)"/)![1].split(' ').map(Number);
 const logo = logoSvg
-  .replace('<svg ', '<svg width="17" height="23" aria-hidden="true" ')
+  .replace('<svg ', `<svg width="${Math.round(23 * logoW / logoH)}" height="23" aria-hidden="true" `)
   .replaceAll('#fff', 'var(--logo-ink)').replaceAll('#000', 'var(--logo-cut)');
 const fullTitle = title === site ? title : `${title} · ${site}`;
 ---
