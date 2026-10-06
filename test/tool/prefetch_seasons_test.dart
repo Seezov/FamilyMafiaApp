@@ -97,7 +97,8 @@ void main() {
         if (uri.host == 'config.test') return _body(config);
         if (uri.path.endsWith(':runQuery')) {
           return _body(jsonEncode([
-            {'document': {'name': 'x/games/g1', 'fields': {'season': {'integerValue': '32'}}}},
+            {'document': {'name': 'x/games/g1', 'fields': {'season': {'integerValue': '32'}}},
+                'readTime': '2026-12-03T20:00:00Z'},
           ]));
         }
         return _body('{}', 404);
@@ -108,7 +109,8 @@ void main() {
 
     expect(ids, [32]);
     final snap = jsonDecode(File('${out.path}/season32.json').readAsStringSync());
-    expect(snap, {'format': 'firestore', 'games': [{'id': 'g1', 'season': 32}]});
+    expect(snap, {'format': 'firestore', 'games': [{'id': 'g1', 'season': 32}],
+        'syncedAt': '2026-12-03T20:00:00Z'});
   });
 
   group('config/club', () {

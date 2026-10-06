@@ -18,25 +18,56 @@ class FirestoreService {
 
   FirestoreService({required Dio dio}) : _dio = dio;
 
-  /// Returns the season snapshot JSON: {"format": "firestore", "games": [...]}.
+  /// Returns the season snapshot JSON:
+  /// {"format": "firestore", "games": [...], "syncedAt": server read time}.
   Future<String> fetchSeasonGames(FirestoreSource source, int seasonId) async {
+    final (games, readTime) = await _runQuery(source,
+        {'field': {'fieldPath': 'season'}, 'op': 'EQUAL', 'value': {'integerValue': '$seasonId'}});
+    return jsonEncode({'format': firestoreSnapshotFormat, 'games': games, 'syncedAt': readTime});
+  }
+
+  /// Games of every season written after [since] (an RFC 3339 timestamp), and
+  /// the server read time. Every create/update sets `updatedAt` (firestore.rules),
+  /// so this is all that changed; a single-field filter needs no composite index.
+  Future<(List<Map<String, dynamic>>, String?)> fetchGamesUpdatedSince(
+          FirestoreSource source, String since) =>
+      _runQuery(source,
+          {'field': {'fieldPath': 'updatedAt'}, 'op': 'GREATER_THAN', 'value': {'timestampValue': since}});
+
+  /// How many games [seasonId] has — one read, however many games.
+  Future<int> countSeasonGames(FirestoreSource source, int seasonId) async {
+    final uri = Uri.parse('https://firestore.googleapis.com/v1/projects/'
+        '${source.projectId}/databases/(default)/documents:runAggregationQuery');
+    final response = await _dio.postUri<List<dynamic>>(uri, data: {
+      'structuredAggregationQuery': {
+        'aggregations': [{'alias': 'n', 'count': {}}],
+        'structuredQuery': {
+          'from': [{'collectionId': 'games'}],
+          'where': {'fieldFilter': {
+            'field': {'fieldPath': 'season'}, 'op': 'EQUAL', 'value': {'integerValue': '$seasonId'},
+          }},
+        },
+      },
+    });
+    final row = (response.data ?? const []).first as Map<String, dynamic>;
+    return int.parse(row['result']['aggregateFields']['n']['integerValue'] as String);
+  }
+
+  Future<(List<Map<String, dynamic>>, String?)> _runQuery(
+      FirestoreSource source, Map<String, Object> fieldFilter) async {
     final uri = Uri.parse('https://firestore.googleapis.com/v1/projects/'
         '${source.projectId}/databases/(default)/documents:runQuery');
     final response = await _dio.postUri<List<dynamic>>(uri, data: {
       'structuredQuery': {
         'from': [{'collectionId': 'games'}],
-        'where': {
-          'fieldFilter': {
-            'field': {'fieldPath': 'season'},
-            'op': 'EQUAL',
-            'value': {'integerValue': '$seasonId'},
-          },
-        },
+        'where': {'fieldFilter': fieldFilter},
       },
     });
     final games = <Map<String, dynamic>>[];
-    for (final row in response.data ?? const []) {
-      final document = (row as Map<String, dynamic>)['document'] as Map<String, dynamic>?;
+    String? readTime;
+    for (final row in (response.data ?? const []).cast<Map<String, dynamic>>()) {
+      readTime ??= row['readTime'] as String?;
+      final document = row['document'] as Map<String, dynamic>?;
       if (document == null) continue;
       final fields = document['fields'] as Map<String, dynamic>? ?? const {};
       games.add({
@@ -44,7 +75,7 @@ class FirestoreService {
         ...decodeFirestoreFields(fields),
       });
     }
-    return jsonEncode({'format': firestoreSnapshotFormat, 'games': games});
+    return (games, readTime);
   }
 
   /// `config/club` as JSON (tournaments, rejectedCandidates, gameLimits), or

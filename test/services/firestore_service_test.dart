@@ -112,6 +112,7 @@ void main() {
     expect(snapshot, {
       'format': 'firestore',
       'games': [{'id': 'abc', 'season': 32, 'host': 'Серпень'}],
+      'syncedAt': '2026-12-03T20:00:00Z',
     });
   });
 
@@ -124,7 +125,7 @@ void main() {
         sheetsService: null, firestoreService: FirestoreService(dio: dio), cacheService: cache);
 
     final first = await service.loadSeasonJson(_config);
-    expect(jsonDecode(first!), {'format': 'firestore', 'games': []});
+    expect(jsonDecode(first!), {'format': 'firestore', 'games': [], 'syncedAt': null});
 
     fail = true;
     expect(await service.loadSeasonJson(_config), first);
@@ -134,5 +135,98 @@ void main() {
     final cache = _MemCache()..data[32] = '{"format":"firestore","games":[]}';
     final service = SeasonDataService(sheetsService: null, cacheService: cache);
     expect(await service.loadSeasonJson(_config), cache.data[32]);
+  });
+
+  group('syncing a cached season', () {
+    Map<String, dynamic> doc(String id, int season, String host) => {
+          'name': 'projects/p1/databases/(default)/documents/games/$id',
+          'fields': {'season': {'integerValue': '$season'}, 'host': {'stringValue': host}},
+        };
+    String cached(List<Map<String, dynamic>> games, String? syncedAt) =>
+        jsonEncode({'format': 'firestore', 'games': games, 'syncedAt': syncedAt});
+
+    // Routes runQuery / runAggregationQuery; [delta] answers the updatedAt query,
+    // [full] the whole-season one, [count] the aggregation.
+    ({_FakeAdapter adapter, List<Map> queries}) server({
+      List<Map<String, dynamic>> delta = const [],
+      List<Map<String, dynamic>> full = const [],
+      required int count,
+    }) {
+      final queries = <Map>[];
+      final adapter = _FakeAdapter((o) {
+        final body = o.data as Map;
+        queries.add(body);
+        if (o.uri.path.endsWith(':runAggregationQuery')) {
+          return _json([{'result': {'aggregateFields': {'n': {'integerValue': '$count'}}},
+              'readTime': '2026-12-05T10:00:01Z'}]);
+        }
+        final field = body['structuredQuery']['where']['fieldFilter']['field']['fieldPath'];
+        final docs = field == 'updatedAt' ? delta : full;
+        return _json([
+          for (final d in docs) {'document': d, 'readTime': '2026-12-05T10:00:00Z'},
+          if (docs.isEmpty) {'readTime': '2026-12-05T10:00:00Z'},
+        ]);
+      });
+      return (adapter: adapter, queries: queries);
+    }
+
+    SeasonDataService serviceFor(_FakeAdapter adapter, _MemCache cache) => SeasonDataService(
+        sheetsService: null,
+        firestoreService: FirestoreService(dio: Dio()..httpClientAdapter = adapter),
+        cacheService: cache);
+
+    test('reads only games changed since the last sync (minus a margin) and merges them', () async {
+      final cache = _MemCache()
+        ..data[32] = cached([
+          {'id': 'a', 'season': 32, 'host': 'Old'},
+          {'id': 'b', 'season': 32, 'host': 'B'},
+          {'id': 'm', 'season': 32, 'host': 'Moved'},
+        ], '2026-12-04T12:00:00.000Z');
+      final s = server(delta: [doc('a', 32, 'New'), doc('c', 32, 'C'), doc('m', 33, 'Moved'), doc('z', 33, 'Other')],
+          count: 3);
+
+      final json = jsonDecode((await serviceFor(s.adapter, cache).loadSeasonJson(_config))!);
+
+      final where = s.queries.first['structuredQuery']['where']['fieldFilter'];
+      expect(where['field']['fieldPath'], 'updatedAt');
+      expect(where['op'], 'GREATER_THAN');
+      expect(where['value'], {'timestampValue': '2026-12-04T11:55:00.000Z'});
+      final countWhere = s.queries.last['structuredAggregationQuery']['structuredQuery']['where']['fieldFilter'];
+      expect(countWhere['value'], {'integerValue': '32'});
+      expect(s.queries, hasLength(2)); // no full season query
+      expect(json['syncedAt'], '2026-12-05T10:00:00Z');
+      expect({for (final g in json['games'] as List) g['id']: g['host']}, {'a': 'New', 'b': 'B', 'c': 'C'});
+      expect(cache.data[32], jsonEncode(json));
+    });
+
+    test('a count that differs from the merged cache (a deleted game) refetches the season', () async {
+      final cache = _MemCache()
+        ..data[32] = cached([{'id': 'a', 'season': 32}, {'id': 'gone', 'season': 32}], '2026-12-04T12:00:00Z');
+      final s = server(full: [doc('a', 32, 'A')], count: 1);
+
+      final json = jsonDecode((await serviceFor(s.adapter, cache).loadSeasonJson(_config))!);
+
+      expect(s.queries, hasLength(3));
+      expect(s.queries.last['structuredQuery']['where']['fieldFilter']['field']['fieldPath'], 'season');
+      expect(json['games'], [{'id': 'a', 'season': 32, 'host': 'A'}]);
+    });
+
+    test('a cache without syncedAt is fetched in full', () async {
+      final cache = _MemCache()..data[32] = '{"format":"firestore","games":[]}';
+      final s = server(full: [doc('a', 32, 'A')], count: 1);
+
+      final json = jsonDecode((await serviceFor(s.adapter, cache).loadSeasonJson(_config))!);
+
+      expect(s.queries, hasLength(1));
+      expect(json['games'], [{'id': 'a', 'season': 32, 'host': 'A'}]);
+      expect(json['syncedAt'], '2026-12-05T10:00:00Z');
+    });
+
+    test('a failed sync falls back to the cache', () async {
+      final cache = _MemCache()..data[32] = cached([{'id': 'a', 'season': 32}], '2026-12-04T12:00:00Z');
+      final adapter = _FakeAdapter((o) => _json({'error': 'x'}, 503));
+
+      expect(await serviceFor(adapter, cache).loadSeasonJson(_config), cache.data[32]);
+    });
   });
 }

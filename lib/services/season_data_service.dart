@@ -1,9 +1,16 @@
+import 'dart:convert';
+
 import 'package:family_mafia_app/models/season_config.dart';
+import 'package:family_mafia_app/services/firestore_rest.dart';
 import 'package:family_mafia_app/services/firestore_service.dart';
 import 'package:family_mafia_app/services/season_cache_service.dart';
 import 'package:family_mafia_app/services/sheets_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+
+/// How far before the last sync a Firestore season re-reads changed games:
+/// `updatedAt` is the request time, which can precede the commit.
+const firestoreSyncMargin = Duration(minutes: 5);
 
 class SeasonDataService {
   final SheetsService? _sheetsService;
@@ -49,13 +56,48 @@ class SeasonDataService {
 
   Future<String?> _loadFirestoreSeason(int seasonId, FirestoreSource source) async {
     try {
-      final json = await _firestoreService!.fetchSeasonGames(source, seasonId);
+      final cached = await _cacheService.getCachedSeasonData(seasonId);
+      final json = await _syncFirestoreSeason(seasonId, source, cached) ??
+          await _firestoreService!.fetchSeasonGames(source, seasonId);
       await _cacheService.cacheSeasonData(seasonId, json, 0);
       return json;
     } catch (e) {
       debugPrint('Season $seasonId: Firestore fetch failed ($e), trying cache');
       return _cacheService.getCachedSeasonData(seasonId);
     }
+  }
+
+  /// Brings a cached season up to date by reading only the games written since
+  /// its last sync, plus a count to catch deletions — a couple of reads instead
+  /// of the whole season. Null when it has to be fetched in full: nothing
+  /// cached, a cache from before syncs, or a count that doesn't match.
+  Future<String?> _syncFirestoreSeason(int seasonId, FirestoreSource source, String? cachedJson) async {
+    if (cachedJson == null) return null;
+    final cached = jsonDecode(cachedJson);
+    final syncedAt = cached is Map ? DateTime.tryParse('${cached['syncedAt']}') : null;
+    if (syncedAt == null) return null;
+    final firestore = _firestoreService!;
+    // A write stamped just before the last read can commit just after it.
+    final since = syncedAt.subtract(firestoreSyncMargin).toUtc().toIso8601String();
+    final (changed, readTime) = await firestore.fetchGamesUpdatedSince(source, since);
+    final games = {
+      for (final g in (cached['games'] as List).cast<Map<String, dynamic>>()) g['id'] as String: g,
+    };
+    for (final g in changed) {
+      // A game moved to another season leaves this one.
+      if (g['season'] == seasonId) {
+        games[g['id'] as String] = g;
+      } else {
+        games.remove(g['id']);
+      }
+    }
+    if (await firestore.countSeasonGames(source, seasonId) != games.length) return null;
+    debugPrint('Season $seasonId: synced ${changed.length} changed game(s)');
+    return jsonEncode({
+      'format': firestoreSnapshotFormat,
+      'games': games.values.toList(),
+      'syncedAt': readTime ?? cached['syncedAt'],
+    });
   }
 
   Future<String?> _loadRemoteSeason(int seasonId, RemoteSource remote) async {
