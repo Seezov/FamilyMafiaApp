@@ -13,6 +13,15 @@ import json, os, sys, urllib.parse, urllib.request
 KEY = os.environ.get('SHEETS_API_KEY') or sys.exit('SHEETS_API_KEY must be set')
 OUT = os.path.join(os.path.dirname(__file__), '..', '..', 'assets', 'raw', 'allstars.json')
 
+# Sheet spellings the roster doesn't know, written in the roster's spelling
+# (the federation years are copied by hand the same way).
+ALIASES = {'StoneCold': 'Stone Cold'}
+
+
+def alias(name):
+    return ALIASES.get(name, name)
+
+
 ROLES = {'мирный': 'civilian', 'мирний': 'civilian', 'шериф': 'sheriff',
          'мафия': 'mafia', 'мафія': 'mafia', 'дон': 'don'}
 
@@ -48,7 +57,7 @@ def standings(rows, header_row):
     for r in rows[header_row + 1:]:
         if not cell(r, 1):
             break
-        out.append({'player': r[1], 'values': [cell(r, 2 + i) for i in range(len(labels))]})
+        out.append({'player': alias(r[1]), 'values': [cell(r, 2 + i) for i in range(len(labels))]})
     return [{'label': l} for l in labels], out
 
 
@@ -73,7 +82,7 @@ def old_layout_games(rows, slot, label, val, player, role, lh, add):
             if lbl == 'Дата' and cell(r, val):
                 dates.add(cell(r, val))
         games.append({'firstKilled': first, 'seats': [
-            {'player': cell(r, player), 'role': ROLES[cell(r, role).lower()],
+            {'player': alias(cell(r, player)), 'role': ROLES[cell(r, role).lower()],
              'add': num(cell(r, add)), 'bestMove': num(cell(r, lh))} for r in block]})
         i += 10
     return games, hosts, dates
@@ -93,7 +102,7 @@ def fas2023_games(rows):
         pu = rows[i + 10]
         first = int(float(cell(pu, 1))) if cell(pu, 0) == 'ПУ' and cell(pu, 1) else None
         games.append({'firstKilled': first, 'seats': [
-            {'player': cell(r, 1), 'role': ROLES[cell(r, 2).lower()],
+            {'player': alias(cell(r, 1)), 'role': ROLES[cell(r, 2).lower()],
              'add': num(cell(r, 9)), 'bestMove': num(cell(r, 8))} for r in block]})
         i += 11
     return games

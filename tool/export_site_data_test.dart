@@ -3,6 +3,7 @@
 // Needs the assets/prefetched/ snapshot for remote seasons — see CLAUDE.md.
 import 'dart:io';
 
+import 'package:family_mafia_app/models/allstars.dart';
 import 'package:family_mafia_app/models/annual_event.dart';
 import 'package:family_mafia_app/providers/app_providers.dart';
 import 'package:family_mafia_app/services/prefetch_paths.dart';
@@ -24,7 +25,10 @@ void main() {
     final annualEvents = annualFile.existsSync()
         ? parseAnnualEvents(annualFile.readAsStringSync())
         : <AnnualEvent>[];
-    await writeSiteData(container, out, annualEvents: annualEvents);
+    final allstarsEvents =
+        parseAllstars(File('assets/raw/allstars.json').readAsStringSync());
+    await writeSiteData(container, out,
+        annualEvents: annualEvents, allstarsEvents: allstarsEvents);
 
     final configs = container.read(loadedSeasonConfigsProvider);
     for (final c in configs) {
