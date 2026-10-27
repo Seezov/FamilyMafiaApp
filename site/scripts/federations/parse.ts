@@ -23,11 +23,12 @@ export function nickVariants(nick: string): string[] {
   return m ? [nick, m[1].trim(), m[2].trim()] : [nick];
 }
 
-// emotion.games — api-v1.emotion.games JSON.
+// emotion.games — api-v1.emotion.games JSON. A player's id everywhere (page URL, year_points) is the club list's
+// profile_id, which the year summaries call player_id.
 export function parseEgClub(j: any): { members: Candidate[]; totalPages: number } {
   const place = j.club?.place ?? {};
   return {
-    members: (j.members ?? []).map((m: any) => cand('eg', m.player_id, m.nickname, 'club', { club: j.club?.title, city: place.city, games: m.tournaments })).filter(named),
+    members: (j.members ?? []).map((m: any) => cand('eg', m.profile_id ?? m.player_id, m.nickname, 'club', { club: j.club?.title, city: place.city, games: m.tournaments })).filter(named),
     totalPages: Number(j.members_pagination?.total_pages ?? 1),
   };
 }

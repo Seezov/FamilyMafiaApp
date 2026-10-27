@@ -12,7 +12,7 @@ describe('emotion.games', () => {
     const { members, totalPages } = parseEgClub(json('eg-club-13-p1.json'));
     expect(totalPages).toBe(6);
     expect(members[0]).toEqual({ fed: 'eg', id: '87', nick: 'Seezov', club: 'Family Mafia Club', city: 'Cherkasy', games: 6, url: 'https://emotion.games/ua/players/87', strength: 'club' });
-    expect(members.find((m) => m.nick === 'Пустой')?.id).toBe('1676');
+    expect(members.find((m) => m.nick === 'Пустой')?.id).toBe('1669');   // profile_id = the summary's player_id = the page URL id
   });
   it('year summary marks club 13 as strong, others as nick', () => {
     const rows = parseEgSummary(json('eg-summary-2026.json'));
