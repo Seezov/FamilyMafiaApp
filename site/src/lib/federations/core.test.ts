@@ -10,6 +10,11 @@ describe('normNick', () => {
     expect(normNick('Red   Fox')).toBe(normNick('red fox'));
     expect(normNick('Luna')).not.toBe(normNick('Луна'));
   });
+  it('is case-insensitive for every letter, look-alikes included', () => {
+    for (const [a, b] of [['Tina', 'tina'], ['TINA', 'tina'], ['SMART', 'Smart'], ['Hunter', 'hunter'], ['Bob', 'bob'], ['Kot', 'kot'], ['Margo', 'MARGO']]) {
+      expect(normNick(a)).toBe(normNick(b));
+    }
+  });
 });
 
 describe('profile urls', () => {
@@ -68,6 +73,16 @@ describe('moveForRosterOp', () => {
     const m = moveForRosterOp(d, { kind: 'merge', from: 'A', into: 'B' });
     expect(m.links).toEqual({ B: { eg: ['2', '1'], fiim: ['3'] } });
     expect(m.rejected).toEqual({ B: ['x:1', 'x:2'] });
+  });
+  it('a rename to the same name keeps everything', () => {
+    expect(moveForRosterOp(d, { kind: 'rename', player: 'A', to: 'A' })).toEqual(d);
+  });
+  it('a rename stores links under the cleaned name the roster saves', () => {
+    expect(Object.keys(moveForRosterOp(d, { kind: 'rename', player: 'A', to: ' A2   x ' }).links)).toEqual(['B', 'A2 x']);
+  });
+  it('a merge drops rejections of profiles that end up linked', () => {
+    const m = moveForRosterOp({ links: { B: { eg: ['1'] } }, rejected: { A: ['eg:1', 'eg:9'] } }, { kind: 'merge', from: 'A', into: 'B' });
+    expect(m.rejected).toEqual({ B: ['eg:9'] });
   });
   it('leaves other ops alone', () => {
     expect(moveForRosterOp(d, { kind: 'add', name: 'C' })).toEqual(d);

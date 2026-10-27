@@ -18,14 +18,12 @@ export type FedOp =
   | { kind: 'reviewed'; player: string; keys: string[] }
   | { kind: 'unreject'; player: string; key: string };
 
-// Latin letters that look like Cyrillic ones (capitals first: Т/T only look alike before lower-casing),
-// so a nick typed in the "wrong" alphabet still matches.
-const UPPER: Record<string, string> = { A: 'А', B: 'В', C: 'С', E: 'Е', H: 'Н', I: 'І', K: 'К', M: 'М', O: 'О', P: 'Р', T: 'Т', X: 'Х', Y: 'У' };
-const LOWER: Record<string, string> = { a: 'а', c: 'с', e: 'е', i: 'і', o: 'о', p: 'р', x: 'х', y: 'у' };
+// Latin letters that look like Cyrillic ones (in either case), so a nick typed in the "wrong" alphabet still
+// matches. Mapped after lower-casing, so matching stays case-insensitive.
+const LOOKALIKE: Record<string, string> = { a: 'а', b: 'в', c: 'с', e: 'е', h: 'н', i: 'і', k: 'к', m: 'м', o: 'о', p: 'р', t: 'т', x: 'х', y: 'у' };
 
 export const normNick = (s: string) =>
-  s.normalize('NFC').trim().replace(/\s+/g, ' ')
-    .replace(/[ABCEHIKMOPTXY]/g, (ch) => UPPER[ch]).toLowerCase().replace(/[aceiopxy]/g, (ch) => LOWER[ch]);
+  s.normalize('NFC').trim().replace(/\s+/g, ' ').toLowerCase().replace(/[abcehikmoptxy]/g, (ch) => LOOKALIKE[ch]);
 
 export const candKey = (c: { fed: Fed; id: string }) => `${c.fed}:${c.id}`;
 
@@ -102,7 +100,9 @@ export function applyFedOp(d: FedDoc, op: FedOp): FedDoc {
 /** Keeps config/federations keyed by the roster's display names through a rename or merge. */
 export function moveForRosterOp(d: FedDoc, op: RosterOp): FedDoc {
   if (op.kind !== 'rename' && op.kind !== 'merge') return d;
-  const [from, to] = op.kind === 'rename' ? [op.player, op.to] : [op.from, op.into];
+  // The roster saves a renamed player under the cleaned name; a rename to the same name changes nothing.
+  const [from, to] = op.kind === 'rename' ? [op.player, op.to.trim().replace(/\s+/g, ' ')] : [op.from, op.into];
+  if (from === to) return d;
   const next = copy(d);
   const links = next.links[from];
   if (links) {
@@ -120,6 +120,11 @@ export function moveForRosterOp(d: FedDoc, op: RosterOp): FedDoc {
     const into = (next.rejected[to] ??= []);
     for (const k of rej) if (!into.includes(k)) into.push(k);
     delete next.rejected[from];
+  }
+  // A profile one of the merged players confirmed and the other rejected stays confirmed.
+  if (next.rejected[to]) {
+    const linked = linkedKeys(next, to);
+    next.rejected[to] = next.rejected[to].filter((k) => !linked.has(k));
   }
   return next;
 }
