@@ -534,3 +534,49 @@ describe('appeals', () => {
     await assertSucceeds(deleteDoc(doc(as(ADMIN), 'appeals', AID)));
   });
 });
+
+describe('payments', () => {
+  const cfgRef = (db: ReturnType<typeof as>) => doc(db, 'payments', 'config');
+  const cfg = (u: User, extra: Record<string, unknown> = {}) => ({
+    prices: { weekday: { 1: 150 }, student: 100, single: 50, events: {} }, students: [], organizers: [], telegram: {}, startSeason: 32,
+    updatedAt: serverTimestamp(), updatedBy: u.uid, updatedByEmail: u.email, ...extra,
+  });
+  const day = (u: User, extra: Record<string, unknown> = {}) => ({
+    eventType: null, marks: { A: { russian: true } }, updatedAt: serverTimestamp(), updatedBy: u.uid, updatedByEmail: u.email, ...extra,
+  });
+  const rec = (u: User, extra: Record<string, unknown> = {}) => ({
+    player: 'A', amount: 150, date: '2026-12-01', note: '', createdAt: serverTimestamp(), createdBy: u.uid, createdByEmail: u.email, ...extra,
+  });
+
+  it('only admins read and write the config', async () => {
+    await assertSucceeds(setDoc(cfgRef(as(ADMIN)), cfg(ADMIN)));
+    await assertSucceeds(getDoc(cfgRef(as(ADMIN))));
+    await assertFails(getDoc(cfgRef(as(HOST))));
+    await assertFails(getDoc(doc(env.unauthenticatedContext().firestore(), 'payments', 'config')));
+    await assertFails(setDoc(cfgRef(as(HOST)), cfg(HOST)));
+    await assertFails(setDoc(cfgRef(as(ADMIN)), cfg(ADMIN, { extra: 1 })));
+    await assertFails(setDoc(cfgRef(as(ADMIN)), cfg(ADMIN, { updatedBy: 'x' })));
+    await assertFails(deleteDoc(cfgRef(as(ADMIN))));
+  });
+  it('days: admins only, date ids, known event types', async () => {
+    await assertSucceeds(setDoc(doc(as(ADMIN), 'paymentDays', '2026-12-01'), day(ADMIN)));
+    await assertSucceeds(setDoc(doc(as(ADMIN), 'paymentDays', '2026-12-02'), day(ADMIN, { eventType: 'marathon' })));
+    await assertFails(setDoc(doc(as(ADMIN), 'paymentDays', '2026-12-03'), day(ADMIN, { eventType: 'party' })));
+    await assertFails(setDoc(doc(as(ADMIN), 'paymentDays', 'tuesday'), day(ADMIN)));
+    await assertFails(setDoc(doc(as(HOST), 'paymentDays', '2026-12-01'), day(HOST)));
+    await assertFails(getDoc(doc(as(HOST), 'paymentDays', '2026-12-01')));
+    await assertSucceeds(deleteDoc(doc(as(ADMIN), 'paymentDays', '2026-12-01')));
+  });
+  it('records: admins add and delete, nobody edits', async () => {
+    const id = 'R0000000000000000001';
+    await assertSucceeds(setDoc(doc(as(ADMIN), 'paymentRecords', id), rec(ADMIN)));
+    await assertFails(setDoc(doc(as(ADMIN), 'paymentRecords', 'R2'), rec(ADMIN, { amount: 0 })));
+    await assertFails(setDoc(doc(as(ADMIN), 'paymentRecords', 'R3'), rec(ADMIN, { createdByEmail: 'x@x.com' })));
+    await assertFails(setDoc(doc(as(ADMIN), 'paymentRecords', 'R4'), rec(ADMIN, { extra: 1 })));
+    await assertFails(setDoc(doc(as(HOST), 'paymentRecords', 'R5'), rec(HOST)));
+    await assertFails(updateDoc(doc(as(ADMIN), 'paymentRecords', id), { amount: 1 }));
+    await assertFails(getDoc(doc(as(HOST), 'paymentRecords', id)));
+    await assertFails(deleteDoc(doc(as(HOST), 'paymentRecords', id)));
+    await assertSucceeds(deleteDoc(doc(as(ADMIN), 'paymentRecords', id)));
+  });
+});

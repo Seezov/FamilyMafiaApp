@@ -1,0 +1,89 @@
+---
+import Base from '../../layouts/Base.astro';
+---
+<Base title="Борги" description="Борги гравців за клубні вечори (лише для адмінів)." active="host">
+  <div class="pagehead"><h1 class="display">Борги</h1><span class="label" id="state"></span></div>
+
+  <div class="panel access">
+    <span class="label">Доступ</span> <span id="who">Не увійшов</span>
+    <button type="button" id="sign-in" class="btn primary">Увійти через Google</button>
+    <button type="button" id="sign-out" class="btn" hidden>Вийти</button>
+    <p class="hint">Лише для адмінів. Борг = вечори з ігор у Firestore (з сезону 32) за цінами з налаштувань − внесені оплати.
+      Організатори не платять; ведучий, який не грав, теж. Нові ігри зʼявляються тут одразу.</p>
+  </div>
+  <p id="msg" class="msg" role="status"></p>
+
+  <div id="content" hidden>
+    <section class="panel">
+      <header class="bar"><h2 class="label">Боржники</h2>
+        <label class="chk"><input type="checkbox" id="only-debtors" checked> лише з ненульовим балансом</label></header>
+      <table class="list"><thead><tr><th>Гравець</th><th class="num">Борг</th><th class="num">Нараховано</th><th class="num">Сплачено</th><th></th></tr></thead>
+        <tbody id="debts"></tbody></table>
+    </section>
+
+    <section class="panel">
+      <h2 class="label">Вечори</h2>
+      <p class="hint">Тип вечора береться зі списку турнірів (/debug/) за датою; тут його можна змінити. Винятки: привів новачка, безкоштовно (з причиною), своя сума, гра російською (×2).</p>
+      <div id="days"></div>
+    </section>
+
+    <section class="panel">
+      <h2 class="label">Налаштування</h2>
+      <form id="config" class="config"></form>
+    </section>
+  </div>
+  <datalist id="roster"></datalist>
+</Base>
+
+<script>
+  import '../../scripts/payments';
+</script>
+
+<style>
+  .access { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; margin-bottom: 12px; }
+  .hint { flex-basis: 100%; margin: 0 0 8px; color: var(--muted); }
+  .msg:empty { display: none; }
+  .msg.error { color: var(--city); }
+  #content { display: grid; gap: 16px; }
+  .bar { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: baseline; margin-bottom: 8px; }
+  h2.label { margin: 0 0 8px; }
+  :global(.btn) { background: var(--panel-2); border: 1px solid var(--border); color: var(--text); border-radius: var(--radius);
+    padding: 5px 12px; font: inherit; cursor: pointer; }
+  :global(.btn:hover) { border-color: var(--muted); }
+  :global(.btn.primary) { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+  :global(.btn.danger) { color: var(--city); }
+  :global(.btn.small) { padding: 1px 8px; font-size: 12px; }
+  :global(.btn:disabled) { opacity: .45; cursor: not-allowed; }
+  :global(.link) { background: none; border: 0; padding: 0; color: inherit; font: inherit; cursor: pointer; text-decoration: underline;
+    text-decoration-color: var(--border); }
+  :global(.list) { width: 100%; border-collapse: collapse; }
+  :global(.list td), :global(.list th) { padding: 6px 8px; border-top: 1px solid var(--border); text-align: left; vertical-align: middle; }
+  :global(.list th) { color: var(--muted); font-weight: 500; font-size: 12px; }
+  :global(.num) { text-align: right !important; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  :global(.neg) { color: var(--city); } :global(.pos) { color: var(--good); }
+  :global(.muted) { color: var(--muted); } :global(.warn) { color: var(--mid); }
+  :global(.act) { text-align: right !important; }
+  :global(.sub td) { background: var(--panel-2); }
+  :global(.pay), :global(.config .fields) { display: flex; flex-wrap: wrap; gap: 8px; align-items: end; }
+  :global(.pay .grow) { flex: 1 1 200px; }
+  :global(.pay input), :global(.config input), :global(.config textarea), :global(.day-form select), :global(.day-form input:not([type=checkbox])) {
+    background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 4px 8px; font: inherit; }
+  :global(.pay label), :global(.config label) { display: grid; gap: 2px; font-size: 12px; color: var(--muted); }
+  :global(.pay .grow input) { width: 100%; box-sizing: border-box; }
+  :global(.config input[type=number]) { width: 80px; }
+  :global(.config fieldset) { border: 1px solid var(--border); border-radius: var(--radius); margin: 0 0 12px; padding: 8px 12px 12px; }
+  :global(.config legend) { color: var(--muted); font-size: 12px; padding: 0 4px; }
+  :global(.config .cols) { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-bottom: 12px; }
+  :global(.config textarea) { width: 100%; box-sizing: border-box; resize: vertical; }
+  :global(.config) > :global(label) { margin-bottom: 12px; }
+  :global(.detail) { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+  :global(.detail h3) { margin: 0 0 4px; }
+  :global(.lines) { list-style: none; margin: 0; padding: 0; }
+  :global(.lines li) { display: grid; grid-template-columns: 1fr auto; gap: 0 12px; padding: 4px 0; border-top: 1px solid var(--border); }
+  :global(.lines li > :nth-child(3)) { grid-column: 1 / -1; font-size: 12px; }
+  :global(.day) { border-top: 1px solid var(--border); padding: 8px 0; }
+  :global(.day summary) { cursor: pointer; }
+  :global(.day-form) { display: grid; gap: 8px; margin-top: 8px; overflow-x: auto; }
+  :global(.day-form input[name=val]) { width: 140px; margin-left: 4px; }
+  :global(.chk) { white-space: nowrap; color: var(--muted); font-size: 12px; }
+</style>

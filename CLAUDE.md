@@ -148,6 +148,11 @@ default branch.
   partial add the points to the seat's `additional` and a «Апеляція: +X» comment in the same
   transaction, then bump `meta/state`. «Історія» filters by player, host, status, season (URL query)
   with per-host totals. Logic in `site/src/lib/appeals/`; rules in `firestore.rules`.
+- **Attendance & debts:** `/season/N/attendance/` (public) lists who played each game day from
+  `games/N.json`. `/payments/` (admins only, live Firestore) computes debts for seasons 32+: prices,
+  students, organizers and Telegram handles in `payments/config`, per-evening marks in `paymentDays/{date}`,
+  payments in `paymentRecords`. Rules in `site/src/lib/payments/payments.ts` (pure, shared with the future
+  Telegram bot); spec `docs/superpowers/specs/2026-10-27-payments-design.md`.
 - Running the prefetch locally leaves a ~650 KB snapshot in `assets/prefetched/`
   that also goes into local release APKs (no secrets, just data). Before a
   release APK: `rm assets/prefetched/season*.json assets/prefetched/remote_config.json`.
