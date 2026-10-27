@@ -1,6 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import { loadUnresolved } from '../../lib/data';
+import { href } from '../../lib/url';
 
 const unresolved = loadUnresolved().names;
 ---
@@ -12,7 +13,7 @@ const unresolved = loadUnresolved().names;
     <button type="button" id="sign-in" class="btn primary">Sign in with Google</button>
     <button type="button" id="sign-out" class="btn" hidden>Sign out</button>
     <button type="button" id="import" class="btn" hidden>Import from players.json</button>
-    <p class="hint">Admins (hosts with <code>admin: true</code>) can save. A game name counts for a player when it equals the player's name or a nickname (case ignored). The site rebuilds within an hour.</p>
+    <p class="hint">Admins (hosts with <code>admin: true</code>) can save. A game name counts for a player when it equals the player's name or a nickname (case ignored). The site rebuilds within an hour. Federation profiles: <a href={href('federations/edit/')}>/federations/edit/</a>.</p>
   </div>
 
   <div class="toolbar">

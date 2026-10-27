@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import type { AllstarsData, AnnualData, DebugData, GamesData, IndexData, PlayerData, PlayersData, RecordsData, SeasonData, TournamentsData, UnresolvedData } from './types';
+import type { CandidatesFile } from './federations/core';
 
 // Written by `flutter test tool/export_site_data_test.dart` (repo root).
 const dir = process.env.SITE_DATA_DIR ?? path.resolve(process.cwd(), 'data');
@@ -24,3 +25,9 @@ export const loadAnnual = () => read<AnnualData>('annual.json');
 export const loadAllstars = () => read<AllstarsData>('allstars.json');
 export const loadDebug = () => read<DebugData>('debug.json');
 export const loadGames = (id: number) => read<GamesData>(`games/${id}.json`);
+
+// Committed output of scripts/find-federation-players.ts (repo root assets/raw/); empty until its first run.
+export function loadFederationCandidates(): CandidatesFile {
+  const file = path.resolve(process.cwd(), '..', 'assets', 'raw', 'federation_candidates.json');
+  return fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf8')) as CandidatesFile : { generatedAt: '', players: {}, unmatched: [] };
+}

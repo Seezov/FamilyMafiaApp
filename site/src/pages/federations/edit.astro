@@ -1,0 +1,66 @@
+---
+import Base from '../../layouts/Base.astro';
+import { loadFederationCandidates } from '../../lib/data';
+
+const candidates = loadFederationCandidates();
+---
+<Base title="Federation profiles" description="Admins confirm which federation profiles belong to club players." active="players">
+  <div class="pagehead"><h1 class="display">Профілі на федераціях</h1><span class="label" id="state">Loading…</span></div>
+
+  <div class="panel access">
+    <span class="label">Editing</span> <span id="who">Read-only</span>
+    <button type="button" id="sign-in" class="btn primary">Sign in with Google</button>
+    <button type="button" id="sign-out" class="btn" hidden>Sign out</button>
+    <p class="hint">Галочка = це той самий гравець. «Переглянуто» відхиляє решту кандидатів рядка — після нового пошуку вони не повернуться.
+      Пошук: <code>cd site && node scripts/find-federation-players.ts</code>{candidates.generatedAt ? `, останній ${candidates.generatedAt.slice(0, 10)}` : ' — ще не запускався'}.</p>
+  </div>
+
+  <div class="toolbar">
+    <div class="filters" role="group" aria-label="Фільтр">
+      <button type="button" class="btn" data-filter="unreviewed">Не переглянуті <span></span></button>
+      <button type="button" class="btn" data-filter="confirmed">Підтверджені <span></span></button>
+      <button type="button" class="btn" data-filter="nothing">Нічого не знайдено <span></span></button>
+      <button type="button" class="btn" data-filter="all">Усі <span></span></button>
+    </div>
+    <input id="q" type="search" placeholder="Пошук гравця" aria-label="Пошук гравця">
+    <label><input type="checkbox" id="show-rejected"> Показати відхилені</label>
+  </div>
+
+  <p id="msg" class="msg" role="status"></p>
+  <div id="list" class="list"></div>
+
+  <h2>Учасники клубу на федераціях без пари</h2>
+  <p class="hint">Записані в Family Mafia Club на федерації, але жоден нік з ростеру їм не відповідає.</p>
+  <div id="unmatched" class="list"></div>
+
+  <datalist id="roster-names"></datalist>
+  <script type="application/json" id="cands" set:html={JSON.stringify(candidates).replace(/</g, '\\u003c')} />
+</Base>
+
+<script>
+  import '../../scripts/federations-edit';
+</script>
+
+<style>
+  .access, .toolbar, .filters { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; margin-bottom: 12px; }
+  .filters { margin-bottom: 0; }
+  .filters .btn.on { background: var(--fg); color: var(--bg); }
+  .hint { flex-basis: 100%; margin: 0; color: var(--muted); }
+  .msg:empty { display: none; }
+  .msg.error { color: var(--city); }
+  .list :global(.row) { padding: 10px 0; border-top: 1px solid var(--border); }
+  .list :global(.head) { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; margin-bottom: 6px; }
+  .list :global(.name) { font-weight: 600; }
+  .list :global(.act) { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-left: auto; }
+  .list :global(.feds) { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px; }
+  .list :global(.fed) { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+  .list :global(.cand) { border: 1px solid var(--border); border-radius: 8px; padding: 6px 8px; overflow-wrap: anywhere; }
+  .list :global(.cand.linked) { border-color: var(--fg); }
+  .list :global(.cand.rejected) { opacity: .55; }
+  .list :global(.meta), .list :global(.none) { color: var(--muted); font-size: .9em; }
+  .list :global(.warn) { color: var(--city); font-size: .9em; }
+  .list :global(.badge) { font-size: .8em; border-radius: 999px; padding: 0 6px; border: 1px solid var(--border); }
+  .list :global(.badge.club) { border-color: currentColor; font-weight: 600; }
+  .list :global(.un) { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; padding: 8px 0; border-top: 1px solid var(--border); }
+  input { min-width: 0; }
+</style>
