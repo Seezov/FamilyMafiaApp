@@ -1,12 +1,13 @@
 ---
 import { loadIndex, loadSeason } from '../lib/data';
-import { gamesHref, seasonHref } from '../lib/url';
+import { attendanceHref, gamesHref, seasonHref } from '../lib/url';
 
-interface Props { id: number; tab: 'main' | 'small' | 'games' }
+interface Props { id: number; tab: 'main' | 'small' | 'games' | 'attendance' }
 const { id, tab } = Astro.props;
 const season = loadSeason(id);
 const seasons = [...loadIndex().seasons].reverse();
-const link = (sid: number) => (tab === 'games' ? gamesHref(sid) : seasonHref(sid, tab === 'small'));
+const link = (sid: number) =>
+  tab === 'games' ? gamesHref(sid) : tab === 'attendance' ? attendanceHref(sid) : seasonHref(sid, tab === 'small');
 ---
 <div class="pagehead">
   <details class="picker">
@@ -19,6 +20,7 @@ const link = (sid: number) => (tab === 'games' ? gamesHref(sid) : seasonHref(sid
     <a class="pill" href={seasonHref(id)} aria-current={tab === 'main' ? 'true' : undefined}>Main league</a>
     <a class="pill" href={seasonHref(id, true)} aria-current={tab === 'small' ? 'true' : undefined}>Small league</a>
     <a class="pill" href={gamesHref(id)} aria-current={tab === 'games' ? 'true' : undefined}>Games</a>
+    <a class="pill" href={attendanceHref(id)} aria-current={tab === 'attendance' ? 'true' : undefined}>Attendance</a>
   </nav>
   <slot />
 </div>

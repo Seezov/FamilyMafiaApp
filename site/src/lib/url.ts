@@ -6,4 +6,5 @@ export const playerHref = (slug: string) => href(`players/${slug}/`);
 export const seasonHref = (id: number, small = false) => href(`season/${id}/${small ? 'small/' : ''}`);
 export const gamesHref = (id: number, player?: string) =>
   href(`season/${id}/games/${player ? `?player=${encodeURIComponent(player)}` : ''}`);
+export const attendanceHref = (id: number) => href(`season/${id}/attendance/`);
 export const absolute = (p: string) => new URL(href(p), 'https://seezov.github.io').toString();
