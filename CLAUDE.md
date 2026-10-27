@@ -136,6 +136,13 @@ default branch.
   Edit it only on `/players/edit/`: the rule accepts any list, but the build fails on a clash or a
   malformed entry, so a console edit can stop every deploy. Colliding player slugs are `<slug>-<n>` (n by
   list order), never the id, so merges do not move URLs.
+- **Federation profiles:** `cd site && node scripts/find-federation-players.ts` (manual, 10–20 min) finds candidate
+  profiles of every roster name/nickname on imafia.org, emotion.games (club 13), fiim.world and mafgame.org (club 9)
+  and writes the committed `assets/raw/federation_candidates.json` (a federation that fails keeps its old candidates).
+  Admins confirm them on `/federations/edit/` (baked from that file) → Firestore `config/federations`
+  (`links[player][fed] = ids`, `rejected[player] = ["fed:id"]`, keyed by roster name; rename/merge on `/players/edit/`
+  moves them in the same transaction). Parsers in `site/scripts/federations/` are tested on saved pages in `fixtures/`.
+  Spec `docs/superpowers/specs/2026-10-27-federation-players-design.md`. Next step: parse federation games for confirmed links.
 - **Player profiles:** `/account/` (Google sign-in → claim a player → admin approves on
   `/account/admin/` → nick + avatar). Firestore `claims/{uid}` (private) and
   `profiles/{playerKey}` (public; `playerKey` = lower-cased, URI-encoded display name).
