@@ -14,6 +14,9 @@ function cand(fed: Fed, id: unknown, nick: unknown, strength: Candidate['strengt
   return c;
 }
 
+// Some federation rows have no nickname at all; such a row can't match anyone.
+const named = (c: Candidate) => !!c.nick;
+
 /** "Braun (Браун)" → the whole nick and both halves, so either spelling matches the roster. */
 export function nickVariants(nick: string): string[] {
   const m = /^(.+?)\s*\((.+)\)\s*$/.exec(nick);
@@ -24,13 +27,13 @@ export function nickVariants(nick: string): string[] {
 export function parseEgClub(j: any): { members: Candidate[]; totalPages: number } {
   const place = j.club?.place ?? {};
   return {
-    members: (j.members ?? []).map((m: any) => cand('eg', m.player_id, m.nickname, 'club', { club: j.club?.title, city: place.city, games: m.tournaments })),
+    members: (j.members ?? []).map((m: any) => cand('eg', m.player_id, m.nickname, 'club', { club: j.club?.title, city: place.city, games: m.tournaments })).filter(named),
     totalPages: Number(j.members_pagination?.total_pages ?? 1),
   };
 }
 
 export const parseEgSummary = (j: any[]): Candidate[] =>
-  j.map((r) => cand('eg', r.player_id, r.nickname, r.club_id === 13 ? 'club' : 'nick', { club: r.club ?? undefined }));
+  j.map((r) => cand('eg', r.player_id, r.nickname, r.club_id === 13 ? 'club' : 'nick', { club: r.club ?? undefined })).filter(named);
 
 // mafgame.org — Laravel + Inertia: the page's props are JSON in the data-page attribute.
 export function inertiaProps(html: string): any {
@@ -42,7 +45,7 @@ export function inertiaProps(html: string): any {
 export function parseMafgameMembers(html: string): { members: Candidate[]; lastPage: number } {
   const p = inertiaProps(html);
   return {
-    members: p.search_results.data.map((m: any) => cand('mafgame', m.id, m.nickname, 'club', { realName: m.display_name ?? undefined, club: p.club?.name })),
+    members: p.search_results.data.map((m: any) => cand('mafgame', m.id, m.nickname, 'club', { realName: m.display_name ?? undefined, club: p.club?.name })).filter(named),
     lastPage: Number(p.search_results.last_page ?? 1),
   };
 }
@@ -50,7 +53,7 @@ export function parseMafgameMembers(html: string): { members: Candidate[]; lastP
 export function parseMafgameRating(html: string): { rows: Candidate[]; lastPage: number; years: number[] } {
   const p = inertiaProps(html);
   return {
-    rows: p.search_results.data.map((r: any) => cand('mafgame', r.user.id, r.user.nickname, 'nick', { realName: r.user.display_name ?? undefined, games: r.participated_count })),
+    rows: p.search_results.data.map((r: any) => cand('mafgame', r.user.id, r.user.nickname, 'nick', { realName: r.user.display_name ?? undefined, games: r.participated_count })).filter(named),
     lastPage: Number(p.search_results.last_page ?? 1),
     years: (p.years ?? []).map(Number),
   };
@@ -68,7 +71,7 @@ export function parseFiimSearch(j: { success: string }): Candidate[] {
     return cand('fiim', links[0]?.[1], text(links[0]?.[2] ?? ''), ours ? 'club' : 'nick', {
       realName: links[1] ? text(links[1][2]) : undefined, club: club || undefined, city: city || undefined, games: games ? +games : undefined,
     });
-  }).filter((c) => c.id !== 'undefined');
+  }).filter((c) => c.id !== 'undefined' && named(c));
 }
 
 // imafia.org — server-rendered HTML.
@@ -77,7 +80,7 @@ export function parseImafiaSearch(html: string): Candidate[] {
     const nick = text(/class="player_link_name">([\s\S]*?)<\/span>/.exec(m[2])?.[1] ?? '');
     const full = text(/class="player_link_full_name">([\s\S]*?)<\/span>/.exec(m[2])?.[1] ?? '').replace(/^\(|\)$/g, '').trim();
     return cand('imafia', m[1], nick, 'nick', { realName: full || undefined });
-  });
+  }).filter(named);
 }
 
 export function parseImafiaProfile(html: string): { realName?: string; club?: string; country?: string; games?: number } {

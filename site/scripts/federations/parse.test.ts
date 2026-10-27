@@ -21,6 +21,13 @@ describe('emotion.games', () => {
   });
 });
 
+describe('empty nicks', () => {
+  it('rows without a nick are dropped, never returned without one', () => {
+    expect(parseEgSummary([{ player_id: 1, nickname: null, club_id: 2 }, { player_id: 2, nickname: ' ', club_id: 2 }])).toEqual([]);
+    expect(parseEgClub({ members: [{ player_id: 3, nickname: '' }], members_pagination: { total_pages: 1 } }).members).toEqual([]);
+  });
+});
+
 describe('mafgame.org', () => {
   it('club members carry the first name', () => {
     const { members, lastPage } = parseMafgameMembers(fx('mafgame-members-9.html'));
