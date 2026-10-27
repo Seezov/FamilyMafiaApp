@@ -193,6 +193,19 @@ service cloud.firestore {
 
     // The club's player list (names + nicknames), edited on /players/edit/. Entry contents
     // are checked by the build and the editor (rules cannot loop over a list).
+    // Roster player ↔ federation profile links, confirmed on /federations/edit/. Keys are roster display names.
+    match /config/federations {
+      allow read: if true;
+      allow create, update: if isAdmin()
+        && request.resource.data.keys().hasOnly(['links', 'rejected', 'updatedAt', 'updatedBy', 'updatedByEmail'])
+        && request.resource.data.links is map
+        && request.resource.data.rejected is map
+        && request.resource.data.updatedAt == request.time
+        && request.resource.data.updatedBy == request.auth.uid
+        && request.resource.data.updatedByEmail == email();
+      allow delete: if false;
+    }
+
     match /config/players {
       allow read: if true;
       allow create, update: if isAdmin()

@@ -367,6 +367,37 @@ describe('config/players', () => {
   });
 });
 
+describe('config/federations', () => {
+  const ref = (db: ReturnType<typeof as>) => doc(db, 'config', 'federations');
+  const body = (u: User, extra: Record<string, unknown> = {}) => ({
+    links: { "P.1 / O'Neil": { eg: ['87'] } }, rejected: { Braun: ['imafia:5'] },
+    updatedAt: serverTimestamp(), updatedBy: u.uid, updatedByEmail: u.email, ...extra,
+  });
+  it('anyone can read', async () => {
+    await assertSucceeds(getDoc(doc(env.unauthenticatedContext().firestore(), 'config', 'federations')));
+  });
+  it('an admin can create and update, odd player names included', async () => {
+    await assertSucceeds(setDoc(ref(as(ADMIN)), body(ADMIN)));
+    await assertSucceeds(setDoc(ref(as(ADMIN)), body(ADMIN, { links: {}, rejected: {} })));
+  });
+  it('a host who is not admin and a guest cannot write', async () => {
+    await assertFails(setDoc(ref(as(HOST)), body(HOST)));
+    await assertFails(setDoc(doc(env.unauthenticatedContext().firestore(), 'config', 'federations'), body(ADMIN)));
+  });
+  it('rejects extra keys, non-maps, a forged author and a client timestamp', async () => {
+    await assertFails(setDoc(ref(as(ADMIN)), body(ADMIN, { extra: 1 })));
+    await assertFails(setDoc(ref(as(ADMIN)), body(ADMIN, { links: ['x'] })));
+    await assertFails(setDoc(ref(as(ADMIN)), body(ADMIN, { rejected: 'x' })));
+    await assertFails(setDoc(ref(as(ADMIN)), body(ADMIN, { updatedBy: 'someone' })));
+    await assertFails(setDoc(ref(as(ADMIN)), body(ADMIN, { updatedByEmail: 'x@x.com' })));
+    await assertFails(setDoc(ref(as(ADMIN)), body(ADMIN, { updatedAt: new Date(0) })));
+  });
+  it('nobody can delete it', async () => {
+    await env.withSecurityRulesDisabled((ctx) => setDoc(doc(ctx.firestore(), 'config', 'federations'), { links: {}, rejected: {} }));
+    await assertFails(deleteDoc(ref(as(ADMIN))));
+  });
+});
+
 describe('config/seasons', () => {
   const ref = (db: ReturnType<typeof as>) => doc(db, 'config', 'seasons');
   const body = (u: User, extra: Record<string, unknown> = {}) => ({
