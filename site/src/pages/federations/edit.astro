@@ -44,7 +44,7 @@ const candidates = loadFederationCandidates();
 <style>
   .access, .toolbar, .filters { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; margin-bottom: 12px; }
   .filters { margin-bottom: 0; }
-  .filters .btn.on { background: var(--fg); color: var(--bg); }
+  .filters .btn.on { border-color: var(--text); font-weight: 600; }
   .hint { flex-basis: 100%; margin: 0; color: var(--muted); }
   .msg:empty { display: none; }
   .msg.error { color: var(--city); }
@@ -55,7 +55,7 @@ const candidates = loadFederationCandidates();
   .list :global(.feds) { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px; }
   .list :global(.fed) { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
   .list :global(.cand) { border: 1px solid var(--border); border-radius: 8px; padding: 6px 8px; overflow-wrap: anywhere; }
-  .list :global(.cand.linked) { border-color: var(--fg); }
+  .list :global(.cand.linked) { border-color: var(--text); }
   .list :global(.cand.rejected) { opacity: .55; }
   .list :global(.meta), .list :global(.none) { color: var(--muted); font-size: .9em; }
   .list :global(.warn) { color: var(--city); font-size: .9em; }
