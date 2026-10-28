@@ -1,7 +1,8 @@
 // HTML for /federations/edit/. Every value from the candidates file or Firestore goes through esc().
 import { esc } from '../annual/render';
 import type { RosterEntry } from '../roster/roster';
-import { candKey, FED_TITLES, FEDS, linkedKeys, profileUrl, rowStatus, type Candidate, type Fed, type FedDoc } from './core';
+import { candKey, FED_TITLES, FEDS, linkedKeys, normNick, profileUrl, rowStatus, type Candidate, type Fed, type FedDoc, type GameDecision } from './core';
+import type { FedRole, ReviewItem } from './games';
 
 export type Filter = 'unreviewed' | 'confirmed' | 'nothing' | 'all';
 export interface Row { entry: RosterEntry; cands: Candidate[] }
@@ -64,4 +65,36 @@ export function filterRows(rows: Row[], d: FedDoc, f: Filter, q: string): Row[] 
     if (k && ![r.entry.name, ...r.entry.nicknames].some((n) => n.toLowerCase().includes(k))) return false;
     return f === 'all' || rowStatus(d, r.entry.name, r.cands) === f;
   });
+}
+
+const FED_ROLE: Record<FedRole, string> = { citizen: 'мирний', sheriff: 'шериф', mafia: 'мафія', don: 'дон' };
+const CLUB_ROLE: Record<string, FedRole> = { civilian: 'citizen', sheriff: 'sheriff', mafia: 'mafia', don: 'don' };
+const TOURNAMENT_URL: Record<Fed, (id: string) => string> = {
+  imafia: (id) => `https://imafia.org/tournament/${id}`,
+  eg: (id) => `https://emotion.games/ua/tournament/${id}`,
+  fiim: (id) => `https://fiim.world/tournaments/${id}`,
+  mafgame: (id) => `https://mafgame.org/tournaments/${id}/game_results`,
+};
+
+/** A federation game that matches a club rating game on most seats: both seat by seat, and the admin's decision. */
+export function reviewRow(item: ReviewItem, decision: GameDecision | undefined, canSave: boolean): string {
+  const who = (slug: string | undefined, nick: string) => slug ?? `nick:${normNick(nick)}`;
+  const rows = item.fedSeats.map((f) => {
+    const c = item.club.seats.find((s) => s.seat === f.seat);
+    const same = !!c && who(f.slug, f.nick) === who(c.slug, c.player) && CLUB_ROLE[c.role] === f.role;
+    return `<tr${same ? '' : ' class="diff"'}><td>${f.seat}</td><td>${esc(f.nick)}</td><td>${FED_ROLE[f.role]}</td>`
+      + `<td>${esc(c?.player ?? '')}</td><td>${c ? (FED_ROLE[CLUB_ROLE[c.role]] ?? esc(c.role)) : ''}</td></tr>`;
+  }).join('');
+  const where = [item.round && `тур ${esc(item.round)}`, item.table !== undefined && `стіл ${item.table}`].filter(Boolean).join(', ');
+  const k = esc(item.key);
+  const dis = canSave ? '' : ' disabled';
+  const act = decision
+    ? `<span class="decided">Рішення: ${decision === 'same' ? 'та сама гра' : 'інша гра'}</span> <button type="button" class="btn" data-decide="" data-key="${k}"${dis}>Скасувати</button>`
+    : `<button type="button" class="btn" data-decide="same" data-key="${k}"${dis}>Та сама гра</button> <button type="button" class="btn" data-decide="different" data-key="${k}"${dis}>Інша гра</button>`;
+  return `<div class="row review">
+  <div class="head"><span class="name"><a href="${esc(TOURNAMENT_URL[item.fed](item.tournamentId))}" target="_blank" rel="noopener">${esc(item.tournament)}</a></span>
+    <span class="meta">${FED_TITLES[item.fed]} · ${esc(item.date)}${where ? ` · ${where}` : ''} · клуб: сезон ${item.club.season}, ${esc(item.club.date)} · збіг ${item.matched}/10</span>
+    <span class="act">${act}</span></div>
+  <table class="seats"><tr><th>#</th><th>Федерація</th><th>Роль</th><th>Клуб</th><th>Роль</th></tr>${rows}</table>
+</div>`;
 }

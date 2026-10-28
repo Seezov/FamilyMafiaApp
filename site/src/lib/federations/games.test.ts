@@ -55,7 +55,7 @@ describe('computeFedGames', () => {
     expect(r.review[0]).toMatchObject({ key: 'eg:1:a', fed: 'eg', tournamentId: '1', tournament: 'T1', matched: 8 });
     expect(r.review[0].club).toMatchObject({ season: 30, id: 'g-1', date: '2026-05-12' });
     expect(r.review[0].fedSeats[0]).toEqual({ seat: 1, nick: 'Braun', role: 'citizen', slug: 'braun' });
-    expect(r.review[0].club.seats[0]).toEqual({ seat: 1, player: 'Braun', role: 'civilian' });
+    expect(r.review[0].club.seats[0]).toEqual({ seat: 1, player: 'Braun', role: 'civilian', slug: 'braun' });
   });
 
   it('counts a partial match outside ±3 days', () => {

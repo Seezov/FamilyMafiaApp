@@ -22,7 +22,7 @@ export interface ClubGame {
 export interface ReviewItem {
   key: string; fed: Fed; tournament: string; tournamentId: string; date: string; round?: string; table?: number;
   matched: number; fedSeats: { seat: number; nick: string; role: FedRole; slug?: string }[];
-  club: { season: number; id: string; date: string; seats: { seat: number; player: string; role: string }[] };
+  club: { season: number; id: string; date: string; seats: { seat: number; player: string; role: string; slug?: string }[] };
 }
 export interface FedGamesFile {
   generatedAt: string;
@@ -161,7 +161,7 @@ export function computeFedGames(i: { tournaments: FedTournament[]; club: ClubGam
           }),
           club: {
             season: match.g.season, id: match.g.id, date: match.g.date!,
-            seats: match.g.seats.toSorted((a, b) => a.n - b.n).map((s) => ({ seat: s.n, player: s.player ?? '', role: s.role })),
+            seats: match.g.seats.toSorted((a, b) => a.n - b.n).map((s) => ({ seat: s.n, player: s.player ?? '', role: s.role, ...(s.slug && { slug: s.slug }) })),
           },
         });
         continue;

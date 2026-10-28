@@ -1,8 +1,9 @@
 ---
 import Base from '../../layouts/Base.astro';
-import { loadFederationCandidates } from '../../lib/data';
+import { loadFederationCandidates, loadFederationGames } from '../../lib/data';
 
 const candidates = loadFederationCandidates();
+const { review } = loadFederationGames();
 ---
 <Base title="Federation profiles" description="Admins confirm which federation profiles belong to club players." active="players">
   <div class="pagehead"><h1 class="display">Профілі на федераціях</h1><span class="label" id="state">Loading…</span></div>
@@ -33,8 +34,14 @@ const candidates = loadFederationCandidates();
   <p class="hint">Записані в Family Mafia Club на федерації, але жоден нік з ростеру їм не відповідає.</p>
   <div id="unmatched" class="list"></div>
 
+  <h2>Можливі дублікати ігор ({review.length})</h2>
+  <p class="hint">Турнірна гра підтвердженого гравця збігається з рейтинговою грою клубу на 7–9 місцях із 10 (гравець і роль)
+    у межах ±3 днів від турніру. Поки рішення немає, гра не рахується на /players/. Рішення застосується після наступного білду (до години).</p>
+  <div id="review" class="list"></div>
+
   <datalist id="roster-names"></datalist>
   <script type="application/json" id="cands" set:html={JSON.stringify(candidates).replace(/</g, '\\u003c')} />
+  <script type="application/json" id="review-data" set:html={JSON.stringify(review).replace(/</g, '\\u003c')} />
 </Base>
 
 <script>
@@ -62,5 +69,9 @@ const candidates = loadFederationCandidates();
   .list :global(.badge) { font-size: .8em; border-radius: 999px; padding: 0 6px; border: 1px solid var(--border); }
   .list :global(.badge.club) { border-color: currentColor; font-weight: 600; }
   .list :global(.un) { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; padding: 8px 0; border-top: 1px solid var(--border); }
+  .list :global(.seats) { border-collapse: collapse; font-size: .9em; }
+  .list :global(.seats td), .list :global(.seats th) { padding: 2px 8px; text-align: left; border-bottom: 1px solid var(--border); }
+  .list :global(.seats tr.diff) { color: var(--city); font-weight: 600; }
+  .list :global(.decided) { font-weight: 600; }
   input { min-width: 0; }
 </style>
