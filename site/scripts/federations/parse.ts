@@ -1,12 +1,12 @@
 // Parsers for the four federation sites (see the design doc for the URLs). Pure: text in, candidates out.
 import { profileUrl, type Candidate, type Fed } from '../../src/lib/federations/core.ts';
 
-const decode = (s: string) => s
+export const decode = (s: string) => s
   .replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(+n))
   .replace(/&#x([0-9a-f]+);/gi, (_, n) => String.fromCodePoint(parseInt(n, 16)))
   .replace(/&quot;/g, '"').replace(/&#039;|&apos;/g, "'").replace(/&lt;/g, '<').replace(/&gt;/g, '>')
   .replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&');
-const text = (html: string) => decode(html.replace(/<[^>]+>/g, ' ')).replace(/\s+/g, ' ').trim();
+export const text = (html: string) => decode(html.replace(/<[^>]+>/g, ' ')).replace(/\s+/g, ' ').trim();
 
 function cand(fed: Fed, id: unknown, nick: unknown, strength: Candidate['strength'], extra: Partial<Candidate> = {}): Candidate {
   const c: Candidate = { fed, id: String(id), nick: String(nick ?? '').trim(), ...extra, url: profileUrl(fed, String(id)), strength };

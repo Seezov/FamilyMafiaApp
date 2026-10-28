@@ -1,7 +1,10 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { parseEgGames, parseEgInfo, parseEgPlayer, parseMafgameHistory, parseMafgameTournament } from './games-parse.ts';
+import {
+  parseEgGames, parseEgInfo, parseEgPlayer, parseFiimProfile, parseFiimUserGames, parseImafiaProfile, parseImafiaTournament,
+  parseMafgameHistory, parseMafgameTournament,
+} from './games-parse.ts';
 
 const fx = (f: string) => fs.readFileSync(path.join(import.meta.dirname, 'fixtures', 'games', f), 'utf8');
 const json = (f: string) => JSON.parse(fx(f));
@@ -57,5 +60,42 @@ describe('mafgame.org', () => {
     expect(g).toMatchObject({ round: '1-1', table: 1, result: 'city' });
     expect(g.seats.map((s) => s.role)).toEqual(['citizen', 'citizen', 'citizen', 'citizen', 'citizen', 'don', 'mafia', 'sheriff', 'citizen', 'mafia']);
     expect(g.seats[5]).toEqual({ seat: 6, nick: 'Тян', fedPlayerId: '3041', role: 'don' });
+  });
+});
+
+describe('imafia.org', () => {
+  it("lists a player's tournaments with dates", () => {
+    const refs = parseImafiaProfile(fx('imafia-u-5057.html'));
+    expect(refs).toContainEqual({ fed: 'imafia', tournamentId: '1760', date: '2026-09-26' });
+    expect(refs[0]).toEqual({ fed: 'imafia', tournamentId: '1453', date: '2026-11-07' });
+    expect(refs).toHaveLength(3);
+  });
+  it('reads games: role_1 citizen, role_2 sheriff, role_3 mafia, role_4 don; result_1 city', () => {
+    const t = parseImafiaTournament(fx('imafia-tournament-1760.html'), '1760');
+    expect(t).toMatchObject({ fed: 'imafia', tournamentId: '1760', name: 'Східний Рубіж 2026 2 серія Кременчук', dateFrom: '2026-09-26', dateTo: '2026-09-26' });
+    expect(t.games).toHaveLength(10);
+    const g = t.games[0];
+    expect(g).toMatchObject({ key: 't1-g1', table: 1, result: 'city' });
+    expect(g.seats.map((s) => s.role)).toEqual(['don', 'citizen', 'sheriff', 'citizen', 'citizen', 'citizen', 'mafia', 'citizen', 'mafia', 'citizen']);
+    expect(g.seats[3]).toEqual({ seat: 4, nick: 'Аглая', fedPlayerId: '5057', role: 'citizen' });
+    expect(t.games[1].result).toBe('mafia');
+  });
+});
+
+describe('fiim.world', () => {
+  it("lists a player's tournaments by award date", () => {
+    expect(parseFiimProfile(fx('fiim-user-14478.html'), '14478')).toEqual([{ fed: 'fiim', tournamentId: '1479', date: '2021-08-09' }]);
+  });
+  it("reads one player's games, marking the owner's seat", () => {
+    const t = parseFiimUserGames(fx('fiim-games-14478-1479.html'), '1479', '14478', '2021-08-09');
+    expect(t).toMatchObject({ fed: 'fiim', tournamentId: '1479', name: 'Кубок Долины Роз 2021', dateFrom: '2021-08-07', dateTo: '2021-08-09' });
+    expect(t.games).toHaveLength(12);
+    expect(t.games.filter((g) => g.result === 'mafia')).toHaveLength(8);
+    const g = t.games[0];
+    expect(g).toMatchObject({ key: 'g222363', round: '1', table: 1, result: 'mafia' });
+    expect(g.seats.map((s) => s.nick)).toEqual(['Павлин', 'Паранойя.', 'Луиза', 'Бонд.', 'Мари', 'Holmes', 'Pадагаст', 'Majest', 'Упс', 'Меланхолия']);
+    expect(g.seats.map((s) => s.role)).toEqual(['mafia', 'citizen', 'citizen', 'citizen', 'don', 'citizen', 'mafia', 'citizen', 'sheriff', 'citizen']);
+    for (const x of t.games) expect(x.seats.filter((s) => s.fedPlayerId)).toHaveLength(1);
+    expect(g.seats[2]).toEqual({ seat: 3, nick: 'Луиза', fedPlayerId: '14478', role: 'citizen' });
   });
 });
