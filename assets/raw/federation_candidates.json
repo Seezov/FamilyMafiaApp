@@ -1,0 +1,7284 @@
+{
+ "generatedAt": "2026-10-28T12:26:22.208Z",
+ "players": {
+  "Alex": [
+   {
+    "fed": "imafia",
+    "id": "623",
+    "nick": "Alex",
+    "realName": "Олександр Бондар",
+    "url": "https://imafia.org/u/623",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 8
+   },
+   {
+    "fed": "eg",
+    "id": "243",
+    "nick": "Alex",
+    "club": "KropMafiaClub",
+    "url": "https://emotion.games/ua/players/243",
+    "strength": "nick"
+   },
+   {
+    "fed": "eg",
+    "id": "350",
+    "nick": "Alex",
+    "url": "https://emotion.games/ua/players/350",
+    "strength": "nick"
+   },
+   {
+    "fed": "eg",
+    "id": "262",
+    "nick": "Alex",
+    "club": "Rocky Mafia Club",
+    "url": "https://emotion.games/ua/players/262",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "18701",
+    "nick": "Alex (Si)",
+    "realName": "Александра",
+    "club": "Не входить до клубу",
+    "city": "Астана, Казахстан",
+    "url": "https://fiim.world/user/18701/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "mafgame",
+    "id": "1743",
+    "nick": "Alex (Si)",
+    "realName": "Александра",
+    "games": 2,
+    "url": "https://mafgame.org/user/1743/view",
+    "strength": "nick"
+   }
+  ],
+  "Apache": [
+   {
+    "fed": "imafia",
+    "id": "1923",
+    "nick": "Apache",
+    "realName": "Tovchenyk Vladyslav",
+    "url": "https://imafia.org/u/1923",
+    "strength": "nick",
+    "city": "Європа",
+    "games": 9
+   },
+   {
+    "fed": "eg",
+    "id": "396",
+    "nick": "Apache",
+    "url": "https://emotion.games/ua/players/396",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "5637",
+    "nick": "Apachе",
+    "realName": "Vladyslav Tovchenyk",
+    "club": "Family Mafia Club",
+    "city": "Прага, Чехія",
+    "url": "https://fiim.world/user/5637/show",
+    "strength": "club"
+   }
+  ],
+  "Aria": [
+   {
+    "fed": "imafia",
+    "id": "4332",
+    "nick": "Aria",
+    "realName": "Staryhina Antonia",
+    "url": "https://imafia.org/u/4332",
+    "strength": "nick",
+    "club": "LA FAMILIA",
+    "city": "США",
+    "games": 30
+   }
+  ],
+  "Belial": [
+   {
+    "fed": "imafia",
+    "id": "1027",
+    "nick": "Belial",
+    "realName": "Дмитренко Дмитро",
+    "url": "https://imafia.org/u/1027",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 87
+   },
+   {
+    "fed": "fiim",
+    "id": "11346",
+    "nick": "Belial",
+    "realName": "Дмитрий Дмитренко",
+    "url": "https://fiim.world/user/11346/show",
+    "strength": "nick"
+   }
+  ],
+  "Blink": [
+   {
+    "fed": "imafia",
+    "id": "728",
+    "nick": "blink",
+    "realName": "Голенко Павло",
+    "url": "https://imafia.org/u/728",
+    "strength": "nick",
+    "club": "Mirage Mafia Club",
+    "city": "Європа",
+    "games": 330
+   },
+   {
+    "fed": "fiim",
+    "id": "3058",
+    "nick": "blink",
+    "realName": "Павел Голенко",
+    "club": "Не входить до клубу",
+    "city": "Київ, Україна",
+    "url": "https://fiim.world/user/3058/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "8864",
+    "nick": "blink",
+    "realName": "Адиль Жалелов",
+    "url": "https://fiim.world/user/8864/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "mafgame",
+    "id": "1557",
+    "nick": "blink",
+    "realName": "Pavlo Holenko",
+    "games": 1,
+    "url": "https://mafgame.org/user/1557/view",
+    "strength": "nick"
+   }
+  ],
+  "Braun": [
+   {
+    "fed": "imafia",
+    "id": "1555",
+    "nick": "Braun",
+    "realName": "Баранов Микола",
+    "url": "https://imafia.org/u/1555",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 10
+   },
+   {
+    "fed": "eg",
+    "id": "246",
+    "nick": "Braun",
+    "club": "Family Mafia Club",
+    "city": "Cherkasy",
+    "games": 0,
+    "url": "https://emotion.games/ua/players/246",
+    "strength": "club"
+   },
+   {
+    "fed": "fiim",
+    "id": "13376",
+    "nick": "Braun (Браун)",
+    "realName": "Микола Баранов",
+    "club": "Family Mafia Club",
+    "city": "Черкаси, Україна",
+    "url": "https://fiim.world/user/13376/show",
+    "strength": "club"
+   }
+  ],
+  "Daisy": [
+   {
+    "fed": "imafia",
+    "id": "4268",
+    "nick": "Daisy",
+    "realName": "Daisy Варя",
+    "url": "https://imafia.org/u/4268",
+    "strength": "nick",
+    "club": "Vendetta Mafia Club",
+    "city": "Європа",
+    "games": 0
+   },
+   {
+    "fed": "fiim",
+    "id": "8064",
+    "nick": "Daisy",
+    "realName": "Диана Кучер",
+    "club": "the Originals",
+    "city": "Лісабон, Португалія",
+    "url": "https://fiim.world/user/8064/show",
+    "strength": "nick"
+   }
+  ],
+  "Diesta": [
+   {
+    "fed": "imafia",
+    "id": "2237",
+    "nick": "Diesta",
+    "realName": "Dasha",
+    "url": "https://imafia.org/u/2237",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 93
+   },
+   {
+    "fed": "eg",
+    "id": "91",
+    "nick": "Diesta",
+    "club": "Vinnytsia Mafia Club",
+    "url": "https://emotion.games/ua/players/91",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "16694",
+    "nick": "Diesta",
+    "realName": "Дар'я",
+    "club": "Vinnytsia Mafia Club",
+    "city": "Вінниця, Україна",
+    "url": "https://fiim.world/user/16694/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "mafgame",
+    "id": "1152",
+    "nick": "Diesta",
+    "realName": "Dasha",
+    "games": 1,
+    "url": "https://mafgame.org/user/1152/view",
+    "strength": "nick"
+   }
+  ],
+  "Dimon": [
+   {
+    "fed": "imafia",
+    "id": "4204",
+    "nick": "Dimon",
+    "realName": "Pilipuk Zakhar",
+    "url": "https://imafia.org/u/4204",
+    "strength": "nick",
+    "club": "PUDRA Mafia Club",
+    "city": "Європа",
+    "games": 5
+   }
+  ],
+  "Dreamer": [
+   {
+    "fed": "imafia",
+    "id": "1064",
+    "nick": "Dreamer",
+    "realName": "Галактіонов Євген",
+    "url": "https://imafia.org/u/1064",
+    "strength": "nick",
+    "club": "Mirage Mafia Club",
+    "city": "Україна",
+    "games": 127
+   },
+   {
+    "fed": "fiim",
+    "id": "10049",
+    "nick": "Dreamer",
+    "realName": "Родион Пулинец",
+    "club": "Не входить до клубу",
+    "city": "Київ, Україна",
+    "url": "https://fiim.world/user/10049/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "mafgame",
+    "id": "1841",
+    "nick": "Dreamer",
+    "realName": "Ievgen",
+    "games": 1,
+    "url": "https://mafgame.org/user/1841/view",
+    "strength": "nick"
+   }
+  ],
+  "Expert": [
+   {
+    "fed": "imafia",
+    "id": "2600",
+    "nick": "Expert",
+    "realName": "Яценко Сергій",
+    "url": "https://imafia.org/u/2600",
+    "strength": "nick",
+    "club": "MafClub Kyiv",
+    "city": "Україна",
+    "games": 35
+   },
+   {
+    "fed": "fiim",
+    "id": "12544",
+    "nick": "Expert",
+    "realName": "Сергей",
+    "club": "MafClub Kyiv",
+    "city": "Київ, Україна",
+    "url": "https://fiim.world/user/12544/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "mafgame",
+    "id": "1112",
+    "nick": "Expert",
+    "realName": "Яценко Сергій",
+    "games": 1,
+    "url": "https://mafgame.org/user/1112/view",
+    "strength": "nick"
+   }
+  ],
+  "Fate": [
+   {
+    "fed": "imafia",
+    "id": "265",
+    "nick": "Fate",
+    "realName": "Савейко Максим",
+    "url": "https://imafia.org/u/265",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 14
+   },
+   {
+    "fed": "fiim",
+    "id": "3264",
+    "nick": "Fate",
+    "realName": "Максим Савейко",
+    "club": "Family Mafia Club",
+    "city": "Кременчук, Україна",
+    "url": "https://fiim.world/user/3264/show",
+    "strength": "club"
+   }
+  ],
+  "Floppy": [
+   {
+    "fed": "imafia",
+    "id": "5726",
+    "nick": "Floppy",
+    "realName": "Koryakin Fedir",
+    "url": "https://imafia.org/u/5726",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 12
+   },
+   {
+    "fed": "eg",
+    "id": "1005",
+    "nick": "Floppy",
+    "club": "Family Mafia Club",
+    "city": "Cherkasy",
+    "games": 0,
+    "url": "https://emotion.games/ua/players/1005",
+    "strength": "club"
+   },
+   {
+    "fed": "fiim",
+    "id": "9172",
+    "nick": "Floppy",
+    "realName": "Фёдор Корякин",
+    "club": "Не входить до клубу",
+    "city": "Черкаси, Україна",
+    "url": "https://fiim.world/user/9172/show",
+    "strength": "club"
+   }
+  ],
+  "Franklin": [
+   {
+    "fed": "imafia",
+    "id": "1006",
+    "nick": "Franklin",
+    "realName": "Джордж Белема",
+    "url": "https://imafia.org/u/1006",
+    "strength": "nick",
+    "club": "Big Ben Mafia Club",
+    "city": "Україна",
+    "games": 476
+   },
+   {
+    "fed": "fiim",
+    "id": "3064",
+    "nick": "Franklin",
+    "realName": "Билим Джордж",
+    "club": "Big Ben Mafia Club",
+    "city": "Київ, Україна",
+    "url": "https://fiim.world/user/3064/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "2188",
+    "nick": "Franklin",
+    "realName": "Білім Джордж",
+    "url": "https://fiim.world/user/2188/show",
+    "strength": "nick"
+   }
+  ],
+  "Hunter": [
+   {
+    "fed": "imafia",
+    "id": "1540",
+    "nick": "Hunter",
+    "realName": "Марчук Іван",
+    "url": "https://imafia.org/u/1540",
+    "strength": "nick",
+    "club": "Mafia Closed Circle",
+    "city": "Україна",
+    "games": 66
+   },
+   {
+    "fed": "eg",
+    "id": "1161",
+    "nick": "hunter",
+    "club": "Family Mafia Club",
+    "city": "Cherkasy",
+    "games": 0,
+    "url": "https://emotion.games/ua/players/1161",
+    "strength": "club"
+   },
+   {
+    "fed": "eg",
+    "id": "1060",
+    "nick": "Hunter",
+    "url": "https://emotion.games/ua/players/1060",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "15037",
+    "nick": "hunter(Ночной Город)",
+    "realName": "hunter",
+    "club": "Не входить до клубу",
+    "city": "Миколаїв, Україна",
+    "url": "https://fiim.world/user/15037/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "2346",
+    "nick": "Hunter",
+    "realName": "Вадим Белый",
+    "club": "Не входить до клубу",
+    "city": "..., ...",
+    "url": "https://fiim.world/user/2346/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "3268",
+    "nick": "hunter",
+    "realName": "Олег Горун",
+    "club": "Не входить до клубу",
+    "city": "Миколаїв, Україна",
+    "url": "https://fiim.world/user/3268/show",
+    "strength": "nick"
+   }
+  ],
+  "Infanta": [
+   {
+    "fed": "imafia",
+    "id": "747",
+    "nick": "Infanta",
+    "realName": "Salamakha Daria",
+    "url": "https://imafia.org/u/747",
+    "strength": "nick",
+    "club": "SECRET TEAM",
+    "city": "Україна",
+    "games": 237
+   },
+   {
+    "fed": "eg",
+    "id": "357",
+    "nick": "Infanta",
+    "club": "BlackBerry mafia club",
+    "url": "https://emotion.games/ua/players/357",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "14932",
+    "nick": "Infanta",
+    "realName": "Daria Salamakha",
+    "club": "BlackBerry Mafia Club",
+    "city": "Львів, Україна",
+    "url": "https://fiim.world/user/14932/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "mafgame",
+    "id": "774",
+    "nick": "Infanta",
+    "realName": "Daria Salamakha",
+    "games": 1,
+    "url": "https://mafgame.org/user/774/view",
+    "strength": "nick"
+   }
+  ],
+  "Joi": [
+   {
+    "fed": "imafia",
+    "id": "3266",
+    "nick": "Joi",
+    "realName": "Некрасенко Аліна",
+    "url": "https://imafia.org/u/3266",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 0
+   },
+   {
+    "fed": "imafia",
+    "id": "4934",
+    "nick": "Фантазер",
+    "realName": "Ереминский Алексей",
+    "url": "https://imafia.org/u/4934",
+    "strength": "nick",
+    "city": "Грузія",
+    "games": 0
+   },
+   {
+    "fed": "fiim",
+    "id": "8378",
+    "nick": "Joi",
+    "realName": "Alina Nekrasenko",
+    "club": "Family Mafia Club",
+    "city": "Черкаси, Україна",
+    "url": "https://fiim.world/user/8378/show",
+    "strength": "club"
+   }
+  ],
+  "Kitty": [
+   {
+    "fed": "imafia",
+    "id": "2118",
+    "nick": "Kitty",
+    "realName": "Dia Elena",
+    "url": "https://imafia.org/u/2118",
+    "strength": "nick",
+    "club": "Chernika Mafia Club/ Мафія Полтава",
+    "city": "Нейтральний регіон",
+    "games": 5
+   },
+   {
+    "fed": "fiim",
+    "id": "16516",
+    "nick": "Kitty",
+    "realName": "Анна",
+    "club": "Zhytomyr Mafia Club Noir",
+    "city": "Житомир, Україна",
+    "url": "https://fiim.world/user/16516/show",
+    "strength": "nick"
+   }
+  ],
+  "Kulav": [
+   {
+    "fed": "imafia",
+    "id": "4299",
+    "nick": "Kulav",
+    "realName": "Меркулов Ігор",
+    "url": "https://imafia.org/u/4299",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 0
+   },
+   {
+    "fed": "eg",
+    "id": "1178",
+    "nick": "Kulav",
+    "club": "Family Mafia Club",
+    "city": "Cherkasy",
+    "games": 1,
+    "url": "https://emotion.games/ua/players/1178",
+    "strength": "club"
+   }
+  ],
+  "Lady": [
+   {
+    "fed": "imafia",
+    "id": "1637",
+    "nick": "Lady",
+    "realName": "Кравченко Анастасія",
+    "url": "https://imafia.org/u/1637",
+    "strength": "nick",
+    "city": "Європа",
+    "games": 0
+   }
+  ],
+  "Leon": [
+   {
+    "fed": "imafia",
+    "id": "4591",
+    "nick": "Leon",
+    "realName": "Aslanyan Gevorg",
+    "url": "https://imafia.org/u/4591",
+    "strength": "nick",
+    "city": "Вірменія",
+    "games": 0
+   },
+   {
+    "fed": "fiim",
+    "id": "20181",
+    "nick": "Leon (YVN)",
+    "realName": "Gevorg",
+    "club": "Joker Mafia Club",
+    "city": "Єреван, Вірменія",
+    "url": "https://fiim.world/user/20181/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "12329",
+    "nick": "LEОN",
+    "realName": "Адиль Альментаев",
+    "url": "https://fiim.world/user/12329/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "2572",
+    "nick": "Leon",
+    "realName": "Ion Shiman",
+    "club": "Не входить до клубу",
+    "city": "Ужгород, Україна",
+    "url": "https://fiim.world/user/2572/show",
+    "strength": "nick"
+   }
+  ],
+  "Lord": [
+   {
+    "fed": "imafia",
+    "id": "112",
+    "nick": "Lord",
+    "realName": "Petrychuk Dmitriy",
+    "url": "https://imafia.org/u/112",
+    "strength": "nick",
+    "club": "Lie or Die Mafia Club",
+    "city": "Європа",
+    "games": 219
+   },
+   {
+    "fed": "eg",
+    "id": "612",
+    "nick": "Lord",
+    "url": "https://emotion.games/ua/players/612",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "6359",
+    "nick": "Lord",
+    "realName": "Дмитрий Петричук",
+    "club": "Lie or Die",
+    "city": "Берлін, Німеччина",
+    "url": "https://fiim.world/user/6359/show",
+    "strength": "nick"
+   }
+  ],
+  "Lucky": [
+   {
+    "fed": "imafia",
+    "id": "5136",
+    "nick": "Удача (lucky)",
+    "realName": "Aronov Irena",
+    "url": "https://imafia.org/u/5136",
+    "strength": "nick",
+    "city": "Ізраїль",
+    "games": 128
+   },
+   {
+    "fed": "imafia",
+    "id": "794",
+    "nick": "Lucky",
+    "realName": "Челахова Ірина",
+    "url": "https://imafia.org/u/794",
+    "strength": "nick",
+    "club": "FRIENDS MAFIA",
+    "city": "Україна",
+    "games": 294
+   },
+   {
+    "fed": "imafia",
+    "id": "2024",
+    "nick": "Lucky",
+    "realName": "Гість",
+    "url": "https://imafia.org/u/2024",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 0
+   },
+   {
+    "fed": "eg",
+    "id": "803",
+    "nick": "Lucky",
+    "url": "https://emotion.games/ua/players/803",
+    "strength": "nick"
+   },
+   {
+    "fed": "eg",
+    "id": "624",
+    "nick": "Lucky",
+    "club": "True Story",
+    "url": "https://emotion.games/ua/players/624",
+    "strength": "nick"
+   },
+   {
+    "fed": "eg",
+    "id": "1204",
+    "nick": "Lucky",
+    "url": "https://emotion.games/ua/players/1204",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "16513",
+    "nick": "Удача (lucky)",
+    "realName": "Irena Aronov",
+    "club": "Маска Mafia Club 🎭",
+    "city": "Петах-Тиква, Ізраїль",
+    "url": "https://fiim.world/user/16513/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "791",
+    "nick": "Lucky",
+    "realName": "Артем Гладун",
+    "club": "Maf League Poltava Club",
+    "city": "Полтава, Україна",
+    "url": "https://fiim.world/user/791/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "6209",
+    "nick": "Lucky",
+    "realName": "Vahan Avetisyan",
+    "club": "ShowTime Ереван",
+    "city": "Єреван, Вірменія",
+    "url": "https://fiim.world/user/6209/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "2292",
+    "nick": "Lucky",
+    "realName": "Ira Shchur",
+    "club": "Mafia CITY",
+    "city": "Київ, Україна",
+    "url": "https://fiim.world/user/2292/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "mafgame",
+    "id": "647",
+    "nick": "Удача (lucky)",
+    "realName": "Irena",
+    "games": 3,
+    "url": "https://mafgame.org/user/647/view",
+    "strength": "nick"
+   },
+   {
+    "fed": "mafgame",
+    "id": "206",
+    "nick": "Lucky",
+    "realName": "Артем Гладун",
+    "games": 1,
+    "url": "https://mafgame.org/user/206/view",
+    "strength": "nick"
+   }
+  ],
+  "Lynx": [
+   {
+    "fed": "imafia",
+    "id": "2920",
+    "nick": "Lynx",
+    "realName": "Бабенко Софія",
+    "url": "https://imafia.org/u/2920",
+    "strength": "nick",
+    "city": "Європа",
+    "games": 24
+   },
+   {
+    "fed": "fiim",
+    "id": "13300",
+    "nick": "Lynx",
+    "realName": "София Бабенко",
+    "club": "Mafia Club Odesa",
+    "city": "Одеса, Україна",
+    "url": "https://fiim.world/user/13300/show",
+    "strength": "nick"
+   }
+  ],
+  "Majest": [
+   {
+    "fed": "imafia",
+    "id": "2202",
+    "nick": "Majest",
+    "realName": "Ovcharenko Anton",
+    "url": "https://imafia.org/u/2202",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 12
+   },
+   {
+    "fed": "eg",
+    "id": "113",
+    "nick": "Majest",
+    "club": "Family Mafia Club",
+    "city": "Cherkasy",
+    "games": 0,
+    "url": "https://emotion.games/ua/players/113",
+    "strength": "club"
+   },
+   {
+    "fed": "fiim",
+    "id": "14268",
+    "nick": "Majest",
+    "realName": "Антон Овчаренко",
+    "club": "Family Mafia Club",
+    "city": "Черкаси, Україна",
+    "url": "https://fiim.world/user/14268/show",
+    "strength": "club"
+   },
+   {
+    "fed": "mafgame",
+    "id": "899",
+    "nick": "Majest",
+    "realName": "Anton",
+    "club": "Family Mafia Club",
+    "url": "https://mafgame.org/user/899/view",
+    "strength": "club"
+   }
+  ],
+  "Mary": [
+   {
+    "fed": "imafia",
+    "id": "1107",
+    "nick": "Mary",
+    "realName": "Perepadia Mariia",
+    "url": "https://imafia.org/u/1107",
+    "strength": "nick",
+    "city": "Європа",
+    "games": 0
+   }
+  ],
+  "Mia": [
+   {
+    "fed": "imafia",
+    "id": "1114",
+    "nick": "Mia",
+    "realName": "Кривцова Анна",
+    "url": "https://imafia.org/u/1114",
+    "strength": "nick",
+    "club": "Big Ben Mafia Club",
+    "city": "Україна",
+    "games": 299
+   },
+   {
+    "fed": "eg",
+    "id": "494",
+    "nick": "Mia",
+    "club": "Big Ben mafia club",
+    "url": "https://emotion.games/ua/players/494",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "21170",
+    "nick": "Mia (Novi Sad)",
+    "realName": "Елена Воробьева",
+    "club": "Vojvodina Mafia Club",
+    "city": "Нови-Сад, Сербія",
+    "url": "https://fiim.world/user/21170/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "7014",
+    "nick": "Mia",
+    "realName": "Hanna Kryvtsova",
+    "club": "Big Ben Mafia Club",
+    "city": "Харків, Україна",
+    "url": "https://fiim.world/user/7014/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "9183",
+    "nick": "Mia",
+    "realName": "Юлианна Румянцева",
+    "club": "Не входить до клубу",
+    "city": "..., ...",
+    "url": "https://fiim.world/user/9183/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "mafgame",
+    "id": "2726",
+    "nick": "Mia",
+    "realName": "Елена Воробьева",
+    "games": 3,
+    "url": "https://mafgame.org/user/2726/view",
+    "strength": "nick"
+   }
+  ],
+  "Nemo": [
+   {
+    "fed": "imafia",
+    "id": "1959",
+    "nick": "Nemo",
+    "realName": "Kovalenko Misha",
+    "url": "https://imafia.org/u/1959",
+    "strength": "nick",
+    "city": "Європа",
+    "games": 5
+   },
+   {
+    "fed": "eg",
+    "id": "628",
+    "nick": "Nemo",
+    "club": "Family Mafia Club",
+    "city": "Cherkasy",
+    "games": 0,
+    "url": "https://emotion.games/ua/players/628",
+    "strength": "club"
+   },
+   {
+    "fed": "fiim",
+    "id": "1601",
+    "nick": "Nemo",
+    "realName": "Игорь Скрипник",
+    "club": "Maf League Poltava Club",
+    "city": "Полтава, Україна",
+    "url": "https://fiim.world/user/1601/show",
+    "strength": "nick"
+   }
+  ],
+  "Neo": [
+   {
+    "fed": "imafia",
+    "id": "1012",
+    "nick": "Neo",
+    "realName": "Пілецький Назар",
+    "url": "https://imafia.org/u/1012",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 18
+   },
+   {
+    "fed": "imafia",
+    "id": "2177",
+    "nick": "NEO",
+    "realName": "Білий Вадим",
+    "url": "https://imafia.org/u/2177",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 0
+   },
+   {
+    "fed": "fiim",
+    "id": "2310",
+    "nick": "Neo",
+    "realName": "Игорь Бордиян",
+    "url": "https://fiim.world/user/2310/show",
+    "strength": "nick"
+   }
+  ],
+  "Night": [
+   {
+    "fed": "imafia",
+    "id": "3069",
+    "nick": "Night",
+    "realName": "Kurhan Anastasiia",
+    "url": "https://imafia.org/u/3069",
+    "strength": "nick",
+    "club": "Mafia Club Bratislava",
+    "city": "Європа",
+    "games": 0
+   },
+   {
+    "fed": "fiim",
+    "id": "6222",
+    "nick": "Night",
+    "realName": "Михаил Коноваленко",
+    "club": "Клуб \"Мафия Харьков\"",
+    "city": "Харків, Україна",
+    "url": "https://fiim.world/user/6222/show",
+    "strength": "nick"
+   }
+  ],
+  "Noname": [
+   {
+    "fed": "imafia",
+    "id": "841",
+    "nick": "NoName",
+    "realName": "Kochkodan Marian",
+    "url": "https://imafia.org/u/841",
+    "strength": "nick",
+    "city": "Європа",
+    "games": 0
+   },
+   {
+    "fed": "fiim",
+    "id": "20549",
+    "nick": "Noname",
+    "realName": "Noname",
+    "club": "LOTUS",
+    "city": "Балi, Індонезія",
+    "url": "https://fiim.world/user/20549/show",
+    "strength": "nick"
+   }
+  ],
+  "PM": [
+   {
+    "fed": "imafia",
+    "id": "4715",
+    "nick": "PM",
+    "realName": "Kovalskyi Oleksii",
+    "url": "https://imafia.org/u/4715",
+    "strength": "nick",
+    "club": "Banana Mafia Club",
+    "city": "Україна",
+    "games": 0
+   },
+   {
+    "fed": "eg",
+    "id": "197",
+    "nick": "PM",
+    "club": "KropMafiaClub",
+    "url": "https://emotion.games/ua/players/197",
+    "strength": "nick"
+   },
+   {
+    "fed": "eg",
+    "id": "1795",
+    "nick": "PM",
+    "url": "https://emotion.games/ua/players/1795",
+    "strength": "nick"
+   }
+  ],
+  "Panda": [
+   {
+    "fed": "imafia",
+    "id": "178",
+    "nick": "Panda",
+    "realName": "Soltys Oleksandra",
+    "url": "https://imafia.org/u/178",
+    "strength": "nick",
+    "club": "PUDRA Mafia Club",
+    "city": "Україна",
+    "games": 0
+   },
+   {
+    "fed": "imafia",
+    "id": "3906",
+    "nick": "Panda (Belgrade)",
+    "realName": "Antipenskii Aleksandr",
+    "url": "https://imafia.org/u/3906",
+    "strength": "nick",
+    "city": "Європа",
+    "games": 46
+   },
+   {
+    "fed": "fiim",
+    "id": "18693",
+    "nick": "Panda (Belgrade)",
+    "realName": "Aleksandr",
+    "club": "Красное и Чёрное",
+    "city": "Белград, Сербія",
+    "url": "https://fiim.world/user/18693/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "18078",
+    "nick": "Pаndа",
+    "realName": "Bekir Chehertma",
+    "club": "ETERNAL MAFIA",
+    "city": "Маямі, США",
+    "url": "https://fiim.world/user/18078/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "8144",
+    "nick": "Panda",
+    "realName": "Александра Галактионова",
+    "club": "Не входить до клубу",
+    "city": "..., ...",
+    "url": "https://fiim.world/user/8144/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "6655",
+    "nick": "PanDa",
+    "realName": "Азамат Тастанов",
+    "club": "Не входить до клубу",
+    "city": "..., ...",
+    "url": "https://fiim.world/user/6655/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "mafgame",
+    "id": "3000",
+    "nick": "Panda (Belgrade)",
+    "realName": "Aleksandr Antipenskii",
+    "games": 2,
+    "url": "https://mafgame.org/user/3000/view",
+    "strength": "nick"
+   },
+   {
+    "fed": "mafgame",
+    "id": "1946",
+    "nick": "Рanda",
+    "realName": "Bekir Chehertma",
+    "games": 1,
+    "url": "https://mafgame.org/user/1946/view",
+    "strength": "nick"
+   }
+  ],
+  "Q": [
+   {
+    "fed": "imafia",
+    "id": "220",
+    "nick": "Q",
+    "realName": "Кононенко Ольга",
+    "url": "https://imafia.org/u/220",
+    "strength": "nick",
+    "club": "Big Ben Mafia Club",
+    "city": "Україна",
+    "games": 467
+   },
+   {
+    "fed": "eg",
+    "id": "305",
+    "nick": "Q",
+    "club": "Big Ben mafia club",
+    "url": "https://emotion.games/ua/players/305",
+    "strength": "nick"
+   }
+  ],
+  "Red": [
+   {
+    "fed": "imafia",
+    "id": "221",
+    "nick": "Red",
+    "realName": "Нежная Кейтлин",
+    "url": "https://imafia.org/u/221",
+    "strength": "nick",
+    "city": "Ізраїль",
+    "games": 598
+   },
+   {
+    "fed": "eg",
+    "id": "346",
+    "nick": "Red",
+    "url": "https://emotion.games/ua/players/346",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "10280",
+    "nick": "Red",
+    "realName": "Caitlyn Nizhna",
+    "club": "Secret Mafia Club❓",
+    "city": "Хайфа, Ізраїль",
+    "url": "https://fiim.world/user/10280/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "mafgame",
+    "id": "369",
+    "nick": "Red",
+    "realName": "Caitlyn Nizhna",
+    "games": 8,
+    "url": "https://mafgame.org/user/369/view",
+    "strength": "nick"
+   }
+  ],
+  "Sam": [
+   {
+    "fed": "imafia",
+    "id": "813",
+    "nick": "Sam",
+    "realName": "Литовко Олена",
+    "url": "https://imafia.org/u/813",
+    "strength": "nick",
+    "club": "FRIENDS MAFIA",
+    "city": "Україна",
+    "games": 79
+   },
+   {
+    "fed": "fiim",
+    "id": "3223",
+    "nick": "Sam (Сем)",
+    "realName": "Олена Литовко",
+    "url": "https://fiim.world/user/3223/show",
+    "strength": "nick"
+   }
+  ],
+  "Seezov": [
+   {
+    "fed": "imafia",
+    "id": "1003",
+    "nick": "Seezov",
+    "realName": "Сізов Олександр",
+    "url": "https://imafia.org/u/1003",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 86
+   },
+   {
+    "fed": "eg",
+    "id": "87",
+    "nick": "Seezov",
+    "club": "Family Mafia Club",
+    "city": "Cherkasy",
+    "games": 6,
+    "url": "https://emotion.games/ua/players/87",
+    "strength": "club"
+   },
+   {
+    "fed": "fiim",
+    "id": "9169",
+    "nick": "Seezov",
+    "realName": "Олександр Сізов",
+    "club": "Family Mafia Club",
+    "city": "Черкаси, Україна",
+    "url": "https://fiim.world/user/9169/show",
+    "strength": "club"
+   },
+   {
+    "fed": "mafgame",
+    "id": "847",
+    "nick": "Seezov",
+    "realName": "Oleksandr",
+    "club": "Family Mafia Club",
+    "url": "https://mafgame.org/user/847/view",
+    "strength": "club"
+   }
+  ],
+  "Skorpio": [
+   {
+    "fed": "imafia",
+    "id": "5719",
+    "nick": "Skorpio",
+    "realName": "Babinskiy Denis",
+    "url": "https://imafia.org/u/5719",
+    "strength": "nick",
+    "club": "CHE Mafia Club",
+    "city": "Україна",
+    "games": 0
+   }
+  ],
+  "Stasy": [
+   {
+    "fed": "imafia",
+    "id": "4725",
+    "nick": "Stasy",
+    "realName": "Rodimushkina Anastasia",
+    "url": "https://imafia.org/u/4725",
+    "strength": "nick",
+    "club": "Soulful Mafia Club",
+    "city": "Канада",
+    "games": 54
+   },
+   {
+    "fed": "fiim",
+    "id": "18380",
+    "nick": "Stasy (Toronto)",
+    "realName": "Anastasia Rodimushkina",
+    "club": "Soulful Mafclub Toronto",
+    "city": "Торонто, Канада",
+    "url": "https://fiim.world/user/18380/show",
+    "strength": "nick"
+   }
+  ],
+  "Sunny": [
+   {
+    "fed": "imafia",
+    "id": "2062",
+    "nick": "Sunny",
+    "realName": "Piliai Alekseii",
+    "url": "https://imafia.org/u/2062",
+    "strength": "nick",
+    "city": "Європа",
+    "games": 0
+   },
+   {
+    "fed": "fiim",
+    "id": "17151",
+    "nick": "Sunny (California)",
+    "realName": "Oleksandra K",
+    "club": "Не входить до клубу",
+    "city": "Сан-Хосе, США",
+    "url": "https://fiim.world/user/17151/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "5209",
+    "nick": "Sunny",
+    "realName": "Александр Волоконский",
+    "club": "Шерлок Холмс",
+    "city": "Харків, Україна",
+    "url": "https://fiim.world/user/5209/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "1594",
+    "nick": "Sunny",
+    "realName": "Алексей Пиляй",
+    "club": "Maf League Poltava Club",
+    "city": "Полтава, Україна",
+    "url": "https://fiim.world/user/1594/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "mafgame",
+    "id": "228",
+    "nick": "Sunny",
+    "realName": "Oleksii Piliai",
+    "games": 2,
+    "url": "https://mafgame.org/user/228/view",
+    "strength": "nick"
+   }
+  ],
+  "Ten": [
+   {
+    "fed": "imafia",
+    "id": "680",
+    "nick": "Ten",
+    "realName": "Кравченко Богдан",
+    "url": "https://imafia.org/u/680",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 288
+   },
+   {
+    "fed": "eg",
+    "id": "229",
+    "nick": "Ten",
+    "club": "BlackBerry mafia club",
+    "url": "https://emotion.games/ua/players/229",
+    "strength": "nick"
+   }
+  ],
+  "Tina": [
+   {
+    "fed": "imafia",
+    "id": "1052",
+    "nick": "Tina",
+    "realName": "Telychko Valentyna",
+    "url": "https://imafia.org/u/1052",
+    "strength": "nick",
+    "club": "PUDRA Mafia Club",
+    "city": "Європа",
+    "games": 22
+   },
+   {
+    "fed": "eg",
+    "id": "210",
+    "nick": "Tina",
+    "club": "Family Mafia Club",
+    "city": "Cherkasy",
+    "games": 1,
+    "url": "https://emotion.games/ua/players/210",
+    "strength": "club"
+   },
+   {
+    "fed": "fiim",
+    "id": "15852",
+    "nick": "Тina",
+    "realName": "Кристина",
+    "club": "Family Mafia Club",
+    "city": "Черкаси, Україна",
+    "url": "https://fiim.world/user/15852/show",
+    "strength": "club"
+   }
+  ],
+  "Viva": [
+   {
+    "fed": "imafia",
+    "id": "1038",
+    "nick": "Viva",
+    "realName": "Гаркава Віталіна",
+    "url": "https://imafia.org/u/1038",
+    "strength": "nick",
+    "club": "Chernika Mafia Club/ Мафія Полтава",
+    "city": "Україна",
+    "games": 205
+   },
+   {
+    "fed": "eg",
+    "id": "471",
+    "nick": "Viva",
+    "club": "The Poltava Mafia Club",
+    "url": "https://emotion.games/ua/players/471",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "782",
+    "nick": "Viva",
+    "realName": "Виталина Капинус",
+    "club": "Maf League Poltava Club",
+    "city": "Полтава, Україна",
+    "url": "https://fiim.world/user/782/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "mafgame",
+    "id": "2279",
+    "nick": "Vivа",
+    "realName": "Федор",
+    "games": 4,
+    "url": "https://mafgame.org/user/2279/view",
+    "strength": "nick"
+   },
+   {
+    "fed": "mafgame",
+    "id": "392",
+    "nick": "Viva",
+    "realName": "Віталіна",
+    "games": 1,
+    "url": "https://mafgame.org/user/392/view",
+    "strength": "nick"
+   }
+  ],
+  "White": [
+   {
+    "fed": "imafia",
+    "id": "283",
+    "nick": "White",
+    "realName": "Максимова Елена",
+    "url": "https://imafia.org/u/283",
+    "strength": "nick",
+    "club": "Мафия PRO",
+    "city": "Європа",
+    "games": 188
+   },
+   {
+    "fed": "imafia",
+    "id": "2398",
+    "nick": "White",
+    "realName": "Осіпчук Дмитро",
+    "url": "https://imafia.org/u/2398",
+    "strength": "nick",
+    "club": "Noir Mafia Club",
+    "city": "Україна",
+    "games": 26
+   },
+   {
+    "fed": "fiim",
+    "id": "4548",
+    "nick": "White",
+    "realName": "Елена Богдель",
+    "club": "Не входить до клубу",
+    "city": "Рига, Латвія",
+    "url": "https://fiim.world/user/4548/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "3088",
+    "nick": "White",
+    "realName": "Aline Kirova",
+    "club": "Не входить до клубу",
+    "city": "Алматы, Казахстан",
+    "url": "https://fiim.world/user/3088/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "8029",
+    "nick": "White",
+    "realName": "Эдуард Кирвас",
+    "club": "Не входить до клубу",
+    "city": "..., ...",
+    "url": "https://fiim.world/user/8029/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "2580",
+    "nick": "White",
+    "realName": "Владислав Бондарев",
+    "url": "https://fiim.world/user/2580/show",
+    "strength": "nick"
+   }
+  ],
+  "Zirka": [
+   {
+    "fed": "imafia",
+    "id": "1116",
+    "nick": "Zirka",
+    "realName": "Костюк Катерина",
+    "url": "https://imafia.org/u/1116",
+    "strength": "nick",
+    "club": "Mafia Choice",
+    "city": "Україна",
+    "games": 92
+   },
+   {
+    "fed": "fiim",
+    "id": "9050",
+    "nick": "Zirka",
+    "realName": "Екатерина Костюк",
+    "club": "Big Ben Mafia Club",
+    "city": "Київ, Україна",
+    "url": "https://fiim.world/user/9050/show",
+    "strength": "nick"
+   }
+  ],
+  "Індиго": [
+   {
+    "fed": "imafia",
+    "id": "1035",
+    "nick": "Індиго",
+    "realName": "Шилюк Анастасія",
+    "url": "https://imafia.org/u/1035",
+    "strength": "nick",
+    "club": "Mafia Closed Circle",
+    "city": "Україна",
+    "games": 350
+   },
+   {
+    "fed": "eg",
+    "id": "387",
+    "nick": "Індиго",
+    "club": "Chernika Mafia Club",
+    "url": "https://emotion.games/ua/players/387",
+    "strength": "nick"
+   },
+   {
+    "fed": "mafgame",
+    "id": "908",
+    "nick": "Індиго",
+    "realName": "Анастасія Шилюк",
+    "games": 2,
+    "url": "https://mafgame.org/user/908/view",
+    "strength": "nick"
+   }
+  ],
+  "Аватар": [
+   {
+    "fed": "imafia",
+    "id": "3606",
+    "nick": "Аватар",
+    "realName": "Замбриборщ Надія",
+    "url": "https://imafia.org/u/3606",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 24
+   },
+   {
+    "fed": "eg",
+    "id": "241",
+    "nick": "Аватар",
+    "club": "Family Mafia Club",
+    "city": "Cherkasy",
+    "games": 1,
+    "url": "https://emotion.games/ua/players/241",
+    "strength": "club"
+   }
+  ],
+  "Аглая": [
+   {
+    "fed": "imafia",
+    "id": "5057",
+    "nick": "Аглая",
+    "realName": "Ткаченко Катерина",
+    "url": "https://imafia.org/u/5057",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 20
+   },
+   {
+    "fed": "eg",
+    "id": "112",
+    "nick": "Аглая",
+    "url": "https://emotion.games/ua/players/112",
+    "strength": "nick"
+   }
+  ],
+  "Адлер": [
+   {
+    "fed": "imafia",
+    "id": "1165",
+    "nick": "Адлер",
+    "realName": "Мітіна Олександра",
+    "url": "https://imafia.org/u/1165",
+    "strength": "nick",
+    "city": "Європа",
+    "games": 778
+   },
+   {
+    "fed": "fiim",
+    "id": "1078",
+    "nick": "Адлер",
+    "realName": "Александра Митина",
+    "club": "Big Ben Mafia Club",
+    "city": "Київ, Україна",
+    "url": "https://fiim.world/user/1078/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "44",
+    "nick": "Адлер",
+    "realName": "Адлер",
+    "url": "https://fiim.world/user/44/show",
+    "strength": "nick"
+   }
+  ],
+  "Адріана": [
+   {
+    "fed": "imafia",
+    "id": "4125",
+    "nick": "Адріана",
+    "realName": "Горячева Юлія",
+    "url": "https://imafia.org/u/4125",
+    "strength": "nick",
+    "club": "Основа",
+    "city": "Україна",
+    "games": 8
+   },
+   {
+    "fed": "eg",
+    "id": "180",
+    "nick": "Адріана",
+    "url": "https://emotion.games/ua/players/180",
+    "strength": "nick"
+   }
+  ],
+  "Алиса": [
+   {
+    "fed": "imafia",
+    "id": "483",
+    "nick": "Алиса",
+    "url": "https://imafia.org/u/483",
+    "strength": "nick",
+    "city": "Ізраїль",
+    "games": 27
+   },
+   {
+    "fed": "fiim",
+    "id": "7491",
+    "nick": "Алиса",
+    "realName": "Ella Borkin",
+    "club": "Secret Mafia Club❓",
+    "city": "Рішон Ле-Цийон, Ізраїль",
+    "url": "https://fiim.world/user/7491/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "10839",
+    "nick": "АлисA",
+    "realName": "Hanna Kholad",
+    "club": "Не входить до клубу",
+    "city": "Вильнюс, Литва",
+    "url": "https://fiim.world/user/10839/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "8289",
+    "nick": "Алиса",
+    "realName": "Валерия Касперович",
+    "club": "Не входить до клубу",
+    "city": "Минск, Білорусь",
+    "url": "https://fiim.world/user/8289/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "10493",
+    "nick": "Алиса",
+    "realName": "Елизавета Климкова",
+    "url": "https://fiim.world/user/10493/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "5896",
+    "nick": "Алиса",
+    "realName": "Елизавета Сивицкая",
+    "club": "Не входить до клубу",
+    "city": "Минск, Білорусь",
+    "url": "https://fiim.world/user/5896/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "mafgame",
+    "id": "33",
+    "nick": "Алиса",
+    "realName": "Anastasiia",
+    "games": 6,
+    "url": "https://mafgame.org/user/33/view",
+    "strength": "nick"
+   }
+  ],
+  "Аляска": [
+   {
+    "fed": "imafia",
+    "id": "1210",
+    "nick": "Аляска",
+    "realName": "Онищенко Лада",
+    "url": "https://imafia.org/u/1210",
+    "strength": "nick",
+    "club": "CAPONE MAFIA CLUB",
+    "city": "Україна",
+    "games": 210
+   },
+   {
+    "fed": "eg",
+    "id": "578",
+    "nick": "Аляска",
+    "club": "Capone Mafia Club",
+    "url": "https://emotion.games/ua/players/578",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "10055",
+    "nick": "Аляска",
+    "realName": "Валерия Картышова",
+    "club": "Не входить до клубу",
+    "city": "Київ, Україна",
+    "url": "https://fiim.world/user/10055/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "2428",
+    "nick": "Аляска",
+    "realName": "Алиса Шлякова",
+    "url": "https://fiim.world/user/2428/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "mafgame",
+    "id": "299",
+    "nick": "Аляска",
+    "realName": "Лада",
+    "games": 1,
+    "url": "https://mafgame.org/user/299/view",
+    "strength": "nick"
+   }
+  ],
+  "Анхель": [
+   {
+    "fed": "imafia",
+    "id": "4859",
+    "nick": "Анхель",
+    "realName": "Соловйов Єгор",
+    "url": "https://imafia.org/u/4859",
+    "strength": "nick",
+    "club": "Big Game Mafia Club",
+    "city": "Україна",
+    "games": 10
+   },
+   {
+    "fed": "fiim",
+    "id": "2949",
+    "nick": "Анхель",
+    "realName": "Егор Соболев",
+    "club": "Большая Игра",
+    "city": "Дніпро, Україна",
+    "url": "https://fiim.world/user/2949/show",
+    "strength": "nick"
+   }
+  ],
+  "Артист": [
+   {
+    "fed": "imafia",
+    "id": "3771",
+    "nick": "Артист",
+    "realName": "Ясінський Олег",
+    "url": "https://imafia.org/u/3771",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 8
+   },
+   {
+    "fed": "fiim",
+    "id": "3240",
+    "nick": "Артист",
+    "realName": "Алексей Косимчук",
+    "club": "Big Ben Mafia Club",
+    "city": "Київ, Україна",
+    "url": "https://fiim.world/user/3240/show",
+    "strength": "nick"
+   }
+  ],
+  "Афина": [
+   {
+    "fed": "imafia",
+    "id": "2205",
+    "nick": "Афина",
+    "realName": "Літвіненко Олена",
+    "url": "https://imafia.org/u/2205",
+    "strength": "nick",
+    "club": "Big Game Mafia Club",
+    "city": "Україна",
+    "games": 153
+   },
+   {
+    "fed": "eg",
+    "id": "127",
+    "nick": "Афина",
+    "url": "https://emotion.games/ua/players/127",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "17192",
+    "nick": "Aфина",
+    "realName": "Елена Литвиненко",
+    "club": "Большая Игра",
+    "city": "Дніпро, Україна",
+    "url": "https://fiim.world/user/17192/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "mafgame",
+    "id": "277",
+    "nick": "Афина",
+    "realName": "Елена Литвиненко",
+    "games": 2,
+    "url": "https://mafgame.org/user/277/view",
+    "strength": "nick"
+   }
+  ],
+  "Барабашка": [
+   {
+    "fed": "imafia",
+    "id": "3626",
+    "nick": "Барабашка",
+    "realName": "Тішенко Анна",
+    "url": "https://imafia.org/u/3626",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 0
+   }
+  ],
+  "Блукач": [
+   {
+    "fed": "imafia",
+    "id": "1078",
+    "nick": "Блукач",
+    "realName": "Винник Юрій",
+    "url": "https://imafia.org/u/1078",
+    "strength": "nick",
+    "club": "Big Ben Mafia Club",
+    "city": "Україна",
+    "games": 657
+   },
+   {
+    "fed": "fiim",
+    "id": "6925",
+    "nick": "Блукач",
+    "realName": "Юрий Винник",
+    "club": "Big Ben Mafia Club",
+    "city": "Київ, Україна",
+    "url": "https://fiim.world/user/6925/show",
+    "strength": "nick"
+   }
+  ],
+  "Борщ": [
+   {
+    "fed": "imafia",
+    "id": "2414",
+    "nick": "Борщ",
+    "realName": "Красуля Дмитро",
+    "url": "https://imafia.org/u/2414",
+    "strength": "nick",
+    "club": "FRIENDS MAFIA",
+    "city": "Україна",
+    "games": 490
+   },
+   {
+    "fed": "eg",
+    "id": "590",
+    "nick": "Борщ",
+    "club": "Big Ben mafia club",
+    "url": "https://emotion.games/ua/players/590",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "1605",
+    "nick": "Борщ",
+    "realName": "Дмитрий Красуля",
+    "club": "Big Ben Mafia Club",
+    "city": "Київ, Україна",
+    "url": "https://fiim.world/user/1605/show",
+    "strength": "nick"
+   }
+  ],
+  "Валькірія": [
+   {
+    "fed": "imafia",
+    "id": "811",
+    "nick": "Валькірія",
+    "realName": "Матвіюк Ірина",
+    "url": "https://imafia.org/u/811",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 15
+   },
+   {
+    "fed": "eg",
+    "id": "23",
+    "nick": "Валькірія",
+    "club": "Family Mafia Club",
+    "city": "Cherkasy",
+    "games": 1,
+    "url": "https://emotion.games/ua/players/23",
+    "strength": "club"
+   },
+   {
+    "fed": "fiim",
+    "id": "7598",
+    "nick": "Валькірія",
+    "realName": "Ірина Матвіюк",
+    "club": "Family Mafia Club",
+    "city": "Черкаси, Україна",
+    "url": "https://fiim.world/user/7598/show",
+    "strength": "club"
+   }
+  ],
+  "Ветер": [
+   {
+    "fed": "imafia",
+    "id": "818",
+    "nick": "Ветер",
+    "realName": "Вернер Эдуард",
+    "url": "https://imafia.org/u/818",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 15
+   },
+   {
+    "fed": "fiim",
+    "id": "11018",
+    "nick": "Ветер",
+    "realName": "Дмитрий Елин",
+    "url": "https://fiim.world/user/11018/show",
+    "strength": "nick"
+   }
+  ],
+  "Відьма": [
+   {
+    "fed": "imafia",
+    "id": "775",
+    "nick": "Відьма",
+    "realName": "Ільїна Женя",
+    "url": "https://imafia.org/u/775",
+    "strength": "nick",
+    "club": "Club13",
+    "city": "Україна",
+    "games": 6
+   },
+   {
+    "fed": "imafia",
+    "id": "3677",
+    "nick": "Відьма",
+    "realName": "Татарінцева Ася",
+    "url": "https://imafia.org/u/3677",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 0
+   },
+   {
+    "fed": "eg",
+    "id": "172",
+    "nick": "Відьма",
+    "club": "Club13",
+    "url": "https://emotion.games/ua/players/172",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "16637",
+    "nick": "Відьма",
+    "realName": "Женя",
+    "club": "Club 13",
+    "city": "Івано-Франківськ, Україна",
+    "url": "https://fiim.world/user/16637/show",
+    "strength": "nick"
+   }
+  ],
+  "Гамлет": [
+   {
+    "fed": "imafia",
+    "id": "928",
+    "nick": "Гамлет",
+    "realName": "Бриль Евгений",
+    "url": "https://imafia.org/u/928",
+    "strength": "nick",
+    "city": "Ізраїль",
+    "games": 0
+   },
+   {
+    "fed": "fiim",
+    "id": "5250",
+    "nick": "Гамлет",
+    "realName": "Евгений Бриль",
+    "club": "Не входить до клубу",
+    "city": "Тель-Авів, Ізраїль",
+    "url": "https://fiim.world/user/5250/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "9196",
+    "nick": "Гамлет",
+    "realName": "Никита Купцов",
+    "club": "Не входить до клубу",
+    "city": "..., ...",
+    "url": "https://fiim.world/user/9196/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "2258",
+    "nick": "Гамлет",
+    "realName": "Гамлет Оганян",
+    "url": "https://fiim.world/user/2258/show",
+    "strength": "nick"
+   }
+  ],
+  "Гера": [
+   {
+    "fed": "imafia",
+    "id": "667",
+    "nick": "Гера",
+    "realName": "Герлингер Анастасия",
+    "url": "https://imafia.org/u/667",
+    "strength": "nick",
+    "club": "PUDRA Mafia Club",
+    "city": "Європа",
+    "games": 8
+   },
+   {
+    "fed": "imafia",
+    "id": "5972",
+    "nick": "Герa",
+    "realName": "Герасіменко Юлія",
+    "url": "https://imafia.org/u/5972",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 0
+   },
+   {
+    "fed": "eg",
+    "id": "235",
+    "nick": "Гера",
+    "club": "KropMafiaClub",
+    "url": "https://emotion.games/ua/players/235",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "16038",
+    "nick": "Гера(izi mafia club)",
+    "realName": "Yuliia Herasimenko",
+    "club": "Izi Mafia Club",
+    "city": "Кропивницький, Україна",
+    "url": "https://fiim.world/user/16038/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "mafgame",
+    "id": "2565",
+    "nick": "Гера",
+    "realName": "Айгерим Бадашева",
+    "games": 1,
+    "url": "https://mafgame.org/user/2565/view",
+    "strength": "nick"
+   }
+  ],
+  "Гном": [
+   {
+    "fed": "imafia",
+    "id": "633",
+    "nick": "Гном",
+    "realName": "Денис Іванов",
+    "url": "https://imafia.org/u/633",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 8
+   }
+  ],
+  "Гонсалес": [
+   {
+    "fed": "imafia",
+    "id": "1261",
+    "nick": "Гонсалес",
+    "realName": "Масюк Оксана",
+    "url": "https://imafia.org/u/1261",
+    "strength": "nick",
+    "club": "PUDRA Mafia Club",
+    "city": "Європа",
+    "games": 0
+   }
+  ],
+  "Грачик": [
+   {
+    "fed": "imafia",
+    "id": "5966",
+    "nick": "Грачик",
+    "realName": "Лаппа Ксенія",
+    "url": "https://imafia.org/u/5966",
+    "strength": "nick",
+    "club": "Основа",
+    "city": "Україна"
+   },
+   {
+    "fed": "fiim",
+    "id": "1525",
+    "nick": "Грачик",
+    "realName": "Grachik Petrosyan",
+    "club": "Не входить до клубу",
+    "city": "..., ...",
+    "url": "https://fiim.world/user/1525/show",
+    "strength": "nick"
+   }
+  ],
+  "Грешила": [
+   {
+    "fed": "imafia",
+    "id": "184",
+    "nick": "Грешила",
+    "realName": "Грешила Ірина",
+    "url": "https://imafia.org/u/184",
+    "strength": "nick",
+    "club": "Good people mafia",
+    "city": "Україна",
+    "games": 12
+   },
+   {
+    "fed": "eg",
+    "id": "65",
+    "nick": "Грешила",
+    "club": "Good People Mafia",
+    "url": "https://emotion.games/ua/players/65",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "13239",
+    "nick": "Грешила",
+    "realName": "Ірина",
+    "url": "https://fiim.world/user/13239/show",
+    "strength": "nick"
+   }
+  ],
+  "Грозний": [
+   {
+    "fed": "imafia",
+    "id": "868",
+    "nick": "Грозний",
+    "realName": "Шостак Роман",
+    "url": "https://imafia.org/u/868",
+    "strength": "nick",
+    "club": "MafClub Kyiv",
+    "city": "Україна",
+    "games": 313
+   },
+   {
+    "fed": "eg",
+    "id": "159",
+    "nick": "Грозний",
+    "club": "Big Ben mafia club",
+    "url": "https://emotion.games/ua/players/159",
+    "strength": "nick"
+   }
+  ],
+  "Девятый": [
+   {
+    "fed": "imafia",
+    "id": "5969",
+    "nick": "Девятый",
+    "realName": "Voits Viesturs",
+    "url": "https://imafia.org/u/5969",
+    "strength": "nick",
+    "club": "Mafia Club Resistance",
+    "city": "Європа"
+   }
+  ],
+  "Джонни": [
+   {
+    "fed": "imafia",
+    "id": "2806",
+    "nick": "Джонни",
+    "realName": "Иванова Татьяна",
+    "url": "https://imafia.org/u/2806",
+    "strength": "nick",
+    "club": "CLAN Mafia Tbilisi",
+    "city": "Грузія",
+    "games": 15
+   },
+   {
+    "fed": "fiim",
+    "id": "18150",
+    "nick": "Джонни (Batumi)",
+    "realName": "Tanya",
+    "url": "https://fiim.world/user/18150/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "1969",
+    "nick": "Джонни",
+    "realName": "Татьяна Никитина",
+    "url": "https://fiim.world/user/1969/show",
+    "strength": "nick"
+   }
+  ],
+  "Динозавр": [
+   {
+    "fed": "imafia",
+    "id": "5647",
+    "nick": "Динозавр",
+    "realName": "Волощук Руслан",
+    "url": "https://imafia.org/u/5647",
+    "strength": "nick",
+    "club": "Decem Mafia Club",
+    "city": "Україна",
+    "games": 9
+   },
+   {
+    "fed": "mafgame",
+    "id": "2137",
+    "nick": "Динозавр",
+    "realName": "Ruslan V",
+    "games": 1,
+    "url": "https://mafgame.org/user/2137/view",
+    "strength": "nick"
+   }
+  ],
+  "Еля": [
+   {
+    "fed": "imafia",
+    "id": "2235",
+    "nick": "Еля",
+    "realName": "Єлизавета Єлизавета",
+    "url": "https://imafia.org/u/2235",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 12
+   },
+   {
+    "fed": "eg",
+    "id": "98",
+    "nick": "Еля",
+    "url": "https://emotion.games/ua/players/98",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "10861",
+    "nick": "Еля",
+    "realName": "Єлизавета",
+    "club": "Vinnytsia Mafia Club",
+    "city": "Вінниця, Україна",
+    "url": "https://fiim.world/user/10861/show",
+    "strength": "nick"
+   }
+  ],
+  "Еліс": [
+   {
+    "fed": "imafia",
+    "id": "3711",
+    "nick": "Еліс",
+    "realName": "Ткаченко Анастасія",
+    "url": "https://imafia.org/u/3711",
+    "strength": "nick",
+    "club": "CHAYKA MAFIA CLUB",
+    "city": "Україна",
+    "games": 0
+   }
+  ],
+  "Живчик": [
+   {
+    "fed": "imafia",
+    "id": "4520",
+    "nick": "Живчик",
+    "realName": "Авраміді Аліна",
+    "url": "https://imafia.org/u/4520",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 0
+   }
+  ],
+  "Залізний": [
+   {
+    "fed": "imafia",
+    "id": "2217",
+    "nick": "Залізний",
+    "realName": "Москальов Вадим",
+    "url": "https://imafia.org/u/2217",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 12
+   },
+   {
+    "fed": "eg",
+    "id": "28",
+    "nick": "Залізний",
+    "club": "Family Mafia Club",
+    "city": "Cherkasy",
+    "games": 6,
+    "url": "https://emotion.games/ua/players/28",
+    "strength": "club"
+   }
+  ],
+  "Кажан": [
+   {
+    "fed": "imafia",
+    "id": "2570",
+    "nick": "Кажан",
+    "realName": "Сураго Олексій",
+    "url": "https://imafia.org/u/2570",
+    "strength": "nick",
+    "club": "NOX",
+    "city": "Європа",
+    "games": 230
+   }
+  ],
+  "Кайзер": [
+   {
+    "fed": "imafia",
+    "id": "4165",
+    "nick": "Кайзер",
+    "realName": "Mamontov Yaroslav",
+    "url": "https://imafia.org/u/4165",
+    "strength": "nick",
+    "club": "Чорна ніч, червоний день",
+    "city": "Україна",
+    "games": 98
+   },
+   {
+    "fed": "fiim",
+    "id": "3708",
+    "nick": "Кайзер",
+    "realName": "Александр Талантов",
+    "club": "Не входить до клубу",
+    "city": "..., ...",
+    "url": "https://fiim.world/user/3708/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "mafgame",
+    "id": "2120",
+    "nick": "Кайзер",
+    "realName": "Yaroslav Mamontov",
+    "games": 5,
+    "url": "https://mafgame.org/user/2120/view",
+    "strength": "nick"
+   }
+  ],
+  "Каратель": [
+   {
+    "fed": "imafia",
+    "id": "2373",
+    "nick": "Каратель",
+    "realName": "Переверзєв Владислав",
+    "url": "https://imafia.org/u/2373",
+    "strength": "nick",
+    "club": "Mafia Closed Circle",
+    "city": "Європа",
+    "games": 418
+   }
+  ],
+  "Карма": [
+   {
+    "fed": "imafia",
+    "id": "718",
+    "nick": "Карма",
+    "realName": "Сырбу Светлана",
+    "url": "https://imafia.org/u/718",
+    "strength": "nick",
+    "club": "Lie or Die Mafia Club",
+    "city": "Україна",
+    "games": 21
+   },
+   {
+    "fed": "eg",
+    "id": "1068",
+    "nick": "Карма",
+    "club": "Rocky Mafia Club",
+    "url": "https://emotion.games/ua/players/1068",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "624",
+    "nick": "Карма",
+    "realName": "Светлана Сырбу",
+    "url": "https://fiim.world/user/624/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "2965",
+    "nick": "Каpма",
+    "realName": "Євгенія Рубан",
+    "club": "Не входить до клубу",
+    "city": "Кременчук, Україна",
+    "url": "https://fiim.world/user/2965/show",
+    "strength": "nick"
+   }
+  ],
+  "Китобой": [
+   {
+    "fed": "imafia",
+    "id": "1972",
+    "nick": "Китобой",
+    "realName": "Darmenko Mykola",
+    "url": "https://imafia.org/u/1972",
+    "strength": "nick",
+    "club": "Mafia Soul’s City",
+    "city": "Європа",
+    "games": 73
+   },
+   {
+    "fed": "mafgame",
+    "id": "442",
+    "nick": "Китобой",
+    "realName": "Niko",
+    "games": 4,
+    "url": "https://mafgame.org/user/442/view",
+    "strength": "nick"
+   }
+  ],
+  "Корлеоне": [
+   {
+    "fed": "imafia",
+    "id": "475",
+    "nick": "Корлеоне",
+    "realName": "Боднарук Владимир",
+    "url": "https://imafia.org/u/475",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 9
+   },
+   {
+    "fed": "fiim",
+    "id": "7396",
+    "nick": "Корлеоне",
+    "realName": "Владимир Боднарук",
+    "club": "The Mob Mafia Club",
+    "city": "Одеса, Україна",
+    "url": "https://fiim.world/user/7396/show",
+    "strength": "nick"
+   }
+  ],
+  "Король": [
+   {
+    "fed": "imafia",
+    "id": "565",
+    "nick": "Король",
+    "url": "https://imafia.org/u/565",
+    "strength": "nick",
+    "city": "Ізраїль",
+    "games": 23
+   },
+   {
+    "fed": "fiim",
+    "id": "3134",
+    "nick": "Король",
+    "realName": "Maxim Kimelman",
+    "club": "Маска Mafia Club 🎭",
+    "city": "Тель-Авів, Ізраїль",
+    "url": "https://fiim.world/user/3134/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "3103",
+    "nick": "Король",
+    "realName": "Олжас Муканов",
+    "url": "https://fiim.world/user/3103/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "mafgame",
+    "id": "3214",
+    "nick": "Король",
+    "realName": "Maxim Kimelman",
+    "games": 2,
+    "url": "https://mafgame.org/user/3214/view",
+    "strength": "nick"
+   }
+  ],
+  "Космос": [
+   {
+    "fed": "imafia",
+    "id": "1524",
+    "nick": "КОСМОС",
+    "realName": "Гаренських Віктор",
+    "url": "https://imafia.org/u/1524",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 21
+   },
+   {
+    "fed": "fiim",
+    "id": "1279",
+    "nick": "Космос",
+    "realName": "Мария Билогуб",
+    "club": "Big Ben Mafia Club",
+    "city": "Київ, Україна",
+    "url": "https://fiim.world/user/1279/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "4970",
+    "nick": "Космос",
+    "realName": "Михаил Поляков",
+    "club": "Не входить до клубу",
+    "city": "..., ...",
+    "url": "https://fiim.world/user/4970/show",
+    "strength": "nick"
+   }
+  ],
+  "Кот": [
+   {
+    "fed": "imafia",
+    "id": "365",
+    "nick": "Кот",
+    "realName": "Потопа Николай",
+    "url": "https://imafia.org/u/365",
+    "strength": "nick",
+    "club": "Good people mafia",
+    "city": "Україна",
+    "games": 11
+   },
+   {
+    "fed": "imafia",
+    "id": "1904",
+    "nick": "Кот(Катовице)",
+    "realName": "Гість",
+    "url": "https://imafia.org/u/1904",
+    "strength": "nick",
+    "club": "I.S.K. Mafia Club",
+    "city": "Європа",
+    "games": 0
+   },
+   {
+    "fed": "mafgame",
+    "id": "448",
+    "nick": "koT",
+    "realName": "Vitalii",
+    "games": 2,
+    "url": "https://mafgame.org/user/448/view",
+    "strength": "nick"
+   }
+  ],
+  "Кошка": [
+   {
+    "fed": "imafia",
+    "id": "1431",
+    "nick": "Кошка",
+    "realName": "Ришалина Ирина",
+    "url": "https://imafia.org/u/1431",
+    "strength": "nick",
+    "city": "Європа",
+    "games": 0
+   },
+   {
+    "fed": "fiim",
+    "id": "3428",
+    "nick": "Кошка",
+    "realName": "Екатерина Василевич",
+    "club": "Не входить до клубу",
+    "city": "Минск, Білорусь",
+    "url": "https://fiim.world/user/3428/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "2509",
+    "nick": "Кошка",
+    "realName": "Алена Дрыга",
+    "club": "Большая Игра",
+    "city": "Дніпро, Україна",
+    "url": "https://fiim.world/user/2509/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "10680",
+    "nick": "Кошка",
+    "realName": "Ольга Бабушкина",
+    "url": "https://fiim.world/user/10680/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "5889",
+    "nick": "Кошка",
+    "realName": "Лариса Кравченко",
+    "club": "Не входить до клубу",
+    "city": "..., ...",
+    "url": "https://fiim.world/user/5889/show",
+    "strength": "nick"
+   }
+  ],
+  "Крис": [
+   {
+    "fed": "imafia",
+    "id": "4129",
+    "nick": "Крис",
+    "realName": "Барановская Анастасия",
+    "url": "https://imafia.org/u/4129",
+    "strength": "nick",
+    "club": "Tbilissimo",
+    "city": "Грузія",
+    "games": 256
+   },
+   {
+    "fed": "fiim",
+    "id": "4954",
+    "nick": "Крис",
+    "realName": "Анастасия Барановская",
+    "club": "Tbilissimo",
+    "city": "Тбілісі, Грузія",
+    "url": "https://fiim.world/user/4954/show",
+    "strength": "nick"
+   }
+  ],
+  "Лана": [
+   {
+    "fed": "imafia",
+    "id": "1383",
+    "nick": "Лана",
+    "realName": "Безродная Яна",
+    "url": "https://imafia.org/u/1383",
+    "strength": "nick",
+    "club": "Alibi Mafia Club",
+    "city": "Європа",
+    "games": 209
+   },
+   {
+    "fed": "eg",
+    "id": "75",
+    "nick": "Лана",
+    "url": "https://emotion.games/ua/players/75",
+    "strength": "nick"
+   },
+   {
+    "fed": "mafgame",
+    "id": "212",
+    "nick": "Лана",
+    "realName": "Яна",
+    "games": 3,
+    "url": "https://mafgame.org/user/212/view",
+    "strength": "nick"
+   }
+  ],
+  "Лев": [
+   {
+    "fed": "imafia",
+    "id": "145",
+    "nick": "Лев",
+    "realName": ". Лев",
+    "url": "https://imafia.org/u/145",
+    "strength": "nick",
+    "club": "Чорна ніч, червоний день",
+    "city": "Європа",
+    "games": 227
+   },
+   {
+    "fed": "fiim",
+    "id": "17317",
+    "nick": "Лев (Нетания)",
+    "realName": "Анастасия",
+    "club": "NIGHT DOZOR",
+    "city": "Нетанія, Ізраїль",
+    "url": "https://fiim.world/user/17317/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "mafgame",
+    "id": "3048",
+    "nick": "Лeв",
+    "realName": "Ivan Mykhailenko",
+    "games": 3,
+    "url": "https://mafgame.org/user/3048/view",
+    "strength": "nick"
+   },
+   {
+    "fed": "mafgame",
+    "id": "552",
+    "nick": "Лев",
+    "realName": "Анастасия",
+    "games": 2,
+    "url": "https://mafgame.org/user/552/view",
+    "strength": "nick"
+   }
+  ],
+  "Лейла": [
+   {
+    "fed": "imafia",
+    "id": "2397",
+    "nick": "Лейла",
+    "realName": "Кондрашова Екатерина",
+    "url": "https://imafia.org/u/2397",
+    "strength": "nick",
+    "club": "Mafia Club Odesa",
+    "city": "Україна",
+    "games": 66
+   },
+   {
+    "fed": "fiim",
+    "id": "10976",
+    "nick": "Лейла",
+    "realName": "Ольга Гузенко",
+    "url": "https://fiim.world/user/10976/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "513",
+    "nick": "Лейла",
+    "realName": "Ольга Веронская",
+    "club": "Не входить до клубу",
+    "city": "..., ...",
+    "url": "https://fiim.world/user/513/show",
+    "strength": "nick"
+   }
+  ],
+  "Лисиця": [
+   {
+    "fed": "imafia",
+    "id": "1234",
+    "nick": "Лисиця",
+    "realName": "Єременко Віталій",
+    "url": "https://imafia.org/u/1234",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 8
+   },
+   {
+    "fed": "eg",
+    "id": "1591",
+    "nick": "Лисиця",
+    "club": "Family Mafia Club",
+    "city": "Cherkasy",
+    "games": 0,
+    "url": "https://emotion.games/ua/players/1591",
+    "strength": "club"
+   }
+  ],
+  "Луна": [
+   {
+    "fed": "imafia",
+    "id": "540",
+    "nick": "Луна",
+    "realName": "Suproniuk Valentyna",
+    "url": "https://imafia.org/u/540",
+    "strength": "nick",
+    "club": "Shot Lublin",
+    "city": "Європа",
+    "games": 33
+   },
+   {
+    "fed": "imafia",
+    "id": "2159",
+    "nick": "Луна",
+    "realName": "Гість",
+    "url": "https://imafia.org/u/2159",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 0
+   },
+   {
+    "fed": "imafia",
+    "id": "2479",
+    "nick": "Лунa",
+    "realName": "Луна Михаил",
+    "url": "https://imafia.org/u/2479",
+    "strength": "nick",
+    "club": "Vendetta Mafia Club",
+    "city": "Європа",
+    "games": 0
+   },
+   {
+    "fed": "imafia",
+    "id": "5284",
+    "nick": "Luna (Yerevan)",
+    "realName": "Мунтян Катерина",
+    "url": "https://imafia.org/u/5284",
+    "strength": "nick",
+    "club": "Joker Mafia Club",
+    "city": "Вірменія",
+    "games": 34
+   },
+   {
+    "fed": "imafia",
+    "id": "241",
+    "nick": "Luna",
+    "realName": "Tribštok Olga",
+    "url": "https://imafia.org/u/241",
+    "strength": "nick",
+    "city": "Європа",
+    "games": 0
+   },
+   {
+    "fed": "imafia",
+    "id": "5161",
+    "nick": "LUNA",
+    "realName": "Салатін Аліна",
+    "url": "https://imafia.org/u/5161",
+    "strength": "nick",
+    "club": "MAFIA COLDBORN CLUB «MCC»",
+    "city": "Канада",
+    "games": 0
+   },
+   {
+    "fed": "eg",
+    "id": "475",
+    "nick": "Luna",
+    "club": "Family Mafia Club",
+    "city": "Cherkasy",
+    "games": 1,
+    "url": "https://emotion.games/ua/players/475",
+    "strength": "club"
+   },
+   {
+    "fed": "fiim",
+    "id": "14725",
+    "nick": "Луна (Luna)",
+    "realName": "Анастасія Череповська",
+    "club": "Family Mafia Club",
+    "city": "Черкаси, Україна",
+    "url": "https://fiim.world/user/14725/show",
+    "strength": "club"
+   },
+   {
+    "fed": "fiim",
+    "id": "20278",
+    "nick": "Луна (Ереван)",
+    "realName": "Катерина",
+    "club": "Joker Mafia Club",
+    "city": "Єреван, Вірменія",
+    "url": "https://fiim.world/user/20278/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "8453",
+    "nick": "Луна",
+    "realName": "Жанна Садвокасова",
+    "url": "https://fiim.world/user/8453/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "21166",
+    "nick": "Luna (Kobuleti)",
+    "realName": "Александра",
+    "club": "X-CITY",
+    "city": "Батумі, Грузія",
+    "url": "https://fiim.world/user/21166/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "7216",
+    "nick": "Luna",
+    "realName": "Татьяна Ким",
+    "club": "Не входить до клубу",
+    "city": "..., ...",
+    "url": "https://fiim.world/user/7216/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "8225",
+    "nick": "Luna",
+    "realName": "- -",
+    "url": "https://fiim.world/user/8225/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "3696",
+    "nick": "Luna",
+    "realName": "Евгения Садовничая",
+    "url": "https://fiim.world/user/3696/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "mafgame",
+    "id": "113",
+    "nick": "Луна",
+    "realName": "Юля",
+    "games": 3,
+    "url": "https://mafgame.org/user/113/view",
+    "strength": "nick"
+   }
+  ],
+  "Люцифер": [
+   {
+    "fed": "imafia",
+    "id": "3779",
+    "nick": "Люцифер",
+    "realName": "Марк Никита",
+    "url": "https://imafia.org/u/3779",
+    "strength": "nick",
+    "club": "Vendetta Mafia Club",
+    "city": "Європа",
+    "games": 0
+   }
+  ],
+  "Малина": [
+   {
+    "fed": "imafia",
+    "id": "182",
+    "nick": "Малина",
+    "realName": "Дюбкина Даша",
+    "url": "https://imafia.org/u/182",
+    "strength": "nick",
+    "club": "PUDRA Mafia Club",
+    "city": "Європа",
+    "games": 72
+   }
+  ],
+  "Марі": [
+   {
+    "fed": "imafia",
+    "id": "1113",
+    "nick": "Марі",
+    "realName": "Косімчук Марія",
+    "url": "https://imafia.org/u/1113",
+    "strength": "nick",
+    "club": "Big Ben Mafia Club",
+    "city": "Україна",
+    "games": 87
+   },
+   {
+    "fed": "eg",
+    "id": "45",
+    "nick": "Марі",
+    "club": "Big Ben mafia club",
+    "url": "https://emotion.games/ua/players/45",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "2243",
+    "nick": "Марі",
+    "realName": "Марія Ашіхміна",
+    "club": "Big Ben Mafia Club",
+    "city": "Київ, Україна",
+    "url": "https://fiim.world/user/2243/show",
+    "strength": "nick"
+   }
+  ],
+  "Меджик": [
+   {
+    "fed": "imafia",
+    "id": "4727",
+    "nick": "Magic",
+    "realName": "Zharuk Anna Kristina",
+    "url": "https://imafia.org/u/4727",
+    "strength": "nick",
+    "city": "США",
+    "games": 0
+   },
+   {
+    "fed": "fiim",
+    "id": "10315",
+    "nick": "Magic",
+    "realName": "Стефания Кара",
+    "url": "https://fiim.world/user/10315/show",
+    "strength": "nick"
+   }
+  ],
+  "Механік": [
+   {
+    "fed": "imafia",
+    "id": "1817",
+    "nick": "Механік",
+    "realName": "Череп В'ячеслав",
+    "url": "https://imafia.org/u/1817",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 10
+   }
+  ],
+  "Милена": [
+   {
+    "fed": "imafia",
+    "id": "3805",
+    "nick": "Милена",
+    "realName": "Милена Милена",
+    "url": "https://imafia.org/u/3805",
+    "strength": "nick",
+    "club": "Vendetta Mafia Club",
+    "city": "Європа",
+    "games": 0
+   }
+  ],
+  "Молодой": [
+   {
+    "fed": "imafia",
+    "id": "2112",
+    "nick": "Молодой",
+    "realName": "Tier Danil",
+    "url": "https://imafia.org/u/2112",
+    "strength": "nick",
+    "club": "Mafia Club Odesa",
+    "city": "Україна",
+    "games": 0
+   },
+   {
+    "fed": "fiim",
+    "id": "13857",
+    "nick": "Мoлодой",
+    "realName": "Данил",
+    "url": "https://fiim.world/user/13857/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "7654",
+    "nick": "Молодой",
+    "realName": "Рашид Мужаидов",
+    "url": "https://fiim.world/user/7654/show",
+    "strength": "nick"
+   }
+  ],
+  "Муза": [
+   {
+    "fed": "imafia",
+    "id": "1594",
+    "nick": "Муза",
+    "realName": "Бóгдан Наталія",
+    "url": "https://imafia.org/u/1594",
+    "strength": "nick",
+    "club": "Mafia Club Odesa",
+    "city": "Україна",
+    "games": 563
+   },
+   {
+    "fed": "eg",
+    "id": "78",
+    "nick": "Муза",
+    "club": "Odesa Mafia Club",
+    "url": "https://emotion.games/ua/players/78",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "16284",
+    "nick": "Муза (Odesa)",
+    "realName": "Наталия",
+    "club": "Mafia Club Odesa",
+    "city": "Одеса, Україна",
+    "url": "https://fiim.world/user/16284/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "4387",
+    "nick": "Муза",
+    "realName": "Татьяна Зайчик",
+    "url": "https://fiim.world/user/4387/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "4477",
+    "nick": "Муза",
+    "realName": "Диана Войтеховская",
+    "url": "https://fiim.world/user/4477/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "mafgame",
+    "id": "882",
+    "nick": "Муза",
+    "realName": "Наталия",
+    "games": 1,
+    "url": "https://mafgame.org/user/882/view",
+    "strength": "nick"
+   }
+  ],
+  "Мэри": [
+   {
+    "fed": "imafia",
+    "id": "1354",
+    "nick": "Мэри",
+    "realName": "Фаюстова Светлана",
+    "url": "https://imafia.org/u/1354",
+    "strength": "nick",
+    "city": "Європа",
+    "games": 0
+   },
+   {
+    "fed": "fiim",
+    "id": "1935",
+    "nick": "Мэри",
+    "realName": "Светлана Фаюстова",
+    "club": "BDSM",
+    "city": "Мюнхен, Німеччина",
+    "url": "https://fiim.world/user/1935/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "3493",
+    "nick": "Мэри",
+    "realName": "Виктория Павелица",
+    "club": "Big Ben Mafia Club",
+    "city": "Київ, Україна",
+    "url": "https://fiim.world/user/3493/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "3745",
+    "nick": "Мэри",
+    "realName": "Меркотан Мария",
+    "url": "https://fiim.world/user/3745/show",
+    "strength": "nick"
+   }
+  ],
+  "Мята": [
+   {
+    "fed": "imafia",
+    "id": "2680",
+    "nick": "Мята",
+    "realName": "Четверус Саша",
+    "url": "https://imafia.org/u/2680",
+    "strength": "nick",
+    "club": "Rango mafia club Kyiv",
+    "city": "Україна",
+    "games": 5
+   },
+   {
+    "fed": "fiim",
+    "id": "7464",
+    "nick": "Мята",
+    "realName": "Динара Джабарова",
+    "url": "https://fiim.world/user/7464/show",
+    "strength": "nick"
+   }
+  ],
+  "Найт": [
+   {
+    "fed": "imafia",
+    "id": "5516",
+    "nick": "Найт",
+    "realName": "Яшан Олексій",
+    "url": "https://imafia.org/u/5516",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 8
+   },
+   {
+    "fed": "eg",
+    "id": "186",
+    "nick": "Найт",
+    "url": "https://emotion.games/ua/players/186",
+    "strength": "nick"
+   }
+  ],
+  "Ната": [
+   {
+    "fed": "imafia",
+    "id": "3822",
+    "nick": "Ната",
+    "realName": "Кат Катерина",
+    "url": "https://imafia.org/u/3822",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 29
+   },
+   {
+    "fed": "eg",
+    "id": "459",
+    "nick": "Ната",
+    "club": "BlackBerry mafia club",
+    "url": "https://emotion.games/ua/players/459",
+    "strength": "nick"
+   }
+  ],
+  "Наташа": [
+   {
+    "fed": "imafia",
+    "id": "3497",
+    "nick": "Наташа",
+    "realName": "Королева Наташа",
+    "url": "https://imafia.org/u/3497",
+    "strength": "nick",
+    "club": "Vendetta Mafia Club",
+    "city": "Європа",
+    "games": 0
+   },
+   {
+    "fed": "fiim",
+    "id": "4740",
+    "nick": "Наташа",
+    "realName": "Наташа Петрушина",
+    "url": "https://fiim.world/user/4740/show",
+    "strength": "nick"
+   }
+  ],
+  "Негрони": [
+   {
+    "fed": "imafia",
+    "id": "2780",
+    "nick": "Негрони",
+    "realName": "N Nazar",
+    "url": "https://imafia.org/u/2780",
+    "strength": "nick",
+    "club": "Tbilissimo",
+    "city": "Грузія",
+    "games": 239
+   },
+   {
+    "fed": "fiim",
+    "id": "17074",
+    "nick": "Негрони",
+    "realName": "Назар",
+    "club": "Tbilissimo",
+    "city": "Тбілісі, Грузія",
+    "url": "https://fiim.world/user/17074/show",
+    "strength": "nick"
+   }
+  ],
+  "Ночь": [
+   {
+    "fed": "imafia",
+    "id": "4307",
+    "nick": "Ночь",
+    "realName": "Bashtanykova Alona",
+    "url": "https://imafia.org/u/4307",
+    "strength": "nick",
+    "city": "Європа",
+    "games": 0
+   },
+   {
+    "fed": "fiim",
+    "id": "20468",
+    "nick": "Ночь (Melbourne Mafia Club)",
+    "realName": "Наталья",
+    "club": "Melbourne Mafia Club",
+    "city": "Мельбурн, Австралія",
+    "url": "https://fiim.world/user/20468/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "4059",
+    "nick": "Ночь",
+    "realName": "Ольга Арчакова",
+    "club": "Не входить до клубу",
+    "city": "Київ, Україна",
+    "url": "https://fiim.world/user/4059/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "2852",
+    "nick": "Ночь",
+    "realName": "Ирина Теленкова",
+    "club": "Не входить до клубу",
+    "city": "..., ...",
+    "url": "https://fiim.world/user/2852/show",
+    "strength": "nick"
+   }
+  ],
+  "Остин": [
+   {
+    "fed": "imafia",
+    "id": "1095",
+    "nick": "Остин",
+    "realName": "Гість",
+    "url": "https://imafia.org/u/1095",
+    "strength": "nick",
+    "club": "Midnight Mafia",
+    "city": "Європа",
+    "games": 0
+   },
+   {
+    "fed": "fiim",
+    "id": "9353",
+    "nick": "Остин",
+    "realName": "Евгения Колхиева",
+    "club": "Family Mafia Club",
+    "city": "Черкаси, Україна",
+    "url": "https://fiim.world/user/9353/show",
+    "strength": "club"
+   }
+  ],
+  "Паранойя": [
+   {
+    "fed": "imafia",
+    "id": "1083",
+    "nick": "Паранойя",
+    "realName": "Ярошевська Надія",
+    "url": "https://imafia.org/u/1083",
+    "strength": "nick",
+    "club": "Big Ben Mafia Club",
+    "city": "Україна",
+    "games": 375
+   },
+   {
+    "fed": "eg",
+    "id": "32",
+    "nick": "Паранойя",
+    "club": "Big Ben mafia club",
+    "url": "https://emotion.games/ua/players/32",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "12560",
+    "nick": "Пaрaнойя",
+    "realName": "Надія",
+    "club": "Big Ben Mafia Club",
+    "city": "Київ, Україна",
+    "url": "https://fiim.world/user/12560/show",
+    "strength": "nick"
+   }
+  ],
+  "Пастырь": [
+   {
+    "fed": "imafia",
+    "id": "149",
+    "nick": "Пастырь",
+    "realName": "YEVTUSHENKO NAZAR",
+    "url": "https://imafia.org/u/149",
+    "strength": "nick",
+    "club": "Classic Mafia Tallinn",
+    "city": "Європа",
+    "games": 5
+   },
+   {
+    "fed": "fiim",
+    "id": "17206",
+    "nick": "Пастырь(Алматы)",
+    "realName": "Максат",
+    "club": "Не входить до клубу",
+    "city": "Алматы, Казахстан",
+    "url": "https://fiim.world/user/17206/show",
+    "strength": "nick"
+   }
+  ],
+  "Пилот": [
+   {
+    "fed": "imafia",
+    "id": "1558",
+    "nick": "Пилот",
+    "realName": "Дмитровский Назар",
+    "url": "https://imafia.org/u/1558",
+    "strength": "nick",
+    "club": "Vendetta Mafia Club",
+    "city": "Європа",
+    "games": 79
+   },
+   {
+    "fed": "fiim",
+    "id": "9607",
+    "nick": "Пилот",
+    "realName": "Алтай Камиев",
+    "url": "https://fiim.world/user/9607/show",
+    "strength": "nick"
+   }
+  ],
+  "Повидло": [
+   {
+    "fed": "imafia",
+    "id": "4735",
+    "nick": "Повидло",
+    "realName": "Hnatyshyn Max",
+    "url": "https://imafia.org/u/4735",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 112
+   },
+   {
+    "fed": "eg",
+    "id": "2354",
+    "nick": "Повидло",
+    "club": "Family Mafia Club",
+    "city": "Cherkasy",
+    "games": 2,
+    "url": "https://emotion.games/ua/players/2354",
+    "strength": "club"
+   },
+   {
+    "fed": "fiim",
+    "id": "17622",
+    "nick": "Повидло",
+    "realName": "Максим Гнатишин",
+    "club": "Не входить до клубу",
+    "city": "Ванкувер, Канада",
+    "url": "https://fiim.world/user/17622/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "mafgame",
+    "id": "3205",
+    "nick": "Повидло",
+    "realName": "Максим",
+    "club": "Family Mafia Club",
+    "url": "https://mafgame.org/user/3205/view",
+    "strength": "club"
+   }
+  ],
+  "Пітон": [
+   {
+    "fed": "imafia",
+    "id": "886",
+    "nick": "Пітон",
+    "realName": "Щупак Роман",
+    "url": "https://imafia.org/u/886",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 85
+   },
+   {
+    "fed": "eg",
+    "id": "1000",
+    "nick": "Пітон",
+    "url": "https://emotion.games/ua/players/1000",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "5817",
+    "nick": "Пітон",
+    "realName": "Роман Щупак",
+    "club": "MAFIA YANTARNE CLUB",
+    "city": "Львів, Україна",
+    "url": "https://fiim.world/user/5817/show",
+    "strength": "nick"
+   }
+  ],
+  "Рауль": [
+   {
+    "fed": "imafia",
+    "id": "1205",
+    "nick": "Рауль",
+    "realName": "Малишев Михайло",
+    "url": "https://imafia.org/u/1205",
+    "strength": "nick",
+    "club": "Midnight Mafia",
+    "city": "Україна",
+    "games": 186
+   },
+   {
+    "fed": "imafia",
+    "id": "1093",
+    "nick": "Рауль",
+    "realName": "Гість",
+    "url": "https://imafia.org/u/1093",
+    "strength": "nick",
+    "club": "Midnight Mafia",
+    "city": "Європа",
+    "games": 0
+   },
+   {
+    "fed": "eg",
+    "id": "427",
+    "nick": "Рауль",
+    "club": "Family Mafia Club",
+    "city": "Cherkasy",
+    "games": 0,
+    "url": "https://emotion.games/ua/players/427",
+    "strength": "club"
+   },
+   {
+    "fed": "fiim",
+    "id": "8096",
+    "nick": "Рауль",
+    "realName": "Михаил Малышев",
+    "club": "Family Mafia Club",
+    "city": "Черкаси, Україна",
+    "url": "https://fiim.world/user/8096/show",
+    "strength": "club"
+   },
+   {
+    "fed": "mafgame",
+    "id": "46",
+    "nick": "Рауль",
+    "realName": "Misha",
+    "games": 5,
+    "url": "https://mafgame.org/user/46/view",
+    "strength": "nick"
+   }
+  ],
+  "Рембо": [
+   {
+    "fed": "imafia",
+    "id": "1759",
+    "nick": "Рембо",
+    "realName": "Ремба Єва",
+    "url": "https://imafia.org/u/1759",
+    "strength": "nick",
+    "club": "Big Ben Mafia Club",
+    "city": "Україна",
+    "games": 112
+   },
+   {
+    "fed": "eg",
+    "id": "103",
+    "nick": "Рембо",
+    "club": "Big Ben mafia club",
+    "url": "https://emotion.games/ua/players/103",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "16677",
+    "nick": "Рембо (Луцьк)",
+    "realName": "Ремба Єва",
+    "club": "Big Ben Mafia Club",
+    "city": "Луцк, Україна",
+    "url": "https://fiim.world/user/16677/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "7873",
+    "nick": "Рембо",
+    "realName": "no name no name",
+    "url": "https://fiim.world/user/7873/show",
+    "strength": "nick"
+   }
+  ],
+  "Ромашка": [
+   {
+    "fed": "imafia",
+    "id": "394",
+    "nick": "Ромашка",
+    "realName": "Ромашин Артём",
+    "url": "https://imafia.org/u/394",
+    "strength": "nick",
+    "club": "Мафия PRO",
+    "city": "Європа",
+    "games": 479
+   },
+   {
+    "fed": "fiim",
+    "id": "8218",
+    "nick": "Ромашка",
+    "realName": "Артем Ромашин",
+    "club": "Не входить до клубу",
+    "city": "Рига, Латвія",
+    "url": "https://fiim.world/user/8218/show",
+    "strength": "nick"
+   }
+  ],
+  "Ріелтор": [
+   {
+    "fed": "imafia",
+    "id": "1543",
+    "nick": "Ріелтор",
+    "realName": "Романюк Олександр",
+    "url": "https://imafia.org/u/1543",
+    "strength": "nick",
+    "club": "Coaliccia Mafia Club",
+    "city": "Україна",
+    "games": 25
+   }
+  ],
+  "Сайфер": [
+   {
+    "fed": "imafia",
+    "id": "1572",
+    "nick": "Сайфер",
+    "realName": "Киракосян Александр",
+    "url": "https://imafia.org/u/1572",
+    "strength": "nick",
+    "city": "Ізраїль",
+    "games": 439
+   },
+   {
+    "fed": "eg",
+    "id": "345",
+    "nick": "Сайфер",
+    "url": "https://emotion.games/ua/players/345",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "10939",
+    "nick": "Сайфер",
+    "realName": "Александр Киракосян",
+    "club": "Secret Mafia Club❓",
+    "city": "Хайфа, Ізраїль",
+    "url": "https://fiim.world/user/10939/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "mafgame",
+    "id": "370",
+    "nick": "Сайфер",
+    "realName": "Aleksandr Kirakosian",
+    "games": 3,
+    "url": "https://mafgame.org/user/370/view",
+    "strength": "nick"
+   }
+  ],
+  "Сакура": [
+   {
+    "fed": "imafia",
+    "id": "4587",
+    "nick": "Сакура",
+    "realName": "Абрамкіна Віта",
+    "url": "https://imafia.org/u/4587",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 12
+   },
+   {
+    "fed": "mafgame",
+    "id": "272",
+    "nick": "Сакура",
+    "realName": "Віта",
+    "games": 5,
+    "url": "https://mafgame.org/user/272/view",
+    "strength": "nick"
+   }
+  ],
+  "Север": [
+   {
+    "fed": "imafia",
+    "id": "1488",
+    "nick": "Север",
+    "realName": "Ричик Евгения",
+    "url": "https://imafia.org/u/1488",
+    "strength": "nick",
+    "city": "Європа",
+    "games": 0
+   },
+   {
+    "fed": "imafia",
+    "id": "3137",
+    "nick": "СЕВЕР",
+    "realName": "Руды Аляксандар",
+    "url": "https://imafia.org/u/3137",
+    "strength": "nick",
+    "city": "Нейтральний регіон",
+    "games": 18
+   },
+   {
+    "fed": "eg",
+    "id": "856",
+    "nick": "Север",
+    "url": "https://emotion.games/ua/players/856",
+    "strength": "nick"
+   },
+   {
+    "fed": "mafgame",
+    "id": "10",
+    "nick": "Север",
+    "realName": "Амата",
+    "games": 5,
+    "url": "https://mafgame.org/user/10/view",
+    "strength": "nick"
+   }
+  ],
+  "Сирник": [
+   {
+    "fed": "imafia",
+    "id": "1343",
+    "nick": "Сирник",
+    "realName": "Озарко Іван",
+    "url": "https://imafia.org/u/1343",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 0
+   },
+   {
+    "fed": "eg",
+    "id": "1453",
+    "nick": "Сирник",
+    "club": "Family Mafia Club",
+    "city": "Cherkasy",
+    "games": 3,
+    "url": "https://emotion.games/ua/players/1453",
+    "strength": "club"
+   }
+  ],
+  "Скорпіон": [
+   {
+    "fed": "imafia",
+    "id": "2253",
+    "nick": "Скорпіон",
+    "realName": "Антонян Анатолій",
+    "url": "https://imafia.org/u/2253",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 28
+   },
+   {
+    "fed": "eg",
+    "id": "95",
+    "nick": "Скорпіон",
+    "club": "Rocky Mafia Club",
+    "url": "https://emotion.games/ua/players/95",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "17090",
+    "nick": "Скорпіон",
+    "realName": "Анатолій",
+    "club": "Rocky Mafia Club",
+    "city": "Вінниця, Україна",
+    "url": "https://fiim.world/user/17090/show",
+    "strength": "nick"
+   }
+  ],
+  "Скоф": [
+   {
+    "fed": "imafia",
+    "id": "284",
+    "nick": "СКОФ",
+    "realName": "Власенко Віктор",
+    "url": "https://imafia.org/u/284",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 40
+   },
+   {
+    "fed": "fiim",
+    "id": "13504",
+    "nick": "СКОФ",
+    "realName": "Віктор Власенко",
+    "club": "BlackBerry Mafia Club",
+    "city": "Львів, Україна",
+    "url": "https://fiim.world/user/13504/show",
+    "strength": "nick"
+   }
+  ],
+  "Смайл": [
+   {
+    "fed": "imafia",
+    "id": "1611",
+    "nick": "Смайл",
+    "realName": "Иваненко Дмитрий",
+    "url": "https://imafia.org/u/1611",
+    "strength": "nick",
+    "club": "Cologne Mafia Club",
+    "city": "Європа",
+    "games": 32
+   },
+   {
+    "fed": "fiim",
+    "id": "5360",
+    "nick": "Смайл",
+    "realName": "Андрей Штундер",
+    "url": "https://fiim.world/user/5360/show",
+    "strength": "nick"
+   }
+  ],
+  "Сова": [
+   {
+    "fed": "imafia",
+    "id": "525",
+    "nick": "Сова",
+    "realName": "Мориков Андрей",
+    "url": "https://imafia.org/u/525",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 8
+   },
+   {
+    "fed": "eg",
+    "id": "884",
+    "nick": "Сова",
+    "url": "https://emotion.games/ua/players/884",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "3040",
+    "nick": "Сова",
+    "realName": "Алексей Чистяков",
+    "club": "Mafia Club Odesa",
+    "city": "Одеса, Україна",
+    "url": "https://fiim.world/user/3040/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "15583",
+    "nick": "Сoва",
+    "realName": "Настасья",
+    "club": "WhiteNights⭐",
+    "city": "Кармиэль, Ізраїль",
+    "url": "https://fiim.world/user/15583/show",
+    "strength": "nick"
+   }
+  ],
+  "Соловей": [
+   {
+    "fed": "imafia",
+    "id": "837",
+    "nick": "Соловей",
+    "realName": "Ткачук Карнела",
+    "url": "https://imafia.org/u/837",
+    "strength": "nick",
+    "club": "CHAYKA MAFIA CLUB",
+    "city": "Україна",
+    "games": 0
+   },
+   {
+    "fed": "fiim",
+    "id": "2713",
+    "nick": "Соловей",
+    "realName": "Соловей",
+    "url": "https://fiim.world/user/2713/show",
+    "strength": "nick"
+   }
+  ],
+  "Старый": [
+   {
+    "fed": "imafia",
+    "id": "2444",
+    "nick": "Старый",
+    "realName": "Никакой Слава",
+    "url": "https://imafia.org/u/2444",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 0
+   }
+  ],
+  "Точка": [
+   {
+    "fed": "imafia",
+    "id": "682",
+    "nick": "Точка",
+    "realName": "Кулєшова Любов",
+    "url": "https://imafia.org/u/682",
+    "strength": "nick",
+    "club": "CHAYKA MAFIA CLUB",
+    "city": "Україна",
+    "games": 257
+   },
+   {
+    "fed": "eg",
+    "id": "51",
+    "nick": "Точка",
+    "club": "Soprano Mafia Club",
+    "url": "https://emotion.games/ua/players/51",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "1446",
+    "nick": "Точка",
+    "realName": "Антон Шмелёв",
+    "url": "https://fiim.world/user/1446/show",
+    "strength": "nick"
+   }
+  ],
+  "Турецький": [
+   {
+    "fed": "imafia",
+    "id": "2239",
+    "nick": "Турецький",
+    "realName": "Богдан Максим",
+    "url": "https://imafia.org/u/2239",
+    "strength": "nick",
+    "club": "Mafia Club Odesa",
+    "city": "Україна",
+    "games": 59
+   },
+   {
+    "fed": "eg",
+    "id": "57",
+    "nick": "Турецький",
+    "club": "Odesa Mafia Club",
+    "url": "https://emotion.games/ua/players/57",
+    "strength": "nick"
+   },
+   {
+    "fed": "mafgame",
+    "id": "886",
+    "nick": "Турецький",
+    "realName": "Maksym",
+    "games": 1,
+    "url": "https://mafgame.org/user/886/view",
+    "strength": "nick"
+   }
+  ],
+  "Тінь": [
+   {
+    "fed": "imafia",
+    "id": "2266",
+    "nick": "Тінь",
+    "realName": "Ivanov Uevgeniy",
+    "url": "https://imafia.org/u/2266",
+    "strength": "nick",
+    "club": "CAPONE MAFIA CLUB",
+    "city": "Україна",
+    "games": 0
+   }
+  ],
+  "Фантом": [
+   {
+    "fed": "imafia",
+    "id": "2315",
+    "nick": "Фантом",
+    "realName": "Савченко Антон",
+    "url": "https://imafia.org/u/2315",
+    "strength": "nick",
+    "club": "Mafia Soul’s City",
+    "city": "Європа",
+    "games": 0
+   },
+   {
+    "fed": "fiim",
+    "id": "6130",
+    "nick": "Фантом",
+    "realName": "Денис Владимирович",
+    "club": "Не входить до клубу",
+    "city": "..., ...",
+    "url": "https://fiim.world/user/6130/show",
+    "strength": "nick"
+   }
+  ],
+  "Фауст": [
+   {
+    "fed": "imafia",
+    "id": "2225",
+    "nick": "Фауст",
+    "realName": "Литюга Олег",
+    "url": "https://imafia.org/u/2225",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 94
+   },
+   {
+    "fed": "eg",
+    "id": "319",
+    "nick": "Фауст",
+    "club": "Soprano Mafia Club",
+    "url": "https://emotion.games/ua/players/319",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "914",
+    "nick": "Фауст",
+    "realName": "Тарас Кульчицький",
+    "url": "https://fiim.world/user/914/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "324",
+    "nick": "Фауст",
+    "realName": "Василь Савицький",
+    "url": "https://fiim.world/user/324/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "mafgame",
+    "id": "925",
+    "nick": "Фауст",
+    "realName": "Олег Литюга",
+    "games": 5,
+    "url": "https://mafgame.org/user/925/view",
+    "strength": "nick"
+   }
+  ],
+  "Фенікс": [
+   {
+    "fed": "imafia",
+    "id": "1535",
+    "nick": "Фенікс",
+    "realName": "Ковальчук Андрій",
+    "url": "https://imafia.org/u/1535",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 50
+   },
+   {
+    "fed": "eg",
+    "id": "298",
+    "nick": "Фенікс",
+    "url": "https://emotion.games/ua/players/298",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "2575",
+    "nick": "Фенікс",
+    "realName": "Андрій Ковальчук",
+    "club": "Не входить до клубу",
+    "city": "Рівне, Україна",
+    "url": "https://fiim.world/user/2575/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "mafgame",
+    "id": "2795",
+    "nick": "Фенікс",
+    "realName": "Pasha",
+    "games": 2,
+    "url": "https://mafgame.org/user/2795/view",
+    "strength": "nick"
+   }
+  ],
+  "Фиалка": [
+   {
+    "fed": "imafia",
+    "id": "312",
+    "nick": "Фиалка",
+    "realName": "Вагнер Ксения",
+    "url": "https://imafia.org/u/312",
+    "strength": "nick",
+    "city": "Європа",
+    "games": 0
+   },
+   {
+    "fed": "fiim",
+    "id": "3102",
+    "nick": "Фиалка",
+    "realName": "Гаухар Баженова",
+    "club": "Не входить до клубу",
+    "city": "Астана, Казахстан",
+    "url": "https://fiim.world/user/3102/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "467",
+    "nick": "Фиалка",
+    "realName": "Наталья Дубровина",
+    "url": "https://fiim.world/user/467/show",
+    "strength": "nick"
+   }
+  ],
+  "Фиона": [
+   {
+    "fed": "imafia",
+    "id": "2580",
+    "nick": "Фиона",
+    "realName": "Фиона Оксана",
+    "url": "https://imafia.org/u/2580",
+    "strength": "nick",
+    "club": "Vendetta Mafia Club",
+    "city": "Європа",
+    "games": 0
+   },
+   {
+    "fed": "mafgame",
+    "id": "1822",
+    "nick": "Фиона",
+    "realName": "Нурай",
+    "games": 1,
+    "url": "https://mafgame.org/user/1822/view",
+    "strength": "nick"
+   }
+  ],
+  "Фурія": [
+   {
+    "fed": "imafia",
+    "id": "4027",
+    "nick": "Фурія",
+    "realName": "Тихонова Марта",
+    "url": "https://imafia.org/u/4027",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 0
+   },
+   {
+    "fed": "eg",
+    "id": "984",
+    "nick": "Фурія",
+    "club": "Family Mafia Club",
+    "city": "Cherkasy",
+    "games": 5,
+    "url": "https://emotion.games/ua/players/984",
+    "strength": "club"
+   }
+  ],
+  "Хаш": [
+   {
+    "fed": "imafia",
+    "id": "4381",
+    "nick": "Хаш",
+    "realName": "Ніколюк Ігор",
+    "url": "https://imafia.org/u/4381",
+    "strength": "nick",
+    "club": "CHAYKA MAFIA CLUB",
+    "city": "Україна",
+    "games": 0
+   }
+  ],
+  "Цезарь": [
+   {
+    "fed": "imafia",
+    "id": "3162",
+    "nick": "Цезарь",
+    "realName": "Данченко Диана",
+    "url": "https://imafia.org/u/3162",
+    "strength": "nick",
+    "club": "Mafia Bayreuth",
+    "city": "Європа",
+    "games": 8
+   },
+   {
+    "fed": "fiim",
+    "id": "9777",
+    "nick": "Цезарь",
+    "realName": "Эдуард Якимов",
+    "club": "Большая Игра",
+    "city": "Дніпро, Україна",
+    "url": "https://fiim.world/user/9777/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "2925",
+    "nick": "Цезарь",
+    "realName": "Эдуард Якимов",
+    "url": "https://fiim.world/user/2925/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "4470",
+    "nick": "Цезарь",
+    "realName": "Ильяс Валеев",
+    "club": "Не входить до клубу",
+    "city": "..., ...",
+    "url": "https://fiim.world/user/4470/show",
+    "strength": "nick"
+   }
+  ],
+  "Чайка": [
+   {
+    "fed": "imafia",
+    "id": "556",
+    "nick": "Чайка",
+    "realName": "Чайкина Любовь",
+    "url": "https://imafia.org/u/556",
+    "strength": "nick",
+    "city": "Ізраїль",
+    "games": 14
+   },
+   {
+    "fed": "imafia",
+    "id": "838",
+    "nick": "Чайка",
+    "realName": "Мельник Марія",
+    "url": "https://imafia.org/u/838",
+    "strength": "nick",
+    "club": "Sicilia Mafia Club",
+    "city": "Україна",
+    "games": 0
+   },
+   {
+    "fed": "fiim",
+    "id": "14566",
+    "nick": "Sakura(Чайка)",
+    "realName": "Кирильчук Юлия",
+    "club": "Chayka Mafia Club",
+    "city": "Київ, Україна",
+    "url": "https://fiim.world/user/14566/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "5856",
+    "nick": "Чайка",
+    "realName": "Полина Власенко",
+    "club": "Не входить до клубу",
+    "city": "Запоріжжя, Україна",
+    "url": "https://fiim.world/user/5856/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "3871",
+    "nick": "Чайка",
+    "realName": "Даша Митрофанова",
+    "club": "Не входить до клубу",
+    "city": "..., ...",
+    "url": "https://fiim.world/user/3871/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "mafgame",
+    "id": "362",
+    "nick": "Чайка",
+    "realName": "Liubov",
+    "games": 1,
+    "url": "https://mafgame.org/user/362/view",
+    "strength": "nick"
+   }
+  ],
+  "Чешир": [
+   {
+    "fed": "imafia",
+    "id": "1066",
+    "nick": "Чешир",
+    "realName": "Yareha Veniyamin",
+    "url": "https://imafia.org/u/1066",
+    "strength": "nick",
+    "city": "Європа",
+    "games": 9
+   },
+   {
+    "fed": "imafia",
+    "id": "1089",
+    "nick": "Чешир",
+    "realName": "Байлема Илья",
+    "url": "https://imafia.org/u/1089",
+    "strength": "nick",
+    "club": "Alibi Mafia Club",
+    "city": "Європа",
+    "games": 31
+   },
+   {
+    "fed": "imafia",
+    "id": "2434",
+    "nick": "Чешир",
+    "realName": "Долгіх Родіон",
+    "url": "https://imafia.org/u/2434",
+    "strength": "nick",
+    "city": "Європа",
+    "games": 0
+   },
+   {
+    "fed": "fiim",
+    "id": "15760",
+    "nick": "Чешир (Краков)",
+    "realName": "Г-жа Чешир",
+    "club": "Не входить до клубу",
+    "city": "Краків, Польща",
+    "url": "https://fiim.world/user/15760/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "6539",
+    "nick": "Чешир",
+    "realName": "Вениамин Ерега",
+    "club": "Не входить до клубу",
+    "city": "Витебск, Білорусь",
+    "url": "https://fiim.world/user/6539/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "mafgame",
+    "id": "712",
+    "nick": "Чешир",
+    "realName": "Илья Байлема",
+    "games": 1,
+    "url": "https://mafgame.org/user/712/view",
+    "strength": "nick"
+   }
+  ],
+  "Чорничка": [
+   {
+    "fed": "imafia",
+    "id": "2328",
+    "nick": "Чорничка",
+    "realName": "Каменська Ангеліна",
+    "url": "https://imafia.org/u/2328",
+    "strength": "nick",
+    "club": "Paramount Mafia Club",
+    "city": "Україна",
+    "games": 89
+   },
+   {
+    "fed": "eg",
+    "id": "2280",
+    "nick": "Чорничка",
+    "club": "BlackBerry mafia club",
+    "url": "https://emotion.games/ua/players/2280",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "14166",
+    "nick": "Чорничка",
+    "realName": "Anji",
+    "club": "BlackBerry Mafia Club",
+    "city": "Львів, Україна",
+    "url": "https://fiim.world/user/14166/show",
+    "strength": "nick"
+   }
+  ],
+  "Шива": [
+   {
+    "fed": "imafia",
+    "id": "2658",
+    "nick": "Шива",
+    "realName": "Шевчук Інна",
+    "url": "https://imafia.org/u/2658",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 44
+   },
+   {
+    "fed": "eg",
+    "id": "94",
+    "nick": "Шива",
+    "club": "Rocky Mafia Club",
+    "url": "https://emotion.games/ua/players/94",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "16678",
+    "nick": "Шива(vn)",
+    "realName": "Інна",
+    "club": "Vinnytsia Mafia Club",
+    "city": "Вінниця, Україна",
+    "url": "https://fiim.world/user/16678/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "1170",
+    "nick": "Шива",
+    "realName": "Лейсан Валиуллина",
+    "url": "https://fiim.world/user/1170/show",
+    "strength": "nick"
+   }
+  ],
+  "Шпрот": [
+   {
+    "fed": "imafia",
+    "id": "1042",
+    "nick": "Шпрот",
+    "realName": "Пасько Вероніка",
+    "url": "https://imafia.org/u/1042",
+    "strength": "nick",
+    "club": "Mafia Club Odesa",
+    "city": "Україна",
+    "games": 304
+   },
+   {
+    "fed": "eg",
+    "id": "349",
+    "nick": "Шпрот",
+    "club": "Odesa Mafia Club",
+    "url": "https://emotion.games/ua/players/349",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "4998",
+    "nick": "Шпрот",
+    "realName": "Ника Пасько",
+    "club": "Mafia Club Odesa",
+    "city": "Полтава, Україна",
+    "url": "https://fiim.world/user/4998/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "mafgame",
+    "id": "390",
+    "nick": "Шпрот",
+    "realName": "Ніка",
+    "games": 1,
+    "url": "https://mafgame.org/user/390/view",
+    "strength": "nick"
+   }
+  ],
+  "Юрист": [
+   {
+    "fed": "imafia",
+    "id": "1713",
+    "nick": "Юрист",
+    "realName": "Гість",
+    "url": "https://imafia.org/u/1713",
+    "strength": "nick",
+    "city": "Європа",
+    "games": 0
+   },
+   {
+    "fed": "eg",
+    "id": "613",
+    "nick": "Юрист",
+    "url": "https://emotion.games/ua/players/613",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "8095",
+    "nick": "Юрист",
+    "realName": "Дмитрий Гаврилов",
+    "club": "Не входить до клубу",
+    "city": "Черкаси, Україна",
+    "url": "https://fiim.world/user/8095/show",
+    "strength": "club"
+   },
+   {
+    "fed": "fiim",
+    "id": "9662",
+    "nick": "Юрист",
+    "realName": "Азамат Валиходжаев",
+    "url": "https://fiim.world/user/9662/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "4597",
+    "nick": "Юрист",
+    "realName": "Артем Козакевич",
+    "club": "Не входить до клубу",
+    "city": "Полоцк, Білорусь",
+    "url": "https://fiim.world/user/4597/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "2338",
+    "nick": "Юрист",
+    "realName": "Виктор Белоглазов",
+    "club": "Не входить до клубу",
+    "city": "..., ...",
+    "url": "https://fiim.world/user/2338/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "4499",
+    "nick": "Юрист",
+    "realName": "Богдан Мирошник",
+    "club": "Не входить до клубу",
+    "city": "Кропивницький, Україна",
+    "url": "https://fiim.world/user/4499/show",
+    "strength": "nick"
+   }
+  ],
+  "Яркий": [
+   {
+    "fed": "imafia",
+    "id": "1088",
+    "nick": "Яркий",
+    "realName": "Соколов Игорь",
+    "url": "https://imafia.org/u/1088",
+    "strength": "nick",
+    "city": "Європа",
+    "games": 0
+   },
+   {
+    "fed": "eg",
+    "id": "1046",
+    "nick": "Яркий",
+    "club": "Mafstat BCN",
+    "url": "https://emotion.games/ua/players/1046",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "11595",
+    "nick": "Яркий",
+    "realName": "Игорь Соколов",
+    "club": "MAFSTAT",
+    "city": "Севастополь, Україна",
+    "url": "https://fiim.world/user/11595/show",
+    "strength": "nick"
+   }
+  ],
+  "Ярл": [
+   {
+    "fed": "imafia",
+    "id": "1725",
+    "nick": "Ярл",
+    "realName": "Лазарь Ярослав",
+    "url": "https://imafia.org/u/1725",
+    "strength": "nick",
+    "club": "Mafia Club Odesa",
+    "city": "Україна",
+    "games": 44
+   },
+   {
+    "fed": "fiim",
+    "id": "12452",
+    "nick": "Ярл",
+    "realName": "Ярослав",
+    "club": "Mafia Club Odesa",
+    "city": "Одеса, Україна",
+    "url": "https://fiim.world/user/12452/show",
+    "strength": "nick"
+   }
+  ],
+  "Gold": [
+   {
+    "fed": "imafia",
+    "id": "848",
+    "nick": "Gold",
+    "realName": "Lys Vladislav",
+    "url": "https://imafia.org/u/848",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 0
+   },
+   {
+    "fed": "fiim",
+    "id": "14836",
+    "nick": "Gold (Poltava)",
+    "realName": "Анна Аброян",
+    "club": "THE POLTAVA MAFIA CLUB",
+    "city": "Полтава, Україна",
+    "url": "https://fiim.world/user/14836/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "mafgame",
+    "id": "1580",
+    "nick": "Gold",
+    "realName": "Natalie",
+    "games": 3,
+    "url": "https://mafgame.org/user/1580/view",
+    "strength": "nick"
+   }
+  ],
+  "Афіна": [
+   {
+    "fed": "imafia",
+    "id": "2895",
+    "nick": "Афіна",
+    "realName": "Ковтун Тетяна",
+    "url": "https://imafia.org/u/2895",
+    "strength": "nick",
+    "club": "CHAYKA MAFIA CLUB",
+    "city": "Україна",
+    "games": 0
+   }
+  ],
+  "Мері": [
+   {
+    "fed": "imafia",
+    "id": "1257",
+    "nick": "Мері",
+    "realName": "Сахарук Ірина",
+    "url": "https://imafia.org/u/1257",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 86
+   }
+  ],
+  "Француз": [
+   {
+    "fed": "imafia",
+    "id": "998",
+    "nick": "Француз",
+    "realName": "Нарепеха Дима",
+    "url": "https://imafia.org/u/998",
+    "strength": "nick",
+    "club": "PUDRA Mafia Club",
+    "city": "Європа",
+    "games": 9
+   },
+   {
+    "fed": "imafia",
+    "id": "3083",
+    "nick": "Француз",
+    "realName": "Гамрецький Богдан",
+    "url": "https://imafia.org/u/3083",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 0
+   },
+   {
+    "fed": "imafia",
+    "id": "5139",
+    "nick": "Француз",
+    "realName": "Нінічук Киріл",
+    "url": "https://imafia.org/u/5139",
+    "strength": "nick",
+    "club": "CHE Mafia Club",
+    "city": "Україна",
+    "games": 0
+   },
+   {
+    "fed": "eg",
+    "id": "1015",
+    "nick": "Француз",
+    "club": "Mafia Universe",
+    "url": "https://emotion.games/ua/players/1015",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "15318",
+    "nick": "Француз",
+    "realName": "Александр",
+    "club": "Маф-клуб \"ИМПЕРИЯ АЛМАТЫ\"",
+    "city": "Алматы, Казахстан",
+    "url": "https://fiim.world/user/15318/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "3966",
+    "nick": "Француз",
+    "realName": "Николай Косульников",
+    "url": "https://fiim.world/user/3966/show",
+    "strength": "nick"
+   }
+  ],
+  "Dantes": [
+   {
+    "fed": "imafia",
+    "id": "2001",
+    "nick": "Dantes",
+    "realName": "Stetskiv Oleh",
+    "url": "https://imafia.org/u/2001",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 631
+   },
+   {
+    "fed": "eg",
+    "id": "547",
+    "nick": "Dantes",
+    "club": "Soprano Mafia Club",
+    "url": "https://emotion.games/ua/players/547",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "16345",
+    "nick": "Dantes",
+    "realName": "Oleg Stetskiv",
+    "club": "Chayka Mafia Club",
+    "city": "Київ, Україна",
+    "url": "https://fiim.world/user/16345/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "mafgame",
+    "id": "895",
+    "nick": "Dantes",
+    "realName": "Oleh",
+    "games": 2,
+    "url": "https://mafgame.org/user/895/view",
+    "strength": "nick"
+   }
+  ],
+  "Лісабон": [
+   {
+    "fed": "imafia",
+    "id": "4494",
+    "nick": "Лісабон",
+    "realName": "Возьний Олег",
+    "url": "https://imafia.org/u/4494",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 10
+   }
+  ],
+  "Жнець": [
+   {
+    "fed": "imafia",
+    "id": "4319",
+    "nick": "Жнець",
+    "realName": "Якимчук Валентин",
+    "url": "https://imafia.org/u/4319",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 0
+   },
+   {
+    "fed": "eg",
+    "id": "2018",
+    "nick": "Жнець",
+    "club": "Family Mafia Club",
+    "city": "Cherkasy",
+    "games": 0,
+    "url": "https://emotion.games/ua/players/2018",
+    "strength": "club"
+   }
+  ],
+  "Пустой": [
+   {
+    "fed": "imafia",
+    "id": "1435",
+    "nick": "Пустой",
+    "realName": "Кутиков Антон",
+    "url": "https://imafia.org/u/1435",
+    "strength": "nick",
+    "city": "Нейтральний регіон",
+    "games": 71
+   },
+   {
+    "fed": "eg",
+    "id": "1669",
+    "nick": "Пустой",
+    "club": "Family Mafia Club",
+    "city": "Cherkasy",
+    "games": 12,
+    "url": "https://emotion.games/ua/players/1669",
+    "strength": "club"
+   }
+  ],
+  "Doctor Stoun": [
+   {
+    "fed": "imafia",
+    "id": "2184",
+    "nick": "Doctor Stoun",
+    "realName": "Сорвін Ярослав",
+    "url": "https://imafia.org/u/2184",
+    "strength": "nick",
+    "club": "CAPONE MAFIA CLUB",
+    "city": "Україна",
+    "games": 36
+   },
+   {
+    "fed": "eg",
+    "id": "1617",
+    "nick": "Doctor Stoun",
+    "club": "Capone Mafia Club",
+    "url": "https://emotion.games/ua/players/1617",
+    "strength": "nick"
+   }
+  ],
+  "Стилістка": [
+   {
+    "fed": "imafia",
+    "id": "1080",
+    "nick": "Стилістка",
+    "realName": "Безугла Тетяна",
+    "url": "https://imafia.org/u/1080",
+    "strength": "nick",
+    "club": "Sicilia Mafia Club",
+    "city": "Україна",
+    "games": 43
+   },
+   {
+    "fed": "eg",
+    "id": "532",
+    "nick": "Стилістка",
+    "club": "Sicilia Mafia Club",
+    "url": "https://emotion.games/ua/players/532",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "16623",
+    "nick": "Стилістка",
+    "realName": "Тетяна",
+    "club": "Не входить до клубу",
+    "city": "Харків, Україна",
+    "url": "https://fiim.world/user/16623/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "mafgame",
+    "id": "1028",
+    "nick": "Стилістка",
+    "realName": "Тетяна Безугла",
+    "games": 1,
+    "url": "https://mafgame.org/user/1028/view",
+    "strength": "nick"
+   }
+  ],
+  "Новичок": [
+   {
+    "fed": "imafia",
+    "id": "2272",
+    "nick": "Новичок",
+    "realName": "Ркоян Юрій",
+    "url": "https://imafia.org/u/2272",
+    "strength": "nick",
+    "club": "Big Game Mafia Club",
+    "city": "Україна",
+    "games": 420
+   },
+   {
+    "fed": "imafia",
+    "id": "1480",
+    "nick": "Новичок",
+    "realName": "Скаковский Глеб",
+    "url": "https://imafia.org/u/1480",
+    "strength": "nick",
+    "club": "PUDRA Mafia Club",
+    "city": "Європа",
+    "games": 0
+   },
+   {
+    "fed": "imafia",
+    "id": "3269",
+    "nick": "Новичок(Lighthouse)",
+    "realName": "Кантыш Виталий",
+    "url": "https://imafia.org/u/3269",
+    "strength": "nick",
+    "club": "Lighthouse",
+    "city": "Європа",
+    "games": 5
+   },
+   {
+    "fed": "eg",
+    "id": "39",
+    "nick": "Новичок",
+    "url": "https://emotion.games/ua/players/39",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "7897",
+    "nick": "Новичок",
+    "realName": "Даниил Агапеев",
+    "club": "Не входить до клубу",
+    "city": "Симферополь, Україна",
+    "url": "https://fiim.world/user/7897/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "6140",
+    "nick": "Новичок",
+    "realName": "Коля Геворгян",
+    "club": "Не входить до клубу",
+    "city": "..., ...",
+    "url": "https://fiim.world/user/6140/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "5822",
+    "nick": "Новичок",
+    "realName": "Болеслав Малиновский",
+    "club": "Не входить до клубу",
+    "city": "Київ, Україна",
+    "url": "https://fiim.world/user/5822/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "6056",
+    "nick": "Новичок",
+    "realName": "- -",
+    "url": "https://fiim.world/user/6056/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "mafgame",
+    "id": "862",
+    "nick": "Новичок",
+    "realName": "Юрий Ркоян",
+    "games": 1,
+    "url": "https://mafgame.org/user/862/view",
+    "strength": "nick"
+   }
+  ],
+  "Мельник": [
+   {
+    "fed": "imafia",
+    "id": "129",
+    "nick": "Мельник",
+    "realName": "Мельник Максим",
+    "url": "https://imafia.org/u/129",
+    "strength": "nick",
+    "club": "Big Game Mafia Club",
+    "city": "Україна",
+    "games": 181
+   },
+   {
+    "fed": "eg",
+    "id": "888",
+    "nick": "Мельник",
+    "url": "https://emotion.games/ua/players/888",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "11632",
+    "nick": "Мельник",
+    "realName": "Максим Мельник",
+    "club": "Большая Игра",
+    "city": "Харків, Україна",
+    "url": "https://fiim.world/user/11632/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "mafgame",
+    "id": "334",
+    "nick": "Мельник",
+    "realName": "Мельник",
+    "games": 2,
+    "url": "https://mafgame.org/user/334/view",
+    "strength": "nick"
+   }
+  ],
+  "Кубик": [
+   {
+    "fed": "imafia",
+    "id": "366",
+    "nick": "Кубик",
+    "realName": "Сырый Артём",
+    "url": "https://imafia.org/u/366",
+    "strength": "nick",
+    "club": "CAPONE MAFIA CLUB",
+    "city": "Україна",
+    "games": 315
+   },
+   {
+    "fed": "eg",
+    "id": "217",
+    "nick": "Кубик",
+    "club": "Capone Mafia Club",
+    "url": "https://emotion.games/ua/players/217",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "15872",
+    "nick": "Kубик",
+    "realName": "Артем Сырый",
+    "club": "Capone Mafia Club",
+    "city": "Кременчук, Україна",
+    "url": "https://fiim.world/user/15872/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "214",
+    "nick": "Кубик",
+    "realName": "Паша Уайт",
+    "url": "https://fiim.world/user/214/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "mafgame",
+    "id": "303",
+    "nick": "Кубик",
+    "realName": "Артем",
+    "games": 1,
+    "url": "https://mafgame.org/user/303/view",
+    "strength": "nick"
+   }
+  ],
+  "Токар": [
+   {
+    "fed": "imafia",
+    "id": "3526",
+    "nick": "Токар",
+    "realName": "Токарєв Ілля",
+    "url": "https://imafia.org/u/3526",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 63
+   },
+   {
+    "fed": "eg",
+    "id": "407",
+    "nick": "Токар",
+    "club": "KropMafiaClub",
+    "url": "https://emotion.games/ua/players/407",
+    "strength": "nick"
+   }
+  ],
+  "Официант": [
+   {
+    "fed": "imafia",
+    "id": "3516",
+    "nick": "Официант",
+    "realName": "Суницкий Максим",
+    "url": "https://imafia.org/u/3516",
+    "strength": "nick",
+    "city": "Європа",
+    "games": 51
+   },
+   {
+    "fed": "eg",
+    "id": "164",
+    "nick": "Официант",
+    "club": "True Story",
+    "url": "https://emotion.games/ua/players/164",
+    "strength": "nick"
+   },
+   {
+    "fed": "eg",
+    "id": "1258",
+    "nick": "Официант",
+    "club": "Sicilia Mafia Club",
+    "url": "https://emotion.games/ua/players/1258",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "15338",
+    "nick": "Официант",
+    "realName": "Максим",
+    "club": "Freedom",
+    "city": "Маріуполь, Україна",
+    "url": "https://fiim.world/user/15338/show",
+    "strength": "nick"
+   }
+  ],
+  "Шахіст": [
+   {
+    "fed": "imafia",
+    "id": "2462",
+    "nick": "Шахіст",
+    "realName": "Трохимишин Сергій",
+    "url": "https://imafia.org/u/2462",
+    "strength": "nick",
+    "club": "Noir Mafia Club",
+    "city": "Україна",
+    "games": 0
+   },
+   {
+    "fed": "fiim",
+    "id": "14615",
+    "nick": "Шахіст",
+    "realName": "Сергій Трохимишин",
+    "club": "Zhytomyr Mafia Club Noir",
+    "city": "Житомир, Україна",
+    "url": "https://fiim.world/user/14615/show",
+    "strength": "nick"
+   }
+  ],
+  "..": [
+   {
+    "fed": "imafia",
+    "id": "5529",
+    "nick": "..",
+    "realName": ". .",
+    "url": "https://imafia.org/u/5529",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 0
+   }
+  ],
+  "Кіт": [
+   {
+    "fed": "imafia",
+    "id": "1282",
+    "nick": "Кіт",
+    "realName": "Васильєв Дмитро",
+    "url": "https://imafia.org/u/1282",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 40
+   },
+   {
+    "fed": "imafia",
+    "id": "3580",
+    "nick": "Кіт",
+    "realName": "Кот Дмитро",
+    "url": "https://imafia.org/u/3580",
+    "strength": "nick",
+    "club": "Чорна ніч, червоний день",
+    "city": "Європа",
+    "games": 14
+   },
+   {
+    "fed": "fiim",
+    "id": "16459",
+    "nick": "Kіт",
+    "realName": "Дмитро",
+    "club": "Capone Mafia Club",
+    "city": "Кременчук, Україна",
+    "url": "https://fiim.world/user/16459/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "263",
+    "nick": "Кіт",
+    "realName": "Роман Ступ'як",
+    "url": "https://fiim.world/user/263/show",
+    "strength": "nick"
+   }
+  ],
+  "Рейн": [
+   {
+    "fed": "imafia",
+    "id": "1636",
+    "nick": "Рейн",
+    "realName": "Райцес Ольга",
+    "url": "https://imafia.org/u/1636",
+    "strength": "nick",
+    "city": "Європа",
+    "games": 0
+   }
+  ],
+  "Марфа": [
+   {
+    "fed": "imafia",
+    "id": "4194",
+    "nick": "Марфа",
+    "realName": "Савчук Олена",
+    "url": "https://imafia.org/u/4194",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 0
+   },
+   {
+    "fed": "fiim",
+    "id": "5284",
+    "nick": "Марфа",
+    "realName": "Елена Орлова",
+    "club": "Red Black Family Baku",
+    "city": "Минск, Білорусь",
+    "url": "https://fiim.world/user/5284/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "1408",
+    "nick": "Марфа",
+    "realName": "Мария Болкунова",
+    "url": "https://fiim.world/user/1408/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "10269",
+    "nick": "Марфа",
+    "realName": "Елена Орлова",
+    "club": "Не входить до клубу",
+    "city": "Минск, Білорусь",
+    "url": "https://fiim.world/user/10269/show",
+    "strength": "nick"
+   }
+  ],
+  "Франко": [
+   {
+    "fed": "imafia",
+    "id": "5506",
+    "nick": "Франко",
+    "realName": "Antoniuk Andrii",
+    "url": "https://imafia.org/u/5506",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 23
+   }
+  ],
+  "Роза": [
+   {
+    "fed": "imafia",
+    "id": "502",
+    "nick": "Роза",
+    "realName": "Гість",
+    "url": "https://imafia.org/u/502",
+    "strength": "nick",
+    "club": "Мафия PRO",
+    "city": "Європа",
+    "games": 0
+   }
+  ],
+  "Анаель": [
+   {
+    "fed": "imafia",
+    "id": "4314",
+    "nick": "Анаель",
+    "realName": "Мухамедзянова Любов",
+    "url": "https://imafia.org/u/4314",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 0
+   }
+  ],
+  "Zippo": [
+   {
+    "fed": "imafia",
+    "id": "1966",
+    "nick": "Zippo",
+    "realName": "Пашкова Ірина",
+    "url": "https://imafia.org/u/1966",
+    "strength": "nick",
+    "club": "Kryvyi Rih Mafia Club",
+    "city": "Україна",
+    "games": 0
+   },
+   {
+    "fed": "fiim",
+    "id": "13283",
+    "nick": "Zippo",
+    "realName": "Ирина",
+    "url": "https://fiim.world/user/13283/show",
+    "strength": "nick"
+   }
+  ],
+  "Кудря": [
+   {
+    "fed": "imafia",
+    "id": "402",
+    "nick": "Кудря",
+    "realName": "PLOKHIKH IRYNA",
+    "url": "https://imafia.org/u/402",
+    "strength": "nick",
+    "city": "Європа",
+    "games": 28
+   }
+  ],
+  "Ciraptor": [
+   {
+    "fed": "imafia",
+    "id": "3594",
+    "nick": "Ciraptor",
+    "realName": "Рупп Крістіна",
+    "url": "https://imafia.org/u/3594",
+    "strength": "nick",
+    "club": "Big Ben Mafia Club",
+    "city": "Україна",
+    "games": 185
+   },
+   {
+    "fed": "eg",
+    "id": "158",
+    "nick": "Ciraptor",
+    "club": "Big Ben mafia club",
+    "url": "https://emotion.games/ua/players/158",
+    "strength": "nick"
+   }
+  ],
+  "Wanted!": [
+   {
+    "fed": "imafia",
+    "id": "1002",
+    "nick": "Wanted!",
+    "realName": "Khorunzhyi Stanislav",
+    "url": "https://imafia.org/u/1002",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 234
+   },
+   {
+    "fed": "eg",
+    "id": "48",
+    "nick": "Wanted!",
+    "club": "YA.NE.MAFIA",
+    "url": "https://emotion.games/ua/players/48",
+    "strength": "nick"
+   }
+  ],
+  "Kiz": [
+   {
+    "fed": "imafia",
+    "id": "2555",
+    "nick": "Kiz",
+    "realName": "Veselov Vlad",
+    "url": "https://imafia.org/u/2555",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 79
+   },
+   {
+    "fed": "eg",
+    "id": "274",
+    "nick": "Kiz",
+    "url": "https://emotion.games/ua/players/274",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "16161",
+    "nick": "Kiz",
+    "realName": "Владислав",
+    "club": "Vinnytsia Mafia Club",
+    "city": "Київ, Україна",
+    "url": "https://fiim.world/user/16161/show",
+    "strength": "nick"
+   }
+  ],
+  "Хельга": [
+   {
+    "fed": "imafia",
+    "id": "564",
+    "nick": "Хельга",
+    "url": "https://imafia.org/u/564",
+    "strength": "nick",
+    "city": "Ізраїль",
+    "games": 9
+   },
+   {
+    "fed": "fiim",
+    "id": "4555",
+    "nick": "Хельга",
+    "realName": "Ольга Ханникова",
+    "club": "Маска Mafia Club 🎭",
+    "city": "Тель-Авів, Ізраїль",
+    "url": "https://fiim.world/user/4555/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "12379",
+    "nick": "Хельга (Одесса)",
+    "realName": "Ольга",
+    "club": "Mafia Club Odesa",
+    "city": "Одеса, Україна",
+    "url": "https://fiim.world/user/12379/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "7826",
+    "nick": "Хельга",
+    "realName": "Ольга Крылова",
+    "url": "https://fiim.world/user/7826/show",
+    "strength": "nick"
+   }
+  ],
+  "Бернуллі": [
+   {
+    "fed": "imafia",
+    "id": "715",
+    "nick": "Бернуллі",
+    "realName": "Осипенко Юля",
+    "url": "https://imafia.org/u/715",
+    "strength": "nick",
+    "club": "FRIENDS MAFIA",
+    "city": "Україна",
+    "games": 265
+   },
+   {
+    "fed": "eg",
+    "id": "568",
+    "nick": "Бернуллі",
+    "url": "https://emotion.games/ua/players/568",
+    "strength": "nick"
+   }
+  ],
+  "Вишня": [
+   {
+    "fed": "imafia",
+    "id": "4450",
+    "nick": "Вишня",
+    "realName": "Овчарук Марина",
+    "url": "https://imafia.org/u/4450",
+    "strength": "nick",
+    "city": "Україна",
+    "games": 0
+   },
+   {
+    "fed": "fiim",
+    "id": "523",
+    "nick": "Вишня",
+    "realName": "Ирина Смолякова",
+    "url": "https://fiim.world/user/523/show",
+    "strength": "nick"
+   }
+  ],
+  "Хоттабич": [
+   {
+    "fed": "eg",
+    "id": "476",
+    "nick": "Хоттабич",
+    "club": "Family Mafia Club",
+    "city": "Cherkasy",
+    "games": 2,
+    "url": "https://emotion.games/ua/players/476",
+    "strength": "club"
+   },
+   {
+    "fed": "fiim",
+    "id": "16652",
+    "nick": "Хоттабыч (FMC)",
+    "realName": "Назар",
+    "club": "Family Mafia Club",
+    "city": "Черкаси, Україна",
+    "url": "https://fiim.world/user/16652/show",
+    "strength": "club"
+   }
+  ],
+  "Малишка": [
+   {
+    "fed": "eg",
+    "id": "184",
+    "nick": "Малишка",
+    "club": "Family Mafia Club",
+    "city": "Cherkasy",
+    "games": 2,
+    "url": "https://emotion.games/ua/players/184",
+    "strength": "club"
+   }
+  ],
+  "Тян": [
+   {
+    "fed": "eg",
+    "id": "249",
+    "nick": "Тян",
+    "club": "Family Mafia Club",
+    "city": "Cherkasy",
+    "games": 2,
+    "url": "https://emotion.games/ua/players/249",
+    "strength": "club"
+   },
+   {
+    "fed": "fiim",
+    "id": "10477",
+    "nick": "Тян",
+    "realName": "Ян Тимошенко",
+    "club": "Не входить до клубу",
+    "city": "Черкаси, Україна",
+    "url": "https://fiim.world/user/10477/show",
+    "strength": "club"
+   },
+   {
+    "fed": "mafgame",
+    "id": "3041",
+    "nick": "Тян",
+    "realName": "Yan Tymoshenko",
+    "club": "Family Mafia Club",
+    "url": "https://mafgame.org/user/3041/view",
+    "strength": "club"
+   }
+  ],
+  "Німфа": [
+   {
+    "fed": "eg",
+    "id": "724",
+    "nick": "Німфа",
+    "club": "Family Mafia Club",
+    "city": "Cherkasy",
+    "games": 4,
+    "url": "https://emotion.games/ua/players/724",
+    "strength": "club"
+   }
+  ],
+  "Таті": [
+   {
+    "fed": "eg",
+    "id": "1551",
+    "nick": "Tati",
+    "club": "Family Mafia Club",
+    "city": "Cherkasy",
+    "games": 2,
+    "url": "https://emotion.games/ua/players/1551",
+    "strength": "club"
+   }
+  ],
+  "Rathma": [
+   {
+    "fed": "eg",
+    "id": "209",
+    "nick": "Rathma",
+    "club": "Family Mafia Club",
+    "city": "Cherkasy",
+    "games": 2,
+    "url": "https://emotion.games/ua/players/209",
+    "strength": "club"
+   },
+   {
+    "fed": "fiim",
+    "id": "16393",
+    "nick": "Скай (FMC)",
+    "realName": "Стас",
+    "club": "Family Mafia Club",
+    "city": "Черкаси, Україна",
+    "url": "https://fiim.world/user/16393/show",
+    "strength": "club"
+   }
+  ],
+  "Anatolich": [
+   {
+    "fed": "eg",
+    "id": "631",
+    "nick": "Anatolich",
+    "club": "Family Mafia Club",
+    "city": "Cherkasy",
+    "games": 0,
+    "url": "https://emotion.games/ua/players/631",
+    "strength": "club"
+   },
+   {
+    "fed": "fiim",
+    "id": "16923",
+    "nick": "Анатоліч",
+    "realName": "Олександр",
+    "club": "Family Mafia Club",
+    "city": "Черкаси, Україна",
+    "url": "https://fiim.world/user/16923/show",
+    "strength": "club"
+   }
+  ],
+  "Green": [
+   {
+    "fed": "eg",
+    "id": "1011",
+    "nick": "Green",
+    "club": "Family Mafia Club",
+    "city": "Cherkasy",
+    "games": 0,
+    "url": "https://emotion.games/ua/players/1011",
+    "strength": "club"
+   },
+   {
+    "fed": "fiim",
+    "id": "16640",
+    "nick": "Green ( Грін)",
+    "realName": "Сергей",
+    "club": "Family Mafia Club",
+    "city": "Черкаси, Україна",
+    "url": "https://fiim.world/user/16640/show",
+    "strength": "club"
+   }
+  ],
+  "Judge": [
+   {
+    "fed": "eg",
+    "id": "1069",
+    "nick": "Judge",
+    "club": "Family Mafia Club",
+    "city": "Cherkasy",
+    "games": 0,
+    "url": "https://emotion.games/ua/players/1069",
+    "strength": "club"
+   }
+  ],
+  "Muggle": [
+   {
+    "fed": "eg",
+    "id": "990",
+    "nick": "Muggle",
+    "club": "Family Mafia Club",
+    "city": "Cherkasy",
+    "games": 0,
+    "url": "https://emotion.games/ua/players/990",
+    "strength": "club"
+   }
+  ],
+  "Red Fox": [
+   {
+    "fed": "eg",
+    "id": "478",
+    "nick": "Red Fox",
+    "club": "Family Mafia Club",
+    "city": "Cherkasy",
+    "games": 0,
+    "url": "https://emotion.games/ua/players/478",
+    "strength": "club"
+   },
+   {
+    "fed": "fiim",
+    "id": "14500",
+    "nick": "RedFox",
+    "realName": "Милена",
+    "club": "Family Mafia Club",
+    "city": "Черкаси, Україна",
+    "url": "https://fiim.world/user/14500/show",
+    "strength": "club"
+   }
+  ],
+  "Rimerk": [
+   {
+    "fed": "eg",
+    "id": "1644",
+    "nick": "Rimerk",
+    "club": "Family Mafia Club",
+    "city": "Cherkasy",
+    "games": 0,
+    "url": "https://emotion.games/ua/players/1644",
+    "strength": "club"
+   }
+  ],
+  "Бульбік": [
+   {
+    "fed": "eg",
+    "id": "2701",
+    "nick": "Бульбік",
+    "club": "Family Mafia Club",
+    "city": "Cherkasy",
+    "games": 0,
+    "url": "https://emotion.games/ua/players/2701",
+    "strength": "club"
+   }
+  ],
+  "Волохата кукурудза": [
+   {
+    "fed": "eg",
+    "id": "954",
+    "nick": "Волохата Кукурудза",
+    "club": "Family Mafia Club",
+    "city": "Cherkasy",
+    "games": 0,
+    "url": "https://emotion.games/ua/players/954",
+    "strength": "club"
+   }
+  ],
+  "Дипломат": [
+   {
+    "fed": "eg",
+    "id": "743",
+    "nick": "Дипломат",
+    "club": "Family Mafia Club",
+    "city": "Cherkasy",
+    "games": 0,
+    "url": "https://emotion.games/ua/players/743",
+    "strength": "club"
+   },
+   {
+    "fed": "fiim",
+    "id": "17123",
+    "nick": "Дипломат ( FMC )",
+    "realName": "Никита",
+    "club": "Family Mafia Club",
+    "city": "Черкаси, Україна",
+    "url": "https://fiim.world/user/17123/show",
+    "strength": "club"
+   },
+   {
+    "fed": "fiim",
+    "id": "9197",
+    "nick": "Дипломат",
+    "realName": "Артём Рыков",
+    "club": "Не входить до клубу",
+    "city": "..., ...",
+    "url": "https://fiim.world/user/9197/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "3721",
+    "nick": "Дипломат",
+    "realName": "Narek Kirakosyan",
+    "club": "Не входить до клубу",
+    "city": "..., ...",
+    "url": "https://fiim.world/user/3721/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "70",
+    "nick": "Дипломат",
+    "realName": "Виталий Петрук",
+    "url": "https://fiim.world/user/70/show",
+    "strength": "nick"
+   }
+  ],
+  "Мідас": [
+   {
+    "fed": "eg",
+    "id": "1496",
+    "nick": "Мідас",
+    "club": "Family Mafia Club",
+    "city": "Cherkasy",
+    "games": 0,
+    "url": "https://emotion.games/ua/players/1496",
+    "strength": "club"
+   }
+  ],
+  "Моргана": [
+   {
+    "fed": "eg",
+    "id": "2449",
+    "nick": "Моргана",
+    "club": "Family Mafia Club",
+    "city": "Cherkasy",
+    "games": 0,
+    "url": "https://emotion.games/ua/players/2449",
+    "strength": "club"
+   }
+  ],
+  "Ростішка": [
+   {
+    "fed": "eg",
+    "id": "2698",
+    "nick": "Ростішка",
+    "club": "Family Mafia Club",
+    "city": "Cherkasy",
+    "games": 0,
+    "url": "https://emotion.games/ua/players/2698",
+    "strength": "club"
+   }
+  ],
+  "Серпень": [
+   {
+    "fed": "eg",
+    "id": "173",
+    "nick": "Серпень",
+    "club": "Family Mafia Club",
+    "city": "Cherkasy",
+    "games": 0,
+    "url": "https://emotion.games/ua/players/173",
+    "strength": "club"
+   }
+  ],
+  "Шпак": [
+   {
+    "fed": "eg",
+    "id": "1452",
+    "nick": "Шпак",
+    "club": "Family Mafia Club",
+    "city": "Cherkasy",
+    "games": 0,
+    "url": "https://emotion.games/ua/players/1452",
+    "strength": "club"
+   },
+   {
+    "fed": "fiim",
+    "id": "7711",
+    "nick": "Шпак",
+    "realName": "Александр Шмагин",
+    "url": "https://fiim.world/user/7711/show",
+    "strength": "nick"
+   }
+  ],
+  "Lamouir": [
+   {
+    "fed": "eg",
+    "id": "40",
+    "nick": "Lamouir",
+    "club": "Vinnytsia Mafia Club",
+    "url": "https://emotion.games/ua/players/40",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "16462",
+    "nick": "Lamouir",
+    "realName": "Анна",
+    "club": "Vinnytsia Mafia Club",
+    "city": "Вінниця, Україна",
+    "url": "https://fiim.world/user/16462/show",
+    "strength": "nick"
+   }
+  ],
+  "RedFim": [
+   {
+    "fed": "eg",
+    "id": "1072",
+    "nick": "Redfim",
+    "url": "https://emotion.games/ua/players/1072",
+    "strength": "nick"
+   }
+  ],
+  "Бумыч": [
+   {
+    "fed": "eg",
+    "id": "1107",
+    "nick": "Бумыч",
+    "url": "https://emotion.games/ua/players/1107",
+    "strength": "nick"
+   }
+  ],
+  "Жума": [
+   {
+    "fed": "eg",
+    "id": "499",
+    "nick": "Жума",
+    "club": "Big Ben mafia club",
+    "url": "https://emotion.games/ua/players/499",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "3241",
+    "nick": "Жума",
+    "realName": "Евгения Идоятова",
+    "club": "Big Ben Mafia Club",
+    "city": "Київ, Україна",
+    "url": "https://fiim.world/user/3241/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "23",
+    "nick": "Жума",
+    "realName": "Евгения Идоятова",
+    "url": "https://fiim.world/user/23/show",
+    "strength": "nick"
+   }
+  ],
+  "Раф": [
+   {
+    "fed": "eg",
+    "id": "388",
+    "nick": "Раф",
+    "url": "https://emotion.games/ua/players/388",
+    "strength": "nick"
+   }
+  ],
+  "Цезар": [
+   {
+    "fed": "eg",
+    "id": "358",
+    "nick": "Цезар",
+    "club": "BlackBerry mafia club",
+    "url": "https://emotion.games/ua/players/358",
+    "strength": "nick"
+   }
+  ],
+  "Linda": [
+   {
+    "fed": "eg",
+    "id": "1762",
+    "nick": "Linda",
+    "url": "https://emotion.games/ua/players/1762",
+    "strength": "nick"
+   }
+  ],
+  "Чех": [
+   {
+    "fed": "eg",
+    "id": "2124",
+    "nick": "Чех",
+    "club": "YA.NE.MAFIA",
+    "url": "https://emotion.games/ua/players/2124",
+    "strength": "nick"
+   }
+  ],
+  "Блонда": [
+   {
+    "fed": "eg",
+    "id": "2136",
+    "nick": "Блонда",
+    "club": "Sicilia Mafia Club",
+    "url": "https://emotion.games/ua/players/2136",
+    "strength": "nick"
+   }
+  ],
+  "Esmen": [
+   {
+    "fed": "eg",
+    "id": "1406",
+    "nick": "Esmen",
+    "club": "KropMafiaClub",
+    "url": "https://emotion.games/ua/players/1406",
+    "strength": "nick"
+   }
+  ],
+  "Полковник": [
+   {
+    "fed": "eg",
+    "id": "951",
+    "nick": "Полковник",
+    "club": "Camelot Mafia Club",
+    "url": "https://emotion.games/ua/players/951",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "8908",
+    "nick": "ПОЛКОВНИК",
+    "realName": "Натик Самедов",
+    "club": "Red Black Family Baku",
+    "city": "Баку, Азербайджан",
+    "url": "https://fiim.world/user/8908/show",
+    "strength": "nick"
+   }
+  ],
+  "Kiss": [
+   {
+    "fed": "eg",
+    "id": "1709",
+    "nick": "Kiss",
+    "club": "YAML Mafia",
+    "url": "https://emotion.games/ua/players/1709",
+    "strength": "nick"
+   }
+  ],
+  "Keynsianets": [
+   {
+    "fed": "eg",
+    "id": "1765",
+    "nick": "Keynsianets",
+    "club": "KropMafiaClub",
+    "url": "https://emotion.games/ua/players/1765",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "4500",
+    "nick": "keynsianets",
+    "realName": "Denys Markov",
+    "club": "Izi Mafia Club",
+    "city": "Кропивницький, Україна",
+    "url": "https://fiim.world/user/4500/show",
+    "strength": "nick"
+   }
+  ],
+  "Candy": [
+   {
+    "fed": "fiim",
+    "id": "14926",
+    "nick": "Candy",
+    "realName": "Дильназ",
+    "club": "Не входить до клубу",
+    "city": "Астана, Казахстан",
+    "url": "https://fiim.world/user/14926/show",
+    "strength": "nick"
+   }
+  ],
+  "Corleone": [
+   {
+    "fed": "fiim",
+    "id": "7553",
+    "nick": "Corleone",
+    "realName": "Светлана Артемов",
+    "club": "Secret Mafia Club❓",
+    "city": "Тель-Авів, Ізраїль",
+    "url": "https://fiim.world/user/7553/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "80",
+    "nick": "Corleone",
+    "realName": "Михаил Лукань",
+    "url": "https://fiim.world/user/80/show",
+    "strength": "nick"
+   }
+  ],
+  "Focus": [
+   {
+    "fed": "fiim",
+    "id": "20644",
+    "nick": "Focus",
+    "realName": "Dmitrii",
+    "url": "https://fiim.world/user/20644/show",
+    "strength": "nick"
+   }
+  ],
+  "Fran4ika": [
+   {
+    "fed": "fiim",
+    "id": "5268",
+    "nick": "Fran4ika",
+    "realName": "Игорь Дубик",
+    "club": "Не входить до клубу",
+    "city": "Київ, Україна",
+    "url": "https://fiim.world/user/5268/show",
+    "strength": "nick"
+   }
+  ],
+  "Galant": [
+   {
+    "fed": "fiim",
+    "id": "8097",
+    "nick": "Galant",
+    "realName": "Леонид Варавва",
+    "club": "Не входить до клубу",
+    "city": "Черкаси, Україна",
+    "url": "https://fiim.world/user/8097/show",
+    "strength": "club"
+   }
+  ],
+  "Horizon": [
+   {
+    "fed": "fiim",
+    "id": "16646",
+    "nick": "Horizon",
+    "realName": "Diana",
+    "club": "Family Mafia Club",
+    "city": "Черкаси, Україна",
+    "url": "https://fiim.world/user/16646/show",
+    "strength": "club"
+   }
+  ],
+  "Kara": [
+   {
+    "fed": "fiim",
+    "id": "9615",
+    "nick": "KARA",
+    "realName": "Дарья Малышева",
+    "url": "https://fiim.world/user/9615/show",
+    "strength": "nick"
+   }
+  ],
+  "KatSun": [
+   {
+    "fed": "fiim",
+    "id": "14320",
+    "nick": "KatSun",
+    "realName": "Кушнир Екатерина",
+    "club": "Family Mafia Club",
+    "city": "Черкаси, Україна",
+    "url": "https://fiim.world/user/14320/show",
+    "strength": "club"
+   }
+  ],
+  "Kris": [
+   {
+    "fed": "fiim",
+    "id": "10057",
+    "nick": "Kris",
+    "realName": "Кристина Меркулова",
+    "club": "Не входить до клубу",
+    "city": "Черкаси, Україна",
+    "url": "https://fiim.world/user/10057/show",
+    "strength": "club"
+   }
+  ],
+  "Light": [
+   {
+    "fed": "fiim",
+    "id": "17150",
+    "nick": "Light(FMC)",
+    "realName": "Roma",
+    "url": "https://fiim.world/user/17150/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "8277",
+    "nick": "Light",
+    "realName": "Тимур Кулдошин",
+    "club": "Не входить до клубу",
+    "city": "Караганда, Казахстан",
+    "url": "https://fiim.world/user/8277/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "8618",
+    "nick": "Light",
+    "realName": "Andrei Klimkou",
+    "url": "https://fiim.world/user/8618/show",
+    "strength": "nick"
+   }
+  ],
+  "MeL": [
+   {
+    "fed": "fiim",
+    "id": "12494",
+    "nick": "MЕL",
+    "realName": "Айгерима Махамбетова",
+    "url": "https://fiim.world/user/12494/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "mafgame",
+    "id": "1742",
+    "nick": "MEL",
+    "realName": "Aigerima",
+    "games": 3,
+    "url": "https://mafgame.org/user/1742/view",
+    "strength": "nick"
+   }
+  ],
+  "Mickey Mouse": [
+   {
+    "fed": "fiim",
+    "id": "5447",
+    "nick": "Mickey Mouse",
+    "realName": "Ксюша Калабушкина",
+    "club": "Не входить до клубу",
+    "city": "..., ...",
+    "url": "https://fiim.world/user/5447/show",
+    "strength": "nick"
+   }
+  ],
+  "Modny": [
+   {
+    "fed": "fiim",
+    "id": "8122",
+    "nick": "Modny",
+    "realName": "Dima Ivashchenko",
+    "club": "Family Mafia Club",
+    "city": "Варшава, Польща",
+    "url": "https://fiim.world/user/8122/show",
+    "strength": "club"
+   }
+  ],
+  "Montana": [
+   {
+    "fed": "fiim",
+    "id": "16863",
+    "nick": "Montana",
+    "realName": "Даниэла",
+    "url": "https://fiim.world/user/16863/show",
+    "strength": "nick"
+   }
+  ],
+  "Nik": [
+   {
+    "fed": "fiim",
+    "id": "17055",
+    "nick": "Nik",
+    "realName": "Nik",
+    "club": "Gatsby Social Club NY",
+    "city": "Нью-Йорк, США",
+    "url": "https://fiim.world/user/17055/show",
+    "strength": "nick"
+   }
+  ],
+  "Pedro": [
+   {
+    "fed": "fiim",
+    "id": "9563",
+    "nick": "Pedro",
+    "realName": "Константин Яровой",
+    "club": "Не входить до клубу",
+    "city": "Брно, Чехія",
+    "url": "https://fiim.world/user/9563/show",
+    "strength": "nick"
+   }
+  ],
+  "R2D2": [
+   {
+    "fed": "fiim",
+    "id": "2389",
+    "nick": "R2D2",
+    "realName": "Максим Ашевский",
+    "url": "https://fiim.world/user/2389/show",
+    "strength": "nick"
+   }
+  ],
+  "Vamos": [
+   {
+    "fed": "fiim",
+    "id": "9171",
+    "nick": "Vamos",
+    "realName": "Александр Катаев",
+    "club": "Family Mafia Club",
+    "city": "Черкаси, Україна",
+    "url": "https://fiim.world/user/9171/show",
+    "strength": "club"
+   }
+  ],
+  "Wito": [
+   {
+    "fed": "fiim",
+    "id": "5901",
+    "nick": "Wito",
+    "realName": "Виктор Петровский",
+    "club": "Не входить до клубу",
+    "city": "Варшава, Польща",
+    "url": "https://fiim.world/user/5901/show",
+    "strength": "nick"
+   }
+  ],
+  "Zed": [
+   {
+    "fed": "fiim",
+    "id": "13706",
+    "nick": "Zed",
+    "realName": "Евгений Пинчуков",
+    "url": "https://fiim.world/user/13706/show",
+    "strength": "nick"
+   }
+  ],
+  "Адель": [
+   {
+    "fed": "fiim",
+    "id": "4596",
+    "nick": "Адель",
+    "realName": "Светлана Сапрончик",
+    "club": "Не входить до клубу",
+    "city": "Полоцк, Білорусь",
+    "url": "https://fiim.world/user/4596/show",
+    "strength": "nick"
+   }
+  ],
+  "Айсли": [
+   {
+    "fed": "fiim",
+    "id": "13237",
+    "nick": "Айсли",
+    "realName": "Полина",
+    "club": "Family Mafia Club",
+    "city": "Кривий Ріг, Україна",
+    "url": "https://fiim.world/user/13237/show",
+    "strength": "club"
+   }
+  ],
+  "Анж": [
+   {
+    "fed": "fiim",
+    "id": "14839",
+    "nick": "Анж",
+    "realName": "Анжелика",
+    "club": "Family Mafia Club",
+    "city": "Черкаси, Україна",
+    "url": "https://fiim.world/user/14839/show",
+    "strength": "club"
+   }
+  ],
+  "Арсенал": [
+   {
+    "fed": "fiim",
+    "id": "15518",
+    "nick": "Арсенал (Алматы)",
+    "realName": "Айбек",
+    "club": "Не входить до клубу",
+    "city": "Алматы, Казахстан",
+    "url": "https://fiim.world/user/15518/show",
+    "strength": "nick"
+   }
+  ],
+  "Афродита": [
+   {
+    "fed": "fiim",
+    "id": "16520",
+    "nick": "Афродита (Бишкек)",
+    "realName": "Дильназа",
+    "club": "Не входить до клубу",
+    "city": "Бішкек, Кыргызстан",
+    "url": "https://fiim.world/user/16520/show",
+    "strength": "nick"
+   }
+  ],
+  "Балу": [
+   {
+    "fed": "fiim",
+    "id": "5099",
+    "nick": "Балу",
+    "realName": "Сергей Ковалев",
+    "url": "https://fiim.world/user/5099/show",
+    "strength": "nick"
+   }
+  ],
+  "Бард": [
+   {
+    "fed": "fiim",
+    "id": "9288",
+    "nick": "Бард",
+    "realName": "Сергей Шатковский",
+    "club": "Mafia Club Odesa",
+    "city": "Одеса, Україна",
+    "url": "https://fiim.world/user/9288/show",
+    "strength": "nick"
+   }
+  ],
+  "Блиц": [
+   {
+    "fed": "fiim",
+    "id": "7610",
+    "nick": "Блиц",
+    "realName": "Алексей Ладыженский",
+    "club": "Big Ben Mafia Club",
+    "city": "Чернигов, Україна",
+    "url": "https://fiim.world/user/7610/show",
+    "strength": "nick"
+   }
+  ],
+  "Бурбон": [
+   {
+    "fed": "fiim",
+    "id": "8660",
+    "nick": "Бурбон",
+    "realName": "Юлия Киселевич",
+    "url": "https://fiim.world/user/8660/show",
+    "strength": "nick"
+   }
+  ],
+  "Василиса": [
+   {
+    "fed": "fiim",
+    "id": "8634",
+    "nick": "Василиса",
+    "realName": "Надежда Иевлева",
+    "url": "https://fiim.world/user/8634/show",
+    "strength": "nick"
+   }
+  ],
+  "Галушка": [
+   {
+    "fed": "fiim",
+    "id": "13403",
+    "nick": "Галушка",
+    "realName": "Артем Галушка",
+    "club": "Family Mafia Club",
+    "city": "Черкаси, Україна",
+    "url": "https://fiim.world/user/13403/show",
+    "strength": "club"
+   }
+  ],
+  "Геральт": [
+   {
+    "fed": "fiim",
+    "id": "10597",
+    "nick": "Геральт",
+    "realName": "Анар Ахундов",
+    "club": "Red Black Family Baku",
+    "city": "Баку, Азербайджан",
+    "url": "https://fiim.world/user/10597/show",
+    "strength": "nick"
+   }
+  ],
+  "Дед Мороз": [
+   {
+    "fed": "fiim",
+    "id": "13662",
+    "nick": "Дед Мороз",
+    "realName": "Олег",
+    "url": "https://fiim.world/user/13662/show",
+    "strength": "nick"
+   }
+  ],
+  "Дон": [
+   {
+    "fed": "fiim",
+    "id": "16839",
+    "nick": "ДОН(Баку)",
+    "realName": "Али Анифаев",
+    "club": "Не входить до клубу",
+    "city": "Баку, Азербайджан",
+    "url": "https://fiim.world/user/16839/show",
+    "strength": "nick"
+   }
+  ],
+  "Енот": [
+   {
+    "fed": "fiim",
+    "id": "3267",
+    "nick": "Eнот",
+    "realName": "Кодеїнослав Білоусов",
+    "club": "Big Ben Mafia Club",
+    "city": "Київ, Україна",
+    "url": "https://fiim.world/user/3267/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "15593",
+    "nick": "Енот (Кристина)",
+    "realName": "Кристина",
+    "club": "Маска Mafia Club 🎭",
+    "city": "Рішон Ле-Цийон, Ізраїль",
+    "url": "https://fiim.world/user/15593/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "8622",
+    "nick": "Енот",
+    "realName": "Даниил Тонев",
+    "club": "Не входить до клубу",
+    "city": "..., ...",
+    "url": "https://fiim.world/user/8622/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "8865",
+    "nick": "Енот",
+    "realName": "Антон Ватлин",
+    "url": "https://fiim.world/user/8865/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "8204",
+    "nick": "Енот",
+    "realName": "Александр Пастухов",
+    "club": "Не входить до клубу",
+    "city": "..., ...",
+    "url": "https://fiim.world/user/8204/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "1154",
+    "nick": "Енот",
+    "realName": "Лидия Габриелян",
+    "club": "Лига Северного Рейна",
+    "city": "Кёльн, Німеччина",
+    "url": "https://fiim.world/user/1154/show",
+    "strength": "nick"
+   }
+  ],
+  "Занзара": [
+   {
+    "fed": "fiim",
+    "id": "395",
+    "nick": "Занзара",
+    "realName": "Сергей Зенков",
+    "url": "https://fiim.world/user/395/show",
+    "strength": "nick"
+   }
+  ],
+  "Зая": [
+   {
+    "fed": "fiim",
+    "id": "5651",
+    "nick": "Зая",
+    "realName": "Александр Боярский",
+    "url": "https://fiim.world/user/5651/show",
+    "strength": "nick"
+   }
+  ],
+  "Зелёный": [
+   {
+    "fed": "fiim",
+    "id": "11689",
+    "nick": "Зелёный",
+    "realName": "Рустам Муминжонов",
+    "url": "https://fiim.world/user/11689/show",
+    "strength": "nick"
+   }
+  ],
+  "Змейка": [
+   {
+    "fed": "fiim",
+    "id": "9170",
+    "nick": "Змейка",
+    "realName": "Лера Полоз",
+    "club": "Не входить до клубу",
+    "city": "Черкаси, Україна",
+    "url": "https://fiim.world/user/9170/show",
+    "strength": "club"
+   }
+  ],
+  "Зоря": [
+   {
+    "fed": "fiim",
+    "id": "7625",
+    "nick": "ЗОРЯ",
+    "realName": "Иван Зарецкий",
+    "club": "Не входить до клубу",
+    "city": "..., ...",
+    "url": "https://fiim.world/user/7625/show",
+    "strength": "nick"
+   }
+  ],
+  "Игривый": [
+   {
+    "fed": "fiim",
+    "id": "10483",
+    "nick": "Игривый",
+    "realName": "Павел Вовкотруб",
+    "club": "Не входить до клубу",
+    "city": "Київ, Україна",
+    "url": "https://fiim.world/user/10483/show",
+    "strength": "nick"
+   }
+  ],
+  "Кида": [
+   {
+    "fed": "fiim",
+    "id": "3432",
+    "nick": "Кида",
+    "realName": "Дарья Киричено",
+    "club": "Не входить до клубу",
+    "city": "Чернигов, Україна",
+    "url": "https://fiim.world/user/3432/show",
+    "strength": "nick"
+   }
+  ],
+  "Кика": [
+   {
+    "fed": "fiim",
+    "id": "1595",
+    "nick": "Кика",
+    "realName": "Дарья Нестерова",
+    "club": "pro100.Mafia",
+    "city": "Харків, Україна",
+    "url": "https://fiim.world/user/1595/show",
+    "strength": "nick"
+   }
+  ],
+  "Китана": [
+   {
+    "fed": "fiim",
+    "id": "14479",
+    "nick": "Kitana (Китана)",
+    "realName": "Anastasia Ilchenko",
+    "club": "Family Mafia Club",
+    "city": "Черкаси, Україна",
+    "url": "https://fiim.world/user/14479/show",
+    "strength": "club"
+   }
+  ],
+  "Красная Борода": [
+   {
+    "fed": "fiim",
+    "id": "8962",
+    "nick": "Красная Борода",
+    "realName": "Егор Соломка",
+    "club": "Не входить до клубу",
+    "city": "Черкаси, Україна",
+    "url": "https://fiim.world/user/8962/show",
+    "strength": "club"
+   }
+  ],
+  "Кристал": [
+   {
+    "fed": "fiim",
+    "id": "15757",
+    "nick": "Кристал",
+    "realName": "Нина",
+    "url": "https://fiim.world/user/15757/show",
+    "strength": "nick"
+   }
+  ],
+  "Крот": [
+   {
+    "fed": "fiim",
+    "id": "10488",
+    "nick": "Крот",
+    "realName": "Тимофей Лось",
+    "club": "Не входить до клубу",
+    "city": "Минск, Білорусь",
+    "url": "https://fiim.world/user/10488/show",
+    "strength": "nick"
+   }
+  ],
+  "Лекси": [
+   {
+    "fed": "fiim",
+    "id": "11017",
+    "nick": "Лекси",
+    "realName": "Александра",
+    "club": "Не входить до клубу",
+    "city": "Карлсруэ, Німеччина",
+    "url": "https://fiim.world/user/11017/show",
+    "strength": "nick"
+   }
+  ],
+  "Лила": [
+   {
+    "fed": "fiim",
+    "id": "9711",
+    "nick": "Лила",
+    "realName": "Михайлова Дарья",
+    "club": "Не входить до клубу",
+    "city": "..., ...",
+    "url": "https://fiim.world/user/9711/show",
+    "strength": "nick"
+   }
+  ],
+  "Лобзик": [
+   {
+    "fed": "fiim",
+    "id": "6354",
+    "nick": "Лобзик",
+    "realName": "Marina Suvorova",
+    "url": "https://fiim.world/user/6354/show",
+    "strength": "nick"
+   }
+  ],
+  "Луиза": [
+   {
+    "fed": "fiim",
+    "id": "14478",
+    "nick": "Луиза",
+    "realName": "Ирина Черненко",
+    "club": "Family Mafia Club",
+    "city": "Черкаси, Україна",
+    "url": "https://fiim.world/user/14478/show",
+    "strength": "club"
+   }
+  ],
+  "Мирный": [
+   {
+    "fed": "fiim",
+    "id": "19444",
+    "nick": "Mирный",
+    "realName": "Maksym",
+    "club": "Не входить до клубу",
+    "city": "Харків, Україна",
+    "url": "https://fiim.world/user/19444/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "3986",
+    "nick": "Мирный",
+    "realName": "Артур Гасанов",
+    "club": "Маф-клуб \"Легавый\"",
+    "city": "Ташкент, Узбекистан",
+    "url": "https://fiim.world/user/3986/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "9495",
+    "nick": "Мирный",
+    "realName": "Тимурхан Магомедов",
+    "club": "Не входить до клубу",
+    "city": "..., ...",
+    "url": "https://fiim.world/user/9495/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "5893",
+    "nick": "Мирный",
+    "realName": "Михаил Лясков",
+    "club": "Не входить до клубу",
+    "city": "..., ...",
+    "url": "https://fiim.world/user/5893/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "3083",
+    "nick": "Мирный",
+    "realName": "Артём Киров",
+    "club": "Не входить до клубу",
+    "city": "Алматы, Казахстан",
+    "url": "https://fiim.world/user/3083/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "4388",
+    "nick": "Мирный",
+    "realName": "Александр Лыков",
+    "club": "Не входить до клубу",
+    "city": "..., ...",
+    "url": "https://fiim.world/user/4388/show",
+    "strength": "nick"
+   }
+  ],
+  "Миша": [
+   {
+    "fed": "fiim",
+    "id": "5082",
+    "nick": "Миша",
+    "realName": "Владимир Медведев",
+    "club": "Не входить до клубу",
+    "city": "Минск, Білорусь",
+    "url": "https://fiim.world/user/5082/show",
+    "strength": "nick"
+   }
+  ],
+  "Немец": [
+   {
+    "fed": "fiim",
+    "id": "9536",
+    "nick": "Немец",
+    "realName": "Андрей Белов",
+    "club": "Не входить до клубу",
+    "city": "..., ...",
+    "url": "https://fiim.world/user/9536/show",
+    "strength": "nick"
+   }
+  ],
+  "Один": [
+   {
+    "fed": "fiim",
+    "id": "6478",
+    "nick": "Один",
+    "realName": "Владислав Гонта",
+    "club": "Не входить до клубу",
+    "city": "..., ...",
+    "url": "https://fiim.world/user/6478/show",
+    "strength": "nick"
+   }
+  ],
+  "Оливка": [
+   {
+    "fed": "fiim",
+    "id": "1600",
+    "nick": "Оливка",
+    "realName": "Алина Алиева",
+    "club": "Mafia сlub \"Champions league\" Kharkiv",
+    "city": "Харків, Україна",
+    "url": "https://fiim.world/user/1600/show",
+    "strength": "nick"
+   }
+  ],
+  "Пакман": [
+   {
+    "fed": "fiim",
+    "id": "13953",
+    "nick": "Пакман",
+    "realName": "Николаев Никита",
+    "url": "https://fiim.world/user/13953/show",
+    "strength": "nick"
+   }
+  ],
+  "Победун": [
+   {
+    "fed": "fiim",
+    "id": "14975",
+    "nick": "Победун",
+    "realName": "Алексей",
+    "club": "Family Mafia Club",
+    "city": "Черкаси, Україна",
+    "url": "https://fiim.world/user/14975/show",
+    "strength": "club"
+   }
+  ],
+  "Прем'єр-міністр": [
+   {
+    "fed": "fiim",
+    "id": "16616",
+    "nick": "Премьер Министр",
+    "realName": "Азат",
+    "club": "Не входить до клубу",
+    "city": "Алматы, Казахстан",
+    "url": "https://fiim.world/user/16616/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "mafgame",
+    "id": "1740",
+    "nick": "Премьер Министр",
+    "realName": "Азат Сабиров",
+    "games": 3,
+    "url": "https://mafgame.org/user/1740/view",
+    "strength": "nick"
+   }
+  ],
+  "Продюсер": [
+   {
+    "fed": "fiim",
+    "id": "16617",
+    "nick": "Продюсер",
+    "realName": "Наталья",
+    "club": "Не входить до клубу",
+    "city": "Алматы, Казахстан",
+    "url": "https://fiim.world/user/16617/show",
+    "strength": "nick"
+   }
+  ],
+  "Радистка Кэт": [
+   {
+    "fed": "fiim",
+    "id": "160",
+    "nick": "Радистка Кэт",
+    "realName": "Екатерина Хегай",
+    "club": "Не входить до клубу",
+    "city": "Атырау, Казахстан",
+    "url": "https://fiim.world/user/160/show",
+    "strength": "nick"
+   }
+  ],
+  "Раст": [
+   {
+    "fed": "fiim",
+    "id": "17063",
+    "nick": "Раст (Maf is)",
+    "realName": "Виталий",
+    "club": "Maf is...",
+    "city": "Сакраменто, США",
+    "url": "https://fiim.world/user/17063/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "6670",
+    "nick": "Раст",
+    "realName": "Владимир Арджеванидзе",
+    "url": "https://fiim.world/user/6670/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "6985",
+    "nick": "Раст",
+    "realName": "Владимир Олегович",
+    "club": "Не входить до клубу",
+    "city": "Черноморск, Україна",
+    "url": "https://fiim.world/user/6985/show",
+    "strength": "nick"
+   }
+  ],
+  "Рибка": [
+   {
+    "fed": "fiim",
+    "id": "4282",
+    "nick": "Рибка",
+    "realName": "Мар'яна Качуровська",
+    "club": "Не входить до клубу",
+    "city": "Львів, Україна",
+    "url": "https://fiim.world/user/4282/show",
+    "strength": "nick"
+   }
+  ],
+  "Рокки": [
+   {
+    "fed": "fiim",
+    "id": "3878",
+    "nick": "Рокки",
+    "realName": "Иван Иванов",
+    "url": "https://fiim.world/user/3878/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "3848",
+    "nick": "Рокки",
+    "realName": "Мистер Рокки",
+    "url": "https://fiim.world/user/3848/show",
+    "strength": "nick"
+   }
+  ],
+  "Рондо": [
+   {
+    "fed": "fiim",
+    "id": "116",
+    "nick": "Рондо",
+    "realName": "Максим Михайлов",
+    "url": "https://fiim.world/user/116/show",
+    "strength": "nick"
+   }
+  ],
+  "Уарабей": [
+   {
+    "fed": "fiim",
+    "id": "4409",
+    "nick": "Уарабей",
+    "realName": "Андрей Вишнеский",
+    "club": "Не входить до клубу",
+    "city": "Біла Церква, Україна",
+    "url": "https://fiim.world/user/4409/show",
+    "strength": "nick"
+   }
+  ],
+  "Фармацевт": [
+   {
+    "fed": "fiim",
+    "id": "4191",
+    "nick": "Фармацевт",
+    "realName": "Исмаилов Ойбек",
+    "club": "Маф-клуб \"Легавый\"",
+    "city": "Ташкент, Узбекистан",
+    "url": "https://fiim.world/user/4191/show",
+    "strength": "nick"
+   }
+  ],
+  "Философ": [
+   {
+    "fed": "fiim",
+    "id": "1848",
+    "nick": "Философ",
+    "realName": "Дмитрий Шорников",
+    "club": "Не входить до клубу",
+    "city": "..., ...",
+    "url": "https://fiim.world/user/1848/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "2323",
+    "nick": "Философ",
+    "realName": "Алексей Комаров",
+    "url": "https://fiim.world/user/2323/show",
+    "strength": "nick"
+   }
+  ],
+  "Флейми": [
+   {
+    "fed": "fiim",
+    "id": "12403",
+    "nick": "Флейми",
+    "realName": "Кулешова Анастасия",
+    "url": "https://fiim.world/user/12403/show",
+    "strength": "nick"
+   }
+  ],
+  "Хозяин": [
+   {
+    "fed": "fiim",
+    "id": "10098",
+    "nick": "Хозяин",
+    "realName": "Манас Муслимов",
+    "url": "https://fiim.world/user/10098/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "7900",
+    "nick": "Хозяин",
+    "realName": "Сергей Деплов",
+    "url": "https://fiim.world/user/7900/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "9295",
+    "nick": "Хозяин",
+    "realName": "Андрей Попов",
+    "url": "https://fiim.world/user/9295/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "4994",
+    "nick": "Хозяин",
+    "realName": "Андрей Остапенко",
+    "url": "https://fiim.world/user/4994/show",
+    "strength": "nick"
+   }
+  ],
+  "Хохол": [
+   {
+    "fed": "fiim",
+    "id": "2196",
+    "nick": "Хохол",
+    "realName": "Андрей Танабаш",
+    "club": "Big Ben Mafia Club",
+    "city": "Київ, Україна",
+    "url": "https://fiim.world/user/2196/show",
+    "strength": "nick"
+   }
+  ],
+  "Чай": [
+   {
+    "fed": "fiim",
+    "id": "20074",
+    "nick": "Чай (фамилия)",
+    "realName": "basilefff",
+    "club": "CLAN Mafia Tbilisi",
+    "city": "Тбілісі, Грузія",
+    "url": "https://fiim.world/user/20074/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "1067",
+    "nick": "Чай",
+    "realName": "Владислав Савлуков",
+    "url": "https://fiim.world/user/1067/show",
+    "strength": "nick"
+   }
+  ],
+  "Черри": [
+   {
+    "fed": "fiim",
+    "id": "4527",
+    "nick": "Черри",
+    "realName": "Мария Маяр",
+    "url": "https://fiim.world/user/4527/show",
+    "strength": "nick"
+   }
+  ],
+  "Элис": [
+   {
+    "fed": "fiim",
+    "id": "11057",
+    "nick": "Элис",
+    "realName": "Таня Молодцова",
+    "url": "https://fiim.world/user/11057/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "1849",
+    "nick": "Элис",
+    "realName": "Екатерина Комзюк",
+    "url": "https://fiim.world/user/1849/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "mafgame",
+    "id": "2204",
+    "nick": "Элис",
+    "realName": "Инна",
+    "games": 2,
+    "url": "https://mafgame.org/user/2204/view",
+    "strength": "nick"
+   }
+  ],
+  "Южная": [
+   {
+    "fed": "fiim",
+    "id": "1337",
+    "nick": "Южная",
+    "realName": "Юлия Губарь",
+    "club": "Не входить до клубу",
+    "city": "..., ...",
+    "url": "https://fiim.world/user/1337/show",
+    "strength": "nick"
+   }
+  ],
+  "Ray": [
+   {
+    "fed": "fiim",
+    "id": "7994",
+    "nick": "Ray",
+    "realName": "Araylym Tleubaeva",
+    "club": "Не входить до клубу",
+    "city": "Астана, Казахстан",
+    "url": "https://fiim.world/user/7994/show",
+    "strength": "nick"
+   }
+  ],
+  "Кактус": [
+   {
+    "fed": "fiim",
+    "id": "1946",
+    "nick": "Кактус",
+    "realName": "Алексей Кочедыков",
+    "url": "https://fiim.world/user/1946/show",
+    "strength": "nick"
+   }
+  ],
+  "Лол": [
+   {
+    "fed": "fiim",
+    "id": "4432",
+    "nick": "Лол",
+    "realName": "Любовь Новикова",
+    "url": "https://fiim.world/user/4432/show",
+    "strength": "nick"
+   },
+   {
+    "fed": "fiim",
+    "id": "185",
+    "nick": "ЛОЛ",
+    "realName": "ЛОЛ",
+    "url": "https://fiim.world/user/185/show",
+    "strength": "nick"
+   }
+  ],
+  "Noa": [
+   {
+    "fed": "fiim",
+    "id": "16128",
+    "nick": "NoA",
+    "realName": "Adinai Askarova",
+    "club": "Спящий Город",
+    "city": "Бішкек, Кыргызстан",
+    "url": "https://fiim.world/user/16128/show",
+    "strength": "nick"
+   }
+  ],
+  "Янус": [
+   {
+    "fed": "fiim",
+    "id": "14454",
+    "nick": "Янус",
+    "realName": "Артем",
+    "club": "Не входить до клубу",
+    "city": "Харків, Україна",
+    "url": "https://fiim.world/user/14454/show",
+    "strength": "nick"
+   }
+  ],
+  "Воланд": [
+   {
+    "fed": "mafgame",
+    "id": "2267",
+    "nick": "Воланд",
+    "realName": "Andrii Voloshynenko",
+    "games": 1,
+    "url": "https://mafgame.org/user/2267/view",
+    "strength": "nick"
+   }
+  ],
+  "Атом": [
+   {
+    "fed": "mafgame",
+    "id": "307",
+    "nick": "Atom",
+    "realName": "Михайло",
+    "games": 1,
+    "url": "https://mafgame.org/user/307/view",
+    "strength": "nick"
+   }
+  ]
+ },
+ "unmatched": [
+  {
+   "fed": "eg",
+   "id": "219",
+   "nick": "Malina",
+   "club": "Family Mafia Club",
+   "city": "Cherkasy",
+   "games": 3,
+   "url": "https://emotion.games/ua/players/219",
+   "strength": "club"
+  },
+  {
+   "fed": "eg",
+   "id": "1242",
+   "nick": "Fenix",
+   "club": "Family Mafia Club",
+   "city": "Cherkasy",
+   "games": 2,
+   "url": "https://emotion.games/ua/players/1242",
+   "strength": "club"
+  },
+  {
+   "fed": "eg",
+   "id": "1160",
+   "nick": "El Bandito",
+   "club": "Family Mafia Club",
+   "city": "Cherkasy",
+   "games": 1,
+   "url": "https://emotion.games/ua/players/1160",
+   "strength": "club"
+  },
+  {
+   "fed": "eg",
+   "id": "120",
+   "nick": "DonTright",
+   "club": "Family Mafia Club",
+   "city": "Cherkasy",
+   "games": 0,
+   "url": "https://emotion.games/ua/players/120",
+   "strength": "club"
+  },
+  {
+   "fed": "eg",
+   "id": "1078",
+   "nick": "Frau",
+   "club": "Family Mafia Club",
+   "city": "Cherkasy",
+   "games": 0,
+   "url": "https://emotion.games/ua/players/1078",
+   "strength": "club"
+  },
+  {
+   "fed": "eg",
+   "id": "890",
+   "nick": "Harry",
+   "club": "Family Mafia Club",
+   "city": "Cherkasy",
+   "games": 0,
+   "url": "https://emotion.games/ua/players/890",
+   "strength": "club"
+  },
+  {
+   "fed": "eg",
+   "id": "2719",
+   "nick": "Liana",
+   "club": "Family Mafia Club",
+   "city": "Cherkasy",
+   "games": 0,
+   "url": "https://emotion.games/ua/players/2719",
+   "strength": "club"
+  },
+  {
+   "fed": "eg",
+   "id": "421",
+   "nick": "Lili",
+   "club": "Family Mafia Club",
+   "city": "Cherkasy",
+   "games": 0,
+   "url": "https://emotion.games/ua/players/421",
+   "strength": "club"
+  },
+  {
+   "fed": "eg",
+   "id": "477",
+   "nick": "Pobedun",
+   "club": "Family Mafia Club",
+   "city": "Cherkasy",
+   "games": 0,
+   "url": "https://emotion.games/ua/players/477",
+   "strength": "club"
+  },
+  {
+   "fed": "eg",
+   "id": "1006",
+   "nick": "Salamandra",
+   "club": "Family Mafia Club",
+   "city": "Cherkasy",
+   "games": 0,
+   "url": "https://emotion.games/ua/players/1006",
+   "strength": "club"
+  },
+  {
+   "fed": "eg",
+   "id": "1295",
+   "nick": "Skorpion",
+   "club": "Family Mafia Club",
+   "city": "Cherkasy",
+   "games": 0,
+   "url": "https://emotion.games/ua/players/1295",
+   "strength": "club"
+  },
+  {
+   "fed": "eg",
+   "id": "573",
+   "nick": "StoneCold Steve Austin 316",
+   "club": "Family Mafia Club",
+   "city": "Cherkasy",
+   "games": 0,
+   "url": "https://emotion.games/ua/players/573",
+   "strength": "club"
+  },
+  {
+   "fed": "eg",
+   "id": "1612",
+   "nick": "Thrain",
+   "club": "Family Mafia Club",
+   "city": "Cherkasy",
+   "games": 0,
+   "url": "https://emotion.games/ua/players/1612",
+   "strength": "club"
+  },
+  {
+   "fed": "eg",
+   "id": "1731",
+   "nick": "VitaminKa",
+   "club": "Family Mafia Club",
+   "city": "Cherkasy",
+   "games": 0,
+   "url": "https://emotion.games/ua/players/1731",
+   "strength": "club"
+  },
+  {
+   "fed": "eg",
+   "id": "426",
+   "nick": "Остін",
+   "club": "Family Mafia Club",
+   "city": "Cherkasy",
+   "games": 0,
+   "url": "https://emotion.games/ua/players/426",
+   "strength": "club"
+  },
+  {
+   "fed": "mafgame",
+   "id": "676",
+   "nick": "Blueberry",
+   "realName": "Kateryna",
+   "club": "Family Mafia Club",
+   "url": "https://mafgame.org/user/676/view",
+   "strength": "club"
+  },
+  {
+   "fed": "mafgame",
+   "id": "3424",
+   "nick": "Hinata",
+   "realName": "Daria",
+   "club": "Family Mafia Club",
+   "url": "https://mafgame.org/user/3424/view",
+   "strength": "club"
+  },
+  {
+   "fed": "mafgame",
+   "id": "558",
+   "nick": "Pro.Poker",
+   "realName": "Mikalai",
+   "club": "Family Mafia Club",
+   "url": "https://mafgame.org/user/558/view",
+   "strength": "club"
+  },
+  {
+   "fed": "mafgame",
+   "id": "556",
+   "nick": "Sowa",
+   "realName": "Iren",
+   "club": "Family Mafia Club",
+   "url": "https://mafgame.org/user/556/view",
+   "strength": "club"
+  },
+  {
+   "fed": "mafgame",
+   "id": "875",
+   "nick": "TINA_istyna",
+   "realName": "Kristina",
+   "club": "Family Mafia Club",
+   "url": "https://mafgame.org/user/875/view",
+   "strength": "club"
+  },
+  {
+   "fed": "mafgame",
+   "id": "45",
+   "nick": "Остін",
+   "realName": "Yevheniia",
+   "club": "Family Mafia Club",
+   "url": "https://mafgame.org/user/45/view",
+   "strength": "club"
+  },
+  {
+   "fed": "mafgame",
+   "id": "853",
+   "nick": "Стонік",
+   "realName": "Artem Kosenkov",
+   "club": "Family Mafia Club",
+   "url": "https://mafgame.org/user/853/view",
+   "strength": "club"
+  }
+ ]
+}
