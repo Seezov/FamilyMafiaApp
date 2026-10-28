@@ -142,7 +142,18 @@ default branch.
   Admins confirm them on `/federations/edit/` (baked from that file) → Firestore `config/federations`
   (`links[player][fed] = ids`, `rejected[player] = ["fed:id"]`, keyed by roster name; rename/merge on `/players/edit/`
   moves them in the same transaction). Parsers in `site/scripts/federations/` are tested on saved pages in `fixtures/`.
-  Spec `docs/superpowers/specs/2026-10-27-federation-players-design.md`. Next step: parse federation games for confirmed links.
+  Spec `docs/superpowers/specs/2026-10-27-federation-players-design.md`.
+- **Federation games:** `/players/` has a «Season games / + Tournaments» toggle (`?t=1`) that adds the federation tournament
+  games of confirmed profiles to Games and WR. Only the nightly `web.yml` run (or "Run workflow" with `federations` checked)
+  runs `site/scripts/fetch-federation-games.ts`: it downloads every tournament of every linked profile into `site/.fedgames/`
+  (gitignored, kept in the Actions cache `fedgames-*` saved on master; other builds restore it), skips tournaments that
+  ended more than two days ago and are cached, and stops after `FED_BUDGET_MIN` (12) minutes — a cold cache fills over
+  a night or two. Every build runs `scripts/federation-games.ts` (cache + `data/games/*.json` + live `config/federations`
+  → `data/federation_games.json`): a game whose 10 seats (player + role) all match a club rating game is a duplicate at
+  any date; 7–9 matching seats within ±3 days of the tournament is a possible duplicate, left out until an admin decides on
+  `/federations/edit/` (`config/federations.gameDecisions`, the save bumps `meta/state`); the same game on two federations
+  counts once. Matching in `site/src/lib/federations/games.ts`, parsers in `site/scripts/federations/games-parse.ts`
+  (fiim serves Ukrainian or Russian; both parse). Spec `docs/superpowers/specs/2026-10-28-federation-games-design.md`.
 - **Player profiles:** `/account/` (Google sign-in → claim a player → admin approves on
   `/account/admin/` → nick + avatar). Firestore `claims/{uid}` (private) and
   `profiles/{playerKey}` (public; `playerKey` = lower-cased, URI-encoded display name).
