@@ -392,6 +392,10 @@ describe('config/federations', () => {
     await assertFails(setDoc(ref(as(ADMIN)), body(ADMIN, { updatedByEmail: 'x@x.com' })));
     await assertFails(setDoc(ref(as(ADMIN)), body(ADMIN, { updatedAt: new Date(0) })));
   });
+  it('an admin can store game decisions as a map', async () => {
+    await assertSucceeds(setDoc(ref(as(ADMIN)), body(ADMIN, { gameDecisions: { 'eg:716:q-1-2': 'same' } })));
+    await assertFails(setDoc(ref(as(ADMIN)), body(ADMIN, { gameDecisions: 'x' })));
+  });
   it('nobody can delete it', async () => {
     await env.withSecurityRulesDisabled((ctx) => setDoc(doc(ctx.firestore(), 'config', 'federations'), { links: {}, rejected: {} }));
     await assertFails(deleteDoc(ref(as(ADMIN))));

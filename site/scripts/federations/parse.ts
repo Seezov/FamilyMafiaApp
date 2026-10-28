@@ -17,11 +17,7 @@ function cand(fed: Fed, id: unknown, nick: unknown, strength: Candidate['strengt
 // Some federation rows have no nickname at all; such a row can't match anyone.
 const named = (c: Candidate) => !!c.nick;
 
-/** "Braun (Браун)" → the whole nick and both halves, so either spelling matches the roster. */
-export function nickVariants(nick: string): string[] {
-  const m = /^(.+?)\s*\((.+)\)\s*$/.exec(nick);
-  return m ? [nick, m[1].trim(), m[2].trim()] : [nick];
-}
+export { nickVariants } from '../../src/lib/federations/core.ts';
 
 // emotion.games — api-v1.emotion.games JSON. A player's id everywhere (page URL, year_points) is the club list's
 // profile_id, which the year summaries call player_id.

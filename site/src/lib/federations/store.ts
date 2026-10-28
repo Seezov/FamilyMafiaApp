@@ -1,5 +1,5 @@
 // Firebase client for config/federations. Access control lives in firestore.rules (public read, admin write).
-// Nothing public reads it yet, so saves do not bump meta/state.
+// Link edits do not bump meta/state; a game decision does, so the hourly build applies it.
 import { doc, getDoc, runTransaction, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase';
 import type { ClubAdmin } from '../club/store';
@@ -10,6 +10,7 @@ export const fedStamp = (u: ClubAdmin) => ({ updatedAt: serverTimestamp(), updat
 export const toFedDoc = (raw: Record<string, unknown> | undefined): FedDoc => ({
   links: (raw?.links ?? {}) as FedDoc['links'],
   rejected: (raw?.rejected ?? {}) as FedDoc['rejected'],
+  ...(raw?.gameDecisions ? { gameDecisions: raw.gameDecisions as FedDoc['gameDecisions'] } : {}),
 });
 
 export async function loadFeds(): Promise<FedDoc> {
@@ -23,6 +24,7 @@ export async function saveFedOp(op: FedOp, u: ClubAdmin): Promise<FedDoc> {
     const snap = await tx.get(fedRef());
     const next = applyFedOp(toFedDoc(snap.exists() ? snap.data() : undefined), op);
     tx.set(fedRef(), { ...next, ...fedStamp(u) });
+    if (op.kind === 'decide') tx.set(doc(db, 'meta', 'state'), { updatedAt: serverTimestamp() });
     return next;
   });
 }

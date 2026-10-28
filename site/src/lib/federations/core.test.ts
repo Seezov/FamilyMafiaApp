@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
-  applyFedOp, candidatesFor, moveForRosterOp, normNick, parseProfileUrl, profileUrl, rowStatus, sharedLinks, type FedDoc,
+  applyFedOp, candidatesFor, gameKey, moveForRosterOp, normNick, parseProfileUrl, profileUrl, rowStatus, sharedLinks, type FedDoc,
 } from './core';
 
 describe('normNick', () => {
@@ -101,5 +101,26 @@ describe('rowStatus and sharedLinks', () => {
   it('sharedLinks lists keys linked to two or more players', () => {
     expect(sharedLinks(d).get('eg:1')).toEqual(['A', 'B']);
     expect(sharedLinks({ links: { A: { eg: ['5'] } }, rejected: {} }).size).toBe(0);
+  });
+});
+
+describe('gameDecisions', () => {
+  const d: FedDoc = { links: { Braun: { eg: ['5'] } }, rejected: { Braun: ['imafia:1'] }, gameDecisions: { 'eg:1:a': 'different' } };
+  it('decide sets and removes a decision without touching the input', () => {
+    const next = applyFedOp(d, { kind: 'decide', key: 'eg:716:q-1-2', value: 'same' });
+    expect(next.gameDecisions).toEqual({ 'eg:1:a': 'different', 'eg:716:q-1-2': 'same' });
+    expect(applyFedOp(next, { kind: 'decide', key: 'eg:1:a', value: null }).gameDecisions).toEqual({ 'eg:716:q-1-2': 'same' });
+    expect(d.gameDecisions).toEqual({ 'eg:1:a': 'different' });
+  });
+  it('decide leaves rejected alone', () => {
+    expect(Object.keys(applyFedOp(d, { kind: 'decide', key: 'k', value: 'same' }).rejected)).toEqual(['Braun']);
+  });
+  it('link, rename and merge keep the decisions', () => {
+    expect(applyFedOp(d, { kind: 'link', player: 'Braun', fed: 'fiim', id: '9' }).gameDecisions).toEqual(d.gameDecisions);
+    expect(moveForRosterOp(d, { kind: 'rename', player: 'Braun', to: 'Браун' } as any).gameDecisions).toEqual(d.gameDecisions);
+    expect(moveForRosterOp(d, { kind: 'merge', from: 'Braun', into: 'X' } as any).gameDecisions).toEqual(d.gameDecisions);
+  });
+  it('gameKey joins fed, tournament and game', () => {
+    expect(gameKey('eg', '716', 'q-1-2')).toBe('eg:716:q-1-2');
   });
 });

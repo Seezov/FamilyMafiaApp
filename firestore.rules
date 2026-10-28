@@ -195,9 +195,10 @@ service cloud.firestore {
     match /config/federations {
       allow read: if true;
       allow create, update: if isAdmin()
-        && request.resource.data.keys().hasOnly(['links', 'rejected', 'updatedAt', 'updatedBy', 'updatedByEmail'])
+        && request.resource.data.keys().hasOnly(['links', 'rejected', 'gameDecisions', 'updatedAt', 'updatedBy', 'updatedByEmail'])
         && request.resource.data.links is map
         && request.resource.data.rejected is map
+        && (!('gameDecisions' in request.resource.data) || request.resource.data.gameDecisions is map)
         && request.resource.data.updatedAt == request.time
         && request.resource.data.updatedBy == request.auth.uid
         && request.resource.data.updatedByEmail == email();
