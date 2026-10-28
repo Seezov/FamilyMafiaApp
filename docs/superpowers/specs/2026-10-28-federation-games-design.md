@@ -20,7 +20,7 @@ confirmed on `/federations/edit/` (Firestore `config/federations.links`) contrib
   tournament, table/round.
 - No double counting:
   1. **Club duplicate (owner's rule):** a federation game is the same game as a club rating game when the nicks, the
-     seats and the roles match. Search window: club games dated within the tournament's dates ±1 day. Nick matching
+     seats and the roles match (full match: any date; partial match: see How it works, step 2). Nick matching
      goes through the roster (name + nicknames, normalised like `normNick`) and through confirmed links where the
      federation gives player ids.
   2. **Cross-federation duplicate:** the same game published on two federations counts once. Detected with the same
