@@ -3,6 +3,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { fetchFederationGames } from './fetch-federation-games.ts';
+import { politeGet } from './federations/http.ts';
 
 const fx = (f: string) => fs.readFileSync(new URL(`./federations/fixtures/games/${f}`, import.meta.url), 'utf8');
 const ok = (body: string) => new Response(body, { status: 200 });
@@ -81,6 +82,23 @@ describe('fetchFederationGames', () => {
     const r = await fetchFederationGames({ fetch: fakeFetch([], /imafia\.org/), cacheDir: dir, budgetMs: 60_000, now: new Date('2026-10-28'), log: () => {}, delayMs: 0 });
     expect(fs.readdirSync(path.join(dir, 't'))).toHaveLength(3);
     expect(r.warnings).toBeGreaterThan(0);
+  });
+
+  it('fetches a settled tournament with no games again', async () => {
+    const dir = tmp();
+    await run(dir, []);
+    const f = path.join(dir, 't', 'imafia-1760.json');
+    fs.writeFileSync(f, JSON.stringify({ ...JSON.parse(fs.readFileSync(f, 'utf8')), games: [] }));
+    const log: string[] = [];
+    await run(dir, log);
+    expect(log.some((u) => u.endsWith('imafia.org/tournament/1760'))).toBe(true);
+  });
+
+  it('gives up on a request that hangs', async () => {
+    const hang = ((_: string, init?: RequestInit) => new Promise((_r, reject) => {
+      init?.signal?.addEventListener('abort', () => reject(new Error('aborted')));
+    })) as typeof fetch;
+    await expect(politeGet(hang, 'https://x', { delayMs: 0, retries: 0, timeoutMs: 50 })).rejects.toThrow();
   });
 
   it('stops at the time budget', async () => {

@@ -67,13 +67,17 @@ jobs:
           key: fedgames-${{ github.run_id }}
           restore-keys: fedgames-
 
+      # Never blocks the deploy: a stuck or broken federation site leaves the last cache in place.
       - name: Fetch federation games
         if: github.event_name == 'schedule' || inputs.federations
+        timeout-minutes: 15
+        continue-on-error: true
         working-directory: site
         run: node scripts/fetch-federation-games.ts
 
       - name: Save federation games cache
-        if: github.event_name == 'schedule' || inputs.federations
+        if: always() && (github.event_name == 'schedule' || inputs.federations)
+        continue-on-error: true
         uses: actions/cache/save@v4
         with:
           path: site/.fedgames

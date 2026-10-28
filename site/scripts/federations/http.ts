@@ -4,12 +4,13 @@ import type { FedDoc } from '../../src/lib/federations/core.ts';
 export const UA = 'Mozilla/5.0 (FamilyMafiaClub federation matcher)';
 export const FED_DOC_URL = 'https://firestore.googleapis.com/v1/projects/familymafiaapp/databases/(default)/documents/config/federations';
 
-/** Waits delayMs before each try; retries a failed request `retries` times, then throws. */
-export async function politeGet(f: typeof fetch, url: string, o: { delayMs: number; retries?: number }): Promise<string> {
+/** Waits delayMs before each try; gives up on a try after timeoutMs (30 s); retries `retries` times (1), then throws. */
+export async function politeGet(f: typeof fetch, url: string, o: { delayMs: number; retries?: number; timeoutMs?: number }): Promise<string> {
   for (let attempt = 0; ; attempt++) {
     if (o.delayMs) await new Promise((r) => setTimeout(r, o.delayMs));
     try {
-      const res = await f(url, { headers: { 'User-Agent': UA } });
+      const signal = AbortSignal.timeout(o.timeoutMs ?? 30_000);
+      const res = await f(url, { headers: { 'User-Agent': UA }, signal });
       if (!res.ok) throw new Error(`HTTP ${res.status} ${url}`);
       return await res.text();
     } catch (e) {

@@ -71,12 +71,13 @@ describe('computeFedGames', () => {
     expect(r.players.braun).toEqual({ games: 1, wins: 1 });
   });
 
-  it('applies decisions: different counts, same drops, neither is reviewed', () => {
+  it('applies decisions: different counts, same drops', () => {
     const names = [...NAMES]; names[9] = 'Other';
-    const t = [tour('eg', '1', [fedGame('a', { ids: BRAUN }), fedGame('b', { ids: BRAUN })])];
+    const other = [...NAMES]; other[8] = 'Other2';
+    const t = [tour('eg', '1', [fedGame('a', { ids: BRAUN }), fedGame('b', { ids: BRAUN, result: 'mafia', nicks: other })])];
     const r = run(t, [club('g-1', '2026-05-10', { names })], { ...doc, gameDecisions: { 'eg:1:a': 'different', 'eg:1:b': 'same' } });
     expect(r.players.braun).toEqual({ games: 1, wins: 1 });
-    expect(r.review).toEqual([]);
+    expect(r.counts.possible).toBe(0);
   });
 
   it('counts a game published on two federations once', () => {
@@ -115,6 +116,42 @@ describe('computeFedGames', () => {
     const nicks = [...NAMES]; nicks[1] = 'Alpha (Альфа)';
     const r = run([tour('eg', '1', [fedGame('a', { ids: BRAUN, nicks })])], [club('g-1', null)]);
     expect(r.counts.clubDuplicates).toBe(1);
+  });
+});
+
+describe('review fixes', () => {
+  const twoLinks: FedDoc = { links: { Braun: { imafia: ['200'] }, Alpha: { eg: ['101'] } }, rejected: {} };
+  it('a game on two federations counts for players linked on either', () => {
+    const r = run([
+      tour('imafia', '7', [fedGame('t1-g1', { ids: { 0: '200', 2: '9' } })]),
+      tour('eg', '1', [fedGame('q-1-1', { ids: { 1: '101' } })]),
+    ], [], twoLinks);
+    expect(r.players).toEqual({ braun: { games: 1, wins: 1 }, alpha: { games: 1, wins: 1 } });
+    expect(r.counts).toMatchObject({ crossFedDuplicates: 1, counted: 1 });
+  });
+  it('an alsoOn copy hands its players to the twin game, even when nicks differ', () => {
+    const r = run([
+      tour('eg', '1', [fedGame('q-1-1', { ids: { 1: '101' }, nicks: NAMES.map((n) => n + '!') })], { alsoOn: { fed: 'imafia', id: '7' } }),
+      tour('imafia', '7', [fedGame('t1-g1', { ids: { 0: '200' } })]),
+    ], [], twoLinks);
+    expect(r.players).toEqual({ braun: { games: 1, wins: 1 }, alpha: { games: 1, wins: 1 } });
+  });
+  it('an alsoOn game with no twin match still counts', () => {
+    const r = run([
+      tour('eg', '1', [fedGame('q-1-1', { ids: { 1: '101' }, roles: [...ROLES].reverse() })], { alsoOn: { fed: 'imafia', id: '7' } }),
+      tour('imafia', '7', [fedGame('t1-g1', { ids: { 0: '200' } })]),
+    ], [], twoLinks);
+    expect(r.players.alpha).toEqual({ games: 1, wins: 1 });
+    expect(r.players.braun).toEqual({ games: 1, wins: 1 });
+  });
+  it('decided possible duplicates stay listed so the decision can be undone', () => {
+    const names = [...NAMES]; names[9] = 'Other';
+    const other = [...NAMES]; other[8] = 'Other2';
+    const t = [tour('eg', '1', [fedGame('a', { ids: BRAUN }), fedGame('b', { ids: BRAUN, result: 'mafia', nicks: other })])];
+    const r = run(t, [club('g-1', '2026-05-10', { names })], { ...doc, gameDecisions: { 'eg:1:a': 'same', 'eg:1:b': 'different' } });
+    expect(r.review.map((x) => x.key).sort()).toEqual(['eg:1:a', 'eg:1:b']);
+    expect(r.players.braun).toEqual({ games: 1, wins: 0 });
+    expect(r.counts.possible).toBe(0);
   });
 });
 

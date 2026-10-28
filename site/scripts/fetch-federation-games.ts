@@ -89,7 +89,8 @@ export async function fetchFederationGames(o: Opts) {
     if (fs.existsSync(file)) {
       try {
         const t = JSON.parse(fs.readFileSync(file, 'utf8')) as FedTournament;
-        if (t.dateTo && t.dateTo < settled) {
+        // No games yet may mean seatings come later (or a page we failed to read): ask again.
+        if (t.dateTo && t.dateTo < settled && t.games.length) {
           r.skipped++;
           continue;
         }
