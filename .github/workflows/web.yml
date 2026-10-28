@@ -4,6 +4,11 @@ on:
   push:
     branches: [feature/flutter_migration]
   workflow_dispatch:
+    inputs:
+      federations:
+        description: Fetch federation games now (otherwise only the nightly run does)
+        type: boolean
+        default: false
   schedule:
     - cron: '0 3 * * *' # nightly, so the site catches up with the sheets
 
@@ -52,6 +57,27 @@ jobs:
           node-version: '24'
           cache: npm
           cache-dependency-path: site/package-lock.json
+
+      # Federation tournament games: only the nightly run (or a manual run with `federations`) fetches; it saves
+      # the cache on master, which every branch can restore. Other builds reuse the last cache.
+      - name: Restore federation games cache
+        uses: actions/cache/restore@v4
+        with:
+          path: site/.fedgames
+          key: fedgames-${{ github.run_id }}
+          restore-keys: fedgames-
+
+      - name: Fetch federation games
+        if: github.event_name == 'schedule' || inputs.federations
+        working-directory: site
+        run: node scripts/fetch-federation-games.ts
+
+      - name: Save federation games cache
+        if: github.event_name == 'schedule' || inputs.federations
+        uses: actions/cache/save@v4
+        with:
+          path: site/.fedgames
+          key: fedgames-${{ github.run_id }}
 
       # `npm run build` ends with scripts/check-dist.mjs: fails on an `AIza`
       # key, a broken internal link, or a player without a page.

@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import type { AllstarsData, AnnualData, DebugData, GamesData, IndexData, PlayerData, PlayersData, RecordsData, SeasonData, TournamentsData, UnresolvedData } from './types';
 import type { CandidatesFile } from './federations/core';
+import type { FedGamesFile } from './federations/games';
 
 // Written by `flutter test tool/export_site_data_test.dart` (repo root).
 const dir = process.env.SITE_DATA_DIR ?? path.resolve(process.cwd(), 'data');
@@ -30,4 +31,12 @@ export const loadGames = (id: number) => read<GamesData>(`games/${id}.json`);
 export function loadFederationCandidates(): CandidatesFile {
   const file = path.resolve(process.cwd(), '..', 'assets', 'raw', 'federation_candidates.json');
   return fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf8')) as CandidatesFile : { generatedAt: '', players: {}, unmatched: [] };
+}
+
+// Written by scripts/federation-games.ts before astro build; missing in a bare `astro dev` → no federation games.
+export function loadFederationGames(): FedGamesFile {
+  const file = path.join(dir, 'federation_games.json');
+  return fs.existsSync(file)
+    ? JSON.parse(fs.readFileSync(file, 'utf8')) as FedGamesFile
+    : { generatedAt: '', players: {}, review: [], counts: { tournaments: 0, games: 0, clubDuplicates: 0, crossFedDuplicates: 0, possible: 0, counted: 0 } };
 }

@@ -1,6 +1,6 @@
 // Federation tournament games (scripts/fetch-federation-games.ts) folded into the club's player stats:
 // attribution through confirmed links, club / cross-federation duplicates, possible duplicates for review. Pure.
-import { gameKey, nickVariants, normNick, type Fed, type FedDoc } from './core';
+import { gameKey, nickVariants, normNick, type Fed, type FedDoc } from './core.ts';
 
 export type FedRole = 'citizen' | 'sheriff' | 'mafia' | 'don';
 export interface FedSeat { seat: number; nick: string; fedPlayerId?: string; role: FedRole }
@@ -14,10 +14,10 @@ export interface TournamentRef { fed: Fed; tournamentId: string; date?: string }
 
 /** A roster player as data/players.json exports him (aliases: lower-cased name + nicknames). */
 export interface ClubPlayer { name: string; slug: string; aliases: string[] }
-/** A club rating game from data/games/N.json (the caller leaves out unrated games). */
+/** A club rating game from data/games/N.json (the caller leaves out unrated games). A blank seat has no player. */
 export interface ClubGame {
   id: string; season: number; date: string | null; result: 'city' | 'mafia';
-  seats: { n: number; slug?: string; player: string; role: string }[];
+  seats: { n: number; slug?: string; player?: string; role: string }[];
 }
 export interface ReviewItem {
   key: string; fed: Fed; tournament: string; tournamentId: string; date: string; round?: string; table?: number;
@@ -92,7 +92,7 @@ export function computeFedGames(i: { tournaments: FedTournament[]; club: ClubGam
   };
   const fedIdents = (fed: Fed, g: FedGame) => g.seats.map((s) => `${slugOf(fed, s) ?? `nick:${normNick(s.nick)}`}:${s.role}`);
   const clubIdents = (g: ClubGame) => g.seats.toSorted((a, b) => a.n - b.n)
-    .map((s) => `${s.slug ?? `nick:${normNick(s.player)}`}:${CLUB_ROLE[s.role] ?? s.role}`);
+    .map((s) => `${s.slug ?? (s.player ? `nick:${normNick(s.player)}` : `blank:${s.n}`)}:${CLUB_ROLE[s.role] ?? s.role}`);
 
   const tournaments = mergeParts(i.tournaments);
   const counts = { tournaments: tournaments.length, games: 0, clubDuplicates: 0, crossFedDuplicates: 0, possible: 0, counted: 0 };
@@ -161,7 +161,7 @@ export function computeFedGames(i: { tournaments: FedTournament[]; club: ClubGam
           }),
           club: {
             season: match.g.season, id: match.g.id, date: match.g.date!,
-            seats: match.g.seats.toSorted((a, b) => a.n - b.n).map((s) => ({ seat: s.n, player: s.player, role: s.role })),
+            seats: match.g.seats.toSorted((a, b) => a.n - b.n).map((s) => ({ seat: s.n, player: s.player ?? '', role: s.role })),
           },
         });
         continue;

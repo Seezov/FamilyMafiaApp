@@ -118,6 +118,17 @@ describe('computeFedGames', () => {
   });
 });
 
+describe('club games with a blank seat', () => {
+  it('never match and do not throw', () => {
+    const blank = club('g-1', '2026-05-10');
+    delete (blank.seats[9] as { player?: string }).player;
+    delete blank.seats[9].slug;
+    const r = run([tour('eg', '1', [fedGame('a', { ids: BRAUN })])], [blank]);
+    expect(r.counts.possible).toBe(1);
+    expect(r.review[0].club.seats[9]).toEqual({ seat: 10, player: '', role: 'civilian' });
+  });
+});
+
 describe('mergeParts', () => {
   it('merges parts by game key, keeping both owners\' ids', () => {
     const a = tour('fiim', '8', [fedGame('g5', { ids: { 0: '300' } })], { dateFrom: '2026-05-09', dateTo: '2026-05-11' });

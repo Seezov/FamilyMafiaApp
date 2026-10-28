@@ -9,6 +9,7 @@ import type { RosterEntry } from '../src/lib/roster/roster.ts';
 import {
   nickVariants, parseEgClub, parseEgSummary, parseFiimSearch, parseImafiaProfile, parseImafiaSearch, parseMafgameMembers, parseMafgameRating,
 } from './federations/parse.ts';
+import { politeGet } from './federations/http.ts';
 
 const ROSTER_URL = 'https://firestore.googleapis.com/v1/projects/familymafiaapp/databases/(default)/documents/config/players';
 const EG_FIRST_YEAR = 2024;
@@ -25,18 +26,7 @@ export function rosterFromRest(doc: any): RosterEntry[] {
 export async function findCandidates(o: Opts): Promise<CandidatesFile> {
   const delay = o.delayMs ?? 300;
   const year = o.year ?? new Date().getFullYear();
-  async function get(url: string): Promise<string> {
-    for (let attempt = 0; ; attempt++) {
-      if (delay) await new Promise((r) => setTimeout(r, delay));
-      try {
-        const res = await o.fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0 (FamilyMafiaClub federation matcher)' } });
-        if (!res.ok) throw new Error(`HTTP ${res.status} ${url}`);
-        return await res.text();
-      } catch (e) {
-        if (attempt >= 1) throw e;
-      }
-    }
-  }
+  const get = (url: string) => politeGet(o.fetch, url, { delayMs: delay });
 
   // Normalised nick → roster name (the first player that claims it).
   const owner = new Map<string, string>();

@@ -99,3 +99,12 @@ describe('fiim.world', () => {
     expect(g.seats[2]).toEqual({ seat: 3, nick: 'Луиза', fedPlayerId: '14478', role: 'citizen' });
   });
 });
+
+describe('fiim.world in Ukrainian (what Node fetch gets)', () => {
+  it('reads the same games and tournaments', () => {
+    const ru = parseFiimUserGames(fx('fiim-games-14478-1479.html'), '1479', '14478', '2021-08-09');
+    const uk = parseFiimUserGames(fx('fiim-games-14478-1479-uk.html'), '1479', '14478', '2021-08-09');
+    expect(uk).toEqual(ru);
+    expect(parseFiimProfile(fx('fiim-user-14478-uk.html'), '14478')).toEqual([{ fed: 'fiim', tournamentId: '1479', date: '2021-08-09' }]);
+  });
+});

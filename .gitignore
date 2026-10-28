@@ -104,4 +104,5 @@ site/dist/
 site/node_modules/
 site/.astro/
 site/public/avatars/
+site/.fedgames/
 firebase/rules-test/node_modules/

@@ -137,19 +137,20 @@ export function parseFiimProfile(html: string, userId: string): TournamentRef[] 
 }
 
 export function parseFiimUserGames(html: string, tid: string, userId: string, awardDate: string): FedTournament {
-  const name = text(/<h1>[^<]*в турнире \[([^<]*)\]<\/h1>/.exec(html)?.[1] ?? '');
+  // The page comes in Russian or Ukrainian depending on the client (Node's fetch gets Ukrainian).
+  const name = text(/<h1>[^<]*\[([^<\]]*)\]<\/h1>/.exec(html)?.[1] ?? '');
   const games: FedGame[] = [];
   for (const block of html.split('<div class="panel-heading">').slice(1)) {
     const id = /href="#game-(\d+)"/.exec(block)?.[1];
     const head = text(/<a [^>]*href="#game-[\s\S]*?>([\s\S]*?)<\/a>/.exec(block)?.[1] ?? '');
-    const result = /Победа мафии/.test(head) ? 'mafia' : /Победа города/.test(head) ? 'city' : undefined;
+    const result = /Победа мафии|Перемога мафії/.test(head) ? 'mafia' : /Победа города|Перемога міста/.test(head) ? 'city' : undefined;
     const seats = block.split('<div class="game-result-block">').slice(1).map((s) => {
       const m = /<th class="place-no[^"]*">\s*(\d+)\s*<\/th>\s*<th[^>]*>([\s\S]*?)<\/th>/.exec(s);
       const role = FIIM_ROLES[/icon-(red|black|sheriff|don)"/.exec(s)?.[1] ?? ''];
       return m ? seat(m[1], text(m[2]), role, s.includes('highlighed-result') ? userId : undefined) : null;
     });
     const g = id && game(`g${id}`, result, seats, {
-      round: /Тур\s+(\d+)/.exec(head)?.[1], table: Number(/Стол\s+(\d+)/.exec(head)?.[1]) || undefined,
+      round: /Тур\s+(\d+)/.exec(head)?.[1], table: Number(/(?:Стол|Стіл)\s+(\d+)/.exec(head)?.[1]) || undefined,
     });
     if (g) games.push(g);
   }
