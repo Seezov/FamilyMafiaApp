@@ -18,10 +18,19 @@ export function renumber(root: HTMLElement) {
 }
 
 function sortBy(root: HTMLElement, th: HTMLTableCellElement) {
+  const current = th.getAttribute('aria-sort');
+  sortDir(root, th, current === 'descending' ? 'asc' : current === 'ascending' ? 'desc' : th.dataset.numeric ? 'desc' : 'asc');
+}
+
+/** Sorts again by the current column and direction, after a page changed the cells' values. */
+export function resort(root: HTMLElement) {
+  const th = root.querySelector<HTMLTableCellElement>('th[data-col][aria-sort]');
+  if (th) sortDir(root, th, th.getAttribute('aria-sort') === 'descending' ? 'desc' : 'asc');
+}
+
+function sortDir(root: HTMLElement, th: HTMLTableCellElement, dir: Dir) {
   const table = root.querySelector('table')!;
   const col = Number(th.dataset.col);
-  const current = th.getAttribute('aria-sort');
-  const dir: Dir = current === 'descending' ? 'asc' : current === 'ascending' ? 'desc' : th.dataset.numeric ? 'desc' : 'asc';
   const bodies = [...table.tBodies];
   const rows = bodies.map((tb) => [...tb.rows[0].cells].filter((c) => !c.hasAttribute('data-rank')).map(cellOf));
   const order = sortedIndices(rows, col, dir);

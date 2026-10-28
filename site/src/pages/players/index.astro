@@ -2,9 +2,12 @@
 import Base from '../../layouts/Base.astro';
 import DataTable from '../../components/DataTable.astro';
 import Panel from '../../components/Panel.astro';
-import { loadPlayers } from '../../lib/data';
+import { loadFederationGames, loadPlayers } from '../../lib/data';
+import { scopeStats } from '../../lib/players/scope';
 const { players, table } = loadPlayers();
 const minGames = [0, 10, 50, 100, 500];
+const scope = scopeStats(players as { slug: string; games: number; winRate: number }[], loadFederationGames().players);
+const hasTournaments = Object.keys(scope).length > 0;
 ---
 <Base title="Players" description={`${players.length} Family Mafia Club players: games, win rate, seasons.`} active="players">
   <div class="pagehead">
@@ -17,27 +20,65 @@ const minGames = [0, 10, 50, 100, 500];
         </a>
       ))}
     </nav>
+    {hasTournaments && (
+      <nav class="pills" id="scope" aria-label="Which games count">
+        <a class="pill" href="?" data-t="0" aria-current="true">Season games</a>
+        <a class="pill" href="?t=1" data-t="1" title="Adds federation tournament games of confirmed profiles; games already in the club rating count once">+ Tournaments</a>
+      </nav>
+    )}
   </div>
   <Panel>
     <DataTable table={table} />
     <p id="none" class="label" hidden>No player matches.</p>
   </Panel>
+  <script type="application/json" id="scope-stats" set:html={JSON.stringify(scope)} />
 </Base>
 
 <script>
-  import { renumber } from '../../components/table';
+  import { renumber, resort } from '../../components/table';
   import { matchesFilter } from '../../lib/profiles/core';
+  import { wrTone } from '../../lib/format';
+  import { shown, type ScopeStats } from '../../lib/players/scope';
 
   const input = document.getElementById('filter') as HTMLInputElement;
   const none = document.getElementById('none')!;
   const pills = [...document.querySelectorAll<HTMLAnchorElement>('#games [data-min]')];
   const root = document.querySelector<HTMLElement>('[data-table]')!;
-  const gamesCol = [...root.querySelectorAll<HTMLElement>('th[data-col]')]
-    .find((th) => th.textContent?.trim() === 'Games')!.dataset.col;
+  const colOf = (label: string) => [...root.querySelectorAll<HTMLElement>('th[data-col]')]
+    .find((th) => th.textContent?.trim() === label)?.dataset.col;
+  const gamesCol = colOf('Games')!;
+  const wrCol = colOf('WR');
+  const scopePills = [...document.querySelectorAll<HTMLAnchorElement>('#scope [data-t]')];
+  const stats = JSON.parse(document.getElementById('scope-stats')?.textContent || '{}') as Record<string, ScopeStats>;
   const params = new URLSearchParams(location.search);
   input.value = params.get('q') ?? '';
   let min = Number(params.get('games')) || 0;
   if (!pills.some((p) => Number(p.dataset.min) === min)) min = 0;
+  let tournaments = scopePills.length > 0 && params.get('t') === '1';
+
+  // Swaps Games and WR between season-only and season + tournament values, then re-sorts.
+  const applyScope = () => {
+    root.querySelectorAll<HTMLTableSectionElement>('tbody').forEach((tb) => {
+      const cells = [...tb.rows[0].cells].filter((c) => !c.hasAttribute('data-rank'));
+      const slug = cells[0]?.querySelector('a')?.getAttribute('href')?.split('/').filter(Boolean).pop();
+      const s = slug ? stats[slug] : undefined;
+      if (!s) return;
+      const v = shown(s, tournaments);
+      const g = cells[Number(gamesCol)];
+      g.textContent = String(v.games);
+      g.dataset.s = String(v.games);
+      const wr = wrCol === undefined ? undefined : cells[Number(wrCol)];
+      if (wr) {
+        wr.dataset.s = String(v.wr);
+        wr.lastChild!.textContent = `${Math.round(v.wr * 100)}%`;
+        wr.querySelector<HTMLElement>('.bar')?.style.setProperty('--w', `${Math.round(v.wr * 100)}%`);
+        wr.classList.remove('tone-good', 'tone-mid', 'tone-low');
+        wr.classList.add(`tone-${wrTone(v.wr) ?? 'low'}`);
+      }
+    });
+    scopePills.forEach((p) => p.setAttribute('aria-current', String((p.dataset.t === '1') === tournaments)));
+    resort(root);
+  };
 
   const apply = () => {
     const needle = input.value.trim().toLowerCase();
@@ -56,6 +97,7 @@ const minGames = [0, 10, 50, 100, 500];
     const qs = new URLSearchParams();
     if (needle) qs.set('q', input.value.trim());
     if (min) qs.set('games', String(min));
+    if (tournaments) qs.set('t', '1');
     history.replaceState(null, '', qs.size ? `?${qs}` : location.pathname);
   };
   input.addEventListener('input', apply);
@@ -64,6 +106,13 @@ const minGames = [0, 10, 50, 100, 500];
     min = Number(p.dataset.min);
     apply();
   }));
+  scopePills.forEach((p) => p.addEventListener('click', (e) => {
+    e.preventDefault();
+    tournaments = p.dataset.t === '1';
+    applyScope();
+    apply();
+  }));
+  if (tournaments) applyScope();
   apply();
 </script>
 
