@@ -191,8 +191,6 @@ service cloud.firestore {
         && request.resource.data.updatedByEmail == email();
     }
 
-    // The club's player list (names + nicknames), edited on /players/edit/. Entry contents
-    // are checked by the build and the editor (rules cannot loop over a list).
     // Roster player ↔ federation profile links, confirmed on /federations/edit/. Keys are roster display names.
     match /config/federations {
       allow read: if true;
@@ -206,6 +204,8 @@ service cloud.firestore {
       allow delete: if false;
     }
 
+    // The club's player list (names + nicknames), edited on /players/edit/. Entry contents
+    // are checked by the build and the editor (rules cannot loop over a list).
     match /config/players {
       allow read: if true;
       allow create, update: if isAdmin()
