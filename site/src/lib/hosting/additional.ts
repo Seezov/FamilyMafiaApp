@@ -7,3 +7,8 @@ const r2 = (n: number) => Math.round(n * 100) / 100;
 export const isAllowedAdditional = (n: number) => (ADDITIONAL_VALUES as readonly number[]).includes(r2(n));
 /** A seat's доп: none, or one of the allowed values. */
 export const isAllowedSeatAdditional = (n: number) => r2(n) === 0 || isAllowedAdditional(n);
+
+/** Dropdown values on /host/ (penalties are typed as positive and stored negative). */
+export const FOUL_VALUES = [1, 2, 3, 4] as const;
+export const PENALTY_VALUES = [0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2, 1.3] as const;
+export const PROTOCOL_VALUES = [0.3, 0.5, 0.8] as const;

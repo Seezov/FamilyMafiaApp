@@ -8,6 +8,7 @@ import { loadRoster } from '../lib/roster/store';
 import { aliasPairs, autocompleteNames } from '../lib/roster/roster';
 import { loadClubSeasons } from '../lib/seasons/store';
 import { followDefault, hostDefaultSeason } from '../lib/seasons/seasons';
+import { ADDITIONAL_VALUES, FOUL_VALUES, PENALTY_VALUES, PROTOCOL_VALUES } from '../lib/hosting/additional';
 
 const page = JSON.parse(document.getElementById('host-data')!.textContent!) as { names: string[]; defaultSeason: number | null; aliases: [string, string][] };
 const aliases = new Map(page.aliases);
@@ -69,8 +70,15 @@ async function refreshList() {
 }
 
 // ── Form rendering ────────────────────────────────────────────────────────
-const num = (k: string, v: string, cls = '') =>
-  `<td><input data-k="${k}" class="${cls}" inputmode="decimal" value="${esc(v)}" aria-label="${k}" /></td>`;
+/** A dropdown cell: blank, then the allowed values; a stored value outside the list stays selectable. */
+const sel = (k: string, label: string, v: string, values: readonly number[], minus = false) => {
+  const cur = v.trim() ? String(Number(v.replace(',', '.'))) : '';
+  const opts = values.map(String);
+  if (cur && cur !== '0' && !opts.includes(cur)) opts.push(cur);
+  const shown = (o: string) => (minus ? `−${o}` : o);
+  return `<td><select data-k="${k}" aria-label="${label}"><option value=""></option>${opts
+    .map((o) => `<option value="${o}"${o === cur ? ' selected' : ''}>${shown(o)}</option>`).join('')}</select></td>`;
+};
 
 function renderSeats() {
   $('seats').querySelector('tbody')!.innerHTML = form.seats.map((s, i) => `
@@ -79,8 +87,9 @@ function renderSeats() {
       <td class="pl"><input data-k="player" class="${isNew(s.player) ? 'new' : ''}" list="names" autocomplete="off"
         value="${esc(s.player)}" aria-label="Гравець ${i + 1}" title="${isNew(s.player) ? 'новий гравець' : ''}" /></td>
       <td><button type="button" class="role" data-role="${esc(s.role)}" title="${esc(s.role)}" aria-label="Роль: ${esc(s.role)}">${esc(ROLE_LETTER[s.role] ?? '?')}</button></td>
-      <td><input data-k="fouls" type="number" min="0" max="4" inputmode="numeric" value="${esc(s.fouls || '')}" aria-label="Фоли" /></td>
-      ${num('additional', s.additional)}${num('penalty', s.penalty)}${num('protocolAdditional', s.protocolAdditional)}${num('protocolPenalty', s.protocolPenalty)}
+      ${sel('fouls', 'Фоли', s.fouls ? String(s.fouls) : '', FOUL_VALUES)}
+      ${sel('additional', 'Доп', s.additional, ADDITIONAL_VALUES)}${sel('penalty', 'Штраф', s.penalty, PENALTY_VALUES, true)}
+      ${sel('protocolAdditional', 'ПрДод', s.protocolAdditional, PROTOCOL_VALUES)}${sel('protocolPenalty', 'ПрШтраф', s.protocolPenalty, PROTOCOL_VALUES, true)}
     </tr>`).join('');
 }
 
