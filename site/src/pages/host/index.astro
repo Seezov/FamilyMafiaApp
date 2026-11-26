@@ -35,7 +35,7 @@ const data = JSON.stringify({ names, defaultSeason, aliases }).replace(/</g, '\\
   <section id="list-view" hidden>
     <div class="toolbar">
       <button class="btn primary" id="new-game" type="button">Нова гра</button>
-      <label class="inline">Сезон <input id="l-season" type="number" min="1" inputmode="numeric" /></label>
+      <label class="inline">Сезон <select id="l-season"></select></label>
       <button class="btn" id="sign-out" type="button">Вийти</button>
     </div>
     <div id="games" class="list" aria-live="polite"></div>
@@ -43,10 +43,10 @@ const data = JSON.stringify({ names, defaultSeason, aliases }).replace(/</g, '\\
 
   <form id="game-form" class="host-form" hidden novalidate>
     <div class="line head">
-      <label>Сезон <input id="f-season" class="n3" type="number" min="1" inputmode="numeric" /></label>
+      <label>Сезон <select id="f-season"></select></label>
       <label>Дата <input id="f-date" type="date" /></label>
       <label>Стіл <select id="f-table"><option value="1">1</option><option value="2">2</option></select></label>
-      <label>Гра <input id="f-number" class="n2" type="number" min="1" inputmode="numeric" /></label>
+      <label>Гра <select id="f-number"></select></label>
       <label class="grow">Ведучий <input id="f-host" list="names" autocomplete="off" placeholder="Оберіть ведучого" /></label>
       <span id="f-result" class="seg" role="radiogroup" aria-label="Перемога">
         <label><input type="radio" name="result" value="city" /><span>Місто</span></label>
@@ -63,7 +63,7 @@ const data = JSON.stringify({ names, defaultSeason, aliases }).replace(/</g, '\\
     </div>
 
     <div class="line">
-      <label>ПУ <input id="f-first" class="n2" type="number" min="0" max="10" inputmode="numeric" /></label>
+      <label>ПУ <select id="f-first"><option value=""></option>{Array.from({ length: 10 }, (_, i) => <option value={i + 1}>{i + 1}</option>)}</select></label>
       <span class="lbl">Опорна 5</span>
       <span id="support" class="cells"></span>
       <span class="label" id="op-value"></span>
@@ -153,7 +153,9 @@ const data = JSON.stringify({ names, defaultSeason, aliases }).replace(/</g, '\\
 
   .cells { display: inline-flex; gap: 8px; }
   .cell { display: inline-flex; }
-  .cell input { width: 2.6em !important; text-align: center; border-radius: 6px 0 0 6px !important; }
+  .cell select { width: 3.6em !important; border-radius: 6px 0 0 6px !important; }
+  .host-form .row select { width: 4em; flex: 0 0 auto; }
+  .host-form select#f-number, .host-form select#f-season, .toolbar select { width: auto; min-width: 4em; }
   .dot { width: 22px; height: 30px; border: 1px solid var(--field-border, var(--border)); border-left: 0; border-radius: 0 6px 6px 0; cursor: pointer; padding: 0; }
   .dot.red { background: var(--civilian); }
   .dot.black { background: #000; box-shadow: inset 0 0 0 2px var(--muted); }

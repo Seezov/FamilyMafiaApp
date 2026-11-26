@@ -39,6 +39,7 @@ let form: FormState = emptyForm(page.defaultSeason, today());
 // else the build's. A form still on the old default follows it.
 let formOpened = false; // a form the host opened, or a season they picked, keeps its season
 const seasonReady = loadClubSeasons().then((list) => {
+  seasonIds = list.map((s) => s.id);
   const d = hostDefaultSeason(list, today(), page.defaultSeason);
   if (d === page.defaultSeason) return;
   const old = page.defaultSeason;
@@ -80,6 +81,22 @@ const sel = (k: string, label: string, v: string, values: readonly number[], min
     .map((o) => `<option value="${o}"${o === cur ? ' selected' : ''}>${shown(o)}</option>`).join('')}</select></td>`;
 };
 
+/** <option>s for 1..max (plus the current value if it is outside), with an optional blank first. */
+const range = (max: number) => Array.from({ length: max }, (_, i) => i + 1);
+const options = (values: number[], cur: number | null | undefined, blank?: string) => {
+  const vs = cur && !values.includes(cur) ? [...values, cur] : values;
+  return (blank !== undefined ? `<option value="">${blank}</option>` : '')
+    + vs.map((v) => `<option value="${v}"${v === cur ? ' selected' : ''}>${v}</option>`).join('');
+};
+/** A seat-number dropdown (1–10). */
+const slotSel = (k: string, cur: number | null | undefined, label: string, blank = '') =>
+  `<select data-k="${k}" aria-label="${label}">${options(range(10), cur || null, blank)}</select>`;
+let seasonIds: number[] = [];
+function fillSeason(id: string, cur: number | null) {
+  $(id).innerHTML = options([...seasonIds].sort((a, b) => b - a), cur, cur === null ? '' : undefined);
+}
+function fillGameNumber(n: number | null) { $('f-number').innerHTML = options(range(20), n, n === null ? '' : undefined); }
+
 function renderSeats() {
   $('seats').querySelector('tbody')!.innerHTML = form.seats.map((s, i) => `
     <tr class="seat" data-i="${i}">
@@ -99,8 +116,7 @@ const dot = (black: boolean) =>
 function renderSupport() {
   $('support').innerHTML = Array.from({ length: 5 }, (_, j) => {
     const g = form.supportFive[j] ?? 0;
-    return `<span class="cell" data-j="${j}"><input data-k="slot" type="number" min="1" max="10" inputmode="numeric"
-      value="${esc(g ? Math.abs(g) : '')}" aria-label="Опорна ${j + 1}" />${dot(g < 0)}</span>`;
+    return `<span class="cell" data-j="${j}">${slotSel('slot', g ? Math.abs(g) : null, `Опорна ${j + 1}`)}${dot(g < 0)}</span>`;
   }).join('');
   renderOp();
 }
@@ -114,9 +130,9 @@ function renderOp() {
 function renderProtocol() {
   $('protocol').innerHTML = form.protocol.map((p, j) => `
     <div class="row" data-j="${j}">
-      <label>вбитий <input data-k="slot" type="number" min="1" max="10" inputmode="numeric" value="${esc(p.slot || '')}" /></label>
-      <label>версія <input data-k="version" type="number" min="1" max="10" inputmode="numeric" value="${esc(p.version ?? '')}" /></label>
-      <label>колір <input data-k="cslot" type="number" min="1" max="10" inputmode="numeric" value="${esc(p.color?.slot ?? '')}" /></label>
+      <label>вбитий ${slotSel('slot', p.slot, 'вбитий')}</label>
+      <label>версія ${slotSel('version', p.version, 'версія')}</label>
+      <label>колір ${slotSel('cslot', p.color?.slot, 'колір')}</label>
       ${dot(!!p.color?.black)}
       <button class="x" type="button" data-remove aria-label="Прибрати">✕</button>
     </div>`).join('');
@@ -125,17 +141,17 @@ function renderProtocol() {
 function renderComments() {
   $('comments').innerHTML = form.comments.map((c, j) => `
     <div class="row" data-j="${j}">
-      <input data-k="slot" type="number" min="1" max="10" inputmode="numeric" value="${esc(c.slot || '')}" aria-label="Номер" placeholder="№" />
+      ${slotSel('slot', c.slot, 'Номер гравця', 'гра')}
       <input data-k="text" value="${esc(c.text)}" aria-label="Коментар" />
       <button class="x" type="button" data-remove aria-label="Прибрати">✕</button>
     </div>`).join('');
 }
 
 function renderAll() {
-  $<HTMLInputElement>('f-season').value = form.season?.toString() ?? '';
+  fillSeason('f-season', form.season);
   $<HTMLInputElement>('f-date').value = form.date;
   $<HTMLSelectElement>('f-table').value = String(form.table);
-  $<HTMLInputElement>('f-number').value = form.gameNumber?.toString() ?? '';
+  fillGameNumber(form.gameNumber);
   $<HTMLInputElement>('f-host').value = form.host;
   $<HTMLInputElement>('f-first').value = form.firstKilled ? String(form.firstKilled) : '';
   document.querySelectorAll<HTMLInputElement>('input[name=result]').forEach((r) => { r.checked = r.value === form.result; });
@@ -196,13 +212,13 @@ function onEdit(t: HTMLInputElement | HTMLSelectElement) {
   if (t.id === 'f-season') form.season = t.value ? Number(t.value) : null;
   else if (t.id === 'f-date') {
     form.date = t.value;
-    if (!editing) { form.gameNumber = nextGameNumber(games, form.date, form.table); $<HTMLInputElement>('f-number').value = String(form.gameNumber); }
+    if (!editing) { form.gameNumber = nextGameNumber(games, form.date, form.table); fillGameNumber(form.gameNumber); }
   }
   else if (t.id === 'f-number') form.gameNumber = t.value ? Number(t.value) : null;
   else if (t.id === 'f-host') form.host = t.value;
   else if (t.id === 'f-table') {
     form.table = Number(t.value) as 1 | 2;
-    if (!editing) { form.gameNumber = nextGameNumber(games, form.date, form.table); $<HTMLInputElement>('f-number').value = String(form.gameNumber); }
+    if (!editing) { form.gameNumber = nextGameNumber(games, form.date, form.table); fillGameNumber(form.gameNumber); }
   } else if (t.id === 'f-first') {
     form.firstKilled = Number(t.value) || 0;
     if (form.firstKilled && !form.protocol.length) { form.protocol = [{ slot: form.firstKilled, version: null, color: null }]; renderProtocol(); }
@@ -317,6 +333,6 @@ onUser(async (u) => {
   $('who').textContent = `${u.name}${u.admin ? ' · адмін' : ''}`;
   await seasonReady; // before the list: a game must not start on the old default
   show('list-view');
-  $<HTMLInputElement>('l-season').value = (form.season ?? page.defaultSeason)?.toString() ?? '';
+  fillSeason('l-season', form.season ?? page.defaultSeason);
   try { await refreshList(); } catch (e) { $('games').innerHTML = `<p class="msg-error">${esc(explainError(e))}</p>`; }
 });

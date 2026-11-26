@@ -88,3 +88,7 @@ h1.display { font-size: clamp(22px, 3vw, 32px); margin: 0; }
 }
 .pill[aria-current='true'] { color: var(--bg); border-color: var(--accent); background: var(--accent); }
 .pagehead { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; margin-bottom: 20px; }
+
+/* No spinner arrows on number fields: small fixed ranges are dropdowns, the rest are typed. */
+input[type=number] { appearance: textfield; -moz-appearance: textfield; }
+input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
