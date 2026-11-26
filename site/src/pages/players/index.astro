@@ -10,27 +10,27 @@ const scope = scopeStats(players as { slug: string; games: number; winRate: numb
 // The «+ Tournaments» toggle is hidden until federation games count correctly.
 const hasTournaments = false;
 ---
-<Base title="Players" description={`${players.length} Family Mafia Club players: games, win rate, seasons.`} active="players">
+<Base title="Гравці" description={`Гравці Family Mafia Club (${players.length}): ігри, відсоток перемог, сезони.`} active="players">
   <div class="pagehead">
-    <h1 class="display">Players</h1>
-    <input id="filter" type="search" placeholder="Filter by name…" aria-label="Filter players" />
-    <nav class="pills" id="games" aria-label="Games played">
+    <h1 class="display">Гравці</h1>
+    <input id="filter" type="search" placeholder="Фільтр за ім'ям…" aria-label="Фільтр гравців" />
+    <nav class="pills" id="games" aria-label="Зіграно ігор">
       {minGames.map((n) => (
         <a class="pill" href={n ? `?games=${n}` : '?'} data-min={n} aria-current={n === 0 ? 'true' : undefined}>
-          {n ? `${n}+ games` : 'All'}
+          {n ? `${n}+ ігор` : 'Усі'}
         </a>
       ))}
     </nav>
     {hasTournaments && (
-      <nav class="pills" id="scope" aria-label="Which games count">
-        <a class="pill" href="?" data-t="0" aria-current="true">Season games</a>
-        <a class="pill" href="?t=1" data-t="1" title="Adds federation tournament games of confirmed profiles; games already in the club rating count once">+ Tournaments</a>
+      <nav class="pills" id="scope" aria-label="Які ігри рахувати">
+        <a class="pill" href="?" data-t="0" aria-current="true">Ігри сезонів</a>
+        <a class="pill" href="?t=1" data-t="1" title="Додає турнірні ігри федерацій з підтверджених профілів; ігри, які вже є в клубному рейтингу, рахуються один раз">+ Турніри</a>
       </nav>
     )}
   </div>
   <Panel>
     <DataTable table={table} />
-    <p id="none" class="label" hidden>No player matches.</p>
+    <p id="none" class="label" hidden>Жодного гравця не знайдено.</p>
   </Panel>
   <script type="application/json" id="scope-stats" set:html={JSON.stringify(scope)} />
 </Base>
@@ -47,7 +47,7 @@ const hasTournaments = false;
   const root = document.querySelector<HTMLElement>('[data-table]')!;
   const colOf = (label: string) => [...root.querySelectorAll<HTMLElement>('th[data-col]')]
     .find((th) => th.textContent?.trim() === label)?.dataset.col;
-  const gamesCol = colOf('Games')!;
+  const gamesCol = (colOf('Ігри') ?? colOf('Games'))!;
   const wrCol = colOf('WR');
   const scopePills = [...document.querySelectorAll<HTMLAnchorElement>('#scope [data-t]')];
   const stats = JSON.parse(document.getElementById('scope-stats')?.textContent || '{}') as Record<string, ScopeStats>;

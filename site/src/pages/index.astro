@@ -4,17 +4,17 @@ import { seasonHref } from '../lib/url';
 const target = seasonHref(loadIndex().latestSeasonId);
 ---
 <!doctype html>
-<html lang="en">
+<html lang="uk">
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="refresh" content={`0; url=${target}`} />
     <link rel="canonical" href={target} />
     <title>Family Mafia Club</title>
     <meta property="og:title" content="Family Mafia Club" />
-    <meta property="og:description" content="Family Mafia Club statistics: seasons, players, records." />
+    <meta property="og:description" content="Статистика Family Mafia Club: сезони, гравці, рекорди." />
     <meta property="og:image" content="https://seezov.github.io/FamilyMafiaApp/og.png" />
   </head>
   <body style="background:#0A0A0A;color:#F2F2F2;font-family:system-ui">
-    <a href={target} style="color:#FFFFFF">Go to the latest season</a>
+    <a href={target} style="color:#FFFFFF">До поточного сезону</a>
   </body>
 </html>

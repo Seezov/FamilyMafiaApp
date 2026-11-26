@@ -29,7 +29,7 @@ void main() {
   });
 
   test('columns only serialise what is set', () {
-    expect(const SiteColumn('W/G', group: 'Don', phone: false).toJson(),
-        {'label': 'W/G', 'numeric': true, 'group': 'Don', 'phone': false});
+    expect(const SiteColumn('П/І', group: 'Дон', groupKey: 'don', phone: false).toJson(),
+        {'label': 'П/І', 'numeric': true, 'group': 'Дон', 'groupKey': 'don', 'phone': false});
   });
 }

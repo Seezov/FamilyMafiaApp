@@ -5,17 +5,17 @@ import { fmtPts } from '../lib/games';
 
 interface Props { game: GameEntry; autoLabel: string; seasonId: number }
 const { game: g, autoLabel } = Astro.props;
-const roleLabel: Record<string, string> = { civilian: 'Civilian', sheriff: 'Sheriff', mafia: 'Mafia', don: 'Don' };
-const result = { city: 'City', mafia: 'Mafia', unrated: 'Unrated' }[g.result];
+const roleLabel: Record<string, string> = { civilian: 'Мирний', sheriff: 'Шериф', mafia: 'Мафія', don: 'Дон' };
+const result = { city: 'Місто', mafia: 'Мафія', unrated: 'Не рейтинг' }[g.result];
 const cols = [
-  { k: 'fouls', label: 'Fouls', tip: 'Фоли' },
-  { k: 'won', label: 'Win', tip: 'Бал: 1 for a win' },
-  { k: 'add', label: 'Add.', tip: 'Доп — additional points from the host' },
-  { k: 'ad', label: 'Auto', tip: 'АД — automatic additional points' },
-  { k: 'bm', label: 'Best move', tip: `${autoLabel} — points of the first killed` },
-  { k: 'pen', label: 'Penalty', tip: 'Штраф' },
-  { k: 'prAdd', label: 'Prot. +', tip: 'ПрДод — protocol bonus' },
-  { k: 'prPen', label: 'Prot. −', tip: 'ПрШтраф — protocol penalty' },
+  { k: 'fouls', label: 'Фоли', tip: 'Фоли' },
+  { k: 'won', label: 'Бал', tip: '1 за перемогу' },
+  { k: 'add', label: 'Доп', tip: 'Додаткові бали від ведучого' },
+  { k: 'ad', label: 'АД', tip: 'Автоматичні додаткові бали' },
+  { k: 'bm', label: autoLabel, tip: `${autoLabel} — бали першого вбитого` },
+  { k: 'pen', label: 'Штраф', tip: 'Штраф' },
+  { k: 'prAdd', label: 'ПрДод', tip: 'Додаткові бали за протокол' },
+  { k: 'prPen', label: 'ПрШтраф', tip: 'Штраф за протокол' },
 ] as const;
 const shown = cols.filter((c) => g.seats.some((s) => s[c.k] !== undefined));
 const cell = (s: GameEntry['seats'][number], k: (typeof cols)[number]['k']) =>
@@ -38,9 +38,9 @@ const keys = g.seats.map((s) => s.key).filter(Boolean).join('|');
     <div class="scroll">
       <table>
         <thead><tr>
-          <th class="num">#</th><th>Player</th><th>Role</th>
+          <th class="num">#</th><th>Гравець</th><th>Роль</th>
           {shown.map((c) => <th class="num" title={c.tip}>{c.label}</th>)}
-          <th class="num" title="Sum of the columns (no СІ top-up)">Total</th>
+          <th class="num" title="Сума колонок (без доповнення СІ)">Разом</th>
         </tr></thead>
         <tbody>
           {g.seats.map((s) => (
@@ -55,13 +55,13 @@ const keys = g.seats.map((s) => s.key).filter(Boolean).join('|');
         </tbody>
       </table>
     </div>
-    {g.firstKilled && <p><b>First killed:</b> {g.firstKilled} · {seatName(g.firstKilled)}</p>}
-    {g.bestMove && <p><b>Best move:</b> {g.bestMove.join(', ')}{g.bestMovePoints !== undefined && <> ({fmtPts(g.bestMovePoints)})</>}</p>}
-    {g.supportFive && <p><b>Support 5:</b> {guesses(g.supportFive)}</p>}
+    {g.firstKilled && <p><b title="Перший убитий">ПУ:</b> {g.firstKilled} · {seatName(g.firstKilled)}</p>}
+    {g.bestMove && <p><b title="Кращий хід">{autoLabel}:</b> {g.bestMove.join(', ')}{g.bestMovePoints !== undefined && <> ({fmtPts(g.bestMovePoints)})</>}</p>}
+    {g.supportFive && <p><b>Опорна 5:</b> {guesses(g.supportFive)}</p>}
     {g.protocol && (
-      <div><b>Protocol</b>
+      <div><b>Протокол</b>
         <ol>{g.protocol.map((p) => (
-          <li>{p.killed} · {seatName(p.killed)}{p.version && <> — sheriff {p.version}</>}{p.colors.length > 0 && <> — {guesses(p.colors)}</>}</li>
+          <li>{p.killed} · {seatName(p.killed)}{p.version && <> — шериф {p.version}</>}{p.colors.length > 0 && <> — {guesses(p.colors)}</>}</li>
         ))}</ol>
       </div>
     )}
@@ -70,7 +70,7 @@ const keys = g.seats.map((s) => s.key).filter(Boolean).join('|');
         <li>{c.seats.length > 0 && <b>{c.seats.join(', ')} — </b>}<span>{c.text}</span></li>
       ))}</ul>
     )}
-    <button type="button" class="copy" data-id={g.id}>Copy link</button>
+    <button type="button" class="copy" data-id={g.id}>Скопіювати посилання</button>
   </div>
 </details>
 

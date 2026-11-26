@@ -7,20 +7,20 @@ const thisYear = new Date().getFullYear();
 const options = [...new Set([thisYear, ...years])].sort((a, b) => b - a);
 const names = loadPlayers().players.map((p) => p.name);
 ---
-<Base title="Edit annual events" description="Admins add tournaments, series and marathons to the annual rating." active="annual">
-  <div class="pagehead"><h1 class="display">Annual events</h1><span class="label" id="state">Loading…</span></div>
+<Base title="Річний рейтинг — події" description="Адміни додають турніри, серії й марафони до річного рейтингу." active="annual">
+  <div class="pagehead"><h1 class="display">Події річного рейтингу</h1><span class="label" id="state">Завантаження…</span></div>
 
   <div class="panel access">
-    <span class="label">Editing</span> <span id="who">Read-only</span>
-    <button type="button" id="sign-in" class="btn primary">Sign in with Google</button>
-    <button type="button" id="sign-out" class="btn" hidden>Sign out</button>
-    <button type="button" id="import" class="btn" hidden>Import 2024–2026 from the sheets</button>
-    <p class="hint">Admins (hosts with <code>admin: true</code>) can save. Club seasons are added automatically. The site rebuilds within an hour.</p>
+    <span class="label">Редагування</span> <span id="who">Лише перегляд</span>
+    <button type="button" id="sign-in" class="btn primary">Увійти через Google</button>
+    <button type="button" id="sign-out" class="btn" hidden>Вийти</button>
+    <button type="button" id="import" class="btn" hidden>Імпортувати 2024–2026 з таблиць</button>
+    <p class="hint">Зберігати можуть адміни (ведучі з <code>admin: true</code>). Клубні сезони додаються автоматично. Сайт перезбирається протягом години.</p>
   </div>
 
   <div class="toolbar">
-    <label>Year <select id="year">{options.map((y) => <option value={y}>{y}</option>)}</select></label>
-    <button type="button" id="add" class="btn" disabled>Add event</button>
+    <label>Рік <select id="year">{options.map((y) => <option value={y}>{y}</option>)}</select></label>
+    <button type="button" id="add" class="btn" disabled>Додати подію</button>
   </div>
 
   <p id="msg" class="msg" role="status"></p>

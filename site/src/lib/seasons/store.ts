@@ -33,11 +33,11 @@ export async function createSeason(draft: Omit<ClubSeason, 'id'>, expectedId: nu
 
 /** Removes the newest season if it still has no games (re-counted right before the write). */
 export async function deleteNewestSeason(id: number, u: ClubAdmin): Promise<ClubSeason[]> {
-  if ((await gamesCount(id)) > 0) throw new Error(`Season ${id} already has games — it cannot be deleted`);
+  if ((await gamesCount(id)) > 0) throw new Error(`У сезоні ${id} вже є ігри — його не можна видалити`);
   return runTransaction(db, async (tx) => {
     const snap = await tx.get(ref());
     const cur = snap.exists() ? toSeasons(snap.data().seasons) : [];
-    if (cur.at(-1)?.id !== id) throw new Error(`Season ${id} is not the newest any more — reload`);
+    if (cur.at(-1)?.id !== id) throw new Error(`Сезон ${id} уже не найновіший — онови сторінку`);
     const list = cur.slice(0, -1);
     tx.set(ref(), { seasons: list, ...stamp(u) });
     tx.set(doc(db, 'meta', 'state'), { updatedAt: serverTimestamp() });

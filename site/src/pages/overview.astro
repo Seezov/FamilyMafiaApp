@@ -7,25 +7,26 @@ import RoleRings from '../components/RoleRings.astro';
 import { loadIndex } from '../lib/data';
 import { pct } from '../lib/format';
 const d = loadIndex();
+const best: Record<string, string> = { civilian: 'Кращий мирний', sheriff: 'Кращий шериф', mafia: 'Краща мафія', don: 'Кращий дон' };
 ---
-<Base title="Overview" description={`All time: ${d.club.seasons} seasons, ${d.club.games} games, ${d.club.players} players.`} active="overview">
-  <div class="pagehead"><h1 class="display">All time</h1></div>
+<Base title="Огляд" description={`За весь час: сезонів ${d.club.seasons}, ігор ${d.club.games}, гравців ${d.club.players}.`} active="overview">
+  <div class="pagehead"><h1 class="display">За весь час</h1></div>
   <div class="kpis">
-    <Kpi label="Seasons" value={String(d.club.seasons)} />
-    <Kpi label="Games" value={String(d.club.games)} />
-    <Kpi label="Players" value={String(d.club.players)} />
-    <Kpi label="City WR" value={pct(d.club.cityWR)} tone="city" />
+    <Kpi label="Сезони" value={String(d.club.seasons)} />
+    <Kpi label="Ігри" value={String(d.club.games)} />
+    <Kpi label="Гравці" value={String(d.club.players)} />
+    <Kpi label="WR міста" value={pct(d.club.cityWR)} tone="city" />
   </div>
   <div class="grid">
-    <Panel title="Win rate by role" class="span-12"><RoleRings roleWR={d.roleWR} /></Panel>
+    <Panel title="Відсоток перемог за роллю" class="span-12"><RoleRings roleWR={d.roleWR} /></Panel>
     <p class="label note span-12">{d.leaderboardNote}</p>
     {d.leaderboards.map((l) => (
-      <Panel title={`Best ${l.label}`} class="span-6">
+      <Panel title={best[l.role] ?? `Кращі: ${l.label}`} class="span-6">
         <DataTable table={l.table} compact />
       </Panel>
     ))}
-    <Panel title="Seasons" class="span-12"><DataTable table={d.seasonsTable} compact /></Panel>
-    <Panel title="Protocol guesses" class="span-6"><DataTable table={d.protocol} compact /></Panel>
+    <Panel title="Сезони" class="span-12"><DataTable table={d.seasonsTable} compact /></Panel>
+    <Panel title="Вгадування в протоколі" class="span-6"><DataTable table={d.protocol} compact /></Panel>
   </div>
 </Base>
 

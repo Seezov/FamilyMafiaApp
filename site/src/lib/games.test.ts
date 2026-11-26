@@ -43,8 +43,8 @@ describe('format', () => {
     expect(fmtPts(undefined)).toBe('');
   });
   it('labels a day', () => {
-    expect(dayLabel('2026-09-01')).toBe('Tue, 1 Sep 2026');
-    expect(dayLabel(null)).toBe('No date');
+    expect(dayLabel('2026-09-01')).toBe('вт, 1 вер 2026');
+    expect(dayLabel(null)).toBe('Без дати');
   });
 });
 

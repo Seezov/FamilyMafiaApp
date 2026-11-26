@@ -11,7 +11,7 @@ void main() {
     expect(signed2(-0.25), '-0.25');
     expect(signed2(0), '0.00');
     expect(rounded(2.41666, 2), '2.42');
-    expect(seasonLabel(null), 'All time');
+    expect(seasonLabel(null), 'За весь час');
     expect(seasonLabel(21), 'S21');
   });
 
@@ -26,5 +26,17 @@ void main() {
     expect(roleCount(games, Role.civilian), 5);
     expect(roleCount(games, Role.sheriff), 0);
     expect(rolePoints(const [('Дон', 0.5), ('Дон', 0.25)], Role.don), 0.75);
+  });
+
+  test('Ukrainian labels and plurals', () {
+    expect(gamesCount(1), '1 гра');
+    expect(gamesCount(3), '3 гри');
+    expect(gamesCount(5), '5 ігор');
+    expect(gamesCount(11), '11 ігор');
+    expect(gamesCount(22), '22 гри');
+    expect(placeLabel(0), '1 місце');
+    expect(seasonTitle('Season 31'), 'Сезон 31');
+    expect(seasonTitle('Осінь 2026'), 'Осінь 2026');
+    expect(roleLabel(Role.civilian), 'Мирний');
   });
 }

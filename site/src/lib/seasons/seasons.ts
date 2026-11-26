@@ -13,25 +13,25 @@ function realDate(s: string): boolean {
 
 export function seasonErrors(list: ClubSeason[], lastJsonId: number): string[] {
   const errors: string[] = [];
-  if (list.length > MAX_SEASONS) errors.push(`${list.length} seasons, the limit is ${MAX_SEASONS}`);
+  if (list.length > MAX_SEASONS) errors.push(`сезонів ${list.length}, ліміт ${MAX_SEASONS}`);
   list.forEach((s, i) => {
     const want = lastJsonId + 1 + i;
-    if (s.id !== want) errors.push(`season ${s.id}: expected id ${want}`);
+    if (s.id !== want) errors.push(`сезон ${s.id}: очікувався id ${want}`);
     const t = s.title.trim().length;
-    if (t < 1 || t > 40) errors.push(`season ${s.id}: title must be 1–40 characters`);
+    if (t < 1 || t > 40) errors.push(`сезон ${s.id}: назва має бути 1–40 символів`);
     if (!Number.isInteger(s.smallLeagueMinGames) || s.smallLeagueMinGames < 1 || s.smallLeagueMinGames > 100) {
-      errors.push(`season ${s.id}: small league minimum must be 1–100`);
+      errors.push(`сезон ${s.id}: мінімум малої ліги має бути 1–100`);
     }
-    if (!realDate(s.startDate)) errors.push(`season ${s.id}: start date "${s.startDate}" is not a YYYY-MM-DD date`);
+    if (!realDate(s.startDate)) errors.push(`сезон ${s.id}: дата старту "${s.startDate}" не у форматі РРРР-ММ-ДД`);
   });
   return errors;
 }
 
-/** Defaults for «Create season N»: next id, `Season N`, the previous season's minimum, today. */
+/** Defaults for «Create season N»: next id, `Сезон N`, the previous season's minimum, today. */
 export function nextSeason(list: ClubSeason[], lastJsonId: number, jsonMinGames: number, today: string): ClubSeason {
   const prev = list.at(-1);
   const id = (prev?.id ?? lastJsonId) + 1;
-  return { id, title: `Season ${id}`, smallLeagueMinGames: prev?.smallLeagueMinGames ?? jsonMinGames, startDate: today };
+  return { id, title: `Сезон ${id}`, smallLeagueMinGames: prev?.smallLeagueMinGames ?? jsonMinGames, startDate: today };
 }
 
 /** The newest club season whose start date has come, else [fallback]. */
@@ -50,7 +50,7 @@ export function toSeasons(raw: unknown): ClubSeason[] {
 /** The new season's id, which must be the one the admin saw: another admin may have just created it. */
 export function nextSeasonId(list: ClubSeason[], lastJsonId: number, expectedId: number): number {
   const id = (list.at(-1)?.id ?? lastJsonId) + 1;
-  if (id !== expectedId) throw new Error(`Season ${expectedId} was just created by someone else — reload`);
+  if (id !== expectedId) throw new Error(`Сезон ${expectedId} щойно створив хтось інший — онови сторінку`);
   return id;
 }
 

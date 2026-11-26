@@ -48,6 +48,8 @@ export function validate(f: FormState, aliases: Map<string, string> = new Map())
       || new Set(slots).size !== slots.length) {
     fail('Протокол: невірний номер вбитого', 'protocol');
   }
+  // 0 = a comment about the whole game; otherwise the seat it is about.
+  if (f.comments.some((c) => c.text.trim() && c.slot !== 0 && !isSlot(c.slot))) fail('Коментар: номер гравця має бути від 1 до 10', 'comments');
   if (f.supportFive.length > 5 || f.supportFive.some((x) => !isSlot(Math.abs(x)))) fail('Опорна 5: невірні номери', 'supportFive');
 
   // Sheet checks (warnings only): SUM(ОП + Доп) > 3.6, COUNT(ОП, Доп cells) > 7.

@@ -54,7 +54,7 @@ function render() {
   $('unmatched').innerHTML = file.unmatched.map((c) => unmatchedRow(c, feds, canSave())).join('') || '<p class="hint">Усі прив\'язані.</p>';
   $('review').innerHTML = review.map((r) => reviewRow(r, feds.gameDecisions?.[r.key], canSave())).join('') || '<p class="hint">Немає.</p>';
   $('roster-names').innerHTML = (roster ?? []).map((e) => `<option value="${esc(e.name)}">`).join('');
-  $('who').textContent = user === null ? 'Read-only' : user === 'not-host' ? 'Not a host — read-only' : `${user.name}${user.admin ? ' (admin)' : ' — not an admin, read-only'}`;
+  $('who').textContent = user === null ? 'Лише перегляд' : user === 'not-host' ? 'Не ведучий — лише перегляд' : `${user.name}${user.admin ? ' (адмін)' : ' — не адмін, лише перегляд'}`;
   $('sign-in').hidden = user !== null;
   $('sign-out').hidden = user === null;
 }

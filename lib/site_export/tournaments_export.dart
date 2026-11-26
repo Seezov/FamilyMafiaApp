@@ -3,6 +3,7 @@ import 'package:family_mafia_app/providers/app_providers.dart';
 import 'package:family_mafia_app/screens/home/home_providers.dart';
 import 'package:family_mafia_app/services/stats/player_resolver.dart';
 import 'package:family_mafia_app/site_export/export_context.dart';
+import 'package:family_mafia_app/site_export/formats.dart';
 import 'package:family_mafia_app/site_export/site_table.dart';
 
 /// The Tournaments page: every tournament in the season config, totals per
@@ -28,7 +29,7 @@ Map<String, Object?> tournamentsJson(ExportContext x) {
         if (list.any((t) => t.type == type))
           {
             'type': type.name,
-            'label': type.label,
+            'label': tournamentLabel(type),
             'count': list.where((t) => t.type == type).length,
             'games': list
                 .where((t) => t.type == type)
@@ -42,12 +43,12 @@ Map<String, Object?> tournamentsJson(ExportContext x) {
         if (list.any((t) => t.seasonId == s.id))
           {
             'id': s.id,
-            'title': s.title,
+            'title': seasonTitle(s.title),
             'events': [
               for (final t in list.where((t) => t.seasonId == s.id))
                 {
                   'type': t.type.name,
-                  'label': t.type.label,
+                  'label': tournamentLabel(t.type),
                   'name': t.name,
                   'games': t.games,
                   'date': t.date,
@@ -92,12 +93,12 @@ SiteTable _winners(
     showRank: true,
     collapsed: 30,
     columns: const [
-      SiteColumn('Player', numeric: false),
-      SiteColumn('1st'),
-      SiteColumn('2nd'),
-      SiteColumn('3rd'),
-      SiteColumn('Podiums'),
-      SiteColumn('Minicap wins'),
+      SiteColumn('Гравець', numeric: false),
+      SiteColumn('1 місце'),
+      SiteColumn('2 місце'),
+      SiteColumn('3 місце'),
+      SiteColumn('Подіуми'),
+      SiteColumn('Перемоги в мінікапах'),
     ],
     rows: [
       for (final (cell, c, minicaps) in places.values)
@@ -118,10 +119,10 @@ SiteTable _bySeason(ExportContext x, List<Tournament> list) {
   return SiteTable(
     sortColumn: 0,
     columns: [
-      const SiteColumn('Season'),
-      for (final t in TournamentType.values) SiteColumn('${t.label}s'),
-      const SiteColumn('Total'),
-      const SiteColumn('Games'),
+      const SiteColumn('Сезон'),
+      for (final t in TournamentType.values) SiteColumn(tournamentPlural(t)),
+      const SiteColumn('Разом'),
+      const SiteColumn('Ігри'),
     ],
     rows: [
       for (final s in x.seasons)

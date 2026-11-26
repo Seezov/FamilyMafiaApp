@@ -43,10 +43,10 @@ Map<String, Object?> playersJson(ExportContext x) {
       showRank: true,
       sortColumn: 1,
       columns: const [
-        SiteColumn('Player', numeric: false),
-        SiteColumn('Games'),
+        SiteColumn('Гравець', numeric: false),
+        SiteColumn('Ігри'),
         SiteColumn('WR'),
-        SiteColumn('Seasons'),
+        SiteColumn('Сезони'),
       ],
       rows: [
         for (final s in summaries)
@@ -87,7 +87,7 @@ Map<String, Object?> playerJson(ExportContext x, Player p) {
   final totalRoleGames = roleGames.values.fold(0, (a, b) => a + b);
   final percentiles = x.read(roleWinRatePercentilesProvider(p));
   String? top(double? v) =>
-      v == null ? null : 'Top ${v < 1 ? v.toStringAsFixed(1) : v.toInt()}%';
+      v == null ? null : 'Топ ${v < 1 ? v.toStringAsFixed(1) : v.toInt()}%';
 
   final fk = x.read(playerFirstKillProvider(p));
   final bm = x.read(playerBestMovesProvider(p));
@@ -112,7 +112,7 @@ Map<String, Object?> playerJson(ExportContext x, Player p) {
           if (acc.tournamentPodiums(t) > 0)
             {
               'type': t.name,
-              'label': t.label,
+              'label': tournamentLabel(t),
               'podiums': acc.tournamentPodiums(t),
               'places': acc.tournamentPlaces[t] ?? const [0, 0, 0],
             }
@@ -122,7 +122,7 @@ Map<String, Object?> playerJson(ExportContext x, Player p) {
       for (final c in x.seasons)
         {
           'seasonId': c.id,
-          'title': c.title,
+          'title': seasonTitle(c.title),
           'games': perSeason[c.id] ?? 0,
           'league': (leagues[c.id] ?? SeasonLeague.none).name,
           // Games still missing for the main league of a season in progress.
@@ -159,7 +159,6 @@ Map<String, Object?> playerJson(ExportContext x, Player p) {
   };
 }
 
-const _places = ['1st', '2nd', '3rd'];
 const _medals = ['gold', 'silver', 'bronze'];
 
 /// The profile's award cards, grouped like the app's Accomplishments section:
@@ -178,25 +177,25 @@ List<Map<String, Object?>> _awardGroups(PlayerAccomplishments acc) {
       };
   List<Map<String, Object?>> podium(String prefix) => [
         for (var i = 0; i < 3; i++)
-          card('$prefix:$i', '${_places[i]} place', 'trophy', _medals[i]),
+          card('$prefix:$i', placeLabel(i), 'trophy', _medals[i]),
       ];
 
   final groups = [
-    ('Main league', podium('main')),
-    ('Small league', podium('small')),
-    ('Season awards', [
+    ('Вища ліга', podium('main')),
+    ('Мала ліга', podium('small')),
+    ('Нагороди сезону', [
       card('mvp', 'MVP', 'star', 'mvp'),
-      card('sheriff', 'Best Sheriff', 'sheriff', 'sheriff'),
-      card('civilian', 'Best Civilian', 'civilian', 'civilian'),
-      card('mafia', 'Best Mafia', 'mafia', 'mafia'),
-      card('don', 'Best Don', 'don', 'don'),
-      card('killed', 'Most Killed', 'killed', 'killed'),
+      card('sheriff', 'Кращий шериф', 'sheriff', 'sheriff'),
+      card('civilian', 'Кращий мирний', 'civilian', 'civilian'),
+      card('mafia', 'Краща мафія', 'mafia', 'mafia'),
+      card('don', 'Кращий дон', 'don', 'don'),
+      card('killed', 'Найчастіше вбитий', 'killed', 'killed'),
     ]),
-    ('Tournament prize places', [
+    ('Призові місця на турнірах', [
       for (final t in TournamentType.values)
         for (var i = 0; i < 3; i++)
-          card('${t.name}:$i', '${_places[i]} place', 'medal', _medals[i],
-              kind: t.label, kindType: t.name),
+          card('${t.name}:$i', placeLabel(i), 'medal', _medals[i],
+              kind: tournamentLabel(t), kindType: t.name),
     ]),
   ];
   return [

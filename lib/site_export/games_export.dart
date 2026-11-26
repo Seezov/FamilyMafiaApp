@@ -8,7 +8,7 @@ import 'package:family_mafia_app/site_export/export_context.dart';
 
 /// The sheet's name for the best-move points column of [seasonId].
 String autoLabel(int seasonId) =>
-    seasonId <= kLegacyMaxSeason ? 'ЛХ' : seasonId <= kPreProtocolMaxSeason ? 'КХ' : 'ОП';
+    seasonId <= kPreProtocolMaxSeason ? 'КХ' : 'ОП';
 
 String _day(DateTime d) =>
     '${d.year.toString().padLeft(4, '0')}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';

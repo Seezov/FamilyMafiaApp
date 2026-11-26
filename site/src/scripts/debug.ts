@@ -60,8 +60,8 @@ function rows(): Row[] {
 
 // ── Filters ─────────────────────────────────────────────────────────────────
 const FILTERS = [
-  ['review', 'Needs review'], ['all', 'All tournaments'], ['detected', 'Auto-detected'], ['confirmed', 'Confirmed'],
-  ['sheet', 'From sheet tabs'], ['differs', 'Podium differs'], ['candidates', 'Candidates'], ['rejected', 'Rejected'],
+  ['review', 'Потребує перевірки'], ['all', 'Усі турніри'], ['detected', 'Знайдені автоматично'], ['confirmed', 'Підтверджені'],
+  ['sheet', 'З вкладок таблиці'], ['differs', 'Інший п’єдестал'], ['candidates', 'Кандидати'], ['rejected', 'Відхилені'],
 ] as const;
 type Filter = (typeof FILTERS)[number][0];
 let filter: Filter = (new URLSearchParams(location.search).get('show') as Filter) || 'review';
@@ -102,37 +102,37 @@ function visible(r: Row): boolean {
 // ── Rendering ───────────────────────────────────────────────────────────────
 const esc = (s: unknown) => String(s ?? '').replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
 const typeLabel = (t: string) => data.types.find((x) => x.type === t)?.label ?? t;
-const STATUS: Record<string, string> = { sheet: 'sheet tab', detected: 'auto-detected', confirmed: 'confirmed' };
+const STATUS: Record<string, string> = { sheet: 'вкладка таблиці', detected: 'знайдено автоматично', confirmed: 'підтверджено' };
 
 function podium(list: string[]) {
   return list.length
     ? `<div class="pod">${list.map((p, i) => `<span class="p${i + 1}"><i>${i + 1}</i>${esc(p)}</span>`).join('')}</div>`
-    : '<div class="flag bad">No podium</div>';
+    : '<div class="flag bad">Немає п’єдесталу</div>';
 }
 
 function evidence(ev: DebugEvidence | null | undefined, expectedGames?: number) {
-  if (!ev) return '<div class="flag">None of its games are in the main game list (own tab or no date).</div>';
+  if (!ev) return '<div class="flag">Жодної його гри немає в основному списку ігор (окрема вкладка або без дати).</div>';
   const hosts = Object.entries(ev.hosts).map(([h, n]) => `${esc(h)}${n > 1 ? ` ×${n}` : ''}`).join(', ');
   const countFlag = expectedGames === undefined || ev.games === expectedGames ? ''
     : ev.games < expectedGames - 1
-      ? ` <span class="flag">· only ${ev.games} of ${expectedGames} games are in the main list (own tab?)</span>`
-      : ` <span class="flag">· found ${ev.games} games, entry says ${expectedGames}</span>`;
+      ? ` <span class="flag">· в основному списку лише ${ev.games} з ${expectedGames} ігор (окрема вкладка?)</span>`
+      : ` <span class="flag">· знайдено ігор: ${ev.games}, у записі: ${expectedGames}</span>`;
   const rowsHtml = ev.standings.map((s, i) => `<tr><td>${i + 1}</td><td>${s.link
     ? `<a href="${base}players/${esc(s.link)}/">${esc(s.t)}</a>` : esc(s.t)}</td><td>${s.pts.toFixed(2)}</td><td>${s.w}/${s.g}</td></tr>`).join('');
-  return `<details class="ev"><summary>Games behind it: ${ev.games} · ${esc(ev.dates.join(', ') || 'no date')} · host ${hosts}${countFlag}</summary>
-    <table><thead><tr><th>#</th><th>Player</th><th>Points</th><th>Won</th></tr></thead><tbody>${rowsHtml}</tbody></table></details>`;
+  return `<details class="ev"><summary>Ігор за ним: ${ev.games} · ${esc(ev.dates.join(', ') || 'без дати')} · ведучий ${hosts}${countFlag}</summary>
+    <table><thead><tr><th>#</th><th>Гравець</th><th>Бали</th><th>Перемоги</th></tr></thead><tbody>${rowsHtml}</tbody></table></details>`;
 }
 
 function editForm(id: string, e: ConfigEntry, saveLabel: string) {
   const types = data.types.map((t) => `<option value="${t.type}" ${t.type === e.type ? 'selected' : ''}>${esc(t.label)}</option>`).join('');
   return `<form class="edit" data-form="${esc(id)}">
-    <label class="wide">Name<input name="name" value="${esc(e.name)}" required></label>
-    <label>Type<select name="type">${types}</select></label>
-    <label>Season<input name="season" type="number" min="0" value="${e.season}" required></label>
-    <label>Games<input name="games" type="number" min="1" value="${e.games}" required></label>
-    <label>Date<input name="date" value="${esc(e.date ?? '')}" placeholder="dd.mm.yyyy"></label>
-    ${[0, 1, 2].map((i) => `<label>${i + 1}${['st', 'nd', 'rd'][i]} place<input name="p${i}" value="${esc(e.podium[i] ?? '')}"></label>`).join('')}
-    <div class="row"><button class="btn primary" type="submit">${saveLabel}</button><button class="btn" type="button" data-act="cancel" data-id="${esc(id)}">Cancel</button></div>
+    <label class="wide">Назва<input name="name" value="${esc(e.name)}" required></label>
+    <label>Тип<select name="type">${types}</select></label>
+    <label>Сезон<input name="season" type="number" min="0" value="${e.season}" required></label>
+    <label>Ігри<input name="games" type="number" min="1" value="${e.games}" required></label>
+    <label>Дата<input name="date" value="${esc(e.date ?? '')}" placeholder="дд.мм.рррр"></label>
+    ${[0, 1, 2].map((i) => `<label>${i + 1} місце<input name="p${i}" value="${esc(e.podium[i] ?? '')}"></label>`).join('')}
+    <div class="row"><button class="btn primary" type="submit">${saveLabel}</button><button class="btn" type="button" data-act="cancel" data-id="${esc(id)}">Скасувати</button></div>
   </form>`;
 }
 
@@ -143,31 +143,31 @@ function card(r: Row): string {
     const b = buildEntry(e);
     const computed = b?.evidence?.standings.slice(0, 3).map((s) => s.t) ?? [];
     const acts = [
-      st === 'detected' ? `<button class="btn primary" data-act="confirm" data-id="${esc(r.key)}">Confirm</button>` : '',
-      `<button class="btn" data-act="edit" data-id="${esc(r.key)}">Edit</button>`,
-      `<button class="btn danger" data-act="delete" data-id="${esc(r.key)}">Delete</button>`,
+      st === 'detected' ? `<button class="btn primary" data-act="confirm" data-id="${esc(r.key)}">Підтвердити</button>` : '',
+      `<button class="btn" data-act="edit" data-id="${esc(r.key)}">Редагувати</button>`,
+      `<button class="btn danger" data-act="delete" data-id="${esc(r.key)}">Видалити</button>`,
     ].join('');
     return `<article class="dbg-card st-${st} ${r.pending ? 'pending-op' : ''}">
       <div class="dbg-head"><span class="s">S${e.season}</span><span class="chip t-${esc(e.type)}">${esc(typeLabel(e.type))}</span>
-        <span class="nm">${esc(e.name)}</span><span class="meta">${esc(e.date ?? 'no date')} · ${e.games} games</span>
+        <span class="nm">${esc(e.name)}</span><span class="meta">${esc(e.date ?? 'без дати')} · ігор: ${e.games}</span>
         <span class="chip s-${st}">${STATUS[st] ?? esc(st)}</span>${r.pending ? '<span class="chip s-pending">unsaved</span>' : ''}
         <span class="acts">${acts}</span></div>
       ${podium(e.podium)}
-      ${differs(e) ? `<div class="flag bad">The games give: ${computed.map(esc).join(' · ')}</div>` : ''}
-      ${editing.has(r.key) ? editForm(r.key, e, 'Apply') : evidence(b?.evidence, e.games)}
+      ${differs(e) ? `<div class="flag bad">За іграми виходить: ${computed.map(esc).join(' · ')}</div>` : ''}
+      ${editing.has(r.key) ? editForm(r.key, e, 'Застосувати') : evidence(b?.evidence, e.games)}
     </article>`;
   }
   const { c } = r;
   const s = c.suggested;
-  const acts = r.rejected ? '' : `<button class="btn primary" data-act="add" data-id="${esc(c.id)}">Add</button>
-    <button class="btn" data-act="reject" data-id="${esc(c.id)}">Not a tournament</button>`;
+  const acts = r.rejected ? '' : `<button class="btn primary" data-act="add" data-id="${esc(c.id)}">Додати</button>
+    <button class="btn" data-act="reject" data-id="${esc(c.id)}">Не турнір</button>`;
   return `<article class="dbg-card st-candidate ${r.pending ? 'pending-op' : ''}">
     <div class="dbg-head"><span class="s">S${c.season}</span><span class="chip t-${esc(s.type)}">${esc(typeLabel(s.type))}?</span>
-      <span class="nm">${esc(s.name)}</span><span class="meta">${esc(s.date ?? 'no date')} · ${s.games} games</span>
-      <span class="chip s-candidate">${r.rejected ? 'rejected' : 'candidate'}</span>${r.pending ? '<span class="chip s-pending">unsaved</span>' : ''}
+      <span class="nm">${esc(s.name)}</span><span class="meta">${esc(s.date ?? 'без дати')} · ігор: ${s.games}</span>
+      <span class="chip s-candidate">${r.rejected ? 'відхилено' : 'кандидат'}</span>${r.pending ? '<span class="chip s-pending">не збережено</span>' : ''}
       <span class="acts">${acts}</span></div>
     ${podium(s.podium)}
-    ${editing.has(c.id) ? editForm(c.id, { ...s, date: s.date ?? undefined, season: c.season }, 'Add') : evidence(c.evidence)}
+    ${editing.has(c.id) ? editForm(c.id, { ...s, date: s.date ?? undefined, season: c.season }, 'Додати') : evidence(c.evidence)}
   </article>`;
 }
 
@@ -178,11 +178,11 @@ function thresholdRows(): string {
     const formula = Math.max(0, Math.ceil(t.formula));
     const saved = liveLimits ? liveLimits[String(t.season)] ?? null : (t.set ? t.gameLimit : null);
     const value = op ? op.limit : saved;
-    const state = t.live ? 'live' : value === null ? `${formula} (formula)` : `${value} (admin)`;
-    const edit = t.live ? '<span class="label">editable after the season ends</span>'
-      : `<form class="thr-form" data-season="${t.season}"><input name="limit" type="number" min="0" step="1" value="${value ?? formula}" aria-label="Threshold for S${t.season}">
-         <button class="btn" type="submit">Set</button><button class="btn" type="button" data-reset="${t.season}">Use formula</button></form>`;
-    return `<div class="thr ${op ? 'pending-op' : ''}"><b>S${t.season}</b><span>formula ${t.formula.toFixed(1)} → ${formula}</span><span>now ${esc(state)}</span>${edit}</div>`;
+    const state = t.live ? 'сезон триває' : value === null ? `${formula} (формула)` : `${value} (адмін)`;
+    const edit = t.live ? '<span class="label">можна змінити після кінця сезону</span>'
+      : `<form class="thr-form" data-season="${t.season}"><input name="limit" type="number" min="0" step="1" value="${value ?? formula}" aria-label="Поріг для S${t.season}">
+         <button class="btn" type="submit">Задати</button><button class="btn" type="button" data-reset="${t.season}">За формулою</button></form>`;
+    return `<div class="thr ${op ? 'pending-op' : ''}"><b>S${t.season}</b><span>формула ${t.formula.toFixed(1)} → ${formula}</span><span>зараз ${esc(state)}</span>${edit}</div>`;
   }).join('');
 }
 
@@ -193,16 +193,16 @@ function render() {
     return `<button type="button" class="pill" role="tab" data-filter="${k}" aria-current="${k === filter}">${label} <b>${n}</b></button>`;
   }).join('');
   const shown = all.filter(visible);
-  $('list').innerHTML = shown.length ? shown.map(card).join('') : '<p class="empty-list">Nothing here.</p>';
+  $('list').innerHTML = shown.length ? shown.map(card).join('') : '<p class="empty-list">Тут нічого немає.</p>';
   const th = document.getElementById('thresholds');
   if (th) th.innerHTML = thresholdRows();
   const p = $('pending');
   p.hidden = ops.length === 0;
-  $('pending-text').textContent = `${ops.length} unsaved change${ops.length === 1 ? '' : 's'}${canSave() ? '' : ' · sign in as an admin to save'}`;
+  $('pending-text').textContent = `незбережених змін: ${ops.length}${canSave() ? '' : ' · щоб зберегти, увійди як адмін'}`;
   $<HTMLButtonElement>('commit').disabled = !canSave() || busy || clubMissing;
-  $('who').textContent = user === null ? 'Read-only'
-    : user === 'not-host' ? 'Signed in, not a host — read-only'
-    : user.admin ? `Saving as ${user.name}` : `${user.name} is not an admin — read-only`;
+  $('who').textContent = user === null ? 'Лише перегляд'
+    : user === 'not-host' ? 'Ви увійшли, але не ведучий — лише перегляд'
+    : user.admin ? `Зберігаєте як ${user.name}` : `${user.name} не адмін — лише перегляд`;
   $('sign-in').hidden = user !== null;
   $('sign-out').hidden = user === null;
   $('import').hidden = !(canSave() && clubMissing);
@@ -236,7 +236,7 @@ $('list').addEventListener('click', (ev) => {
     case 'cancel': editing.delete(id); render(); break;
     case 'reject': push({ kind: 'reject', id }); break;
     case 'delete':
-      if (!armed.has(id)) { armed.add(id); b.textContent = 'Sure? Delete'; setTimeout(() => armed.delete(id), 4000); return; }
+      if (!armed.has(id)) { armed.add(id); b.textContent = 'Точно? Видалити'; setTimeout(() => armed.delete(id), 4000); return; }
       armed.delete(id); push({ kind: 'delete', key: id }); break;
   }
 });
@@ -274,9 +274,9 @@ async function loadLive() {
     const club = await loadClub();
     clubMissing = club === null;
     live = club;
-    $('live-state').textContent = club ? 'Live list from Firestore' : "Not imported yet — showing the build's copy";
+    $('live-state').textContent = club ? 'Живий список із Firestore' : 'Ще не імпортовано — показано копію зі збірки';
   } catch (e) {
-    $('live-state').textContent = `Showing the build's copy (${(e as Error).message})`;
+    $('live-state').textContent = `Показано копію зі збірки (${(e as Error).message})`;
   }
   render();
 }
@@ -292,30 +292,30 @@ $('import').addEventListener('click', async () => {
   busy = true; render();
   try {
     const raw = await fetch(`https://raw.githubusercontent.com/${repo.owner}/${repo.name}/${repo.branch}/remote_config.json`, { cache: 'no-store' });
-    if (!raw.ok) throw new Error(`config file: HTTP ${raw.status}`);
+    if (!raw.ok) throw new Error(`файл конфігу: HTTP ${raw.status}`);
     await importClub(await raw.json(), user as ClubAdmin);
     busy = false;
     await loadLive();
-    $('live-state').textContent = 'Imported. The site rebuilds within an hour.';
+    $('live-state').textContent = 'Імпортовано. Сайт перезбереться протягом години.';
   } catch (e) {
     busy = false; render();
-    $('live-state').textContent = `Not imported: ${(e as Error).message}`;
+    $('live-state').textContent = `Не імпортовано: ${(e as Error).message}`;
   }
 });
 
 $('commit').addEventListener('click', async () => {
   if (!canSave() || busy || !ops.length) return;
   busy = true; render();
-  $('pending-text').textContent = 'Saving…';
+  $('pending-text').textContent = 'Збереження…';
   try {
     await saveClub(ops, user as ClubAdmin);
     ops = []; saveOps();
     busy = false;
     await loadLive();
-    $('live-state').textContent = 'Saved. The site rebuilds within an hour.';
+    $('live-state').textContent = 'Збережено. Сайт перезбереться протягом години.';
   } catch (e) {
     busy = false; render();
-    $('pending-text').textContent = `Not saved: ${(e as Error).message}`;
+    $('pending-text').textContent = `Не збережено: ${(e as Error).message}`;
   }
 });
 

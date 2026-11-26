@@ -7,33 +7,33 @@ import Base from '../../layouts/Base.astro';
 const root = path.resolve(process.cwd(), '..');
 const config = JSON.parse(fs.readFileSync(path.join(root, 'remote_config.json'), 'utf8')) as
   { seasons: { id: number; title: string; source: string; smallLeagueMinGames?: number }[] };
-const SOURCE: Record<string, string> = { bundled: 'App', remote: 'Sheet', firestore: 'Firestore' };
+const SOURCE: Record<string, string> = { bundled: 'Застосунок', remote: 'Таблиця', firestore: 'Firestore' };
 const json = config.seasons.map((s) => ({ id: s.id, title: s.title, source: SOURCE[s.source] ?? s.source }));
 const last = config.seasons.reduce((a, b) => (b.id > a.id ? b : a));
 const data = JSON.stringify({ json, lastJsonId: last.id, jsonMinGames: last.smallLeagueMinGames ?? 15 }).replace(/</g, '\\u003c');
 ---
-<Base title="Edit seasons" description="Admins open new club seasons." active="season">
-  <div class="pagehead"><h1 class="display">Seasons</h1><span class="label" id="state">Loading…</span></div>
+<Base title="Сезони — редагування" description="Адміни відкривають нові сезони клубу." active="season">
+  <div class="pagehead"><h1 class="display">Сезони</h1><span class="label" id="state">Завантаження…</span></div>
 
   <div class="panel access">
-    <span class="label">Editing</span> <span id="who">Read-only</span>
-    <button type="button" id="sign-in" class="btn primary">Sign in with Google</button>
-    <button type="button" id="sign-out" class="btn" hidden>Sign out</button>
-    <p class="hint">Admins (hosts with <code>admin: true</code>) can create a season. From its start date hosts get it by default on /host/; it appears on the site after its first game and the next rebuild (within an hour).</p>
+    <span class="label">Редагування</span> <span id="who">Лише перегляд</span>
+    <button type="button" id="sign-in" class="btn primary">Увійти через Google</button>
+    <button type="button" id="sign-out" class="btn" hidden>Вийти</button>
+    <p class="hint">Створювати сезон можуть адміни (ведучі з <code>admin: true</code>). З дати старту ведучі отримують його за замовчуванням на /host/; на сайті він з'явиться після першої гри й наступної перезбірки (протягом години).</p>
   </div>
 
   <form id="create" class="panel form" hidden>
-    <h2 id="create-title">Create season</h2>
+    <h2 id="create-title">Створити сезон</h2>
     <div class="fields">
-      <label>Title <input name="title" maxlength="40" required></label>
-      <label>Small league: min games <input name="min" type="number" min="1" max="100" required></label>
-      <label>Start date <input name="start" type="date" required></label>
-      <button type="submit" class="btn primary">Create</button>
+      <label>Назва <input name="title" maxlength="40" required></label>
+      <label>Мала ліга: мін. ігор <input name="min" type="number" min="1" max="100" required></label>
+      <label>Дата старту <input name="start" type="date" required></label>
+      <button type="submit" class="btn primary">Створити</button>
     </div>
   </form>
 
   <p id="msg" class="msg" role="status"></p>
-  <table class="list"><thead><tr><th>#</th><th>Title</th><th>Source</th><th>Start</th><th>Games</th><th></th></tr></thead><tbody id="rows"></tbody></table>
+  <table class="list"><thead><tr><th>#</th><th>Назва</th><th>Джерело</th><th>Старт</th><th>Ігри</th><th></th></tr></thead><tbody id="rows"></tbody></table>
 
   <script type="application/json" id="seasons-data" set:html={data} />
 </Base>

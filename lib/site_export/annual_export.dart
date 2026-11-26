@@ -5,6 +5,7 @@ import 'package:family_mafia_app/screens/players/players_providers.dart';
 import 'package:family_mafia_app/services/stats/annual_rating.dart';
 import 'package:family_mafia_app/services/stats/player_resolver.dart';
 import 'package:family_mafia_app/site_export/export_context.dart';
+import 'package:family_mafia_app/site_export/formats.dart';
 import 'package:family_mafia_app/site_export/site_table.dart';
 
 /// Club seasons from this one on feed the annual rating automatically; the
@@ -34,7 +35,7 @@ List<AnnualEvent> derivedSeasonEvents(ExportContext x,
       id: 'season-${s.id}',
       year: seasonYear(dates[s.id]!),
       kind: AnnualKind.season,
-      name: s.title,
+      name: seasonTitle(s.title),
       results: [
         for (final (i, p) in main.indexed) AnnualResult(p.displayName, i + 1),
         for (final (i, p) in small.indexed) AnnualResult(p.displayName, 101 + i),
@@ -94,7 +95,7 @@ Map<String, Object?> annualJson(ExportContext x, List<AnnualEvent> stored) {
                 {
                   'id': e.id,
                   'kind': e.kind.name,
-                  'label': e.kind.label,
+                  'label': annualKindLabel(e.kind),
                   'name': e.name,
                   'date': e.date,
                   'stars': e.stars,

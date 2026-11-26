@@ -5,13 +5,13 @@ import { loadFederationCandidates, loadFederationGames } from '../../lib/data';
 const candidates = loadFederationCandidates();
 const { review } = loadFederationGames();
 ---
-<Base title="Federation profiles" description="Admins confirm which federation profiles belong to club players." active="players">
-  <div class="pagehead"><h1 class="display">Профілі на федераціях</h1><span class="label" id="state">Loading…</span></div>
+<Base title="Профілі на федераціях" description="Адміни підтверджують, які профілі на федераціях належать гравцям клубу." active="players">
+  <div class="pagehead"><h1 class="display">Профілі на федераціях</h1><span class="label" id="state">Завантаження…</span></div>
 
   <div class="panel access">
-    <span class="label">Editing</span> <span id="who">Read-only</span>
-    <button type="button" id="sign-in" class="btn primary">Sign in with Google</button>
-    <button type="button" id="sign-out" class="btn" hidden>Sign out</button>
+    <span class="label">Редагування</span> <span id="who">Лише перегляд</span>
+    <button type="button" id="sign-in" class="btn primary">Увійти через Google</button>
+    <button type="button" id="sign-out" class="btn" hidden>Вийти</button>
     <p class="hint">Галочка = це той самий гравець. «Переглянуто» відхиляє решту кандидатів рядка — після нового пошуку вони не повернуться.
       Пошук: <code>cd site && node scripts/find-federation-players.ts</code>{candidates.generatedAt ? `, останній ${candidates.generatedAt.slice(0, 10)}` : ' — ще не запускався'}.</p>
   </div>

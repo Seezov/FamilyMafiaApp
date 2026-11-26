@@ -7,46 +7,46 @@ const d = loadDebug();
 const json = JSON.stringify(d).replace(/</g, '\\u003c');
 const seasons = [...new Set([...d.tournaments.map((t) => t.season), ...d.candidates.map((c) => c.season)])].sort((a, b) => b - a);
 ---
-<Base title="Debug" description="Review the club's tournament list: confirm, fix or add tournaments." active="debug">
+<Base title="Налагодження" description="Перевірка списку турнірів клубу: підтвердити, виправити або додати." active="debug">
   <div class="pagehead">
-    <h1 class="display">Tournament review</h1>
-    <span class="label" id="live-state">Loading the live config…</span>
+    <h1 class="display">Перевірка турнірів</h1>
+    <span class="label" id="live-state">Завантаження живого конфігу…</span>
   </div>
 
   <div class="panel access" id="access">
     <div class="row">
-      <span class="label">Editing</span> <span id="who" class="who">Read-only</span>
-      <button type="button" id="sign-in" class="btn primary">Sign in with Google</button>
-      <button type="button" id="sign-out" class="btn" hidden>Sign out</button>
-      <button type="button" id="import" class="btn" hidden>Import from the config file</button>
+      <span class="label">Редагування</span> <span id="who" class="who">Лише перегляд</span>
+      <button type="button" id="sign-in" class="btn primary">Увійти через Google</button>
+      <button type="button" id="sign-out" class="btn" hidden>Вийти</button>
+      <button type="button" id="import" class="btn" hidden>Імпортувати з файлу конфігу</button>
     </div>
-    <p class="hint">Admins (hosts with <code>admin: true</code>) can save. Changes go to Firestore at once; the site
-      rebuilds within an hour (or run the <a href={`https://github.com/${d.repo.owner}/${d.repo.name}/actions/workflows/web.yml`} target="_blank" rel="noopener">web workflow</a>).</p>
+    <p class="hint">Зберігати можуть адміни (ведучі з <code>admin: true</code>). Зміни одразу йдуть у Firestore; сайт
+      перезбирається протягом години (або запусти <a href={`https://github.com/${d.repo.owner}/${d.repo.name}/actions/workflows/web.yml`} target="_blank" rel="noopener">web workflow</a>).</p>
   </div>
 
   {d.thresholds.length > 0 && (
     <section class="panel thresholds">
-      <h2 class="label">Main-league thresholds</h2>
-      <p class="hint">While a season is played the threshold follows the sheet formula (top-3 games × 0.6 − 5). After it ends an admin can set the final value; empty = rounded-up formula.</p>
+      <h2 class="label">Пороги вищої ліги</h2>
+      <p class="hint">Поки сезон триває, поріг рахується за формулою таблиці (ігри топ-3 × 0.6 − 5). Після кінця адмін може задати фінальне значення; порожньо = формула з округленням вгору.</p>
       <div id="thresholds"></div>
     </section>
   )}
 
   <div class="toolbar">
-    <div class="pills" id="filters" role="tablist" aria-label="Show"></div>
-    <select id="season" aria-label="Season">
-      <option value="">All seasons</option>
+    <div class="pills" id="filters" role="tablist" aria-label="Показати"></div>
+    <select id="season" aria-label="Сезон">
+      <option value="">Усі сезони</option>
       {seasons.map((s) => <option value={s}>S{s}</option>)}
     </select>
-    <input id="q" type="search" placeholder="Name or player…" aria-label="Search" />
+    <input id="q" type="search" placeholder="Назва або гравець…" aria-label="Пошук" />
   </div>
 
   <div id="list" class="list" aria-live="polite"></div>
 
   <div class="pending" id="pending" hidden>
     <span id="pending-text"></span>
-    <button type="button" class="btn" id="discard">Discard</button>
-    <button type="button" class="btn primary" id="commit">Save</button>
+    <button type="button" class="btn" id="discard">Скасувати зміни</button>
+    <button type="button" class="btn primary" id="commit">Зберегти</button>
   </div>
 
   <script type="application/json" id="debug-data" set:html={json} />

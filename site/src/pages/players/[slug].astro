@@ -6,7 +6,7 @@ import GamesBySeasonChart from '../../components/GamesBySeasonChart.astro';
 import Kpi from '../../components/Kpi.astro';
 import Panel from '../../components/Panel.astro';
 import { loadPlayer, loadPlayers } from '../../lib/data';
-import { pct } from '../../lib/format';
+import { GAMES, pct, ukCount } from '../../lib/format';
 import { href } from '../../lib/url';
 import { profileFor } from '../../lib/profiles/site';
 
@@ -22,50 +22,50 @@ const bm = p.bestMoves;
 const fk = p.firstKill;
 const chase = p.timeline.find((t) => t.needed);
 ---
-<Base title={shown} description={`${shown}: ${pct(p.winRate)} WR · ${p.games} games · ${p.seasons} seasons`} active="players">
+<Base title={shown} description={`${shown}: ${pct(p.winRate)} WR · ${ukCount(p.games, GAMES)} · сезонів: ${p.seasons}`} active="players">
   <div class="hero">
     {prof?.avatar ? <img class="avatar" src={href(prof.avatar)} alt="" width="64" height="64" /> : <div class="avatar display">{p.initials}</div>}
     <div class="who">
       <h1 class="display">{shown}</h1>
       {prof?.nick && <div class="label">у таблицях: {p.name}</div>}
-      <div class="label">{p.games} games played</div>
+      <div class="label">Зіграно {ukCount(p.games, GAMES)}</div>
     </div>
   </div>
 
   <div class="kpis">
-    <Kpi label="Win rate" value={pct(p.winRate, 1)} />
-    <Kpi label="Seasons" value={String(p.seasons)} />
-    <Kpi label="Accomplishments" value={String(a.total)} />
+    <Kpi label="Відсоток перемог" value={pct(p.winRate, 1)} />
+    <Kpi label="Сезони" value={String(p.seasons)} />
+    <Kpi label="Досягнення" value={String(a.total)} />
   </div>
 
   {a.groups.length > 0 && (
-    <Panel title="Accomplishments" note={`${a.total} in total`} class="awards">
+    <Panel title="Досягнення" note={`усього ${a.total}`} class="awards">
       <AwardCards groups={a.groups} />
     </Panel>
   )}
 
   <div class="grid">
-    <Panel title="Games by season" note={chase ? `S${chase.seasonId}: ${chase.needed} more game${chase.needed === 1 ? '' : 's'} to the main league` : undefined} class="span-8"><GamesBySeasonChart timeline={p.timeline} slug={p.slug} /></Panel>
-    <Panel title="Roles" class="span-4">
+    <Panel title="Ігри по сезонах" note={chase ? `S${chase.seasonId}: до вищої ліги ще ${ukCount(chase.needed!, GAMES)}` : undefined} class="span-8"><GamesBySeasonChart timeline={p.timeline} slug={p.slug} /></Panel>
+    <Panel title="Ролі" class="span-4">
       <Bars items={p.roles.map((r) => ({
         label: r.label, value: r.share, color: roleColor[r.role], badge: r.top,
-        text: `${r.games} · ${pct(r.share)} · ${r.wins}/${r.games} won`,
+        text: `${r.games} · ${pct(r.share)} · ${r.wins}/${r.games} перемог`,
       }))} />
     </Panel>
-    <Panel title="Killed first" note="Civilian and sheriff games" class="span-6">
+    <Panel title="Вбитий першим" note="Ігри за мирного й шерифа" class="span-6">
       <div class="duo">
-        <Kpi label="First killed" value={String(fk.total)} />
-        <Kpi label="City lost after" value={String(fk.cityLost)} />
+        <Kpi label="Перший убитий" value={String(fk.total)} />
+        <Kpi label="Місто програло після" value={String(fk.cityLost)} />
       </div>
-      <p class="label">{fk.civSherGames > 0 ? `${pct(fk.total / fk.civSherGames, 1)} of ${fk.civSherGames} red games` : 'No red games yet'}</p>
+      <p class="label">{fk.civSherGames > 0 ? `${pct(fk.total / fk.civSherGames, 1)} з ${fk.civSherGames} ігор за червоних` : 'Ще немає ігор за червоних'}</p>
     </Panel>
-    <Panel title="Best move" note="Black cards found when killed first" class="span-6">
-      {bm.firstKilled === 0 ? <p class="label">No best moves recorded.</p> : (
+    <Panel title="Кращий хід" note="Знайдено чорних, коли вбитий першим" class="span-6">
+      {bm.firstKilled === 0 ? <p class="label">Кращих ходів немає.</p> : (
         <Bars items={[
-          { label: '3 black', value: bm.three / bm.firstKilled, text: `${bm.three}`, color: 'var(--good)' },
-          { label: '2 black', value: bm.two / bm.firstKilled, text: `${bm.two}` },
-          { label: '1 black', value: bm.one / bm.firstKilled, text: `${bm.one}` },
-          { label: '0 black', value: bm.zero / bm.firstKilled, text: `${bm.zero}`, color: 'var(--muted)' },
+          { label: '3 чорних', value: bm.three / bm.firstKilled, text: `${bm.three}`, color: 'var(--good)' },
+          { label: '2 чорних', value: bm.two / bm.firstKilled, text: `${bm.two}` },
+          { label: '1 чорний', value: bm.one / bm.firstKilled, text: `${bm.one}` },
+          { label: '0 чорних', value: bm.zero / bm.firstKilled, text: `${bm.zero}`, color: 'var(--muted)' },
         ]} />
       )}
     </Panel>

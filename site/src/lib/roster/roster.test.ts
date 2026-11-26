@@ -33,7 +33,7 @@ describe('applyOp', () => {
   it('add appends; refuses a taken or too short name', () => {
     expect(applyOp(R(), { kind: 'add', name: '  Новенький ' }).at(-1)).toEqual({ name: 'Новенький', nicknames: [] });
     expect(() => applyOp(R(), { kind: 'add', name: 'скай' })).toThrow(/Rathma/);
-    expect(() => applyOp(R(), { kind: 'add', name: 'X' })).toThrow(/2 characters/);
+    expect(() => applyOp(R(), { kind: 'add', name: 'X' })).toThrow(/2 символи/);
   });
   it('nickname add and remove', () => {
     const r = applyOp(R(), { kind: 'nick-add', player: 'Braun', nick: 'Браун' });

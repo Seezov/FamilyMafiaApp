@@ -5,28 +5,28 @@ import { href } from '../../lib/url';
 
 const unresolved = loadUnresolved().names;
 ---
-<Base title="Edit players" description="Admins add players and glue nicknames." active="players">
-  <div class="pagehead"><h1 class="display">Players list</h1><span class="label" id="state">Loading…</span></div>
+<Base title="Гравці — редагування" description="Адміни додають гравців і склеюють нікнейми." active="players">
+  <div class="pagehead"><h1 class="display">Список гравців</h1><span class="label" id="state">Завантаження…</span></div>
 
   <div class="panel access">
-    <span class="label">Editing</span> <span id="who">Read-only</span>
-    <button type="button" id="sign-in" class="btn primary">Sign in with Google</button>
-    <button type="button" id="sign-out" class="btn" hidden>Sign out</button>
-    <button type="button" id="import" class="btn" hidden>Import from players.json</button>
-    <p class="hint">Admins (hosts with <code>admin: true</code>) can save. A game name counts for a player when it equals the player's name or a nickname (case ignored). The site rebuilds within an hour. Federation profiles: <a href={href('federations/edit/')}>/federations/edit/</a>.</p>
+    <span class="label">Редагування</span> <span id="who">Лише перегляд</span>
+    <button type="button" id="sign-in" class="btn primary">Увійти через Google</button>
+    <button type="button" id="sign-out" class="btn" hidden>Вийти</button>
+    <button type="button" id="import" class="btn" hidden>Імпортувати з players.json</button>
+    <p class="hint">Зберігати можуть адміни (ведучі з <code>admin: true</code>). Ім'я з гри зараховується гравцю, коли збігається з його ім'ям або нікнеймом (без урахування регістру). Сайт перезбирається протягом години. Профілі у федераціях: <a href={href('federations/edit/')}>/federations/edit/</a>.</p>
   </div>
 
   <div class="toolbar">
-    <input id="q" type="search" placeholder="Search name or nickname" aria-label="Search">
-    <input id="new-name" placeholder="New player" aria-label="New player name">
-    <button type="button" id="add" class="btn" disabled>Add player</button>
+    <input id="q" type="search" placeholder="Пошук за ім'ям або нікнеймом" aria-label="Пошук">
+    <input id="new-name" placeholder="Новий гравець" aria-label="Ім'я нового гравця">
+    <button type="button" id="add" class="btn" disabled>Додати гравця</button>
   </div>
 
   <p id="msg" class="msg" role="status"></p>
   <div id="list" class="list"></div>
 
-  <h2>Unresolved names</h2>
-  <p class="hint">Names from games (as of the last build) that belong to no player.</p>
+  <h2>Нерозпізнані імена</h2>
+  <p class="hint">Імена з ігор (станом на останню збірку), що не належать жодному гравцю.</p>
   <div id="unresolved" class="list"></div>
 
   <datalist id="roster-names"></datalist>

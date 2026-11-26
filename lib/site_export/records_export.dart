@@ -17,7 +17,7 @@ SiteTable _table(List<SiteColumn> columns, List<List<SiteCell>> rows) =>
       showRank: true,
       collapsed: _topN,
       sortColumn: 1,
-      empty: 'No records yet.',
+      empty: 'Рекордів ще немає.',
       columns: columns,
       rows: rows,
     );
@@ -31,13 +31,13 @@ Map<String, Object?> recordsJson(ExportContext x) {
       tables[key] = {'scope': scope, 'table': t.toJson()};
 
   for (final period in PointsPeriod.values) {
-    add('mvp/${period.name}', 'Main league only', _table(const [
-      SiteColumn('Player', numeric: false),
-      SiteColumn('Pts/game'),
-      SiteColumn('Max'),
-      SiteColumn('Total'),
+    add('mvp/${period.name}', 'Лише вища ліга', _table(const [
+      SiteColumn('Гравець', numeric: false),
+      SiteColumn('Бали/гра'),
+      SiteColumn('Макс'),
+      SiteColumn('Разом'),
       SiteColumn('WR'),
-      SiteColumn('Season'),
+      SiteColumn('Сезон'),
     ], [
       for (final r in mvpRecords(input, period))
         [
@@ -51,12 +51,12 @@ Map<String, Object?> recordsJson(ExportContext x) {
     ]));
 
     for (final role in Role.values) {
-      add('roles/${role.name}/${period.name}', 'Main league only', _table(const [
-        SiteColumn('Player', numeric: false),
-        SiteColumn('Pts/game'),
+      add('roles/${role.name}/${period.name}', 'Лише вища ліга', _table(const [
+        SiteColumn('Гравець', numeric: false),
+        SiteColumn('Бали/гра'),
         SiteColumn('WR'),
-        SiteColumn('Games'),
-        SiteColumn('Season'),
+        SiteColumn('Ігри'),
+        SiteColumn('Сезон'),
       ], [
         for (final r in roleRecords(input, role, period))
           [
@@ -82,12 +82,12 @@ Map<String, Object?> recordsJson(ExportContext x) {
       final key = allTime ? null : s;
       noHost[key] = (noHost[key] ?? 0) + n;
     }
-    add('hosts/${allTime ? 'alltime' : 'season'}', 'All hosts', _table([
-      const SiteColumn('Host', numeric: false),
-      const SiteColumn('Hosted'),
-      const SiteColumn('Avg +'),
-      const SiteColumn('Avg −'),
-      if (!allTime) const SiteColumn('Season'),
+    add('hosts/${allTime ? 'alltime' : 'season'}', 'Усі ведучі', _table([
+      const SiteColumn('Ведучий', numeric: false),
+      const SiteColumn('Проведено'),
+      const SiteColumn('Сер. +'),
+      const SiteColumn('Сер. −'),
+      if (!allTime) const SiteColumn('Сезон'),
     ], [
       for (final r in hostRecords(input, allTime: allTime))
         [
@@ -114,11 +114,11 @@ Map<String, Object?> recordsJson(ExportContext x) {
 
   for (final allTime in [false, true]) {
     add('games/${allTime ? 'alltime' : 'season'}',
-        allTime ? 'All players' : 'Main league only', _table([
-      const SiteColumn('Player', numeric: false),
-      const SiteColumn('Games'),
+        allTime ? 'Усі гравці' : 'Лише вища ліга', _table([
+      const SiteColumn('Гравець', numeric: false),
+      const SiteColumn('Ігри'),
       const SiteColumn('WR'),
-      if (!allTime) const SiteColumn('Season'),
+      if (!allTime) const SiteColumn('Сезон'),
     ], [
       for (final r in gamesRecords(input, allTime: allTime))
         [
@@ -130,12 +130,12 @@ Map<String, Object?> recordsJson(ExportContext x) {
     ]));
   }
 
-  add('pu', 'Main league only', _table(const [
-    SiteColumn('Player', numeric: false),
-    SiteColumn('ПУ', tip: 'Killed on the first night'),
-    SiteColumn('% of red'),
-    SiteColumn('Red games'),
-    SiteColumn('Season'),
+  add('pu', 'Лише вища ліга', _table(const [
+    SiteColumn('Гравець', numeric: false),
+    SiteColumn('ПУ', tip: 'Убитий у першу ніч'),
+    SiteColumn('% червоних'),
+    SiteColumn('Червоні ігри'),
+    SiteColumn('Сезон'),
   ], [
     for (final r in firstKillRecords(input))
       [
@@ -148,13 +148,13 @@ Map<String, Object?> recordsJson(ExportContext x) {
   ]));
 
   // Negated sort keys: "most minus" first when descending, as in the app.
-  add('penalties', 'Main league · Seasons $kPenaltyColumnFirstSeason+', _table(const [
-    SiteColumn('Player', numeric: false),
-    SiteColumn('Minus/game'),
-    SiteColumn('Max'),
-    SiteColumn('Total'),
+  add('penalties', 'Вища ліга · сезони $kPenaltyColumnFirstSeason+', _table(const [
+    SiteColumn('Гравець', numeric: false),
+    SiteColumn('Мінус/гра'),
+    SiteColumn('Макс'),
+    SiteColumn('Разом'),
     SiteColumn('WR'),
-    SiteColumn('Season'),
+    SiteColumn('Сезон'),
   ], [
     for (final r in penaltyRecords(input))
       [
@@ -167,10 +167,10 @@ Map<String, Object?> recordsJson(ExportContext x) {
       ]
   ]));
 
-  add('streaks', 'All players', _table(const [
-    SiteColumn('Player', numeric: false),
-    SiteColumn('Wins in a row'),
-    SiteColumn('Seasons', numeric: false),
+  add('streaks', 'Усі гравці', _table(const [
+    SiteColumn('Гравець', numeric: false),
+    SiteColumn('Перемог поспіль'),
+    SiteColumn('Сезони', numeric: false),
   ], [
     for (final WinStreak r in x.read(winStreaksProvider))
       [
@@ -199,12 +199,12 @@ Map<String, Object?> recordsJson(ExportContext x) {
         SiteCell('$total', s: total),
       ]);
     }
-    add('podiums/$league', 'Ranked by wins, then 2nd and 3rd places', _table(const [
-      SiteColumn('Player', numeric: false),
-      SiteColumn('1st'),
-      SiteColumn('2nd'),
-      SiteColumn('3rd'),
-      SiteColumn('Podiums'),
+    add('podiums/$league', 'За перемогами, далі за 2 і 3 місцями', _table(const [
+      SiteColumn('Гравець', numeric: false),
+      SiteColumn('1 місце'),
+      SiteColumn('2 місце'),
+      SiteColumn('3 місце'),
+      SiteColumn('Подіуми'),
     ], rows));
   }
 
@@ -229,20 +229,20 @@ Map<String, Object?> recordsJson(ExportContext x) {
       SiteCell('$total', s: total * 100 + acc.mvp),
     ]);
   }
-  add('nominations', 'Season awards · ranked by total, then MVPs', SiteTable(
+  add('nominations', 'Нагороди сезону · за сумою, далі за MVP', SiteTable(
     showRank: true,
     collapsed: _topN,
     sortColumn: 7,
-    empty: 'No records yet.',
+    empty: 'Рекордів ще немає.',
     columns: const [
-      SiteColumn('Player', numeric: false),
+      SiteColumn('Гравець', numeric: false),
       SiteColumn('MVP'),
-      SiteColumn('Sheriff', tip: 'Best Sheriff'),
-      SiteColumn('Civilian', tip: 'Best Civilian'),
-      SiteColumn('Mafia', tip: 'Best Mafia'),
-      SiteColumn('Don', tip: 'Best Don'),
-      SiteColumn('Most killed', tip: 'Most first-night kills in the main league'),
-      SiteColumn('Total'),
+      SiteColumn('Шериф', tip: 'Кращий шериф'),
+      SiteColumn('Мирний', tip: 'Кращий мирний'),
+      SiteColumn('Мафія', tip: 'Краща мафія'),
+      SiteColumn('Дон', tip: 'Кращий дон'),
+      SiteColumn('Найчастіше вбитий', tip: 'Найбільше вбивств у першу ніч у вищій лізі'),
+      SiteColumn('Разом'),
     ],
     rows: nominations,
   ));
@@ -251,52 +251,52 @@ Map<String, Object?> recordsJson(ExportContext x) {
     'categories': const [
       {
         'slug': 'podiums',
-        'label': 'Prize places',
+        'label': 'Призові місця',
         'filters': ['league'],
-        'group': 'Season stats',
+        'group': 'Статистика сезону',
       },
       {
         'slug': 'nominations',
-        'label': 'Nominations',
+        'label': 'Номінації',
         'filters': <String>[],
-        'group': 'Season stats',
+        'group': 'Статистика сезону',
       },
-      {'slug': 'mvp', 'label': 'MVP', 'filters': ['period'], 'group': 'All time'},
+      {'slug': 'mvp', 'label': 'MVP', 'filters': ['period'], 'group': 'За весь час'},
       {
         'slug': 'roles',
-        'label': 'Roles',
+        'label': 'Ролі',
         'filters': ['role', 'period'],
-        'group': 'All time',
+        'group': 'За весь час',
       },
-      {'slug': 'games', 'label': 'Games', 'filters': ['scope'], 'group': 'All time'},
-      {'slug': 'hosts', 'label': 'Hosts', 'filters': ['scope'], 'group': 'All time'},
-      {'slug': 'pu', 'label': 'ПУ', 'filters': <String>[], 'group': 'All time'},
+      {'slug': 'games', 'label': 'Ігри', 'filters': ['scope'], 'group': 'За весь час'},
+      {'slug': 'hosts', 'label': 'Ведучі', 'filters': ['scope'], 'group': 'За весь час'},
+      {'slug': 'pu', 'label': 'ПУ', 'filters': <String>[], 'group': 'За весь час'},
       {
         'slug': 'penalties',
-        'label': 'Penalties',
+        'label': 'Штрафи',
         'filters': <String>[],
-        'group': 'All time',
+        'group': 'За весь час',
       },
       {
         'slug': 'streaks',
-        'label': 'Streaks',
+        'label': 'Серії перемог',
         'filters': <String>[],
-        'group': 'All time',
+        'group': 'За весь час',
       },
     ],
     'roles': [
       for (final r in Role.values) {'key': r.name, 'label': roleLabel(r)}
     ],
     'scopes': const [
-      {'key': 'alltime', 'label': 'All time'},
-      {'key': 'season', 'label': 'Per season'},
+      {'key': 'alltime', 'label': 'За весь час'},
+      {'key': 'season', 'label': 'За сезон'},
     ],
     'leagues': const [
-      {'key': 'main', 'label': 'Main league'},
-      {'key': 'small', 'label': 'Small league'},
+      {'key': 'main', 'label': 'Вища ліга'},
+      {'key': 'small', 'label': 'Мала ліга'},
     ],
     'periods': [
-      for (final p in PointsPeriod.values) {'key': p.name, 'label': p.label}
+      for (final p in PointsPeriod.values) {'key': p.name, 'label': pointsPeriodLabel(p)}
     ],
     'defaults': const {
       'role': 'don',

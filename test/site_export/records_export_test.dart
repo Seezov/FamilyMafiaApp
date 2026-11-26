@@ -42,7 +42,7 @@ void main() {
       }
     }
     expect(tables.length, expected);
-    expect(tables['penalties']['scope'], startsWith('Main league · Seasons '));
+    expect(tables['penalties']['scope'], startsWith('Вища ліга · сезони '));
     expect(tables['streaks']['table']['rows'], isNotEmpty);
   });
 
@@ -85,8 +85,8 @@ void main() {
     List labels(String key) =>
         [for (final c in tables[key]['table']['columns'] as List) c['label']];
     for (final cat in ['hosts', 'games']) {
-      expect(labels('$cat/alltime'), isNot(contains('Season')), reason: cat);
-      expect(labels('$cat/season'), contains('Season'), reason: cat);
+      expect(labels('$cat/alltime'), isNot(contains('Сезон')), reason: cat);
+      expect(labels('$cat/season'), contains('Сезон'), reason: cat);
       for (final row in tables['$cat/alltime']['table']['rows'] as List) {
         expect((row as List).length, labels('$cat/alltime').length);
       }

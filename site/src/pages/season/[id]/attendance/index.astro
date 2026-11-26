@@ -6,6 +6,7 @@ import { attendance, attendanceText } from '../../../../lib/attendance';
 import { loadGames, loadIndex, loadSeason } from '../../../../lib/data';
 import { dayLabel } from '../../../../lib/games';
 import { gamesHref } from '../../../../lib/url';
+import { GAMES, PLAYERS, ukCount } from '../../../../lib/format';
 
 export function getStaticPaths() {
   return loadIndex().seasons.map((s) => ({ params: { id: String(s.id) } }));
@@ -13,22 +14,22 @@ export function getStaticPaths() {
 const id = Number(Astro.params.id);
 const season = loadSeason(id);
 const { days, totals } = attendance(loadGames(id));
-const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
+
 ---
-<Base title={`${season.title} · Attendance`} description={`${season.title}: who played on each game day`} active="season">
+<Base title={`${season.title} · Відвідуваність`} description={`${season.title}: хто грав у кожен ігровий день`} active="season">
   <SeasonHead id={id} tab="attendance" />
-  <p class="intro">Who played on each game day and how many games, newest first — every game counts, rated or not.
-    “Copy” puts the day's list on the clipboard for the chat.</p>
+  <p class="intro">Хто грав у кожен ігровий день і скільки ігор, нові згори — рахуються всі ігри, рейтингові й ні.
+    «Копіювати» кладе список дня в буфер обміну для чату.</p>
   <div class="days">
     {days.map((d) => (
       <section class="day">
         <header>
           <h2 class="label">{dayLabel(d.date)}</h2>
-          <button type="button" class="copy" data-text={attendanceText(`${dayLabel(d.date)} · ${plural(d.games, 'game', 'games')}`, d.players)}>Copy</button>
+          <button type="button" class="copy" data-text={attendanceText(`${dayLabel(d.date)} · ${ukCount(d.games, GAMES)}`, d.players)}>Копіювати</button>
         </header>
         <p class="meta">
-          <a href={gamesHref(id)}>{plural(d.games, 'game', 'games')}</a> · {plural(d.players.length, 'player', 'players')}
-          {d.hosts.length > 0 && <> · host {d.hosts.join(', ')}</>}
+          <a href={gamesHref(id)}>{ukCount(d.games, GAMES)}</a> · {ukCount(d.players.length, PLAYERS)}
+          {d.hosts.length > 0 && <> · ведучий {d.hosts.join(', ')}</>}
           {d.labels.map((l) => <span class="tag">{l}</span>)}
         </p>
         <ol>
@@ -40,9 +41,9 @@ const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one :
     ))}
   </div>
   <section class="totals">
-    <h2 class="label">Season totals</h2>
+    <h2 class="label">Підсумок сезону</h2>
     <table>
-      <thead><tr><th>Player</th><th class="num">Days</th><th class="num">Games</th></tr></thead>
+      <thead><tr><th>Гравець</th><th class="num">Дні</th><th class="num">Ігри</th></tr></thead>
       <tbody>
         {totals.map((t) => (
           <tr><td>{t.slug ? <PlayerName slug={t.slug} name={t.name} /> : t.name}</td><td class="num">{t.days}</td><td class="num">{t.games}</td></tr>
@@ -56,8 +57,8 @@ const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one :
   document.addEventListener('click', async (e) => {
     const b = (e.target as HTMLElement).closest<HTMLButtonElement>('button.copy');
     if (!b) return;
-    try { await navigator.clipboard.writeText(b.dataset.text!); b.textContent = 'Copied'; } catch { b.textContent = 'Failed'; }
-    setTimeout(() => (b.textContent = 'Copy'), 1500);
+    try { await navigator.clipboard.writeText(b.dataset.text!); b.textContent = 'Скопійовано'; } catch { b.textContent = 'Не вдалося'; }
+    setTimeout(() => (b.textContent = 'Копіювати'), 1500);
   });
 </script>
 

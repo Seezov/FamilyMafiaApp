@@ -22,7 +22,7 @@ void main() {
 
     final seasons = json['seasonsTable'] as Map;
     expect((seasons['rows'] as List), hasLength(2));
-    expect((seasons['columns'] as List).first['label'], 'Season');
+    expect((seasons['columns'] as List).first['label'], 'Сезон');
     for (final row in seasons['rows'] as List) {
       expect((row as List).length, (seasons['columns'] as List).length);
     }

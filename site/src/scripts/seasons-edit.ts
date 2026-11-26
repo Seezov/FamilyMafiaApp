@@ -24,9 +24,9 @@ async function refresh() {
   try {
     club = await loadClubSeasons();
     await Promise.all(club.map(async (s) => games.set(s.id, await gamesCount(s.id))));
-    $('state').textContent = `${page.json.length + club.length} seasons`;
+    $('state').textContent = `сезонів: ${page.json.length + club.length}`;
   } catch (e) {
-    $('state').textContent = 'Could not load seasons';
+    $('state').textContent = 'Не вдалося завантажити сезони';
     say(String(e), true);
   }
   render();
@@ -42,7 +42,7 @@ function render() {
   const f = $('create') as HTMLFormElement;
   f.hidden = !isAdmin();
   const next = nextSeason(club, page.lastJsonId, page.jsonMinGames, today());
-  $('create-title').textContent = `Create season ${next.id}`;
+  $('create-title').textContent = `Створити сезон ${next.id}`;
   if (!f.dataset.for || f.dataset.for !== String(next.id)) {
     f.dataset.for = String(next.id);
     (f.elements.namedItem('title') as HTMLInputElement).value = next.title;
@@ -50,7 +50,7 @@ function render() {
     (f.elements.namedItem('start') as HTMLInputElement).value = next.startDate;
   }
   f.querySelector('button')!.toggleAttribute('disabled', busy);
-  $('who').textContent = user === null ? 'Read-only' : user === 'not-host' ? 'Not a host — read-only' : `${user.name}${user.admin ? ' (admin)' : ' — not an admin, read-only'}`;
+  $('who').textContent = user === null ? 'Лише перегляд' : user === 'not-host' ? 'Не ведучий — лише перегляд' : `${user.name}${user.admin ? ' (адмін)' : ' — не адмін, лише перегляд'}`;
   $('sign-in').hidden = user !== null;
   $('sign-out').hidden = user === null;
 }
@@ -61,7 +61,7 @@ async function run(work: () => Promise<ClubSeason[]>, done: string) {
   try {
     club = await work();
     confirming = null;
-    say(`${done} The site updates within an hour.`);
+    say(`${done} Сайт оновиться протягом години.`);
   } catch (e) {
     say((e as Error).message, true);
   } finally {
@@ -77,7 +77,7 @@ $('create').addEventListener('submit', (ev) => {
   const v = (n: string) => (f.elements.namedItem(n) as HTMLInputElement).value;
   const id = Number(f.dataset.for);
   void run(() => createSeason({ title: v('title'), smallLeagueMinGames: Number(v('min')), startDate: v('start') }, id, page.lastJsonId, user as ClubAdmin),
-    `Season ${id} created.`);
+    `Сезон ${id} створено.`);
 });
 
 document.addEventListener('click', (ev) => {
@@ -86,7 +86,7 @@ document.addEventListener('click', (ev) => {
   const id = Number(b.dataset.id);
   if (b.dataset.act === 'delete') { confirming = id; render(); }
   else if (b.dataset.act === 'cancel') { confirming = null; render(); }
-  else if (b.dataset.act === 'delete-ok') void run(() => deleteNewestSeason(id, user as ClubAdmin), `Season ${id} deleted.`);
+  else if (b.dataset.act === 'delete-ok') void run(() => deleteNewestSeason(id, user as ClubAdmin), `Сезон ${id} видалено.`);
 });
 
 $('sign-in').addEventListener('click', () => void signIn().catch((e) => say(String(e), true)));

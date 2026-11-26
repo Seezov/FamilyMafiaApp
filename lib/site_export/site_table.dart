@@ -2,7 +2,7 @@
 /// way the app's widgets format it; the site only lays out and sorts.
 class SiteColumn {
   const SiteColumn(this.label,
-      {this.numeric = true, this.tip, this.group, this.phone = true});
+      {this.numeric = true, this.tip, this.group, this.groupKey, this.phone = true});
 
   final String label;
 
@@ -15,6 +15,9 @@ class SiteColumn {
   /// Shared header above adjacent columns, e.g. a role name.
   final String? group;
 
+  /// Language-neutral key of [group] for styling (e.g. the role name `civilian`).
+  final String? groupKey;
+
   /// Shown on phones; hidden columns move into the row's expandable details.
   final bool phone;
 
@@ -23,6 +26,7 @@ class SiteColumn {
         'numeric': numeric,
         if (tip != null) 'tip': tip,
         if (group != null) 'group': group,
+        if (groupKey != null) 'groupKey': groupKey,
         if (!phone) 'phone': false,
       };
 }

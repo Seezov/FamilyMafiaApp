@@ -41,8 +41,8 @@ void main() {
   test('totals and per-type counts', () {
     expect(json['totals'], {'tournaments': 2, 'games': 12});
     expect(json['types'], [
-      {'type': 'minicap', 'label': 'Minicap', 'count': 1, 'games': 4},
-      {'type': 'marathon', 'label': 'Marathon', 'count': 1, 'games': 8},
+      {'type': 'minicap', 'label': 'Мінікап', 'count': 1, 'games': 4},
+      {'type': 'marathon', 'label': 'Марафон', 'count': 1, 'games': 8},
     ]);
   });
 

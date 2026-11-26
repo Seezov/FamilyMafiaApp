@@ -1,4 +1,4 @@
-export interface SiteColumn { label: string; numeric: boolean; tip?: string; group?: string; phone?: boolean }
+export interface SiteColumn { label: string; numeric: boolean; tip?: string; group?: string; groupKey?: string; phone?: boolean }
 export interface SiteCell { t: string; s?: number; link?: string; tone?: 'wr' | 'pos' | 'neg' }
 export interface SiteTable {
   title?: string; empty?: string; columns: SiteColumn[]; rows: SiteCell[][];

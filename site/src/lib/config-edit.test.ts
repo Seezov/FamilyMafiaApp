@@ -34,7 +34,7 @@ describe('applyOps', () => {
   });
 
   it('refuses to touch an entry that is gone', () => {
-    expect(() => applyOps(file(), [{ kind: 'delete', key: '19|Nope' }])).toThrow(/no longer in the config/);
+    expect(() => applyOps(file(), [{ kind: 'delete', key: '19|Nope' }])).toThrow(/вже немає в конфігу/);
   });
 });
 

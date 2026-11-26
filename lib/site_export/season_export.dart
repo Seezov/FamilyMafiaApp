@@ -35,7 +35,7 @@ Map<String, Object?> seasonJson(ExportContext x, SeasonConfig season) {
       x.read(tournamentsProvider).where((t) => t.seasonId == season.id);
   return {
     'id': season.id,
-    'title': season.title,
+    'title': seasonTitle(season.title),
     'gameLimit': season.gameLimit,
     'thresholdFormula': season.thresholdFormula,
     'thresholdLive': season.thresholdLive,
@@ -54,7 +54,7 @@ Map<String, Object?> seasonJson(ExportContext x, SeasonConfig season) {
       for (final t in tournaments)
         {
           'type': t.type.name,
-          'label': t.type.label,
+          'label': tournamentLabel(t.type),
           'name': t.name,
           'games': t.games,
           'date': t.date,
@@ -64,7 +64,7 @@ Map<String, Object?> seasonJson(ExportContext x, SeasonConfig season) {
     'tournamentCounts': [
       for (final MapEntry(key: type, value: count)
           in (extra?.tournaments ?? const {}).entries)
-        {'type': type.name, 'label': type.label, 'count': count}
+        {'type': type.name, 'label': tournamentLabel(type), 'count': count}
     ],
     'leagues': leagues,
   };
@@ -83,29 +83,31 @@ SiteTable _ratings(ExportContext x, SeasonConfig season, League league,
   return SiteTable(
     showRank: true,
     empty: league == League.small
-        ? 'No players in the ${season.smallLeagueMinGames}–${limit - 1} game range'
-        : 'No players have played at least $limit games',
+        ? 'Немає гравців із ${season.smallLeagueMinGames}–${limit - 1} іграми'
+        : 'Ніхто ще не зіграв щонайменше ${gamesCount(limit)}',
     columns: [
-      const SiteColumn('Player', numeric: false),
-      const SiteColumn('WR'),
-      const SiteColumn('Rating'),
-      const SiteColumn('Games', tip: 'Wins / games'),
-      const SiteColumn('Add. Pts', tip: 'Additional points from the host (доп)', phone: false),
-      const SiteColumn('Penalty', phone: false),
-      SiteColumn(protocol ? 'Support 5' : 'Best Move', phone: false),
+      const SiteColumn('Гравець', numeric: false),
+      const SiteColumn('WR', tip: 'Відсоток перемог'),
+      const SiteColumn('Бал', tip: 'Рейтинг'),
+      const SiteColumn('П/І', tip: 'Перемоги / ігри'),
+      const SiteColumn('ДБ', tip: 'Додаткові бали від ведучого', phone: false),
+      const SiteColumn('Штраф', phone: false),
+      protocol
+          ? const SiteColumn('ОП', tip: 'Опорна п’ятірка: бали першого убитого', phone: false)
+          : const SiteColumn('КХ', tip: 'Кращий хід: бали першого убитого', phone: false),
       const SiteColumn('MVP', phone: false),
-      const SiteColumn('CI/Game', tip: 'Compensation for being killed first, per game', phone: false),
-      const SiteColumn('CI', tip: 'Compensation for being killed first', phone: false),
-      const SiteColumn('Death %', phone: false),
-      const SiteColumn('First Killed', tip: 'ПУ — killed on the first night', phone: false),
-      const SiteColumn('City Lost', tip: 'Killed first and the city lost', phone: false),
+      const SiteColumn('CI/I', tip: 'Компенсація за перший відстріл на гру', phone: false),
+      const SiteColumn('СІ', tip: 'Компенсація за перший відстріл', phone: false),
+      const SiteColumn('% ВВПН', tip: 'Відсоток вбивств у першу ніч', phone: false),
+      const SiteColumn('ПУ', tip: 'Перший убитий — убитий у першу ніч', phone: false),
+      const SiteColumn('ПУП', tip: 'Убитий першим, і місто програло', phone: false),
       if (protocol) ...const [
-        SiteColumn('Protocol Pts', phone: false),
-        SiteColumn('Guesses', tip: 'Correct / total colour guesses', phone: false),
+        SiteColumn('Протокол', tip: 'Бали за протокол', phone: false),
+        SiteColumn('Вгадування', tip: 'Вгадані / всі кольори', phone: false),
       ],
       for (final r in kRoleOrder) ...[
-        SiteColumn('W/G', group: roleLabel(r), phone: false),
-        SiteColumn('±', group: roleLabel(r), tip: 'Points in this role', phone: false),
+        SiteColumn('П/І', group: roleLabel(r), groupKey: r.name, tip: 'Перемоги / ігри', phone: false),
+        SiteColumn('±', group: roleLabel(r), groupKey: r.name, tip: 'Бали в цій ролі', phone: false),
       ],
     ],
     rows: [
@@ -190,10 +192,10 @@ List<Map<String, Object?>> _awards(ExportContext x, SeasonStats stats) {
         'winnerLink': x.slugs[winner.player.id],
       'table': SiteTable(
         showRank: true,
-        empty: 'Nobody qualified.',
+        empty: 'Ніхто не пройшов.',
         columns: [
-          const SiteColumn('Player', numeric: false),
-          const SiteColumn('Avg pts'),
+          const SiteColumn('Гравець', numeric: false),
+          const SiteColumn('Сер. бал'),
           SiteColumn(metric),
         ],
         rows: [
@@ -204,17 +206,17 @@ List<Map<String, Object?>> _awards(ExportContext x, SeasonStats stats) {
   }
 
   return [
-    award('mvp', 'MVP', stats.mvpRanking, 'Score', seasonPts,
+    award('mvp', 'MVP', stats.mvpRanking, 'Бали', seasonPts,
         (p) => SiteCell(p.mvp.toStringAsFixed(3), s: p.mvp)),
-    award('sheriff', 'Sheriff', stats.bestSheriffRanking, 'Record',
+    award('sheriff', 'Шериф', stats.bestSheriffRanking, 'Рекорд',
         (p) => rolePts(p, Role.sheriff), (p) => record(p, Role.sheriff)),
-    award('civilian', 'Civilian', stats.bestCivilianRanking, 'Record',
+    award('civilian', 'Мирний', stats.bestCivilianRanking, 'Рекорд',
         (p) => rolePts(p, Role.civilian), (p) => record(p, Role.civilian)),
-    award('mafia', 'Mafia', stats.bestMafiaRanking, 'Record',
+    award('mafia', 'Мафія', stats.bestMafiaRanking, 'Рекорд',
         (p) => rolePts(p, Role.mafia), (p) => record(p, Role.mafia)),
-    award('don', 'Don', stats.bestDonRanking, 'Record',
+    award('don', 'Дон', stats.bestDonRanking, 'Рекорд',
         (p) => rolePts(p, Role.don), (p) => record(p, Role.don)),
-    award('mostKilled', 'Most Killed', stats.mostKilledRanking, 'Deaths',
+    award('mostKilled', 'Найчастіше вбитий', stats.mostKilledRanking, 'ПУ',
         seasonPts, (p) => SiteCell('${p.firstKilled}', s: p.firstKilled)),
   ];
 }
@@ -236,20 +238,20 @@ List<Map<String, Object?>> _statItems(ExportContext x, SeasonExtraStats s,
           showRank: true,
           empty: empty,
           columns: [
-            const SiteColumn('Player', numeric: false),
+            const SiteColumn('Гравець', numeric: false),
             SiteColumn(a),
             SiteColumn(b),
           ],
           rows: rows,
         ).toJson(),
       };
-  final hostEmpty = 'No host hosted $kHostMinGamesForAverage+ games.';
+  final hostEmpty = 'Жоден ведучий не провів $kHostMinGamesForAverage+ ігор.';
 
   return [
     item(
-      'Most Games',
+      'Найбільше ігор',
       first(s.mostGames, (p) => '${p.player.displayName} · ${p.gamesPlayed}'),
-      'No players in this league.', 'WR', 'Games',
+      'У цій лізі немає гравців.', 'WR', 'Ігри',
       [
         for (final p in s.mostGames)
           [
@@ -260,10 +262,10 @@ List<Map<String, Object?>> _statItems(ExportContext x, SeasonExtraStats s,
       ],
     ),
     item(
-      'Top ПУ %',
+      'Найвищий % ПУ',
       first(s.topFirstKilledPct,
           (p) => '${p.player.displayName} · ${pct0(p.percentOfDeath)}'),
-      'No red games in this league.', 'ПУ', '% of red',
+      'У цій лізі немає червоних ігор.', 'ПУ', '% червоних',
       [
         for (final p in s.topFirstKilledPct)
           [
@@ -275,10 +277,10 @@ List<Map<String, Object?>> _statItems(ExportContext x, SeasonExtraStats s,
     ),
     if (showHosts) ...[
       item(
-        'Most Hosted',
+        'Найбільше проведених',
         first(s.mostHosted, (h) =>
             '${h.host.displayName} · ${h.hosted} (${s.seasonGames == 0 ? '—' : pct0(h.hosted / s.seasonGames)})'),
-        'No host data for this season.', 'Share', 'Games',
+        'Немає даних про ведучих цього сезону.', 'Частка', 'Ігри',
         [
           for (final h in s.mostHosted)
             [
@@ -292,28 +294,28 @@ List<Map<String, Object?>> _statItems(ExportContext x, SeasonExtraStats s,
         ],
       ),
       item(
-        'Host avg доп',
+        'Сер. доп ведучого',
         first(s.hostAvgPlus, (h) => '${h.host.displayName} · ${signed2(h.avgPlus)}'),
-        hostEmpty, 'Games', 'Avg / game',
+        hostEmpty, 'Ігри', 'Сер. / гра',
         [
           for (final h in s.hostAvgPlus)
             [x.name(h.host), SiteCell('${h.hosted}', s: h.hosted), _signedCell(h.avgPlus)]
         ],
       ),
       item(
-        'Host avg мінус',
+        'Сер. мінус ведучого',
         first(s.hostAvgMinus, (h) => '${h.host.displayName} · ${signed2(h.avgMinus)}'),
-        hostEmpty, 'Games', 'Avg / game',
+        hostEmpty, 'Ігри', 'Сер. / гра',
         [
           for (final h in s.hostAvgMinus)
             [x.name(h.host), SiteCell('${h.hosted}', s: h.hosted), _signedCell(h.avgMinus)]
         ],
       ),
       {
-        'label': 'No host',
+        'label': 'Без ведучого',
         'winner': s.gamesWithoutHost == null
-            ? 'No data'
-            : '${s.gamesWithoutHost} games',
+            ? 'Немає даних'
+            : gamesCount(s.gamesWithoutHost!),
       },
     ],
   ];

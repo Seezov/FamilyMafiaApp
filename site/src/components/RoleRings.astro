@@ -4,15 +4,15 @@ import { pct } from '../lib/format';
 interface Props { roleWR: IndexData['roleWR'] }
 const { roleWR } = Astro.props;
 const roles: { key: RoleKey; label: string }[] = [
-  { key: 'civilian', label: 'Civilian' }, { key: 'sheriff', label: 'Sheriff' },
-  { key: 'mafia', label: 'Mafia' }, { key: 'don', label: 'Don' },
+  { key: 'civilian', label: 'Мирний' }, { key: 'sheriff', label: 'Шериф' },
+  { key: 'mafia', label: 'Мафія' }, { key: 'don', label: 'Дон' },
 ];
 const r = 34, c = 2 * Math.PI * r;
 ---
 <div class="rings">
   {roles.map(({ key, label }) => (
     <figure>
-      <svg viewBox="0 0 80 80" role="img" aria-label={`${label} win rate ${pct(roleWR[key])}`}>
+      <svg viewBox="0 0 80 80" role="img" aria-label={`${label}: відсоток перемог ${pct(roleWR[key])}`}>
         <circle cx="40" cy="40" r={r} fill="none" stroke="var(--panel-2)" stroke-width="8" />
         <circle cx="40" cy="40" r={r} fill="none" stroke={`var(--${key})`} stroke-width="8" stroke-linecap="round"
           stroke-dasharray={`${(roleWR[key] * c).toFixed(1)} ${c.toFixed(1)}`} transform="rotate(-90 40 40)" />

@@ -30,10 +30,10 @@ export function rosterClashes(r: RosterEntry[]): string[] {
 
 export function rosterErrors(r: RosterEntry[]): string[] {
   const errors: string[] = [];
-  if (r.length > MAX_ENTRIES) errors.push(`${r.length} players, the limit is ${MAX_ENTRIES}`);
-  for (const e of r) if (e.nicknames.length > MAX_NICKNAMES) errors.push(`${e.name} has ${e.nicknames.length} nicknames, the limit is ${MAX_NICKNAMES}`);
+  if (r.length > MAX_ENTRIES) errors.push(`гравців ${r.length}, ліміт ${MAX_ENTRIES}`);
+  for (const e of r) if (e.nicknames.length > MAX_NICKNAMES) errors.push(`у ${e.name} нікнеймів ${e.nicknames.length}, ліміт ${MAX_NICKNAMES}`);
   const clashes = rosterClashes(r);
-  if (clashes.length) errors.push(`names used by two players: ${clashes.join(', ')}`);
+  if (clashes.length) errors.push(`імена, які мають два гравці: ${clashes.join(', ')}`);
   return errors;
 }
 
@@ -58,17 +58,17 @@ export function ownerOf(r: RosterEntry[], name: string): string | undefined {
 
 function find(r: RosterEntry[], player: string): number {
   const i = r.findIndex((e) => e.name === player);
-  if (i < 0) throw new Error(`${player} is not in the list any more — reload`);
+  if (i < 0) throw new Error(`${player} уже немає в списку — онови сторінку`);
   return i;
 }
 
 /** A new name or nickname for entry [self] (or a new entry): long enough, nobody else's. */
 function fresh(r: RosterEntry[], raw: string, self: number | null): string {
   const n = clean(raw);
-  if (n.length < 2) throw new Error('A name needs at least 2 characters');
+  if (n.length < 2) throw new Error("Ім'я має містити щонайменше 2 символи");
   const k = low(n);
   const other = r.findIndex((e, i) => i !== self && names(e).some((x) => low(x) === k));
-  if (other >= 0) throw new Error(`"${n}" already belongs to ${r[other].name}`);
+  if (other >= 0) throw new Error(`«${n}» уже належить гравцю ${r[other].name}`);
   return n;
 }
 
@@ -101,7 +101,7 @@ export function applyOp(r: RosterEntry[], op: RosterOp): RosterEntry[] {
     case 'merge': {
       const from = find(next, op.from);
       const into = find(next, op.into);
-      if (from === into) throw new Error('Pick another player to merge into');
+      if (from === into) throw new Error("Вибери іншого гравця для об'єднання");
       const have = new Set(names(next[into]).map(low));
       for (const n of names(next[from])) if (!have.has(low(n))) { next[into].nicknames.push(n); have.add(low(n)); }
       next.splice(from, 1);

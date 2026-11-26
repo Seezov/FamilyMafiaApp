@@ -5,6 +5,9 @@ import Base from '../layouts/Base.astro';
 import Panel from './Panel.astro';
 import PlayerName from './PlayerName.astro';
 import { href } from '../lib/url';
+import { ukCount } from '../lib/format';
+const EVENTS = ['подія', 'події', 'подій'] as const;
+const PLAYERS_GEN = ['гравець', 'гравці', 'гравців'] as const;
 import type { AnnualData, AnnualYear } from '../lib/types';
 
 interface Props { data: AnnualData; y: AnnualYear }
@@ -13,23 +16,23 @@ const newest = data.years[0]?.year;
 const yearHref = (year: number) => href(year === newest ? 'annual/' : `annual/${year}/`);
 const byId = new Map(y.events.map((e) => [e.id, e]));
 const place = (p: number) => (p > 100 ? `S${p - 100}` : String(p));
-const placeTip = (p: number) => (p > 100 ? `Small league #${p - 100}` : undefined);
+const placeTip = (p: number) => (p > 100 ? `Мала ліга #${p - 100}` : undefined);
 ---
-<Base title={`Annual rating ${y.year}`} description={`Family Mafia Club annual rating ${y.year}: tournaments, series, marathons and club seasons.`} active="annual">
+<Base title={`Річний рейтинг ${y.year}`} description={`Річний рейтинг Family Mafia Club ${y.year}: турніри, серії, марафони й клубні сезони.`} active="annual">
   <div class="pagehead">
-    <h1 class="display">Annual rating {y.year}</h1>
-    <nav class="years" aria-label="Year">
+    <h1 class="display">Річний рейтинг {y.year}</h1>
+    <nav class="years" aria-label="Рік">
       {data.years.map((o) => <a href={yearHref(o.year)} aria-current={o.year === y.year ? 'page' : undefined}>{o.year}</a>)}
     </nav>
   </div>
-  <p class="hint">Sum of each player's 12 best results: club seasons, external tournaments, series and marathons.</p>
+  <p class="hint">Сума 12 кращих результатів гравця: клубні сезони, зовнішні турніри, серії й марафони.</p>
 
   <div class="grid">
-    <Panel title="Standings" class="span-12">
+    <Panel title="Таблиця" class="span-12">
       <div class="standings" role="table">
         <div class="row head" role="row">
-          <span>#</span><span>Player</span><span class="num">Score</span><span class="num">Wins</span>
-          <span class="num">Top-3</span><span class="num">Top-10</span><span class="num">Events</span>
+          <span>#</span><span>Гравець</span><span class="num">Бали</span><span class="num">Перемоги</span>
+          <span class="num">Top-3</span><span class="num">Top-10</span><span class="num">Події</span>
         </div>
         {y.standings.map((s) => (
           <details class="st">
@@ -57,14 +60,14 @@ const placeTip = (p: number) => (p > 100 ? `Small league #${p - 100}` : undefine
       </div>
     </Panel>
 
-    <Panel title="Events" note={`${y.events.length} events`} class="span-12">
+    <Panel title="Події" note={ukCount(y.events.length, EVENTS)} class="span-12">
       <div class="events">
         {y.events.map((e) => (
           <details class="ev">
             <summary>
               <span class={`kind k-${e.kind}`}>{e.label}</span>
               <span class="name">{e.name}</span>
-              <span class="meta num">{e.date ?? 'date unknown'}{e.kind === 'tournament' && ` · ${e.stars}★ · ${e.participants} players`}</span>
+              <span class="meta num">{e.date ?? 'дата невідома'}{e.kind === 'tournament' && ` · ${e.stars}★ · ${ukCount(e.participants ?? 0, PLAYERS_GEN)}`}</span>
             </summary>
             <ol class="results">
               {e.results.map((r) => (

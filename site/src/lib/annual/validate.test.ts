@@ -9,17 +9,17 @@ const ok = (): EventDraft => ({
 describe('validateEvent', () => {
   it('accepts a good event', () => expect(validateEvent(ok())).toEqual([]));
   it('refuses missing name, no rows, bad places, duplicates', () => {
-    expect(validateEvent({ ...ok(), name: ' ' })).toContain('Name is required');
-    expect(validateEvent({ ...ok(), results: [] })).toContain('Add at least one player');
-    expect(validateEvent({ ...ok(), results: [{ player: 'A', place: 0 }] })).toContain('Row 1: place must be a whole number ≥ 1');
-    expect(validateEvent({ ...ok(), results: [{ player: '', place: 1 }] })).toContain('Row 1: player is empty');
-    expect(validateEvent({ ...ok(), results: [{ player: 'A', place: 1 }, { player: 'a', place: 2 }] })).toContain('A is listed twice');
+    expect(validateEvent({ ...ok(), name: ' ' })).toContain('Потрібна назва');
+    expect(validateEvent({ ...ok(), results: [] })).toContain('Додай хоча б одного гравця');
+    expect(validateEvent({ ...ok(), results: [{ player: 'A', place: 0 }] })).toContain('Рядок 1: місце має бути цілим числом ≥ 1');
+    expect(validateEvent({ ...ok(), results: [{ player: '', place: 1 }] })).toContain('Рядок 1: не вказано гравця');
+    expect(validateEvent({ ...ok(), results: [{ player: 'A', place: 1 }, { player: 'a', place: 2 }] })).toContain('A записаний двічі');
   });
   it('tournament needs stars 0–5 and participants ≥ the largest place', () => {
-    expect(validateEvent({ ...ok(), stars: null })).toContain('Stars must be 0–5');
-    expect(validateEvent({ ...ok(), stars: 6 })).toContain('Stars must be 0–5');
-    expect(validateEvent({ ...ok(), participants: 5 })).toContain('Participants must be at least 9');
+    expect(validateEvent({ ...ok(), stars: null })).toContain('Зірки мають бути 0–5');
+    expect(validateEvent({ ...ok(), stars: 6 })).toContain('Зірки мають бути 0–5');
+    expect(validateEvent({ ...ok(), participants: 5 })).toContain('Учасників має бути щонайменше 9');
     expect(validateEvent({ ...ok(), kind: 'series', stars: null, participants: null })).toEqual([]);
   });
-  it('bad date', () => expect(validateEvent({ ...ok(), date: '28.02.2026' })).toContain('Date must be YYYY-MM-DD'));
+  it('bad date', () => expect(validateEvent({ ...ok(), date: '28.02.2026' })).toContain('Дата має бути у форматі РРРР-ММ-ДД'));
 });

@@ -1,4 +1,5 @@
 import { filtersToSearch, initialView, matchesFilters, parseFilters, type GameFilters } from '../lib/games';
+import { GAMES, ukCount, ukWord } from '../lib/format';
 
 const players: { name: string; key: string }[] = JSON.parse(document.getElementById('games-players')!.textContent!);
 const games = [...document.querySelectorAll<HTMLDetailsElement>('details.game')];
@@ -24,10 +25,10 @@ function apply(f: GameFilters) {
     if (c) {
       c.textContent = String(n);
       const u = group.querySelector('.day-unit');
-      if (u) u.textContent = n === 1 ? 'game' : 'games';
+      if (u) u.textContent = ukWord(n, GAMES);
     }
   }
-  count.textContent = `${shown} ${shown === 1 ? 'game' : 'games'}`;
+  count.textContent = ukCount(shown, GAMES);
   input.value = players.find((p) => p.key === f.player)?.name ?? '';
   host.value = f.host ?? '';
 }
@@ -61,6 +62,6 @@ document.addEventListener('click', async (e) => {
   const b = (e.target as HTMLElement).closest<HTMLButtonElement>('button.copy');
   if (!b) return;
   const url = `${location.origin}${location.pathname}#${b.dataset.id}`;
-  try { await navigator.clipboard.writeText(url); b.textContent = 'Copied'; } catch { location.hash = b.dataset.id!; }
-  setTimeout(() => (b.textContent = 'Copy link'), 1500);
+  try { await navigator.clipboard.writeText(url); b.textContent = 'Скопійовано'; } catch { location.hash = b.dataset.id!; }
+  setTimeout(() => (b.textContent = 'Скопіювати посилання'), 1500);
 });

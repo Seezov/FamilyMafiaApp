@@ -15,7 +15,7 @@ Map<String, Object?> overviewJson(ExportContext x) {
 
   return {
     'seasons': [
-      for (final s in seasons) {'id': s.id, 'title': s.title}
+      for (final s in seasons) {'id': s.id, 'title': seasonTitle(s.title)}
     ],
     'latestSeasonId': seasons.last.id,
     'club': {
@@ -26,7 +26,7 @@ Map<String, Object?> overviewJson(ExportContext x) {
     },
     'roleWR': {for (final r in kRoleOrder) r.name: roleWR[r] ?? 0.0},
     'leaderboardNote':
-        'All-time win rate, players with at least $kDashboardMinRatingGames rating games.',
+        'Відсоток перемог за весь час, гравці з щонайменше $kDashboardMinRatingGames рейтинговими іграми.',
     'leaderboards': [
       for (final r in kRoleOrder)
         {
@@ -34,11 +34,11 @@ Map<String, Object?> overviewJson(ExportContext x) {
           'label': roleLabel(r),
           'table': SiteTable(
             showRank: true,
-            empty: 'Nobody qualifies yet.',
+            empty: 'Поки ніхто не проходить.',
             columns: const [
-              SiteColumn('Player', numeric: false),
+              SiteColumn('Гравець', numeric: false),
               SiteColumn('WR'),
-              SiteColumn('Games'),
+              SiteColumn('Ігри'),
             ],
             rows: [
               for (final e in top[r] ?? const [])
@@ -53,11 +53,11 @@ Map<String, Object?> overviewJson(ExportContext x) {
     ],
     'protocol': SiteTable(
       showRank: true,
-      empty: 'No protocol data yet.',
+      empty: 'Даних протоколу ще немає.',
       columns: const [
-        SiteColumn('Player', numeric: false),
-        SiteColumn('Accuracy'),
-        SiteColumn('Guesses', tip: 'Correct / total colour guesses'),
+        SiteColumn('Гравець', numeric: false),
+        SiteColumn('Точність'),
+        SiteColumn('Вгадування', tip: 'Вгадані / всі кольори'),
       ],
       rows: [
         for (final e in x.read(protocolGuessLeaderboardProvider))
@@ -82,28 +82,28 @@ SiteTable _seasonsTable(List<SeasonRow> rows) {
   String dec(num v) => v.toStringAsFixed(2);
 
   final named_ = <(String, NamedValue? Function(SeasonRow), String Function(num))>[
-    ('Most games', (r) => r.mostGames, int_),
+    ('Найбільше ігор', (r) => r.mostGames, int_),
     ('MVP', (r) => r.mvp, dec),
-    ('Most ПУ', (r) => r.mostKilled, int_),
-    ('Top ПУ %', (r) => r.topKilledPct, pct),
-    ('Most hosted', (r) => r.mostHosted, int_),
-    ('Host avg +', (r) => r.hostAvgPlus, dec),
-    ('Best Don', (r) => r.bestDon, pct),
-    ('Best Sheriff', (r) => r.bestSheriff, pct),
-    ('Best Civilian', (r) => r.bestCivilian, pct),
-    ('Best Mafia', (r) => r.bestMafia, pct),
+    ('Найбільше ПУ', (r) => r.mostKilled, int_),
+    ('Найвищий % ПУ', (r) => r.topKilledPct, pct),
+    ('Найбільше проведених', (r) => r.mostHosted, int_),
+    ('Сер. доп ведучого', (r) => r.hostAvgPlus, dec),
+    ('Кращий дон', (r) => r.bestDon, pct),
+    ('Кращий шериф', (r) => r.bestSheriff, pct),
+    ('Кращий мирний', (r) => r.bestCivilian, pct),
+    ('Краща мафія', (r) => r.bestMafia, pct),
   ];
 
   return SiteTable(
     sortColumn: 0,
     columns: [
-      const SiteColumn('Season'),
-      const SiteColumn('Games'),
-      const SiteColumn('City WR'),
-      const SiteColumn('Mafia WR'),
-      const SiteColumn('Players'),
-      const SiteColumn('Main lg', tip: 'Players in the main league'),
-      for (final t in TournamentType.values) SiteColumn('${t.label}s'),
+      const SiteColumn('Сезон'),
+      const SiteColumn('Ігри'),
+      const SiteColumn('WR міста'),
+      const SiteColumn('WR мафії'),
+      const SiteColumn('Гравці'),
+      const SiteColumn('Вища ліга', tip: 'Гравців у вищій лізі'),
+      for (final t in TournamentType.values) SiteColumn(tournamentPlural(t)),
       for (final (label, _, _) in named_) SiteColumn(label, numeric: false),
     ],
     rows: [

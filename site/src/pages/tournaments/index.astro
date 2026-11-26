@@ -6,45 +6,46 @@ import Panel from '../../components/Panel.astro';
 import { loadTournaments } from '../../lib/data';
 import PlayerName from '../../components/PlayerName.astro';
 import { seasonHref } from '../../lib/url';
+import { GAMES, ukCount } from '../../lib/format';
 
 const d = loadTournaments();
-const plural = (n: number, label: string) => `${n} ${label.toLowerCase()}${n === 1 ? '' : 's'}`;
-const places = ['1st', '2nd', '3rd'];
+const plural = (n: number, label: string) => `${label}: ${n}`;
+const places = ['1 місце', '2 місце', '3 місце'];
 ---
 <Base
-  title="Tournaments"
-  description={`${d.totals.tournaments} tournaments, ${d.totals.games} games: minicaps, maxicaps, bigcaps, marathons and cups by season.`}
+  title="Турніри"
+  description={`Турнірів: ${d.totals.tournaments}, ігор: ${d.totals.games} — мінікапи, максікапи, бігкапи, марафони й кубки по сезонах.`}
   active="tournaments"
 >
-  <div class="pagehead"><h1 class="display">Tournaments</h1></div>
+  <div class="pagehead"><h1 class="display">Турніри</h1></div>
 
   <div class="kpis">
-    <Kpi label="Tournaments" value={String(d.totals.tournaments)} />
-    <Kpi label="Tournament games" value={String(d.totals.games)} />
+    <Kpi label="Турніри" value={String(d.totals.tournaments)} />
+    <Kpi label="Турнірні ігри" value={String(d.totals.games)} />
     {d.types.map((t) => (
       <div class={`type t-${t.type}`}>
-        <div class="label">{t.label}s</div>
+        <div class="label">{t.label}</div>
         <div class="display value">{t.count}</div>
-        <div class="label">{t.games} games</div>
+        <div class="label">{ukCount(t.games, GAMES)}</div>
       </div>
     ))}
   </div>
 
   <div class="grid">
-    <Panel title="Most prize places" note="Ranked by wins, then 2nd and 3rd places" class="span-6">
+    <Panel title="Найбільше призових місць" note="Спершу перемоги, потім 2 і 3 місця" class="span-6">
       <DataTable table={d.winners} compact />
     </Panel>
-    <Panel title="By season" class="span-6">
+    <Panel title="По сезонах" class="span-6">
       <DataTable table={d.bySeason} compact />
     </Panel>
 
-    <Panel title="Every tournament" class="span-12">
+    <Panel title="Усі турніри" class="span-12">
       <div class="seasons">
         {d.seasons.map((s, i) => (
           <details open={i < 2}>
             <summary>
               <a class="sn display" href={seasonHref(s.id)}>S{s.id}</a>
-              <span class="label">{s.events.reduce((a, e) => a + e.games, 0)} games</span>
+              <span class="label">{ukCount(s.events.reduce((a, e) => a + e.games, 0), GAMES)}</span>
               <span class="chips">
                 {d.types.filter((t) => s.events.some((e) => e.type === t.type)).map((t) => (
                   <span class={`chip t-${t.type}`}>{plural(s.events.filter((e) => e.type === t.type).length, t.label)}</span>
@@ -55,11 +56,11 @@ const places = ['1st', '2nd', '3rd'];
               {s.events.map((e) => (
                 <li class={`ev t-${e.type}`}>
                   <span class="kind">{e.label}</span>
-                  <span class="name">{e.name}{e.unconfirmed && <span class="auto" title="Found in the game list; not confirmed yet">auto</span>}</span>
-                  <span class="meta num">{e.date ?? 'date unknown'} · {e.games} games</span>
+                  <span class="name">{e.name}{e.unconfirmed && <span class="auto" title="Знайдено в списку ігор; ще не підтверджено">авто</span>}</span>
+                  <span class="meta num">{e.date ?? 'дата невідома'} · {ukCount(e.games, GAMES)}</span>
                   <span class="podium">
                     {e.podium.length === 0 ? (
-                      <span class="label">No results entered</span>
+                      <span class="label">Результатів не внесено</span>
                     ) : e.podium.map((p, k) => (
                       <span class={`place p${k + 1}`} title={places[k]}>
                         <i aria-hidden="true">{k + 1}</i>
@@ -75,13 +76,13 @@ const places = ['1st', '2nd', '3rd'];
       </div>
     </Panel>
 
-    <Panel title="How it's counted" class="span-12">
+    <Panel title="Як це рахується" class="span-12">
       <ul class="rules">
-        <li>Tournaments come from each season's Google sheet: its tournament tabs, with their own game list or a row range in the main “Ігри” tab. Game counts are taken from those tabs.</li>
-        <li>Bigcaps are the “Big …” / “Біг …” events: Big Fish, Big Brother, Big Ben, Big Family, Big Spell Mage, Біг Смоук, Біг Тейсті, Біг Сіті Лайф.</li>
-        <li>Tabs copied into another season's sheet are counted once. Templates, summary tabs, “EmptyMarathon” and the FAS 2023 fantasy tab are skipped.</li>
-        <li>The date comes from the games, not the tab name: the “Мінікап10.08.2024” tab was played on 08.10.2024. Seasons 0, 1 and 5 have no dates.</li>
-        <li>Podium names are matched to players by nickname, so “Железный” and “Залізний” count as one player.</li>
+        <li>Турніри взято з Google-таблиці кожного сезону: з її турнірних вкладок, зі своїм списком ігор або діапазоном рядків в основній вкладці «Ігри». Кількість ігор — з цих вкладок.</li>
+        <li>Бігкапи — це події «Big …» / «Біг …»: Big Fish, Big Brother, Big Ben, Big Family, Big Spell Mage, Біг Смоук, Біг Тейсті, Біг Сіті Лайф.</li>
+        <li>Вкладки, скопійовані в таблицю іншого сезону, рахуються один раз. Шаблони, підсумкові вкладки, «EmptyMarathon» і фентезі-вкладка FAS 2023 пропущені.</li>
+        <li>Дата береться з ігор, а не з назви вкладки: вкладку «Мінікап10.08.2024» зіграли 08.10.2024. Сезони 0, 1 і 5 без дат.</li>
+        <li>Імена з п'єдесталу зіставлені з гравцями за нікнеймами, тож «Железный» і «Залізний» — один гравець.</li>
       </ul>
     </Panel>
   </div>

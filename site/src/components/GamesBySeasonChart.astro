@@ -1,6 +1,7 @@
 ---
 import type { PlayerData } from '../lib/types';
 import { gamesHref } from '../lib/url';
+import { GAMES, ukCount } from '../lib/format';
 interface Props { timeline: PlayerData['timeline']; slug: string }
 const { timeline, slug } = Astro.props;
 const W = 760, H = 220, padL = 32, padR = 12, padT = 12, band = 10, padB = 30;
@@ -12,9 +13,10 @@ const played = timeline.map((t, i) => ({ ...t, i })).filter((t) => t.games > 0);
 const path = played.map((t, k) => `${k ? 'L' : 'M'}${x(t.i).toFixed(1)},${y(t.games).toFixed(1)}`).join(' ');
 const step = n > 1 ? (W - padL - padR) / (n - 1) : W;
 const leagueColor = { main: 'var(--city)', small: 'var(--mid)', below: 'var(--border)', none: 'transparent' } as const;
+const leagueName = { main: 'вища ліга', small: 'мала ліга', below: 'нижче порогу', none: 'не грав' } as const;
 const ticks = [0, Math.round(max / 2), max];
 ---
-<svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label="Games per season">
+<svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label="Ігри по сезонах">
   {ticks.map((t) => (
     <g>
       <line x1={padL} x2={W - padR} y1={y(t)} y2={y(t)} stroke="var(--border)" />
@@ -23,14 +25,14 @@ const ticks = [0, Math.round(max / 2), max];
   ))}
   {timeline.map((t, i) => (
     <rect x={x(i) - step / 2 + 1} y={H - padB - band} width={Math.max(2, step - 2)} height={band} rx="2" fill={leagueColor[t.league]}>
-      <title>{`${t.title}: ${t.league === 'none' ? 'did not play' : t.league + ' league'}`}</title>
+      <title>{`${t.title}: ${leagueName[t.league]}`}</title>
     </rect>
   ))}
   <path d={path} fill="none" stroke="var(--text)" stroke-width="2" />
   {played.map((t) => (
-    <a href={gamesHref(t.seasonId, slug)} aria-label={`${t.title}: ${t.games} games`}>
+    <a href={gamesHref(t.seasonId, slug)} aria-label={`${t.title}: ${ukCount(t.games, GAMES)}`}>
       <circle cx={x(t.i)} cy={y(t.games)} r="5" fill="var(--bg)" stroke="var(--text)" stroke-width="2">
-        <title>{`${t.title}: ${t.games} games — open the games`}</title>
+        <title>{`${t.title}: ${ukCount(t.games, GAMES)} — відкрити ігри`}</title>
       </circle>
     </a>
   ))}
@@ -38,13 +40,13 @@ const ticks = [0, Math.round(max / 2), max];
     <text x={x(i)} y={H - 8} text-anchor="middle">S{t.seasonId}</text>
   ))}
 </svg>
-<p class="games-row label">Games: {played.map((t, k) => (
-  <>{k > 0 && ' · '}<a href={gamesHref(t.seasonId, slug)} aria-label={`${t.title}: ${t.games} games`}>S{t.seasonId}</a></>
+<p class="games-row label">Ігри: {played.map((t, k) => (
+  <>{k > 0 && ' · '}<a href={gamesHref(t.seasonId, slug)} aria-label={`${t.title}: ${ukCount(t.games, GAMES)}`}>S{t.seasonId}</a></>
 ))}</p>
 <div class="legend label">
-  <span><i style="background:var(--city)" />Main league</span>
-  <span><i style="background:var(--mid)" />Small league</span>
-  <span><i style="background:var(--border)" />Below threshold</span>
+  <span><i style="background:var(--city)" />Вища ліга</span>
+  <span><i style="background:var(--mid)" />Мала ліга</span>
+  <span><i style="background:var(--border)" />Нижче порогу</span>
 </div>
 
 <style>

@@ -138,7 +138,7 @@ function showMessages(highlight: boolean) {
   const r = validate(form, aliases);
   document.querySelectorAll('.invalid').forEach((el) => el.classList.remove('invalid'));
   if (highlight) {
-    const map: Record<string, string> = { host: 'f-host', result: 'f-result', season: 'f-season', gameNumber: 'f-number', date: 'f-date', protocol: 'protocol', supportFive: 'support', roles: 'seats' };
+    const map: Record<string, string> = { host: 'f-host', result: 'f-result', season: 'f-season', gameNumber: 'f-number', date: 'f-date', protocol: 'protocol', supportFive: 'support', roles: 'seats', comments: 'comments' };
     for (const f of r.fields) {
       const m = /^seat-(\d+)-(player|additional)$/.exec(f);
       const el = m ? document.querySelector(`.seat[data-i="${+m[1] - 1}"] [data-k=${m[2]}]`) : document.getElementById(map[f]);

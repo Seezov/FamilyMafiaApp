@@ -76,7 +76,7 @@ export function applyOps(file: SeasonConfigFile, ops: Op[]): SeasonConfigFile {
   const limits = { ...(file.gameLimits ?? {}) };
   const find = (key: string) => {
     const i = list.findIndex((t) => entryKey(t) === key);
-    if (i < 0) throw new Error(`"${key.split('|')[1]}" (S${key.split('|')[0]}) is no longer in the config`);
+    if (i < 0) throw new Error(`"${key.split('|')[1]}" (S${key.split('|')[0]}) вже немає в конфігу`);
     return i;
   };
   for (const op of ops) {
@@ -98,13 +98,13 @@ export function applyOps(file: SeasonConfigFile, ops: Op[]): SeasonConfigFile {
         break;
       case 'add': {
         const e = normalize(op.entry);
-        if (list.some((t) => entryKey(t) === entryKey(e))) throw new Error(`"${e.name}" (S${e.season}) already exists`);
+        if (list.some((t) => entryKey(t) === entryKey(e))) throw new Error(`"${e.name}" (S${e.season}) вже існує`);
         list.splice(insertAt(list, e), 0, e);
         break;
       }
       case 'gameLimit': {
         if (op.limit !== null && (!Number.isInteger(op.limit) || op.limit < 0)) {
-          throw new Error(`Threshold must be a whole number ≥ 0, got ${op.limit}`);
+          throw new Error(`Поріг має бути цілим числом ≥ 0, отримано ${op.limit}`);
         }
         if (op.limit === null) delete limits[String(op.season)];
         else limits[String(op.season)] = op.limit;

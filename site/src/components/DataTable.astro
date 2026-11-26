@@ -13,11 +13,11 @@ const order = table.sortColumn === undefined
   : sortedIndices(table.rows, table.sortColumn, table.desc ? 'desc' : 'asc');
 const hasHidden = columns.some((c) => c.phone === false);
 const hasGroups = columns.some((c) => c.group);
-const groups: { label: string; span: number }[] = [];
+const groups: { label: string; key: string; span: number }[] = [];
 for (const c of columns) {
   const last = groups.at(-1);
   if (last && last.label === (c.group ?? '') && c.group) last.span++;
-  else groups.push({ label: c.group ?? '', span: 1 });
+  else groups.push({ label: c.group ?? '', key: c.groupKey ?? (c.group ?? '').toLowerCase(), span: 1 });
 }
 const toneClass = (c: SiteCell) =>
   c.tone === 'wr' ? `tone-${wrTone(c.s) ?? 'low'}` : c.tone ? `tone-${c.tone}` : undefined;
@@ -25,7 +25,7 @@ const collapsed = table.collapsed && table.rows.length > table.collapsed ? table
 const colCount = columns.length + (showRank ? 1 : 0);
 ---
 {table.rows.length === 0 ? (
-  <p class="empty">{table.empty ?? 'No data.'}</p>
+  <p class="empty">{table.empty ?? 'Немає даних.'}</p>
 ) : (
   <div class:list={['dt', { compact }]} data-table data-collapsed={collapsed}>
     <div class="scroll">
@@ -35,7 +35,7 @@ const colCount = columns.length + (showRank ? 1 : 0);
             <tr class="groups">
               {showRank && <th />}
               {groups.map((g) => (
-                <th colspan={g.span} class:list={[{ grp: g.label }, `role-${g.label.toLowerCase()}`]}>{g.label}</th>
+                <th colspan={g.span} class:list={[{ grp: g.label }, `role-${g.key}`]}>{g.label}</th>
               ))}
             </tr>
           )}
@@ -80,7 +80,7 @@ const colCount = columns.length + (showRank ? 1 : 0);
         ))}
       </table>
     </div>
-    {collapsed !== undefined && <button type="button" class="more" data-more>Show all {table.rows.length}</button>}
+    {collapsed !== undefined && <button type="button" class="more" data-more>Показати всі ({table.rows.length})</button>}
   </div>
 )}
 

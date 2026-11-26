@@ -16,11 +16,11 @@ const link = (sid: number) =>
       {seasons.map((x) => <li><a href={link(x.id)} aria-current={x.id === id ? 'page' : undefined}>{x.title}</a></li>)}
     </ul>
   </details>
-  <nav class="pills" aria-label="Section">
-    <a class="pill" href={seasonHref(id)} aria-current={tab === 'main' ? 'true' : undefined}>Main league</a>
-    <a class="pill" href={seasonHref(id, true)} aria-current={tab === 'small' ? 'true' : undefined}>Small league</a>
-    <a class="pill" href={gamesHref(id)} aria-current={tab === 'games' ? 'true' : undefined}>Games</a>
-    <a class="pill" href={attendanceHref(id)} aria-current={tab === 'attendance' ? 'true' : undefined}>Attendance</a>
+  <nav class="pills" aria-label="Розділ">
+    <a class="pill" href={seasonHref(id)} aria-current={tab === 'main' ? 'true' : undefined}>Вища ліга</a>
+    <a class="pill" href={seasonHref(id, true)} aria-current={tab === 'small' ? 'true' : undefined}>Мала ліга</a>
+    <a class="pill" href={gamesHref(id)} aria-current={tab === 'games' ? 'true' : undefined}>Ігри</a>
+    <a class="pill" href={attendanceHref(id)} aria-current={tab === 'attendance' ? 'true' : undefined}>Відвідуваність</a>
   </nav>
   <slot />
 </div>

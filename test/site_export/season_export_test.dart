@@ -31,15 +31,15 @@ void main() {
     expect((main['awards'] as List).map((a) => a['key']),
         ['mvp', 'sheriff', 'civilian', 'mafia', 'don', 'mostKilled']);
     expect((main['stats'] as List).map((s) => s['label']), [
-      'Most Games', 'Top ПУ %', 'Most Hosted', 'Host avg доп',
-      'Host avg мінус', 'No host',
+      'Найбільше ігор', 'Найвищий % ПУ', 'Найбільше проведених', 'Сер. доп ведучого',
+      'Сер. мінус ведучого', 'Без ведучого',
     ]);
     final small = json['leagues']['small'] as Map;
     expect(small.containsKey('awards'), isFalse);
     expect((small['stats'] as List).map((s) => s['label']),
-        ['Most Games', 'Top ПУ %']);
+        ['Найбільше ігор', 'Найвищий % ПУ']);
     expect(json['tournamentCounts'], [
-      {'type': 'minicap', 'label': 'Minicap', 'count': 1}
+      {'type': 'minicap', 'label': 'Мінікап', 'count': 1}
     ]);
   });
 
@@ -50,8 +50,8 @@ void main() {
       final t = json['leagues'][league.name]['ratings'] as Map;
       expect(t['empty'], isNotEmpty);
       if ((t['rows'] as List).isEmpty) {
-        expect(t['empty'], anyOf(startsWith('No players in the'),
-            startsWith('No players have played at least')));
+        expect(t['empty'], anyOf(startsWith('Немає гравців із'),
+            startsWith('Ніхто ще не зіграв щонайменше')));
       }
     }
   });
@@ -59,7 +59,7 @@ void main() {
   test('a name with no player page is plain text', () {
     final Map json = seasonJson(x, x.seasons.last);
     final stats = json['leagues']['main']['stats'] as List;
-    final hosted = stats.firstWhere((s) => s['label'] == 'Most Hosted');
+    final hosted = stats.firstWhere((s) => s['label'] == 'Найбільше проведених');
     for (final row in (hosted['table']['rows'] as List)) {
       final cell = (row as List).first as Map;
       if (cell['link'] != null) {

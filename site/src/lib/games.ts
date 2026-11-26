@@ -36,10 +36,10 @@ export function fmtPts(v: number | undefined): string {
   return s.startsWith('-') ? `−${s.slice(1)}` : s;
 }
 
-const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const days = ['нд', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
+const months = ['січ', 'лют', 'бер', 'кві', 'тра', 'чер', 'лип', 'сер', 'вер', 'жов', 'лис', 'гру'];
 export function dayLabel(date: string | null): string {
-  if (!date) return 'No date';
+  if (!date) return 'Без дати';
   const [y, m, d] = date.split('-').map(Number);
   const wd = new Date(Date.UTC(y, m - 1, d)).getUTCDay();
   return `${days[wd]}, ${d} ${months[m - 1]} ${y}`;

@@ -7,6 +7,7 @@ import 'package:family_mafia_app/screens/home/home_providers.dart';
 import 'package:family_mafia_app/services/stats/player_resolver.dart';
 import 'package:family_mafia_app/services/stats/tournament_review.dart';
 import 'package:family_mafia_app/site_export/export_context.dart';
+import 'package:family_mafia_app/site_export/formats.dart';
 
 /// Rows of a tournament table shown on the Debug page.
 const _standingRows = 10;
@@ -50,7 +51,7 @@ Map<String, Object?> debugJson(ExportContext x) {
         if (c.gameLimitRule == GameLimitRule.top3 && c.thresholdFormula != null)
           {
             'season': c.id,
-            'title': c.title,
+            'title': seasonTitle(c.title),
             'formula': c.thresholdFormula,
             'gameLimit': c.gameLimit,
             'set': c.gameLimitSet,
@@ -58,7 +59,7 @@ Map<String, Object?> debugJson(ExportContext x) {
           },
     ],
     'types': [
-      for (final t in TournamentType.values) {'type': t.name, 'label': t.label},
+      for (final t in TournamentType.values) {'type': t.name, 'label': tournamentLabel(t)},
     ],
     'tournaments': [
       for (final t in tournaments)

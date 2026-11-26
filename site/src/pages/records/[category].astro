@@ -33,9 +33,9 @@ const pillHref = (f: FilterName, key: string) => {
   return `?${params}`;
 };
 ---
-<Base title={`${cat.label} records`} description={`Family Mafia Club all-time ${cat.label} records.`} active="records">
-  <div class="pagehead"><h1 class="display">Records</h1></div>
-  <nav class="pills cats" aria-label="Category">
+<Base title={`Рекорди: ${cat.label}`} description={`Рекорди Family Mafia Club за весь час: ${cat.label}.`} active="records">
+  <div class="pagehead"><h1 class="display">Рекорди</h1></div>
+  <nav class="pills cats" aria-label="Категорія">
     {groups.map((g) => (
       <>
         {g.title && <span class="group label">{g.title}</span>}
@@ -46,7 +46,7 @@ const pillHref = (f: FilterName, key: string) => {
     ))}
   </nav>
   {filters.map((f) => (
-    <nav class="pills filter" data-filter={f} aria-label={f}>
+    <nav class="pills filter" data-filter={f} aria-label={{ role: 'Роль', scope: 'Обсяг', period: 'Період', league: 'Ліга' }[f]}>
       {options[f].map((o) => (
         <a class="pill" href={pillHref(f, o.key)} data-key={o.key} aria-current={o.key === data.defaults[f] ? 'true' : undefined}>{o.label}</a>
       ))}

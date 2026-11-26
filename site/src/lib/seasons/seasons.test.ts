@@ -4,7 +4,7 @@ import { followDefault, hostDefaultSeason, nextSeason, nextSeasonId, seasonError
 
 const cases = JSON.parse(fs.readFileSync(new URL('../../../../test/fixtures/club_season_cases.json', import.meta.url), 'utf8')) as
   { case: string; lastJsonId: number; seasons: ClubSeason[]; valid: boolean }[];
-const S = (id: number, startDate: string, min = 15): ClubSeason => ({ id, title: `Season ${id}`, smallLeagueMinGames: min, startDate });
+const S = (id: number, startDate: string, min = 15): ClubSeason => ({ id, title: `Сезон ${id}`, smallLeagueMinGames: min, startDate });
 
 describe('seasonErrors', () => {
   it('matches every shared case (same fixture as the Dart test)', () => {
@@ -49,7 +49,7 @@ describe('nextSeasonId', () => {
     expect(nextSeasonId([S(32, '2026-12-01')], 31, 33)).toBe(33);
   });
   it('another admin created it first: refuse instead of taking the next id', () => {
-    expect(() => nextSeasonId([S(32, '2026-12-01')], 31, 32)).toThrow(/32.*reload/);
+    expect(() => nextSeasonId([S(32, '2026-12-01')], 31, 32)).toThrow(/32.*онови сторінку/);
   });
 });
 

@@ -4,6 +4,7 @@ import GameCard from '../../../../components/GameCard.astro';
 import SeasonHead from '../../../../components/SeasonHead.astro';
 import { loadGames, loadIndex, loadSeason } from '../../../../lib/data';
 import { dayLabel, tableGroups } from '../../../../lib/games';
+import { GAMES, ukCount, ukWord } from '../../../../lib/format';
 
 export function getStaticPaths() {
   return loadIndex().seasons.map((s) => ({ params: { id: String(s.id) } }));
@@ -13,20 +14,20 @@ const season = loadSeason(id);
 const data = loadGames(id);
 const total = data.days.reduce((n, d) => n + d.games.length, 0);
 ---
-<Base title={`${season.title} · Games`} description={`${season.title}: all ${total} games`} active="season">
+<Base title={`${season.title} · Ігри`} description={`${season.title}: усі ігри (${total})`} active="season">
   <SeasonHead id={id} tab="games" />
   <div class="toolbar">
-    <input id="f-player" aria-label="Filter by player" list="players" placeholder="Player" autocomplete="off" />
+    <input id="f-player" aria-label="Фільтр за гравцем" list="players" placeholder="Гравець" autocomplete="off" />
     <datalist id="players">{data.players.map((p) => <option value={p.name} data-key={p.key} />)}</datalist>
-    <select id="f-host" aria-label="Filter by host"><option value="">All hosts</option>{data.hosts.map((h) => <option>{h}</option>)}</select>
-    <span id="count" class="label" aria-live="polite">{total} games</span>
+    <select id="f-host" aria-label="Фільтр за ведучим"><option value="">Усі ведучі</option>{data.hosts.map((h) => <option>{h}</option>)}</select>
+    <span id="count" class="label" aria-live="polite">{ukCount(total, GAMES)}</span>
   </div>
   {data.days.map((d) => (
     <section class="day">
-      <h2 class="label">{dayLabel(d.date)} · <span class="day-count">{d.games.length}</span> <span class="day-unit">{d.games.length === 1 ? 'game' : 'games'}</span></h2>
+      <h2 class="label">{dayLabel(d.date)} · <span class="day-count">{d.games.length}</span> <span class="day-unit">{ukWord(d.games.length, GAMES)}</span></h2>
       {tableGroups(d.games).map(({ table, games }) => (
         <div class="table-group">
-          {table !== null && <h3 class="label">Table {table}</h3>}
+          {table !== null && <h3 class="label">Стіл {table}</h3>}
           {games.map((g) => <GameCard game={g} autoLabel={data.autoLabel} seasonId={id} />)}
         </div>
       ))}

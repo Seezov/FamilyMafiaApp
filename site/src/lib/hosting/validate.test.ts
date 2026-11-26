@@ -31,6 +31,20 @@ describe('validate', () => {
       expect(r.fields.has('seat-5-additional')).toBe(true);
     }
   });
+  it('a comment is about the whole game (0) or seat 1–10', () => {
+    for (const slot of [0, 1, 10]) {
+      const f = valid(); f.comments = [{ slot, text: 'x' }];
+      expect(validate(f).errors).toEqual([]);
+    }
+    for (const slot of [11, -1, 1.5]) {
+      const f = valid(); f.comments = [{ slot, text: 'x' }];
+      const r = validate(f);
+      expect(r.errors).toContain('Коментар: номер гравця має бути від 1 до 10');
+      expect(r.fields.has('comments')).toBe(true);
+    }
+    const f = valid(); f.comments = [{ slot: 11, text: '  ' }]; // empty comments are dropped on save
+    expect(validate(f).errors).toEqual([]);
+  });
   it('result is required', () => {
     const f = valid(); f.result = null;
     expect(validate(f).fields.has('result')).toBe(true);

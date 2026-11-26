@@ -9,9 +9,9 @@ export const canDelete = (list: ClubSeason[], id: number, games: number) =>
 
 export function seasonRow(r: SeasonRow, o: { deletable: boolean; confirming: boolean }): string {
   const del = !o.deletable ? '' : o.confirming
-    ? `<button type="button" class="btn primary" data-act="delete-ok" data-id="${r.id}">Delete season ${r.id}</button>
-       <button type="button" class="btn" data-act="cancel">Cancel</button>`
-    : `<button type="button" class="btn" data-act="delete" data-id="${r.id}">Delete</button>`;
+    ? `<button type="button" class="btn primary" data-act="delete-ok" data-id="${r.id}">Видалити сезон ${r.id}</button>
+       <button type="button" class="btn" data-act="cancel">Скасувати</button>`
+    : `<button type="button" class="btn" data-act="delete" data-id="${r.id}">Видалити</button>`;
   return `<tr><td class="num">${r.id}</td><td>${esc(r.title)}</td><td>${esc(r.source)}</td>
     <td>${esc(r.startDate ?? '')}</td><td class="num">${r.games ?? ''}</td><td>${del}</td></tr>`;
 }
