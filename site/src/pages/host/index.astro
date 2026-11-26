@@ -103,9 +103,9 @@ const data = JSON.stringify({ names, defaultSeason, aliases }).replace(/</g, '\\
   .list { display: grid; gap: 8px; }
   .game-row { text-align: left; color: var(--text); font: inherit; cursor: pointer; width: 100%; }
 
-  .host-form { display: grid; gap: 8px; font-size: 14px; }
+  .host-form { display: grid; gap: 14px; font-size: 14px; --field-border: color-mix(in srgb, var(--text) 22%, transparent); }
   .host-form input:not([type=radio]), .host-form select, .toolbar input {
-    background: var(--panel-2); border: 1px solid var(--border); border-radius: 6px; color: var(--text);
+    background: var(--panel); border: 1px solid var(--field-border, var(--border)); border-radius: 6px; color: var(--text);
     padding: 3px 6px; font: inherit; height: 30px; min-width: 0; }
   .host-form .line { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; }
   .host-form .line.top { align-items: flex-start; }
@@ -114,7 +114,7 @@ const data = JSON.stringify({ names, defaultSeason, aliases }).replace(/</g, '\\
   .host-form .grow input { flex: 1; width: 100%; }
   .host-form .lbl { color: var(--muted); min-width: 5.5em; }
   .host-form .n2 { width: 3.2em; } .host-form .n3 { width: 4.2em; }
-  .host-form .rows { display: grid; gap: 4px; justify-items: start; }
+  .host-form .rows { display: grid; gap: 8px; justify-items: start; }
   .host-form .rows.grow { justify-items: stretch; }
   .host-form .rows.grow > .btn { justify-self: start; }
   .host-form .row { display: flex; flex-wrap: wrap; gap: 4px 6px; align-items: center; }
@@ -130,9 +130,9 @@ const data = JSON.stringify({ names, defaultSeason, aliases }).replace(/</g, '\\
 
   .scroll { overflow-x: auto; }
   .seats { border-collapse: collapse; width: 100%; min-width: 520px; }
-  .seats th { font-size: 11px; font-weight: 500; color: var(--muted); text-align: center; padding: 0 2px 2px; }
+  .seats th { font-size: 11px; font-weight: 500; color: var(--muted); text-align: center; padding: 0 4px 4px; }
   .seats th.pl { text-align: left; }
-  .seats td { padding: 1px 2px; text-align: center; }
+  .seats td { padding: 3px 4px; text-align: center; }
   .seats td:first-child { color: var(--muted); width: 1.6em; }
   .seats td.pl { width: 38%; }
   .seats td.pl input { width: 100%; }
@@ -140,16 +140,16 @@ const data = JSON.stringify({ names, defaultSeason, aliases }).replace(/</g, '\\
   .seats td input[data-k] { width: 4.2em; text-align: center; }
   .seats td.pl input[data-k] { width: 100%; text-align: left; }
   .seats td input[data-k=fouls] { width: 2.6em; }
-  .role { width: 2.4em; height: 30px; border-radius: 6px; border: 1px solid var(--border); font: inherit; font-weight: 700; cursor: pointer; }
+  .role { width: 2.4em; height: 30px; border-radius: 6px; border: 1px solid var(--field-border, var(--border)); font: inherit; font-weight: 700; cursor: pointer; }
   .role[data-role="Мирний"] { background: var(--civilian); color: #fff; border-color: transparent; }
   .role[data-role="Мафія"] { background: var(--mafia); color: #fff; border-color: transparent; }
   .role[data-role="Дон"] { background: var(--don); color: #fff; border-color: transparent; }
   .role[data-role="Шериф"] { background: var(--sheriff); color: #fff; border-color: transparent; }
 
-  .cells { display: inline-flex; gap: 4px; }
+  .cells { display: inline-flex; gap: 8px; }
   .cell { display: inline-flex; }
   .cell input { width: 2.6em !important; text-align: center; border-radius: 6px 0 0 6px !important; }
-  .dot { width: 22px; height: 30px; border: 1px solid var(--border); border-left: 0; border-radius: 0 6px 6px 0; cursor: pointer; padding: 0; }
+  .dot { width: 22px; height: 30px; border: 1px solid var(--field-border, var(--border)); border-left: 0; border-radius: 0 6px 6px 0; cursor: pointer; padding: 0; }
   .dot.red { background: var(--civilian); }
   .dot.black { background: #000; box-shadow: inset 0 0 0 2px var(--muted); }
   .row .dot { border-left: 1px solid var(--border); border-radius: 6px; }
