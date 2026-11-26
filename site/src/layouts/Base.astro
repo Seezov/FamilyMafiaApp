@@ -16,13 +16,12 @@ const nav = [
   { key: 'season', label: 'Сезон', url: href(`season/${latestSeasonId}/`) },
   { key: 'players', label: 'Гравці', url: href('players/') },
   { key: 'annual', label: 'Річний рейтинг', url: href('annual/') },
-  { key: 'host', label: 'Провести гру', url: href('host/') },
 ];
 const site = 'Family Mafia Club';
 // Inline so the monogram follows the theme (--logo-* in global.css).
 const [, , logoW, logoH] = logoSvg.match(/viewBox="([^"]+)"/)![1].split(' ').map(Number);
 const logo = logoSvg
-  .replace('<svg ', `<svg width="${Math.round(23 * logoW / logoH)}" height="23" aria-hidden="true" `)
+  .replace('<svg ', `<svg width="${Math.round(32 * logoW / logoH)}" height="32" aria-hidden="true" `)
   .replaceAll('#fff', 'var(--logo-ink)').replaceAll('#000', 'var(--logo-cut)');
 const fullTitle = title === site ? title : `${title} · ${site}`;
 ---
@@ -40,8 +39,7 @@ const fullTitle = title === site ? title : `${title} · ${site}`;
     <meta property="og:image" content={absolute('og.png')} />
     <meta property="og:url" content={new URL(Astro.url.pathname, 'https://seezov.github.io').toString()} />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="theme-color" content="#0A0A0A" media="(prefers-color-scheme: dark)" />
-    <meta name="theme-color" content="#F4F4F4" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#111318" />
     <script is:inline>
       try { const t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch {}
     </script>
@@ -50,18 +48,19 @@ const fullTitle = title === site ? title : `${title} · ${site}`;
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Unbounded:wght@600;700&display=swap&subset=cyrillic"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Oswald:wght@500;600;700&display=swap&subset=cyrillic"
     />
   </head>
   <body>
     <header class="top">
       <div class="wrap bar">
-        <a class="logo display" href={href(`season/${latestSeasonId}/`)}><span class="mark" set:html={logo} /><span>FAMILY MAFIA CLUB</span></a>
+        <a class="logo display" href={href(`season/${latestSeasonId}/`)} aria-label="Family Mafia Club — на головну"><span class="mark" set:html={logo} /><span>Family Mafia Club</span></a>
         <nav class="tabs" aria-label="Розділи">
           {nav.map((n) => (
             <a href={n.url} aria-current={n.key === active ? 'page' : undefined}>{n.label}</a>
           ))}
         </nav>
+        <a class="host-btn" href={href('host/')} aria-current={active === 'host' ? 'page' : undefined}>Провести гру</a>
         <a class="account" href={href('account/')} aria-label="Мій профіль" title="Мій профіль"><span>Увійти</span></a>
         <button class="theme" type="button" aria-label="Світла / темна тема" title="Світла / темна тема">
           <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 3a9 9 0 0 0 0 18z" /></svg>
@@ -72,7 +71,7 @@ const fullTitle = title === site ? title : `${title} · ${site}`;
       </div>
     </header>
     <main class="wrap"><slot /></main>
-    <footer class="wrap foot label">Family Mafia Club · статистика · оновлюється щоночі</footer>
+    <footer class="foot"><div class="wrap">Family Mafia Club · статистика клубу · оновлюється щоночі</div></footer>
     <script is:inline>
       document.querySelector('.theme').addEventListener('click', () => {
         const root = document.documentElement;
@@ -105,34 +104,43 @@ const fullTitle = title === site ? title : `${title} · ${site}`;
 </html>
 
 <style>
-  .top { position: sticky; top: 0; z-index: 10; background: var(--header-bg);
-    backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); }
-  .bar { display: flex; align-items: center; gap: 28px; height: 56px; }
-  .logo { display: flex; align-items: center; gap: 10px; font-size: 15px; letter-spacing: .04em; white-space: nowrap; }
-  .mark { display: grid; place-items: center; width: 30px; height: 30px; flex: none;
-    border-radius: 8px; background: var(--logo-tile); }
+  .top { position: sticky; top: 0; z-index: 10; background: var(--header-bg); color: var(--header-text); }
+  .bar { display: flex; align-items: center; gap: 24px; height: 64px; }
+  .logo { display: flex; align-items: center; gap: 12px; font-size: 20px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: .05em; white-space: nowrap; color: var(--header-text); }
+  .logo:hover { color: var(--header-text); }
+  .mark { display: grid; place-items: center; flex: none; }
   .mark :global(svg) { display: block; }
-  .tabs { display: flex; gap: 4px; height: 100%; }
-  .tabs a { display: flex; align-items: center; padding: 0 12px; color: var(--muted);
-    border-bottom: 2px solid transparent; font-weight: 500; white-space: nowrap; }
-  .tabs a[aria-current='page'] { color: var(--text); border-bottom-color: var(--accent); }
-  .theme { display: grid; place-items: center; width: 32px; height: 32px; padding: 0;
-    background: none; border: 1px solid var(--border); border-radius: var(--radius); color: var(--muted); cursor: pointer; }
-  .theme:hover { color: var(--text); }
-  .account { margin-left: auto; display: grid; place-items: center; min-width: 32px; height: 32px; padding: 0 10px;
-    border: 1px solid var(--border); border-radius: var(--radius); color: var(--muted); font-size: 13px; white-space: nowrap; }
-  .account:hover { color: var(--text); }
-  .account:has(img), .account:has(.initial) { padding: 0; width: 32px; border-radius: 50%; overflow: hidden; }
+  .tabs { display: flex; height: 100%; }
+  .tabs a { display: flex; align-items: center; padding: 0 16px; color: var(--header-muted);
+    font-weight: 600; white-space: nowrap; }
+  .tabs a:hover { color: var(--header-text); }
+  .tabs a[aria-current='page'] { color: var(--header-text); box-shadow: inset 0 -3px var(--city); }
+  .host-btn { margin-left: auto; padding: 8px 14px; border: 1.5px solid var(--header-text); color: var(--header-text);
+    font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: .06em; white-space: nowrap; }
+  .host-btn:hover, .host-btn[aria-current='page'] { background: var(--header-text); color: var(--header-bg); }
+  .theme { display: grid; place-items: center; width: 34px; height: 34px; padding: 0;
+    background: none; border: 1px solid var(--header-line); color: var(--header-muted); cursor: pointer; }
+  .theme:hover { color: var(--header-text); }
+  .account { display: grid; place-items: center; min-width: 34px; height: 34px; padding: 0 10px;
+    border: 1px solid var(--header-line); color: var(--header-muted); font-size: 13px; font-weight: 600; white-space: nowrap; }
+  .account:hover { color: var(--header-text); }
+  .account:has(img), .account:has(.initial) { padding: 0; width: 34px; border-radius: 50%; overflow: hidden; }
   .account img { width: 100%; height: 100%; object-fit: cover; }
-  .account .initial { font-weight: 600; color: var(--text); }
+  .account .initial { font-weight: 700; color: var(--header-text); }
   .theme svg { width: 16px; height: 16px; fill: currentColor; stroke: currentColor; stroke-width: 2; }
   .theme svg circle { fill: none; }
-  .search input { width: 220px; background: var(--panel); border: 1px solid var(--border);
-    border-radius: var(--radius); color: var(--text); padding: 7px 10px; font: inherit; }
-  .foot { padding-top: 24px; padding-bottom: 32px; border-top: 1px solid var(--border); }
+  .search input { width: 200px; background: rgba(255, 255, 255, .08); border: 1px solid var(--header-line);
+    color: var(--header-text); padding: 7px 10px; font: inherit; }
+  .search input::placeholder { color: var(--header-muted); }
+  .foot { background: var(--header-bg); color: var(--header-muted); font-size: 13px; }
+  .foot .wrap { padding-top: 22px; padding-bottom: 22px; }
+  @media (max-width: 1099px) { .search input { width: 140px; } }
   @media (max-width: 899px) {
-    .bar { flex-wrap: wrap; height: auto; gap: 0 12px; padding-top: 10px; }
-    .search input { width: 140px; }
-    .tabs { order: 3; width: 100%; overflow-x: auto; scrollbar-width: none; height: 44px; }
+    .bar { flex-wrap: wrap; height: auto; gap: 0 10px; padding-top: 10px; }
+    .logo { font-size: 16px; }
+    .tabs { order: 3; width: 100%; overflow-x: auto; scrollbar-width: none; height: 46px; }
+    .tabs a { padding: 0 12px; }
   }
+  @media (max-width: 560px) { .logo span:last-child { display: none; } .search { display: none; } }
 </style>

@@ -1,56 +1,41 @@
 :root {
+  /* Sports-scoreboard look: dark header, light panels, red accent (city), black (mafia).
+     Light is the default; the header toggle switches to dark (data-theme on <html>). */
+  color-scheme: light;
+  --bg: #EEF0F3; --panel: #FFFFFF; --panel-2: #F6F7F9; --border: #DCDFE5; --line: #ECEEF1;
+  --text: #111318; --muted: #5B616E;
+  --city: #C8102E; --mafia: #111318; --accent: #C8102E;
+  --civilian: #C8102E; --sheriff: #0B8FA3; --don: #7357D9;
+  --good: #1E7A34; --mid: #A66A00; --low: var(--muted);
+  --gold: #E3B341; --silver: #C3C8D0; --bronze: #C2793F; --bronze-text: #A85E2A;
+  --award-mvp: #B8870B; --award-civilian: #DD6A12;
+  --t-minicap: #17917E; --t-maxicap: #B5740F; --t-bigcap: #C14B61;
+  --t-marathon: #5560C8; --t-tournament: #7E777D;
+  --tint: rgba(0, 0, 0, .05); --tint-weak: rgba(0, 0, 0, .025);
+  --shadow: rgba(0, 0, 0, .15);
+  --role-civilian-bg: #C8102E; --role-sheriff-bg: #0B8FA3; --role-mafia-bg: #111318; --role-don-bg: #7357D9;
+  --header-bg: #111318; --header-text: #FFFFFF; --header-muted: #A9AEB8; --header-line: #2A2E36;
+  --logo-tile: transparent; --logo-ink: #FFFFFF; --logo-cut: #111318;
+  --radius: 2px; --gutter: 24px; --max: 1240px;
+  --font-display: 'Oswald', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+}
+:root[data-theme='dark'] {
   color-scheme: dark;
-  /* Chrome is black and white like the app icon; colour is kept for data
-     (roles, results, medals, tournament types). */
-  --bg: #0A0A0A; --panel: #121212; --panel-2: #181818; --border: #262626;
-  --text: #F2F2F2; --muted: #8C8C8C;
-  --city: #E5484D; --mafia: #A3ADBA; --accent: #FFFFFF;
-  --civilian: #E5484D; --sheriff: #22C3DC; --don: #A78BFA;
-  --good: #3FB950; --mid: #D29922; --low: var(--muted);
-  --gold: #E3B341; --silver: #B4BCC8; --bronze: #C2410C; --bronze-text: #D08A57;
-  --award-mvp: #F87171; --award-civilian: #FB923C;
+  --bg: #0D0F12; --panel: #16191F; --panel-2: #1C2027; --border: #2A2F38; --line: #222730;
+  --text: #F2F3F5; --muted: #9AA0AB;
+  --city: #F0545C; --mafia: #C9CED6; --accent: #F0545C;
+  --civilian: #F0545C; --sheriff: #22C3DC; --don: #A78BFA;
+  --good: #3FB950; --mid: #D29922;
+  --gold: #E3B341; --silver: #B4BCC8; --bronze: #C2793F; --bronze-text: #D08A57;
+  --award-mvp: #E3B341; --award-civilian: #FB923C;
   --t-minicap: #5CC7B6; --t-maxicap: #E9A948; --t-bigcap: #E08795;
   --t-marathon: #9AA2EC; --t-tournament: #B3ADB2;
   --tint: rgba(255, 255, 255, .05); --tint-weak: rgba(255, 255, 255, .025);
-  --header-bg: rgba(10, 10, 10, .92); --shadow: rgba(0, 0, 0, .5);
-  --logo-tile: #FFFFFF; --logo-ink: #0A0A0A; --logo-cut: #FFFFFF;
-  --radius: 8px; --gutter: 24px; --max: 1280px;
-  --font-display: 'Unbounded', system-ui, sans-serif;
-  --font-body: 'Inter', system-ui, sans-serif;
+  --shadow: rgba(0, 0, 0, .5);
+  --role-civilian-bg: #C8102E; --role-sheriff-bg: #0B8FA3; --role-mafia-bg: #000000; --role-don-bg: #6D4FD6;
+  --header-bg: #08090B;
 }
-/* Light theme: the system's choice unless the header toggle picked one
-   (data-theme on <html>, set before first paint in Base.astro). Data colours
-   are darker so they keep their contrast on white. */
-@media (prefers-color-scheme: light) { :root:not([data-theme='dark']) { 
-  color-scheme: light;
-  --bg: #F4F4F4; --panel: #FFFFFF; --panel-2: #F0F0F0; --border: #E0E0E0;
-  --text: #0A0A0A; --muted: #6B6B6B;
-  --city: #D63B40; --mafia: #5F6B7A; --accent: #0A0A0A;
-  --civilian: #D63B40; --sheriff: #0B8FA3; --don: #7357D9;
-  --good: #1E8A34; --mid: #A66A00;
-  --gold: #B8870B; --silver: #8A93A0; --bronze: #B4530F; --bronze-text: #A85E2A;
-  --award-mvp: #D94545; --award-civilian: #DD6A12;
-  --t-minicap: #17917E; --t-maxicap: #B5740F; --t-bigcap: #C14B61;
-  --t-marathon: #5560C8; --t-tournament: #7E777D;
-  --tint: rgba(0, 0, 0, .05); --tint-weak: rgba(0, 0, 0, .025);
-  --header-bg: rgba(244, 244, 244, .92); --shadow: rgba(0, 0, 0, .15);
-  --logo-tile: transparent; --logo-ink: #0A0A0A; --logo-cut: var(--bg);
- } }
-:root[data-theme='light'] { 
-  color-scheme: light;
-  --bg: #F4F4F4; --panel: #FFFFFF; --panel-2: #F0F0F0; --border: #E0E0E0;
-  --text: #0A0A0A; --muted: #6B6B6B;
-  --city: #D63B40; --mafia: #5F6B7A; --accent: #0A0A0A;
-  --civilian: #D63B40; --sheriff: #0B8FA3; --don: #7357D9;
-  --good: #1E8A34; --mid: #A66A00;
-  --gold: #B8870B; --silver: #8A93A0; --bronze: #B4530F; --bronze-text: #A85E2A;
-  --award-mvp: #D94545; --award-civilian: #DD6A12;
-  --t-minicap: #17917E; --t-maxicap: #B5740F; --t-bigcap: #C14B61;
-  --t-marathon: #5560C8; --t-tournament: #7E777D;
-  --tint: rgba(0, 0, 0, .05); --tint-weak: rgba(0, 0, 0, .025);
-  --header-bg: rgba(244, 244, 244, .92); --shadow: rgba(0, 0, 0, .15);
-  --logo-tile: transparent; --logo-ink: #0A0A0A; --logo-cut: var(--bg);
- }
 @media (max-width: 899px) { :root { --gutter: 16px; } }
 
 * { box-sizing: border-box; }
@@ -59,7 +44,9 @@ body {
   background: var(--bg); color: var(--text);
   font: 14px/1.5 var(--font-body); font-feature-settings: 'tnum' 1;
   overflow-x: hidden;
+  min-height: 100vh; display: flex; flex-direction: column;
 }
+body > main { flex: 1 0 auto; width: 100%; }
 a { color: inherit; text-decoration: none; }
 a:hover { color: var(--accent); }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
@@ -72,8 +59,10 @@ main.wrap { padding-top: 24px; padding-bottom: 64px; }
 @media (max-width: 899px) { .grid > * { grid-column: span 12; } }
 
 .label { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
-.display { font-family: var(--font-display); font-weight: 700; letter-spacing: -.01em; }
-h1.display { font-size: clamp(22px, 3vw, 32px); margin: 0; }
+.display { font-family: var(--font-display); font-weight: 700; letter-spacing: .01em; }
+h1.display { font-size: clamp(30px, 4.5vw, 52px); line-height: 1.05; margin: 0; text-transform: uppercase; }
+/* Section title: Oswald, upper case. */
+.h-section { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: 26px; line-height: 1.2; text-transform: uppercase; letter-spacing: .01em; }
 .num { font-variant-numeric: tabular-nums; }
 
 .tone-good { color: var(--good); } .tone-mid { color: var(--mid); } .tone-low { color: var(--low); }
@@ -84,9 +73,10 @@ h1.display { font-size: clamp(22px, 3vw, 32px); margin: 0; }
 .pills { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
 .pill {
   white-space: nowrap; padding: 5px 12px; border: 1px solid var(--border);
-  border-radius: 999px; color: var(--muted); font-size: 13px;
+  border-radius: var(--radius); color: var(--muted); font-size: 13px; font-weight: 600; background: var(--panel);
 }
-.pill[aria-current='true'] { color: var(--bg); border-color: var(--accent); background: var(--accent); }
+.pill:hover { color: var(--text); }
+.pill[aria-current='true'] { color: var(--panel); border-color: var(--text); background: var(--text); }
 .pagehead { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; margin-bottom: 20px; }
 
 /* No spinner arrows on number fields: small fixed ranges are dropdowns, the rest are typed. */

@@ -1,0 +1,69 @@
+---
+// Season nominations as cards: header in the role's colour, the winner large, the next places below.
+import PlayerName from './PlayerName.astro';
+import type { Award, SiteCell } from '../lib/types';
+
+interface Props { awards: Award[] }
+const { awards } = Astro.props;
+const tidy = (t: string) => t.replace(/\s{2,}/g, ' · ');
+const initial = (t: string) => [...t.trim()][0]?.toUpperCase() ?? '?';
+---
+<div class="cards">
+  {awards.map((a) => {
+    const cols = a.table.columns;
+    const [first, ...rest] = a.table.rows;
+    return (
+      <article class={`card a-${a.key}`}>
+        <header><span class="title">{a.label}</span><span class="metric">{cols[1]?.label}</span></header>
+        {first ? (
+          <div class="winner">
+            <span class="avatar" aria-hidden="true">{initial(first[0].t)}</span>
+            <div class="who">
+              <div class="name">{first[0].link ? <PlayerName slug={first[0].link!} name={first[0].t} /> : first[0].t}</div>
+              {first[2] && <div class="detail">{cols[2]?.label}: {tidy(first[2].t)}</div>}
+            </div>
+            <div class="display big">{first[1]?.t}</div>
+          </div>
+        ) : <div class="winner"><div class="name">{a.winner}</div></div>}
+        {rest.length > 0 && (
+          <ol start="2">
+            {rest.slice(0, 3).map((r, i) => (
+              <li>
+                <span class="pos">{i + 2}</span>
+                <span class="n">{r[0].link ? <PlayerName slug={r[0].link} name={r[0].t} /> : r[0].t}</span>
+                <span class="d">{tidy(r[2]?.t ?? '')}</span>
+                <span class="v">{r[1]?.t}</span>
+              </li>
+            ))}
+          </ol>
+        )}
+      </article>
+    );
+  })}
+</div>
+
+<style>
+  .cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  @media (max-width: 1023px) { .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 639px) { .cards { grid-template-columns: minmax(0, 1fr); } }
+  .card { --c: var(--muted); background: var(--panel); display: flex; flex-direction: column; min-width: 0; }
+  .a-mvp { --c: var(--award-mvp); } .a-civilian { --c: var(--role-civilian-bg); } .a-sheriff { --c: var(--role-sheriff-bg); }
+  .a-mafia { --c: var(--role-mafia-bg); } .a-don { --c: var(--role-don-bg); } .a-mostKilled { --c: #5B616E; }
+  header { background: var(--c); color: #fff; padding: 10px 18px; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .title { font-family: var(--font-display); font-size: 18px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+  .metric { font-size: 12px; opacity: .85; }
+  .winner { padding: 16px 18px; display: flex; align-items: center; gap: 14px; }
+  .avatar { width: 48px; height: 48px; flex: none; border-radius: 50%; background: var(--bg); display: grid; place-items: center;
+    font-family: var(--font-display); font-weight: 700; font-size: 20px; color: var(--c); }
+  :global([data-theme='dark']) .a-mafia .avatar { color: var(--text); }
+  .who { flex: 1; min-width: 0; }
+  .name { font-size: 20px; font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .detail { color: var(--muted); font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .big { font-size: 30px; flex: none; }
+  ol { list-style: none; margin: 0; padding: 6px 18px 10px; border-top: 1px solid var(--line); }
+  li { display: flex; gap: 10px; padding: 5px 0; font-size: 13px; align-items: baseline; }
+  .pos { width: 14px; color: var(--muted); font-weight: 700; }
+  .n { flex: 1; min-width: 0; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .d { color: var(--muted); white-space: nowrap; }
+  .v { width: 46px; text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; }
+</style>

@@ -5,19 +5,20 @@ const { title, note, class: cls } = Astro.props;
 <section class:list={['panel', cls]}>
   {(title || Astro.slots.has('actions')) && (
     <header>
-      {title && <h2 class="label">{title}</h2>}
+      {title && <h2>{title}</h2>}
       {note && <span class="note">{note}</span>}
       <div class="actions"><slot name="actions" /></div>
     </header>
   )}
-  <slot />
+  <div class="body"><slot /></div>
 </section>
 
 <style>
-  .panel { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius);
-    padding: 16px; min-width: 0; }
-  header { display: flex; align-items: baseline; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
-  h2 { margin: 0; font-weight: 600; color: var(--text); }
-  .note { color: var(--muted); font-size: 12px; }
+  .panel { background: var(--panel); min-width: 0; }
+  header { display: flex; align-items: baseline; gap: 6px 14px; padding: 14px 20px; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+  h2 { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: 22px; line-height: 1.2;
+    text-transform: uppercase; letter-spacing: .01em; color: var(--text); }
+  .note { color: var(--muted); font-size: 13px; }
   .actions { margin-left: auto; }
+  .body { padding: 16px 20px; }
 </style>
