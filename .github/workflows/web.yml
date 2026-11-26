@@ -101,11 +101,41 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     permissions:
+      actions: read
       pages: write
       id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      # Not actions/deploy-pages: it names the deployment after the commit SHA, and
+      # Pages treats a second deployment of the same SHA as already done, so the
+      # nightly / games-watch rebuilds of an unchanged commit never went live
+      # (the site was stuck on 2026-10-28 for a month). A per-run version fixes it.
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const { data } = await github.rest.actions.listWorkflowRunArtifacts({ owner, repo, run_id: context.runId });
+            const artifact = data.artifacts.find((a) => a.name === 'github-pages');
+            if (!artifact) throw new Error('github-pages artifact not found');
+            const version = `${context.sha}-${context.runId}-${process.env.GITHUB_RUN_ATTEMPT}`;
+            const created = await github.request('POST /repos/{owner}/{repo}/pages/deployments', {
+              owner, repo,
+              artifact_id: artifact.id,
+              pages_build_version: version,
+              oidc_token: await core.getIDToken(),
+            });
+            core.info(`Created Pages deployment ${version}`);
+            core.setOutput('page_url', created.data.page_url);
+            for (let i = 0; i < 120; i++) {
+              await new Promise((r) => setTimeout(r, 5000));
+              const { data: s } = await github.request('GET /repos/{owner}/{repo}/pages/deployments/{id}', { owner, repo, id: version });
+              core.info(`status: ${s.status}`);
+              if (s.status === 'succeed') return;
+              if (['deployment_failed', 'deployment_lost', 'deployment_content_failed', 'deployment_cancelled', 'deployment_attempt_error'].includes(s.status)) {
+                throw new Error(`Pages deployment ${s.status}`);
+              }
+            }
+            throw new Error('Pages deployment timed out');
