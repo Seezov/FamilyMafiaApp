@@ -117,7 +117,7 @@ const data = JSON.stringify({ names, defaultSeason, aliases }).replace(/</g, '\\
   .host-form .rows { display: grid; gap: 8px; justify-items: start; }
   .host-form .rows.grow { justify-items: stretch; }
   .host-form .rows.grow > .btn { justify-self: start; }
-  .host-form .row { display: flex; flex-wrap: wrap; gap: 4px 6px; align-items: center; }
+  .host-form .row { display: flex; flex-wrap: wrap; gap: 4px 6px; align-items: center; width: min(100%, 640px); }
   .host-form .row input[type=number] { width: 3.2em; flex: 0 0 3.2em; text-align: center; }
   .host-form .row input[data-k=text] { flex: 1 1 320px; min-width: 220px; }
   .host-form .row .x { background: none; border: 0; color: var(--muted); cursor: pointer; font-size: 15px; padding: 0 4px; }
