@@ -11,15 +11,12 @@ interface Props {
 }
 const { title, description = 'Family Mafia Club statistics: seasons, players, records, tournaments.', active } = Astro.props;
 const { latestSeasonId } = loadIndex();
+// Records, Tournaments, All Stars and Debug are hidden from the menu for now (pages still build).
 const nav = [
   { key: 'season', label: 'Season', url: href(`season/${latestSeasonId}/`) },
   { key: 'players', label: 'Players', url: href('players/') },
   { key: 'overview', label: 'Overview', url: href('overview/') },
-  { key: 'records', label: 'Records', url: href('records/mvp/') },
-  { key: 'tournaments', label: 'Tournaments', url: href('tournaments/') },
-  { key: 'allstars', label: 'All Stars', url: href('allstars/') },
   { key: 'annual', label: 'Annual', url: href('annual/') },
-  { key: 'debug', label: 'Debug', url: href('debug/') },
   { key: 'host', label: 'Провести гру', url: href('host/') },
 ];
 const site = 'Family Mafia Club';

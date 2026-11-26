@@ -7,7 +7,8 @@ import { scopeStats } from '../../lib/players/scope';
 const { players, table } = loadPlayers();
 const minGames = [0, 10, 50, 100, 500];
 const scope = scopeStats(players as { slug: string; games: number; winRate: number }[], loadFederationGames().players);
-const hasTournaments = Object.keys(scope).length > 0;
+// The «+ Tournaments» toggle is hidden until federation games count correctly.
+const hasTournaments = false;
 ---
 <Base title="Players" description={`${players.length} Family Mafia Club players: games, win rate, seasons.`} active="players">
   <div class="pagehead">

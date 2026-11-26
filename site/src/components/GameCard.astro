@@ -38,14 +38,14 @@ const keys = g.seats.map((s) => s.key).filter(Boolean).join('|');
     <div class="scroll">
       <table>
         <thead><tr>
-          <th>#</th><th>Player</th><th>Role</th>
-          {shown.map((c) => <th title={c.tip}>{c.label}</th>)}
-          <th title="Sum of the columns (no СІ top-up)">Total</th>
+          <th class="num">#</th><th>Player</th><th>Role</th>
+          {shown.map((c) => <th class="num" title={c.tip}>{c.label}</th>)}
+          <th class="num" title="Sum of the columns (no СІ top-up)">Total</th>
         </tr></thead>
         <tbody>
           {g.seats.map((s) => (
             <tr>
-              <td>{s.n}</td>
+              <td class="num">{s.n}</td>
               <td>{s.player ? (s.slug ? <PlayerName slug={s.slug} name={s.player} /> : s.player) : '—'}</td>
               <td class={`role ${s.role}`}>{roleLabel[s.role] ?? s.role}</td>
               {shown.map((c) => <td class="num">{cell(s, c.k)}</td>)}
@@ -81,8 +81,9 @@ const keys = g.seats.map((s) => s.key).filter(Boolean).join('|');
   .label, .pick { color: var(--muted); font-size: .9em; }
   .scroll { overflow-x: auto; }
   table { border-collapse: collapse; min-width: 100%; }
-  th, td { padding: 4px 8px; text-align: left; white-space: nowrap; }
-  td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  th, td { padding: 4px 8px; text-align: left; white-space: nowrap; border: 1px solid var(--border); }
+  th { color: var(--muted); font-weight: 500; }
+  th.num, td.num { text-align: center; font-variant-numeric: tabular-nums; }
   .role.civilian { color: var(--civilian); } .role.sheriff { color: var(--sheriff); }
   .role.mafia { color: var(--mafia); } .role.don { color: var(--don); }
   .comments span { white-space: pre-line; }
