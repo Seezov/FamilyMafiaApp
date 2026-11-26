@@ -18,9 +18,12 @@ service cloud.firestore {
         && d.avatar.matches('^data:image/(webp|jpeg);base64,[A-Za-z0-9+/]+=*$'));
     }
 
+    // Allowed «Доп»: 0.2–1.0 in steps of 0.1, or 1.3. Keep in sync with site/src/lib/hosting/additional.ts.
+    function validAdditional(n) { return n in [0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.3]; }
     function validSeat(s) {
       return s.player is string && s.player.size() > 0
-        && s.role in ['Мирний', 'Мафія', 'Дон', 'Шериф'];
+        && s.role in ['Мирний', 'Мафія', 'Дон', 'Шериф']
+        && (!('additional' in s) || s.additional == 0 || validAdditional(s.additional));
     }
 
     function validGame(d) {
@@ -136,7 +139,8 @@ service cloud.firestore {
         return i >= 0 && i < list.size() && list[i].id == season && seasonStart(list[i]) <= request.time
           && (i == list.size() - 1 || seasonStart(list[i + 1]) > request.time);
       }
-      function validAmount(n) { return (n is int || n is float) && n > 0 && n <= 5; }
+      // Asked and partially granted amounts are allowed доп values (a partial grant is also below the request).
+      function validAmount(n) { return validAdditional(n); }
       function validText(t) { return t is string && t.size() >= 1 && t.size() <= 1000; }
       function claimPlayer() { return get(/databases/$(database)/documents/claims/$(request.auth.uid)).data.player; }
       function validFiling(d) {

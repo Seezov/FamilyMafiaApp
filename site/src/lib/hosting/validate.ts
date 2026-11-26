@@ -1,5 +1,6 @@
 import { normalizeName, parseNumber } from './form';
 import { supportFivePoints } from './points';
+import { ADDITIONAL_HINT, isAllowedSeatAdditional } from './additional';
 import type { FormState } from './types';
 
 /**
@@ -28,6 +29,12 @@ export function validate(f: FormState, aliases: Map<string, string> = new Map())
     const key = (aliases.get(name.toLowerCase()) ?? name).toLowerCase();
     if (seen.has(key)) fail(`Гравець «${normalizeName(f.seats[seen.get(key)!].player)}» записаний двічі`, `seat-${i + 1}-player`);
     else seen.set(key, i);
+  });
+
+  f.seats.forEach((s, i) => {
+    const raw = s.additional.trim().replace(',', '.');
+    const n = raw ? Number(raw) : 0;
+    if (!Number.isFinite(n) || !isAllowedSeatAdditional(n)) fail(`Доп: лише ${ADDITIONAL_HINT}`, `seat-${i + 1}-additional`);
   });
 
   const count = (r: string) => f.seats.filter((s) => s.role === r).length;

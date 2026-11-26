@@ -1,5 +1,6 @@
 // HTML for the appeal sections on /account/ and /account/admin/. Every value is escaped.
-import { MAX_REQUESTED, MAX_TEXT, type Appeal, type HostTotal } from './core';
+import { ADDITIONAL_HINT } from '../hosting/additional';
+import { MAX_TEXT, type Appeal, type HostTotal } from './core';
 
 export const esc = (v: unknown) => String(v ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
 const day = (iso: string) => iso.split('-').reverse().join('.');
@@ -19,7 +20,7 @@ const form = (a: Appeal | null) => `<div class="ap-form">
     <textarea id="ap-text" maxlength="${MAX_TEXT}" rows="4">${esc(a?.text ?? '')}</textarea></label>
   <label class="field">Очікуваний дод бал
     <input id="ap-req" inputmode="decimal" value="${esc(a?.requested ?? '')}" placeholder="0.5" /></label>
-  <span class="label">Не більше ${MAX_REQUESTED}.</span>
+  <span class="label">${ADDITIONAL_HINT}.</span>
   <div class="actions"><button class="btn sm primary" data-act="save" type="button">${a ? 'Зберегти' : 'Подати апеляцію'}</button>
     ${a ? '<button class="btn sm" data-act="withdraw" type="button">Відкликати</button>' : ''}
     <button class="btn sm" data-act="close" type="button">Скасувати</button></div></div>`;

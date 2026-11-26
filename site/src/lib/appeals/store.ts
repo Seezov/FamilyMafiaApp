@@ -5,7 +5,8 @@ import {
 import { db } from '../firebase';
 import type { AccountUser } from '../account/store';
 import type { GameDoc } from '../hosting/types';
-import { appealChanged, appealId, applyGrant, grantedFor, round2, SeatGoneError, type Appeal, type Decision } from './core';
+import { ADDITIONAL_HINT } from '../hosting/additional';
+import { AdditionalSumError, appealChanged, appealId, applyGrant, grantedFor, round2, SeatGoneError, type Appeal, type Decision } from './core';
 
 export class StaleAppealError extends Error {}
 
@@ -78,6 +79,7 @@ export async function decideAppeal(a: Appeal, d: Decision, admin: AccountUser) {
 export function explainAppealError(e: unknown): string {
   if (e instanceof StaleAppealError) return 'Апеляцію змінили, розглянули або відкликали — онови сторінку.';
   if (e instanceof SeatGoneError) return 'Гравця вже немає в цій грі — перевір гру на /host/.';
+  if (e instanceof AdditionalSumError) return `Доп гравця став би ${e.total} — дозволено лише ${ADDITIONAL_HINT}. Дай інший бал або виправ гру на /host/.`;
   const code = (e as { code?: string }).code ?? '';
   if (code === 'permission-denied') return 'Немає прав (сезон закінчився, гру змінили або апеляцію вже розглянули).';
   if (code === 'unavailable' || code === 'deadline-exceeded' || !navigator.onLine) return 'Немає зʼєднання — спробуй ще.';

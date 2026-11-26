@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { GameDoc } from '../hosting/types';
 import {
-  appealId, applyGrant, decisionError, draftError, filterFromQuery, filterHistory, filterToQuery, grantedFor,
+  AdditionalSumError, appealId, applyGrant, decisionError, draftError, filterFromQuery, filterHistory, filterToQuery, grantedFor,
   appealChanged, hostTotals, myGames, parseAmount, round2, SeatGoneError, type Appeal,
 } from './core';
 
@@ -30,10 +30,8 @@ describe('draftError', () => {
     expect(draftError('x'.repeat(1001), '0.5')).toMatch(/1000/);
   });
   it('amount bounds', () => {
-    expect(draftError('t', '0')).toMatch(/більше 0/);
-    expect(draftError('t', 'x')).toMatch(/більше 0/);
-    expect(draftError('t', '5.01')).toMatch(/5/);
-    expect(draftError('t', '5')).toBeNull();
+    for (const bad of ['0', 'x', '0.1', '0.25', '1.1', '1.2', '1.4', '5']) expect(draftError('t', bad)).toMatch(/1\.3/);
+    for (const ok of ['0.2', '0,5', '1', '1.3']) expect(draftError('t', ok)).toBeNull();
   });
 });
 
@@ -47,8 +45,9 @@ describe('decisions', () => {
   it('rejected grants nothing', () => { expect(grantedFor(A(), { status: 'rejected', adminComment: '' })).toBeNull(); });
   it('partial bounds', () => {
     expect(decisionError(A(), { status: 'partial', granted: 0.5, adminComment: '' })).toMatch(/менше/);
-    expect(decisionError(A(), { status: 'partial', granted: 0, adminComment: '' })).toMatch(/більше 0/);
-    expect(decisionError(A(), { status: 'partial', granted: NaN, adminComment: '' })).toMatch(/більше 0/);
+    expect(decisionError(A(), { status: 'partial', granted: 0, adminComment: '' })).toMatch(/1\.3/);
+    expect(decisionError(A(), { status: 'partial', granted: NaN, adminComment: '' })).toMatch(/1\.3/);
+    expect(decisionError(A(), { status: 'partial', granted: 0.15, adminComment: '' })).toMatch(/1\.3/);
     expect(decisionError(A(), { status: 'partial', granted: 0.2, adminComment: '' })).toBeNull();
   });
   it('comment length', () => {
@@ -69,6 +68,12 @@ describe('applyGrant', () => {
     const g = game('g');
     g.seats[7] = seat('Braun');
     expect(applyGrant(g, 'Braun', 0.5).seats[7].additional).toBe(0.5);
+  });
+  it('refuses a total that is not an allowed доп (0.6 + 0.6 = 1.2)', () => {
+    const g = game('g');
+    g.seats[2] = seat('Braun', 0.6);
+    expect(() => applyGrant(g, 'Braun', 0.6)).toThrow(AdditionalSumError);
+    expect(applyGrant(g, 'Braun', 0.4).seats[2].additional).toBe(1);
   });
   it('throws when the player is gone', () => {
     expect(() => applyGrant(game('g'), 'Braun', 0.5)).toThrow(SeatGoneError);

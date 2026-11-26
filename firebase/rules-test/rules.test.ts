@@ -66,6 +66,18 @@ describe('games', () => {
     const seats = game(HOST).seats.map((s, i) => (i === 0 ? { ...s, role: 'Шпигун' } : s));
     await assertFails(setDoc(doc(as(HOST), 'games', G1), game(HOST, { seats })));
   });
+  it('доп is one of 0.2–1.0 by 0.1 or 1.3', async () => {
+    const id = (k: number) => G1.slice(0, 18) + String(k).padStart(2, '0'); // a fresh create each time
+    let k = 0;
+    for (const ok of [0.2, 0.7, 1, 1.3]) {
+      const seats = game(HOST).seats.map((s, i) => (i === 0 ? { ...s, additional: ok } : s));
+      await assertSucceeds(setDoc(doc(as(HOST), 'games', id(k++)), game(HOST, { seats })));
+    }
+    for (const bad of [0.1, 0.25, 1.1, 1.2, 2, -0.5]) {
+      const seats = game(HOST).seats.map((s, i) => (i === 0 ? { ...s, additional: bad } : s));
+      await assertFails(setDoc(doc(as(HOST), 'games', id(k++)), game(HOST, { seats })));
+    }
+  });
   it('rejects a seat without a player', async () => {
     const seats = game(HOST).seats.map((s, i) => (i === 9 ? { ...s, player: '' } : s));
     await assertFails(setDoc(doc(as(HOST), 'games', G1), game(HOST, { seats })));
@@ -504,7 +516,7 @@ describe('appeals', () => {
     await assertFails(file(PLAYER, { season: 33 }));
   });
   it('bad text, amount, status or extra fields are denied', async () => {
-    for (const extra of [{ text: '' }, { text: 'x'.repeat(1001) }, { requested: 0 }, { requested: 5.5 },
+    for (const extra of [{ text: '' }, { text: 'x'.repeat(1001) }, { requested: 0 }, { requested: 0.1 }, { requested: 1.1 }, { requested: 1.2 }, { requested: 5.5 },
       { requested: '1' }, { status: 'accepted' }, { granted: 1 }, { extra: 1 }, { email: RIVAL.email }])
       await assertFails(file(PLAYER, extra));
   });
@@ -552,6 +564,7 @@ describe('appeals', () => {
     await file(PLAYER);
     await assertFails(grant(ADMIN, { status: 'partial', granted: 0.5 }));
     await assertFails(grant(ADMIN, { status: 'partial', granted: 0 }));
+    await assertFails(grant(ADMIN, { status: 'partial', granted: 0.15 }, 0.15));
     await assertSucceeds(grant(ADMIN, { status: 'partial', granted: 0.2 }, 0.2));
   });
   it('a decided appeal cannot be decided again', async () => {

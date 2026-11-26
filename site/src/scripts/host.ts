@@ -140,8 +140,8 @@ function showMessages(highlight: boolean) {
   if (highlight) {
     const map: Record<string, string> = { host: 'f-host', result: 'f-result', season: 'f-season', gameNumber: 'f-number', date: 'f-date', protocol: 'protocol', supportFive: 'support', roles: 'seats' };
     for (const f of r.fields) {
-      const m = /^seat-(\d+)-player$/.exec(f);
-      const el = m ? document.querySelector(`.seat[data-i="${+m[1] - 1}"] [data-k=player]`) : document.getElementById(map[f]);
+      const m = /^seat-(\d+)-(player|additional)$/.exec(f);
+      const el = m ? document.querySelector(`.seat[data-i="${+m[1] - 1}"] [data-k=${m[2]}]`) : document.getElementById(map[f]);
       el?.classList.add('invalid');
     }
   }

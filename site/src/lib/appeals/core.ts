@@ -1,5 +1,6 @@
 // Appeals for an additional point: pure logic shared by /account/ and /account/admin/.
 // The same limits are enforced by firestore.rules (match /appeals).
+import { ADDITIONAL_HINT, isAllowedAdditional } from '../hosting/additional';
 import type { GameDoc } from '../hosting/types';
 
 export type AppealStatus = 'pending' | 'accepted' | 'partial' | 'rejected';
@@ -12,7 +13,8 @@ export interface Appeal {
 export interface Decision { status: 'accepted' | 'partial' | 'rejected'; granted?: number; adminComment: string }
 
 export const MAX_TEXT = 1000;
-export const MAX_REQUESTED = 5;
+
+
 
 export const round2 = (n: number) => Math.round(n * 100) / 100;
 export const parseAmount = (s: string) => (s.trim() ? round2(Number(s.trim().replace(',', '.'))) : NaN);
@@ -23,8 +25,7 @@ export function draftError(text: string, requested: string): string | null {
   if (!t) return 'Опиши, за що має бути дод бал.';
   if (t.length > MAX_TEXT) return `Опис довший за ${MAX_TEXT} символів.`;
   const n = parseAmount(requested);
-  if (!(n > 0)) return 'Очікуваний бал має бути більше 0.';
-  if (n > MAX_REQUESTED) return `Очікуваний бал — не більше ${MAX_REQUESTED}.`;
+  if (!isAllowedAdditional(n)) return `Очікуваний бал — ${ADDITIONAL_HINT}.`;
   return null;
 }
 
@@ -38,7 +39,7 @@ export function decisionError(a: Appeal, d: Decision): string | null {
   if (d.adminComment.trim().length > MAX_TEXT) return `Коментар довший за ${MAX_TEXT} символів.`;
   if (d.status !== 'partial') return null;
   const g = grantedFor(a, d)!;
-  if (!(g > 0)) return 'Нарахований бал має бути більше 0.';
+  if (!isAllowedAdditional(g)) return `Нарахований бал — ${ADDITIONAL_HINT}.`;
   if (g >= a.requested) return `Частково — це менше, ніж просили (${a.requested}).`;
   return null;
 }
@@ -49,13 +50,19 @@ export function appealChanged(shown: Appeal, stored: { text: string; requested: 
 }
 
 export class SeatGoneError extends Error {}
+/** The seat's доп after the grant would not be an allowed value (e.g. 0.6 + 0.6 = 1.2). */
+export class AdditionalSumError extends Error {
+  constructor(readonly total: number) { super(`additional ${total}`); }
+}
 
 /** The game after granting: the player's seat is found by name, since the host may have moved it. */
 export function applyGrant(g: Pick<GameDoc, 'seats' | 'comments'>, player: string, granted: number): Pick<GameDoc, 'seats' | 'comments'> {
   const i = g.seats.findIndex((s) => s.player === player);
   if (i < 0) throw new SeatGoneError(player);
+  const total = round2((g.seats[i].additional || 0) + granted);
+  if (!isAllowedAdditional(total)) throw new AdditionalSumError(total);
   return {
-    seats: g.seats.map((s, j) => (j === i ? { ...s, additional: round2((s.additional || 0) + granted) } : s)),
+    seats: g.seats.map((s, j) => (j === i ? { ...s, additional: total } : s)),
     comments: [...g.comments, { slot: i + 1, text: `Апеляція: +${granted}` }],
   };
 }

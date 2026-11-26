@@ -19,6 +19,18 @@ describe('validate', () => {
     expect(r.errors).toContain('Оберіть ведучого');
     expect(r.fields.has('host')).toBe(true);
   });
+  it('доп is limited to 0.2–1.0 by 0.1 and 1.3', () => {
+    for (const ok of ['', '0', '0.2', '0,7', '1', '1.3']) {
+      const f = valid(); f.seats[4].additional = ok;
+      expect(validate(f).errors).toEqual([]);
+    }
+    for (const bad of ['0.1', '0.25', '1.1', '1.2', '1.5', '-0.3', 'x']) {
+      const f = valid(); f.seats[4].additional = bad;
+      const r = validate(f);
+      expect(r.errors.some((e) => e.startsWith('Доп:'))).toBe(true);
+      expect(r.fields.has('seat-5-additional')).toBe(true);
+    }
+  });
   it('result is required', () => {
     const f = valid(); f.result = null;
     expect(validate(f).fields.has('result')).toBe(true);
