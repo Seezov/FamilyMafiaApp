@@ -73,10 +73,7 @@ const statParts = (w: string) => { const i = w.indexOf(' · '); return i < 0 ? [
 
     {league.awards && league.awards.length > 0 && (
       <section>
-        <div class="sec-head">
-          <h2 class="h-section">Номінації</h2>
-          <span class="muted">Переможці {small ? 'Малої' : 'Вищої'} ліги за ролями</span>
-        </div>
+        <h2 class="h-section sec-gap">Номінації</h2>
         <SeasonAwards awards={league.awards} />
       </section>
     )}
@@ -169,7 +166,6 @@ const statParts = (w: string) => { const i = w.indexOf(' · '); return i < 0 ? [
   .vs-bar { display: flex; height: 8px; margin-top: 4px; }
   .vs-bar .c { background: var(--city); } .vs-bar .m { background: var(--mafia); }
   @media (max-width: 899px) { .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } .vs-nums { font-size: 22px; } }
-  .sec-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 16px; margin-bottom: 14px; }
   .sec-gap { margin-bottom: 14px; }
   .muted { color: var(--muted); }
   .small { font-size: 12px; }
