@@ -145,7 +145,7 @@ const data = JSON.stringify({ names, defaultSeason, aliases }).replace(/</g, '\\
   .seats td input[data-k=fouls] { width: 2.6em; }
   .seats td select[data-k] { width: 4.8em; text-align: center; }
   .seats td select[data-k=fouls] { width: 3.4em; }
-  .role { width: 2.4em; height: 30px; border-radius: 0; border: 1px solid var(--field-border, var(--border)); font: inherit; font-weight: 700; cursor: pointer; }
+  .role { width: 2.4em; height: 30px; min-height: 0; padding: 0; display: inline-grid; place-items: center; line-height: 1; border-radius: 0; border: 1px solid var(--field-border, var(--border)); font: inherit; font-weight: 700; cursor: pointer; }
   .role[data-role="Мирний"] { background: var(--civilian); color: #fff; border-color: transparent; }
   .role[data-role="Мафія"] { background: var(--mafia); color: #fff; border-color: transparent; }
   .role[data-role="Дон"] { background: var(--don); color: #fff; border-color: transparent; }
@@ -156,7 +156,7 @@ const data = JSON.stringify({ names, defaultSeason, aliases }).replace(/</g, '\\
   .cell select { width: 3.6em !important; border-radius: 0 !important; }
   .host-form .row select { width: 4em; flex: 0 0 auto; }
   .host-form select#f-number, .host-form select#f-season, .toolbar select { width: auto; min-width: 4em; }
-  .dot { width: 22px; height: 30px; border: 1px solid var(--field-border, var(--border)); border-left: 0; border-radius: 0; cursor: pointer; padding: 0; }
+  .dot { width: 22px; height: 30px; min-height: 0; border: 1px solid var(--field-border, var(--border)); border-left: 0; border-radius: 0; cursor: pointer; padding: 0; }
   .dot.red { background: var(--civilian); }
   .dot.black { background: #000; box-shadow: inset 0 0 0 2px var(--muted); }
   .row .dot { border-left: 1px solid var(--border); border-radius: 0; }
