@@ -82,8 +82,8 @@ const data = JSON.stringify({ names, defaultSeason, aliases }).replace(/</g, '\\
 
     <div class="line foot">
       <div id="messages" class="grow" aria-live="polite"></div>
-      <button class="btn" id="cancel" type="button">До списку</button>
-      <button class="btn primary" id="save" type="submit">Зберегти</button>
+      <p id="missing" class="missing" aria-live="polite"></p>
+      <button class="btn primary" id="save" type="submit" disabled>Зберегти</button>
     </div>
   </form>
 
@@ -163,9 +163,12 @@ const data = JSON.stringify({ names, defaultSeason, aliases }).replace(/</g, '\\
 
   .invalid, .invalid input { outline: 2px solid var(--city) !important; outline-offset: 1px; }
   #messages p { margin: 0; }
-  .line.foot { position: sticky; bottom: 0; background: var(--bg); padding: 6px 0; }
-  .line.foot #messages { flex-basis: 100%; }
-  .line.foot .btn:last-child { margin-left: auto; }
+  .line.foot { position: sticky; bottom: 0; background: var(--panel); padding: 10px 0 0; flex-direction: column; align-items: stretch; gap: 6px; }
+  .line.foot #messages, .line.foot .missing { flex-basis: auto; }
+  .line.foot .missing { margin: 0; color: var(--muted); font-size: 13px; }
+  .line.foot .missing:empty { display: none; }
+  .line.foot #save { width: 100%; min-height: 48px; font-size: 16px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
+  .line.foot #save:disabled { background: var(--panel-2); border-color: var(--border); color: var(--muted); opacity: 1; filter: none; }
 
   /* Phones: all eight columns without sideways scrolling. */
   @media (max-width: 560px) {

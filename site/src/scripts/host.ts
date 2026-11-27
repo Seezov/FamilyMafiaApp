@@ -159,6 +159,7 @@ function renderAll() {
   showMessages(false);
 }
 
+let saving = false;
 function showMessages(highlight: boolean) {
   const r = validate(form, aliases);
   document.querySelectorAll('.invalid').forEach((el) => el.classList.remove('invalid'));
@@ -170,6 +171,9 @@ function showMessages(highlight: boolean) {
       el?.classList.add('invalid');
     }
   }
+  // «Зберегти» stays disabled until the game is complete; the hint says what is still missing.
+  if (!saving) $<HTMLButtonElement>('save').disabled = r.errors.length > 0;
+  $('missing').textContent = r.errors.length ? `Щоб зберегти: ${r.errors.join(' · ')}` : '';
   $('messages').innerHTML = [
     ...(highlight ? r.errors.map((e) => `<p class="msg-error">${esc(e)}</p>`) : []),
     ...r.warnings.map((w) => `<p class="msg-warn">⚠ ${esc(w)}</p>`),
@@ -269,22 +273,23 @@ $('game-form').addEventListener('click', (e) => {
 
 $('add-protocol').addEventListener('click', () => { form.protocol.push({ slot: 0, version: null, color: null }); renderProtocol(); changed(); });
 $('add-comment').addEventListener('click', () => { form.comments.push({ slot: 0, text: '' }); renderComments(); changed(); });
-$('cancel').addEventListener('click', async () => { show('list-view'); await refreshList(); });
 
 $('game-form').addEventListener('submit', async (e) => {
   e.preventDefault();
   const r = showMessages(true);
   if (r.errors.length || !user) return;
   const btn = $<HTMLButtonElement>('save');
-  if (btn.disabled) return;
+  if (btn.disabled || saving) return;
   btn.disabled = true;
+  saving = true;
   try {
     await saveGame(formToDoc(form), editing, user);
     store.set(draftKey(editing?.id ?? null), null);
     $('messages').innerHTML = '<p>Гру збережено. У статистиці зʼявиться протягом години.</p>';
     // The button stays disabled until the list is back: a second tap must not save a copy.
-    setTimeout(async () => { show('list-view'); btn.disabled = false; await refreshList(); }, 1200);
+    setTimeout(async () => { saving = false; show('list-view'); await refreshList(); }, 1200);
   } catch (err) {
+    saving = false;
     $('messages').innerHTML = `<p class="msg-error">${esc(explainError(err))}</p>`;
     btn.disabled = false;
   }
