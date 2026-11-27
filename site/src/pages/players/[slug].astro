@@ -16,10 +16,11 @@ export function getStaticPaths() {
 const p = loadPlayer(Astro.params.slug!);
 const prof = profileFor(p.slug);
 const shown = prof?.nick ?? p.name;
-// Tournament prizes are hidden for now (tournament data is not ready); the total counts what is shown.
-const HIDDEN_GROUPS = new Set(['Призові місця на турнірах']);
-const groups = p.accomplishments.groups.filter((g) => !HIDDEN_GROUPS.has(g.title));
-const a = { groups, total: groups.reduce((n, g) => n + g.cards.reduce((m, c) => m + c.count, 0), 0) };
+// Tournament prizes are for admins only for now (tournament data is not ready); the total counts what everyone sees.
+const ADMIN_GROUPS = new Set(['Призові місця на турнірах']);
+const groups = p.accomplishments.groups.map((g) => ({ ...g, adminOnly: ADMIN_GROUPS.has(g.title) }));
+const a = { groups, total: groups.filter((g) => !g.adminOnly).reduce((n, g) => n + g.cards.reduce((m, c) => m + c.count, 0), 0) };
+const onlyAdmin = groups.length > 0 && groups.every((g) => g.adminOnly); // nothing public to show
 const roleColor = { civilian: 'var(--civilian)', sheriff: 'var(--sheriff)', mafia: 'var(--mafia)', don: 'var(--don)' } as const;
 const bm = p.bestMoves;
 const fk = p.firstKill;
@@ -42,9 +43,11 @@ const chase = p.timeline.find((t) => t.needed);
   </div>
 
   {a.groups.length > 0 && (
-    <Panel title="Досягнення" note={`усього ${a.total}`} class="awards">
-      <AwardCards groups={a.groups} />
-    </Panel>
+    <div class:list={{ 'admin-only': onlyAdmin }} hidden={onlyAdmin}>
+      <Panel title="Досягнення" note={`усього ${a.total}`} class="awards">
+        <AwardCards groups={a.groups} />
+      </Panel>
+    </div>
   )}
 
   <div class="grid">
