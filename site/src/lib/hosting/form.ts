@@ -5,6 +5,16 @@ export type DocBody = Omit<GameDoc, 'createdBy' | 'createdByEmail' | 'createdAt'
 /** Trim and collapse inner whitespace — "Іван  Петров" and "Іван Петров" are one player. */
 export const normalizeName = (s: string) => s.trim().replace(/\s+/g, ' ');
 
+/**
+ * The roster's display name for a typed name or nickname (any case), so a saved game always
+ * carries the same name as the player's profile (appeals match seats by that name).
+ * `aliases`: lower-cased name or nickname → display name. Unknown names are kept as typed.
+ */
+export const canonicalName = (s: string, aliases: Map<string, string>) => {
+  const n = normalizeName(s);
+  return aliases.get(n.toLowerCase()) ?? n;
+};
+
 export const parseNumber = (s: string) => {
   const v = Number.parseFloat(s.replace(',', '.'));
   return Number.isFinite(v) ? v : 0;

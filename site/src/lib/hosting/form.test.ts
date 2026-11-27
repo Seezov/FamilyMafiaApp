@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { docToForm, draftKey, emptyForm, eveningDate, formToDoc, nextGameNumber, pickDraft, wrapDraft } from './form';
+import { canonicalName, docToForm, draftKey, emptyForm, eveningDate, formToDoc, nextGameNumber, pickDraft, wrapDraft } from './form';
 
 describe('formToDoc', () => {
   it('stores penalties negative whatever sign was typed', () => {
@@ -30,6 +30,15 @@ describe('formToDoc', () => {
     expect(back.seats[0].penalty).toBe('0.5');
     expect(back.gameNumber).toBe(2);
   });
+});
+
+describe('canonicalName', () => {
+  const aliases = new Map([['мелок', 'Мелок'], ['мілок', 'Мелок'], ['green', 'Green']]);
+  it('a nickname or another case becomes the display name', () => {
+    expect(canonicalName('мілок', aliases)).toBe('Мелок');
+    expect(canonicalName('  GREEN ', aliases)).toBe('Green');
+  });
+  it('unknown names are kept (trimmed)', () => expect(canonicalName(' Новий  Гравець ', aliases)).toBe('Новий Гравець'));
 });
 
 describe('nextGameNumber', () => {

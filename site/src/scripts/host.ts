@@ -1,5 +1,5 @@
 // The /host/ page: sign-in, a host's games, and the protocol form.
-import { docToForm, draftKey, emptyForm, eveningDate, formToDoc, nextGameNumber, pickDraft, wrapDraft } from '../lib/hosting/form';
+import { canonicalName, docToForm, draftKey, emptyForm, eveningDate, formToDoc, nextGameNumber, pickDraft, wrapDraft } from '../lib/hosting/form';
 import { supportFivePoints } from '../lib/hosting/points';
 import { explainError, listSeasonGames, millis, onUser, saveGame, signIn, signOutUser, type HostUser } from '../lib/hosting/store';
 import { ROLES, type FormState, type GameDoc, type Role } from '../lib/hosting/types';
@@ -283,8 +283,11 @@ $('game-form').addEventListener('submit', async (e) => {
   if (r.emptySeats.length) {
     if (!(await confirmGuests(r.emptySeats))) return;
     for (const n of r.emptySeats) form.seats[n - 1].player = GUEST;
-    renderSeats(); saveDraft();
   }
+  // Nicknames / other spellings → the roster's display name (the profile's name; appeals match by it).
+  for (const s of form.seats) if (!isGuest(s.player)) s.player = canonicalName(s.player, aliases);
+  form.host = canonicalName(form.host, aliases);
+  renderSeats(); $<HTMLInputElement>('f-host').value = form.host; saveDraft();
   btn.disabled = true;
   saving = true;
   try {

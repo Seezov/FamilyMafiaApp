@@ -11,6 +11,11 @@ service cloud.firestore {
       return signedIn() && exists(/databases/$(database)/documents/claims/$(request.auth.uid))
         && get(/databases/$(database)/documents/claims/$(request.auth.uid)).data.status == 'approved';
     }
+    // An admin's invite for the signed-in email (id = email lower-cased; site/src/lib/account/invites.ts).
+    function inviteRef() { return /databases/$(database)/documents/invites/$(email().lower()); }
+    function invitedTo(player, key) {
+      return signedIn() && exists(inviteRef()) && get(inviteRef()).data.player == player && get(inviteRef()).data.playerKey == key;
+    }
     // Keep in sync with site/src/lib/profiles/core.ts.
     function validNick(d) { return !('nick' in d) || (d.nick is string && d.nick.size() >= 2 && d.nick.size() <= 24); }
     function validAvatar(d) {
@@ -71,15 +76,21 @@ service cloud.firestore {
 
     match /claims/{uid} {
       function own() { return signedIn() && uid == request.auth.uid; }
-      function validClaim(d) {
+      function claimShape(d) {
         return d.keys().hasOnly(['player', 'playerKey', 'email', 'googleName', 'status', 'createdAt'])
           && d.keys().hasAll(['player', 'playerKey', 'email', 'googleName', 'status', 'createdAt'])
           && d.player is string && d.player.size() > 0 && d.player.size() <= 60
           && d.playerKey is string && d.playerKey.size() > 0 && d.playerKey.size() <= 400
           && d.email == email()
           && d.googleName is string && d.googleName.size() <= 100
-          && d.status == 'pending'
           && d.createdAt == request.time;
+      }
+      function validClaim(d) { return claimShape(d) && d.status == 'pending'; }
+      // Invited: approved at once, for exactly the invited player.
+      // The profile is created in the same batch and is theirs (an already-linked player cannot be taken).
+      function invitedClaim(d) {
+        return claimShape(d) && d.status == 'approved' && invitedTo(d.player, d.playerKey)
+          && getAfter(/databases/$(database)/documents/profiles/$(d.playerKey)).data.uid == request.auth.uid;
       }
       function decision(d) {
         return d.diff(resource.data).affectedKeys().hasOnly(['status', 'decidedBy', 'decidedAt'])
@@ -89,8 +100,9 @@ service cloud.firestore {
               && existsAfter(/databases/$(database)/documents/profiles/$(resource.data.playerKey))));
       }
       allow read: if own() || isAdmin();
-      allow create: if own() && validClaim(request.resource.data);
-      allow update: if (own() && resource.data.status != 'approved' && validClaim(request.resource.data))
+      allow create: if own() && (validClaim(request.resource.data) || invitedClaim(request.resource.data));
+      allow update: if (own() && resource.data.status != 'approved'
+          && (validClaim(request.resource.data) || invitedClaim(request.resource.data)))
         || (isAdmin() && decision(request.resource.data));
       allow delete: if (own() && resource.data.status != 'approved') || isAdmin();
     }
@@ -120,6 +132,14 @@ service cloud.firestore {
         && claimAfter(request.resource.data.uid).status == 'approved'
         && claimAfter(request.resource.data.uid).playerKey == key
         && claimAfter(request.resource.data.uid).player == request.resource.data.player;
+      // Redeeming an invite: the invited player creates their own profile in the same batch as the claim.
+      allow create: if signedIn() && request.resource.data.uid == request.auth.uid
+        && request.resource.data.keys().hasOnly(['player', 'uid', 'updatedAt'])
+        && validProfile(request.resource.data)
+        && invitedTo(request.resource.data.player, key)
+        && claimAfter(request.auth.uid).status == 'approved'
+        && claimAfter(request.auth.uid).playerKey == key
+        && claimAfter(request.auth.uid).player == request.resource.data.player;
       allow update: if validProfile(request.resource.data) && onlyStyle()
         && ((signedIn() && resource.data.uid == request.auth.uid) || (isAdmin() && onlyResets()));
       allow delete: if isAdmin();
@@ -179,6 +199,21 @@ service cloud.firestore {
       allow create: if approvedPlayer() && validFiling(request.resource.data);
       allow update: if (approvedPlayer() && playerEdit(request.resource.data)) || decision(request.resource.data);
       allow delete: if (signedIn() && resource.data.uid == request.auth.uid && resource.data.status == 'pending') || isAdmin();
+    }
+
+    // Invites (/account/admin/): email → roster player. Id = the email lower-cased.
+    match /invites/{em} {
+      function validInvite(d) {
+        return d.keys().hasOnly(['player', 'playerKey', 'createdBy', 'createdAt'])
+          && d.keys().hasAll(['player', 'playerKey', 'createdBy', 'createdAt'])
+          && d.player is string && d.player.size() > 0 && d.player.size() <= 60
+          && d.playerKey is string && d.playerKey.size() > 0 && d.playerKey.size() <= 400
+          && d.createdBy == email() && d.createdAt == request.time;
+      }
+      allow read: if isAdmin() || (signedIn() && em == email().lower());
+      allow create, update: if isAdmin() && em == em.lower() && em.matches('^[^@ ]+@[^@ ]+[.][^@ ]+$')
+        && validInvite(request.resource.data);
+      allow delete: if isAdmin() || (signedIn() && em == email().lower());
     }
 
     // The club's tournament list and final thresholds, edited on /debug/.

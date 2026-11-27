@@ -2,8 +2,17 @@
 import Base from '../../layouts/Base.astro';
 import { href } from '../../lib/url';
 import '../../styles/forms.css';
+import fs from 'node:fs';
+import path from 'node:path';
+import { aliasPairs, dedupeRoster, fromAppJson } from '../../lib/roster/roster';
 
-const base = JSON.stringify({ base: href('') }).replace(/</g, '\\u003c');
+// Roster names and nicknames → display name, for invites (the page also reads the live list).
+const root = path.resolve(process.cwd(), '..');
+const snapshot = path.join(root, 'assets/prefetched/players.json');
+const rosterFile = fs.existsSync(snapshot) ? snapshot : path.join(root, 'assets/raw/players.json');
+const aliases = aliasPairs(dedupeRoster(fromAppJson(JSON.parse(fs.readFileSync(rosterFile, 'utf8')))));
+
+const base = JSON.stringify({ base: href(''), aliases }).replace(/</g, '\\u003c');
 ---
 <Base title="Адмін: заявки та апеляції" description="Схвалення профілів гравців і розгляд апеляцій.">
   <div class="pagehead"><h1 class="display">Заявки та апеляції</h1><span class="label" id="who"></span></div>
@@ -12,6 +21,14 @@ const base = JSON.stringify({ base: href('') }).replace(/</g, '\\u003c');
     <button class="btn primary" id="sign-in" type="button">Увійти через Google</button>
   </section>
   <section id="admin" hidden>
+    <h2 class="label">Запрошення</h2>
+    <div class="box invites">
+      <p class="hint">По рядку: <b>імейл — нік гравця</b> (можна кілька). Коли людина вперше увійде з цим імейлом на «Мій профіль»,
+        її одразу привʼяже до гравця — без заявки й схвалення. Нік береться зі списку гравців.</p>
+      <textarea id="inv-text" rows="4" placeholder="імейл — нік, по одному на рядок"></textarea>
+      <div class="inv-actions"><button class="btn primary" id="inv-add" type="button">Додати запрошення</button><span id="inv-msg"></span></div>
+      <div id="invites" class="list"></div>
+    </div>
     <h2 class="label">Заявки</h2>
     <div id="claims" class="list"></div>
     <h2 class="label">Привʼязані профілі</h2>
@@ -66,4 +83,12 @@ const base = JSON.stringify({ base: href('') }).replace(/</g, '\\u003c');
   .tbl th, .tbl td { border-bottom: 1px solid var(--border); padding: 4px 8px; text-align: left; vertical-align: top; }
   .tbl .num { text-align: right; }
   .st-accepted, .st-partial { color: var(--good); }
+  .invites .hint { margin: 0 0 8px; color: var(--muted); }
+  #inv-text { width: 100%; box-sizing: border-box; font-family: inherit; }
+  .inv-actions { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; margin: 8px 0 12px; }
+  #inv-msg { white-space: pre-line; }
+  .invites .list { margin: 0; }
+  .inv { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; padding: 8px 0; border-top: 1px solid var(--line); }
+  .inv .grow { flex: 1 1 260px; }
+  .inv .warn { color: var(--city); font-size: 13px; }
 </style>

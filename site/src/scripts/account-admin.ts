@@ -1,6 +1,10 @@
 // /account/admin/: approve or reject player claims; reset or unlink profiles. Rules re-check everything.
 import { signIn } from '../lib/firebase';
-import { decideClaim, explainAccountError, listClaims, listProfiles, onAccount, resetProfile, unlink, type AccountUser } from '../lib/account/store';
+import { decideClaim, deleteInvite, explainAccountError, listClaims, listInvites, listProfiles, onAccount, resetProfile, saveInvites, unlink, type AccountUser } from '../lib/account/store';
+import { parseInvites, type Invite } from '../lib/account/invites';
+import { aliasPairs } from '../lib/roster/roster';
+import { loadRoster } from '../lib/roster/store';
+import { playerKey } from '../lib/profiles/core';
 import { claimKeyOk, sortClaims, takenKeys, type Claim, type Profile } from '../lib/account/state';
 import { decisionError, filterFromQuery, filterHistory, filterToQuery, hostTotals, parseAmount, type Appeal, type Decision, type HistoryFilter } from '../lib/appeals/core';
 import { historyRow, pendingCard, totalsRows } from '../lib/appeals/render';
@@ -13,7 +17,11 @@ const STATUS = { pending: 'чекає', approved: 'схвалено', rejected: 
 let user: AccountUser | null = null;
 let claims: Claim[] = [];
 let profiles: Profile[] = [];
-const adminPage = JSON.parse(document.getElementById('admin-data')!.textContent!) as { base: string };
+const adminPage = JSON.parse(document.getElementById('admin-data')!.textContent!) as { base: string; aliases: [string, string][] };
+const aliases = new Map(adminPage.aliases);
+let invites: Invite[] = [];
+// The baked roster is as of the last build; a player just added on /players/edit/ is known at once.
+void loadRoster().then((r) => { if (r) { aliases.clear(); for (const [k, v] of aliasPairs(r)) aliases.set(k, v); } }).catch(() => { /* keep the baked list */ });
 let appeals: Appeal[] = [];
 let games = new Map<string, GameDoc>();
 let tab: 'new' | 'history' = new URLSearchParams(location.search).has('tab') ? 'history' : 'new';
@@ -73,12 +81,18 @@ $('appeals-history').addEventListener('input', () => {
 });
 
 async function load() {
-  try { [claims, profiles] = await Promise.all([listClaims(), listProfiles()]); render(); }
+  try { [claims, profiles, invites] = await Promise.all([listClaims(), listProfiles(), listInvites().catch(() => [] as Invite[])]); render(); }
   catch (e) { $('who').textContent = explainAccountError(e); }
 }
 
 function render() {
   const taken = takenKeys(profiles);
+  $('invites').innerHTML = [...invites].sort((a, b) => (b.createdAt ?? 0) - (a.createdAt ?? 0)).map((i) => `<div class="inv">
+      <span class="grow"><b>${esc(i.player)}</b> ← ${esc(i.email)}
+        <span class="label">${i.createdAt ? new Date(i.createdAt).toLocaleDateString('uk-UA') : ''}${i.createdBy ? ` · ${esc(i.createdBy)}` : ''}</span>
+        ${taken.has(playerKey(i.player)) ? '<span class="warn">гравця вже привʼязано до іншого акаунта</span>' : ''}</span>
+      <button class="btn sm" data-act="inv-delete" data-email="${esc(i.email)}">Видалити</button></div>`).join('')
+    || '<p class="label">Запрошень, що чекають на вхід, немає.</p>';
   $('claims').innerHTML = sortClaims(claims).map((c) => {
     const forged = !claimKeyOk(c);
     const busy = c.status !== 'approved' && taken.has(c.playerKey);
@@ -113,11 +127,29 @@ document.addEventListener('click', async (e) => {
     if (b.dataset.act === 'reset-nick' && p) await resetProfile(p.key, 'nick');
     if (b.dataset.act === 'reset-avatar' && p) await resetProfile(p.key, 'avatar');
     if (b.dataset.act === 'unlink' && p) await unlink(p);
+    if (b.dataset.act === 'inv-delete' && b.dataset.email) await deleteInvite(b.dataset.email);
     await load();
   } catch (err) {
     $('who').textContent = explainAccountError(err);
     b.disabled = false;
   }
+});
+
+$('inv-add').addEventListener('click', async () => {
+  if (!user) return;
+  const out = $('inv-msg');
+  const { invites: list, errors } = parseInvites($<HTMLTextAreaElement>('inv-text').value, aliases);
+  if (!list.length) { out.className = 'msg-error'; out.textContent = errors.join('\n') || 'Впиши хоча б один рядок: імейл — нік.'; return; }
+  const btn = $<HTMLButtonElement>('inv-add');
+  btn.disabled = true;
+  try {
+    await saveInvites(list, user.email);
+    $<HTMLTextAreaElement>('inv-text').value = errors.length ? $<HTMLTextAreaElement>('inv-text').value : '';
+    out.className = errors.length ? 'msg-warn' : '';
+    out.textContent = `Додано запрошень: ${list.length}.` + (errors.length ? `\nПропущено:\n${errors.join('\n')}` : '');
+    await load();
+  } catch (e) { out.className = 'msg-error'; out.textContent = explainAccountError(e); }
+  btn.disabled = false;
 });
 
 async function decide(b: HTMLButtonElement) {

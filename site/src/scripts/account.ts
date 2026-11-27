@@ -1,6 +1,6 @@
 // The /account/ page: sign-in, claiming a player, nick + avatar settings.
 import { signIn, signOutUser } from '../lib/firebase';
-import { cancelClaim, explainAccountError, getClaim, listProfiles, onAccount, saveProfile, submitClaim, type AccountUser } from '../lib/account/store';
+import { cancelClaim, explainAccountError, getClaim, getMyInvite, listProfiles, onAccount, redeemInvite, saveProfile, submitClaim, type AccountUser } from '../lib/account/store';
 import { accountView, pickList, takenKeys, type Claim, type Profile } from '../lib/account/state';
 import { cropRect, encodeAvatar } from '../lib/account/avatar';
 import { cleanNick, nickError, playerKey } from '../lib/profiles/core';
@@ -28,6 +28,7 @@ let mine: Profile | null = null;
 let img: HTMLImageElement | null = null; // newly chosen photo, not saved yet
 let avatar: string | null = null;        // what will be saved
 let rows: { game: GameDoc & { id: string }; seat: number }[] = [];
+let invitedAs: string | null = null;
 let appeals = new Map<string, Appeal>(); // by gameId
 let openGame: string | null = null;
 const appealsMsg = (text: string, kind: 'error' | 'ok' = 'ok') => { $('appeals-msg').className = kind === 'error' ? 'msg-error' : ''; $('appeals-msg').textContent = text; };
@@ -61,6 +62,7 @@ function show() {
   if (view === 'pick' || view === 'rejected') renderPick();
   if (view === 'pending') $('pending-player').textContent = claim!.player;
   if (view === 'settings') renderSettings();
+  if (view === 'settings' && invitedAs) { msg(`Готово: тебе привʼязано до гравця «${invitedAs}» за запрошенням адміна. Можеш поставити нік і аватарку.`); invitedAs = null; }
   if (view === 'settings') loadAppeals(); else $('appeals').hidden = true;
 }
 
@@ -98,10 +100,23 @@ function drawPreview() {
 
 const msg = (text: string, kind: 'error' | 'ok' = 'ok') => { $('msg').className = kind === 'error' ? 'msg-error' : ''; $('msg').textContent = text; };
 
+let redeemTried = false;
 async function refresh() {
   if (!user) { claim = null; mine = null; return show(); }
   try {
     [claim, profiles] = await Promise.all([getClaim(user.uid), listProfiles()]);
+    // An admin invited this email: link the player at once, no claim to approve.
+    if (claim?.status !== 'approved' && !redeemTried) {
+      redeemTried = true;
+      const inv = await getMyInvite(user.email).catch(() => null);
+      if (inv) {
+        try {
+          await redeemInvite(user, inv);
+          [claim, profiles] = await Promise.all([getClaim(user.uid), listProfiles()]);
+          invitedAs = inv.player;
+        } catch { alertBox(`Тебе запросили як «${inv.player}», але цього гравця вже привʼязано. Напиши адміну.`); }
+      }
+    }
     mine = claim?.status === 'approved' ? profiles.find((p) => p.key === claim!.playerKey && p.uid === user!.uid) ?? null : null;
     remember({ label: mine?.nick ?? mine?.player ?? user.name, avatar: mine?.avatar });
   } catch (e) { alertBox(explainAccountError(e)); }

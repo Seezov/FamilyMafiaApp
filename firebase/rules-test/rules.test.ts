@@ -258,6 +258,73 @@ describe('profiles', () => {
   });
 });
 
+describe('invites', () => {
+  const invite = (extra: Record<string, unknown> = {}) => ({ player: 'Braun', playerKey: 'braun', createdBy: ADMIN.email, createdAt: serverTimestamp(), ...extra });
+  const seedInvite = (email = PLAYER.email, player = 'Braun', playerKey = 'braun') =>
+    env.withSecurityRulesDisabled((ctx) => setDoc(doc(ctx.firestore(), 'invites', email), { player, playerKey, createdBy: ADMIN.email, createdAt: new Date() }));
+  // What /account/ does on the first sign-in: approved claim + own profile + invite removed + meta bump.
+  const redeem = (who: User, key = 'braun', player = 'Braun', inviteId = who.email) => {
+    const db = as(who);
+    const b = writeBatch(db);
+    b.set(doc(db, 'claims', who.uid), claim(who, { status: 'approved', player, playerKey: key }));
+    b.set(doc(db, 'profiles', key), { player, uid: who.uid, updatedAt: serverTimestamp() });
+    b.delete(doc(db, 'invites', inviteId));
+    return b.commit();
+  };
+
+  it('only an admin creates an invite, keyed by the lower-cased email, signed with their email', async () => {
+    await assertSucceeds(setDoc(doc(as(ADMIN), 'invites', PLAYER.email), invite()));
+    await assertFails(setDoc(doc(as(HOST), 'invites', PLAYER.email), invite({ createdBy: HOST.email })));
+    await assertFails(setDoc(doc(as(PLAYER), 'invites', PLAYER.email), invite({ createdBy: PLAYER.email })));
+    await assertFails(setDoc(doc(as(ADMIN), 'invites', 'Player@x.com'), invite()));
+    await assertFails(setDoc(doc(as(ADMIN), 'invites', 'not-an-email'), invite()));
+    await assertFails(setDoc(doc(as(ADMIN), 'invites', PLAYER.email), invite({ createdBy: HOST.email })));
+    await assertFails(setDoc(doc(as(ADMIN), 'invites', PLAYER.email), invite({ extra: 1 })));
+  });
+  it('the invitee reads their own invite; others (except admins) do not', async () => {
+    await seedInvite();
+    await assertSucceeds(getDoc(doc(as(PLAYER), 'invites', PLAYER.email)));
+    await assertSucceeds(getDoc(doc(as(ADMIN), 'invites', PLAYER.email)));
+    await assertFails(getDoc(doc(as(RIVAL), 'invites', PLAYER.email)));
+  });
+  it('the invitee redeems: approved claim and own profile in one batch', async () => {
+    await seedInvite();
+    await assertSucceeds(redeem(PLAYER));
+  });
+  it('the email case of the account does not matter', async () => {
+    await seedInvite();
+    const MIXED = { uid: 'u-mixed', email: 'Player@X.com' };
+    await assertSucceeds(redeem(MIXED, 'braun', 'Braun', 'player@x.com'));
+  });
+  it('no invite, another player than invited, or someone else’s invite: no self-approval', async () => {
+    await assertFails(redeem(PLAYER));
+    await seedInvite();
+    await assertFails(redeem(PLAYER, 'floppy', 'Floppy'));
+    await assertFails(redeem(RIVAL, 'braun', 'Braun', PLAYER.email));
+  });
+  it('an approved claim without the profile in the same batch fails', async () => {
+    await seedInvite();
+    await assertFails(setDoc(doc(as(PLAYER), 'claims', PLAYER.uid), claim(PLAYER, { status: 'approved' })));
+  });
+  it('a player already linked to another account cannot be taken by an invite', async () => {
+    await seedApproved(RIVAL);
+    await seedInvite();
+    await assertFails(redeem(PLAYER));
+  });
+  it('a pending claim is replaced by the invited, approved one', async () => {
+    await setDoc(doc(as(PLAYER), 'claims', PLAYER.uid), claim(PLAYER, { player: 'Floppy', playerKey: 'floppy' }));
+    await seedInvite();
+    await assertSucceeds(redeem(PLAYER));
+  });
+  it('admin or the invitee deletes an invite; others do not', async () => {
+    await seedInvite();
+    await assertFails(deleteDoc(doc(as(RIVAL), 'invites', PLAYER.email)));
+    await assertSucceeds(deleteDoc(doc(as(ADMIN), 'invites', PLAYER.email)));
+    await seedInvite();
+    await assertSucceeds(deleteDoc(doc(as(PLAYER), 'invites', PLAYER.email)));
+  });
+});
+
 describe('meta/state by players', () => {
   it('an approved player bumps updatedAt', async () => {
     await seedApproved(PLAYER);

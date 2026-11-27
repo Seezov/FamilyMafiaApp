@@ -6,6 +6,7 @@ import {
 import { auth, db } from '../firebase';
 import { playerKey } from '../profiles/core';
 import type { Claim, Profile } from './state';
+import { inviteKey, type Invite } from './invites';
 
 export type AccountUser = { uid: string; email: string; name: string; admin: boolean };
 
@@ -86,6 +87,47 @@ export async function unlink(p: Profile) {
   b.delete(doc(db, 'claims', p.uid));
   bump(b);
   await b.commit();
+}
+
+// ── Invites ──────────────────────────────────────────────────────────────
+const toInvite = (id: string, d: Record<string, unknown>): Invite => ({
+  email: id, player: String(d.player), createdBy: String(d.createdBy ?? ''),
+  createdAt: (d.createdAt as Timestamp | undefined)?.toMillis?.(),
+});
+
+export async function listInvites() {
+  const s = await getDocs(collection(db, 'invites'));
+  return s.docs.map((d) => toInvite(d.id, d.data()));
+}
+
+export async function saveInvites(list: Invite[], adminEmail: string) {
+  const b = writeBatch(db);
+  for (const i of list) {
+    b.set(doc(db, 'invites', inviteKey(i.email)), { player: i.player, playerKey: playerKey(i.player), createdBy: adminEmail, createdAt: serverTimestamp() });
+  }
+  await b.commit();
+}
+
+export const deleteInvite = (email: string) => deleteDoc(doc(db, 'invites', inviteKey(email)));
+
+export async function getMyInvite(email: string) {
+  const s = await getDoc(doc(db, 'invites', inviteKey(email)));
+  return s.exists() ? toInvite(s.id, s.data()) : null;
+}
+
+/** First sign-in of an invited email: approved claim + own profile + invite removed, then the site rebuild bump. */
+export async function redeemInvite(u: AccountUser, inv: Invite) {
+  const key = playerKey(inv.player);
+  const b = writeBatch(db);
+  b.set(doc(db, 'claims', u.uid), {
+    player: inv.player, playerKey: key, email: u.email, googleName: u.name.slice(0, 100),
+    status: 'approved', createdAt: serverTimestamp(),
+  });
+  b.set(doc(db, 'profiles', key), { player: inv.player, uid: u.uid, updatedAt: serverTimestamp() });
+  b.delete(doc(db, 'invites', inviteKey(inv.email)));
+  await b.commit();
+  // A separate write: the meta rule checks the claim as it was before the batch.
+  await setDoc(doc(db, 'meta', 'state'), { updatedAt: serverTimestamp() }).catch(() => { /* the nightly build picks it up */ });
 }
 
 export function explainAccountError(e: unknown): string {
