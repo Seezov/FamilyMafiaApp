@@ -1,6 +1,8 @@
 ---
 // Season nominations as cards: header in the role's colour, the winner large, the next places below.
 import PlayerName from './PlayerName.astro';
+import { profileFor } from '../lib/profiles/site';
+import { href } from '../lib/url';
 import type { Award, SiteCell } from '../lib/types';
 
 interface Props { awards: Award[] }
@@ -17,7 +19,9 @@ const initial = (t: string) => [...t.trim()][0]?.toUpperCase() ?? '?';
         <header><span class="title">{a.label}</span><span class="metric">{cols[1]?.label}</span></header>
         {first ? (
           <div class="winner">
-            <span class="avatar" aria-hidden="true">{initial(first[0].t)}</span>
+            {first[0].link && profileFor(first[0].link)?.avatar
+              ? <img class="avatar" src={href(profileFor(first[0].link)!.avatar!)} alt="" width="56" height="56" loading="lazy" />
+              : <span class="avatar" aria-hidden="true">{initial(first[0].t)}</span>}
             <div class="who">
               <div class="name">{first[0].link ? <PlayerName slug={first[0].link!} name={first[0].t} /> : first[0].t}</div>
               {first[2] && <div class="detail">{cols[2]?.label}: {tidy(first[2].t)}</div>}
@@ -53,7 +57,7 @@ const initial = (t: string) => [...t.trim()][0]?.toUpperCase() ?? '?';
   .title { font-family: var(--font-display); font-size: 18px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
   .metric { font-size: 12px; opacity: .85; }
   .winner { padding: 16px 18px; display: flex; align-items: center; gap: 14px; }
-  .avatar { width: 48px; height: 48px; flex: none; border-radius: 50%; background: var(--bg); display: grid; place-items: center;
+  .avatar { width: 56px; height: 56px; object-fit: cover; flex: none; border-radius: 50%; background: var(--bg); display: grid; place-items: center;
     font-family: var(--font-display); font-weight: 700; font-size: 20px; color: var(--c); }
   :global([data-theme='dark']) .a-mafia .avatar { color: var(--text); }
   .who { flex: 1; min-width: 0; }

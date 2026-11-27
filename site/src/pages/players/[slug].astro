@@ -27,7 +27,7 @@ const chase = p.timeline.find((t) => t.needed);
 ---
 <Base title={shown} description={`${shown}: ${pct(p.winRate)} WR · ${ukCount(p.games, GAMES)} · сезонів: ${p.seasons}`} active="players">
   <div class="pagehead hero">
-    {prof?.avatar ? <img class="avatar" src={href(prof.avatar)} alt="" width="80" height="80" /> : <div class="avatar display">{p.initials}</div>}
+    {prof?.avatar ? <img class="avatar" src={href(prof.avatar)} alt="" width="112" height="112" /> : <div class="avatar display">{p.initials}</div>}
     <div class="who">
       <div class="eyebrow">Гравець клубу</div>
       <h1 class="display">{shown}</h1>
@@ -77,8 +77,8 @@ const chase = p.timeline.find((t) => t.needed);
 
 <style>
   .hero { flex-wrap: nowrap; gap: 20px; }
-  .avatar { width: 80px; height: 80px; border-radius: 50%; display: grid; place-items: center;
-    background: var(--bg); color: var(--city); font-size: 30px; flex: none; }
+  .avatar { width: 112px; height: 112px; border-radius: 50%; display: grid; place-items: center;
+    background: var(--bg); color: var(--city); font-size: 40px; flex: none; }
   .sub { color: var(--muted); margin-top: 2px; }
   img.avatar { object-fit: cover; padding: 0; }
   .who { min-width: 0; }
