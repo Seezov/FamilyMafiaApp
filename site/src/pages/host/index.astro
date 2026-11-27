@@ -87,6 +87,16 @@ const data = JSON.stringify({ names, defaultSeason, aliases }).replace(/</g, '\\
     </div>
   </form>
 
+  <dialog id="guest-dialog" class="guest-dialog" aria-labelledby="guest-title">
+    <h2 id="guest-title">Не всі ніки введені</h2>
+    <p>Без ніка: <b id="guest-seats"></b>. Усіх гравців, кого треба, введено?</p>
+    <p class="muted">Порожні місця запишуться як «Гість» — новенький або гість. Гра піде в рейтинг решти гравців, а «Гість» у таблицях не з'явиться.</p>
+    <div class="guest-actions">
+      <button type="button" class="btn" id="guest-no">Ні, допишу</button>
+      <button type="button" class="btn primary" id="guest-yes">Так, зберегти</button>
+    </div>
+  </dialog>
+
   <datalist id="names">{names.map((n) => <option value={n} />)}</datalist>
   <script type="application/json" id="host-data" set:html={data} />
 </Base>
@@ -163,6 +173,13 @@ const data = JSON.stringify({ names, defaultSeason, aliases }).replace(/</g, '\\
 
   .invalid, .invalid input { outline: 2px solid var(--city) !important; outline-offset: 1px; }
   #messages p { margin: 0; }
+  .guest-dialog { border: 0; padding: 22px 24px; max-width: min(440px, calc(100vw - 32px)); background: var(--panel); color: var(--text);
+    border-top: 4px solid var(--city); box-shadow: 0 16px 48px var(--shadow); }
+  .guest-dialog::backdrop { background: rgba(0, 0, 0, .5); }
+  .guest-dialog h2 { margin: 0 0 10px; font-family: var(--font-display); font-size: 22px; text-transform: uppercase; }
+  .guest-dialog p { margin: 0 0 10px; }
+  .guest-dialog .muted { color: var(--muted); font-size: 13px; }
+  .guest-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px; }
   .line.foot { position: sticky; bottom: 0; background: var(--panel); padding: 10px 0 0; flex-direction: column; align-items: stretch; gap: 6px; }
   .line.foot #messages, .line.foot .missing { flex-basis: auto; }
   .line.foot .missing { margin: 0; color: var(--muted); font-size: 13px; }

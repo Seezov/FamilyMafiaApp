@@ -1,5 +1,6 @@
 import 'dart:developer' as developer;
 
+import 'package:family_mafia_app/constants/season_constants.dart';
 import 'package:family_mafia_app/enums/role.dart';
 import 'package:family_mafia_app/models/game.dart';
 import 'package:family_mafia_app/models/protocol_entry.dart';
@@ -52,7 +53,13 @@ Game gameFromFirestore(int seasonId, Map<String, dynamic> doc) {
   ];
   return Game(
     seasonId: seasonId,
-    players: [for (final s in seats) (s['player'] as String).trim()],
+    players: [
+      for (final (i, s) in seats.indexed)
+        if ((s['player'] as String).trim().toLowerCase() == kGuestPlayerName.toLowerCase())
+          '_blank_$i'
+        else
+          (s['player'] as String).trim(),
+    ],
     roles: roles,
     cityWon: _cityWon(doc['result']),
     firstKilled: firstKilled,

@@ -65,6 +65,15 @@ void main() {
       expect(g.fouls![5], 3);
       expect(g.protocolAdditionalPoints, hasLength(10));
     });
+    test('a «Гість» seat is an empty seat (no rating row, not a name)', () {
+      final d = doc();
+      (d['seats'] as List)[2] = seat('Гість', 'Мирний');
+      (d['seats'] as List)[7] = seat(' гість ', 'Мирний');
+      final guest = gameFromFirestore(32, d);
+      expect(guest.players[2], '_blank_2');
+      expect(guest.players[7], '_blank_7');
+      expect(guest.players.first, 'Німфа');
+    });
     test('result → cityWon', () {
       expect(g.cityWon, true);
       expect(gameFromFirestore(32, doc(result: 'mafia')).cityWon, false);

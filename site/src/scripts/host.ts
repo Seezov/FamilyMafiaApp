@@ -3,7 +3,7 @@ import { docToForm, draftKey, emptyForm, eveningDate, formToDoc, nextGameNumber,
 import { supportFivePoints } from '../lib/hosting/points';
 import { explainError, listSeasonGames, millis, onUser, saveGame, signIn, signOutUser, type HostUser } from '../lib/hosting/store';
 import { ROLES, type FormState, type GameDoc, type Role } from '../lib/hosting/types';
-import { validate } from '../lib/hosting/validate';
+import { GUEST, isGuest, validate } from '../lib/hosting/validate';
 import { loadRoster } from '../lib/roster/store';
 import { aliasPairs, autocompleteNames } from '../lib/roster/roster';
 import { loadClubSeasons } from '../lib/seasons/store';
@@ -21,7 +21,7 @@ const today = () => eveningDate(); // the club evening: after midnight still cou
 const esc = (v: unknown) => String(v ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
 const ROLE_LETTER: Record<Role, string> = { 'Мирний': 'М', 'Мафія': 'Ч', 'Дон': 'Д', 'Шериф': 'Ш' };
 const nextRole = (r: Role) => ROLES[(ROLES.indexOf(r) + 1) % ROLES.length];
-const isNew = (name: string) => !!name.trim() && !page.names.includes(name.trim());
+const isNew = (name: string) => !!name.trim() && !isGuest(name) && !page.names.includes(name.trim());
 
 // The baked list is as of the last build; a player an admin just added shows up here at once.
 void loadRoster().then((r) => {
@@ -280,6 +280,11 @@ $('game-form').addEventListener('submit', async (e) => {
   if (r.errors.length || !user) return;
   const btn = $<HTMLButtonElement>('save');
   if (btn.disabled || saving) return;
+  if (r.emptySeats.length) {
+    if (!(await confirmGuests(r.emptySeats))) return;
+    for (const n of r.emptySeats) form.seats[n - 1].player = GUEST;
+    renderSeats(); saveDraft();
+  }
   btn.disabled = true;
   saving = true;
   try {
@@ -294,6 +299,19 @@ $('game-form').addEventListener('submit', async (e) => {
     btn.disabled = false;
   }
 });
+
+/** Asks whether the empty seats really are newcomers / guests. Resolves true to save them as «Гість». */
+function confirmGuests(seats: number[]): Promise<boolean> {
+  const dlg = $<HTMLDialogElement>('guest-dialog');
+  $('guest-seats').textContent = seats.length === 1 ? `місце ${seats[0]}` : `місця ${seats.join(', ')}`;
+  return new Promise((resolve) => {
+    const done = (ok: boolean) => { dlg.close(); resolve(ok); };
+    $('guest-yes').onclick = () => done(true);
+    $('guest-no').onclick = () => done(false);
+    dlg.oncancel = (e) => { e.preventDefault(); done(false); };
+    dlg.showModal();
+  });
+}
 
 // ── Opening a game ────────────────────────────────────────────────────────
 function openNew() {

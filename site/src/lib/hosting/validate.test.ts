@@ -53,9 +53,15 @@ describe('validate', () => {
     const f = valid(); f.seats[0].role = 'Мафія';
     expect(validate(f).errors).toContain('Ролі мають бути 6 мирних, 2 мафії, 1 дон, 1 шериф');
   });
-  it('empty player is highlighted', () => {
-    const f = valid(); f.seats[2].player = '';
-    expect(validate(f).fields.has('seat-3-player')).toBe(true);
+  it('an empty player does not block saving; the seat is listed for the guest prompt', () => {
+    const f = valid(); f.seats[2].player = ''; f.seats[6].player = '  ';
+    const r = validate(f);
+    expect(r.errors).toEqual([]);
+    expect(r.emptySeats).toEqual([3, 7]);
+  });
+  it('several guests in one game are not duplicates', () => {
+    const f = valid(); f.seats[2].player = 'Гість'; f.seats[6].player = 'гість';
+    expect(validate(f).errors).toEqual([]);
   });
   it('duplicates differing by case/space are caught', () => {
     const f = valid(); f.seats[0].player = 'Seezov'; f.seats[1].player = ' seezov ';

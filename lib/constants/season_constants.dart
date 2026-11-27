@@ -97,6 +97,12 @@ const kCiFactorNew = 0.5;
 /// Seasons 21+: CI multiplier for proportional compensation (ratio * 1.25).
 const kCiMultiplierNew = 1.25;
 
+/// What /host/ saves for a seat the host left without a name (a newcomer or guest,
+/// confirmed in a prompt). Games from Firestore read it as an empty seat
+/// (`_blank_N`): the game counts for the other nine, the guest gets no rating
+/// row and is not an unresolved name. Same constant in TS: GUEST in validate.ts.
+const kGuestPlayerName = 'Гість';
+
 /// ── Player exclusions ─────────────────────────────────────────────────────
 /// Players the season sheet leaves out of its rating (test/placeholder entries
 /// or players it never listed, e.g. Савиола in season 1, ТВЛ in season 2),

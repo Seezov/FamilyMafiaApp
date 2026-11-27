@@ -3,6 +3,10 @@ import { supportFivePoints } from './points';
 import { ADDITIONAL_HINT, isAllowedSeatAdditional } from './additional';
 import type { FormState } from './types';
 
+/** What an empty seat is saved as: a newcomer or guest. The export treats it as an empty seat (no rating row). Same constant in Dart: kGuestPlayerName. */
+export const GUEST = 'Гість';
+export const isGuest = (name: string) => normalizeName(name).toLowerCase() === GUEST.toLowerCase();
+
 /**
  * `aliases`: lower-cased name or nickname → the player's display name, so a player
  * entered once by name and once by nickname is caught as a duplicate.
@@ -11,6 +15,8 @@ export function validate(f: FormState, aliases: Map<string, string> = new Map())
   const errors: string[] = [];
   const warnings: string[] = [];
   const fields = new Set<string>();
+  /** Seats (1-based) without a name: they do not block saving; the host confirms them, then they become «Гість». */
+  const emptySeats: number[] = [];
   const fail = (msg: string, ...names: string[]) => {
     if (!errors.includes(msg)) errors.push(msg);
     names.forEach((n) => fields.add(n));
@@ -25,7 +31,8 @@ export function validate(f: FormState, aliases: Map<string, string> = new Map())
   const seen = new Map<string, number>();
   f.seats.forEach((s, i) => {
     const name = normalizeName(s.player);
-    if (!name) { fail('Заповніть усіх 10 гравців', `seat-${i + 1}-player`); return; }
+    if (!name) { emptySeats.push(i + 1); return; }
+    if (isGuest(name)) return; // several guests in one game are fine
     const key = (aliases.get(name.toLowerCase()) ?? name).toLowerCase();
     if (seen.has(key)) fail(`Гравець «${normalizeName(f.seats[seen.get(key)!].player)}» записаний двічі`, `seat-${i + 1}-player`);
     else seen.set(key, i);
@@ -59,5 +66,5 @@ export function validate(f: FormState, aliases: Map<string, string> = new Map())
   const cells = f.seats.filter((s) => parseNumber(s.additional) !== 0).length + (f.firstKilled ? 1 : 0);
   if (cells > 7) warnings.push('Бали мають більше ніж 7 клітинок');
 
-  return { errors, warnings, fields };
+  return { errors, warnings, fields, emptySeats };
 }
