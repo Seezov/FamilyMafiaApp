@@ -178,10 +178,10 @@ function thresholdRows(): string {
     const formula = Math.max(0, Math.ceil(t.formula));
     const saved = liveLimits ? liveLimits[String(t.season)] ?? null : (t.set ? t.gameLimit : null);
     const value = op ? op.limit : saved;
-    const state = t.live ? 'сезон триває' : value === null ? `${formula} (формула)` : `${value} (адмін)`;
-    const edit = t.live ? '<span class="label">можна змінити після кінця сезону</span>'
-      : `<form class="thr-form" data-season="${t.season}"><input name="limit" type="number" min="0" step="1" value="${value ?? formula}" aria-label="Поріг для S${t.season}">
-         <button class="btn" type="submit">Задати</button><button class="btn" type="button" data-reset="${t.season}">За формулою</button></form>`;
+    const state = value !== null ? `${value} (адмін, сезон закрито)` : t.live ? 'сезон триває' : `${formula} (формула)`;
+    // Setting a value closes the season (it then counts in the annual rating), even before its quarter ends.
+    const edit = `<form class="thr-form" data-season="${t.season}"><input name="limit" type="number" min="0" step="1" value="${value ?? formula}" aria-label="Поріг для S${t.season}">
+         <button class="btn" type="submit">${t.live && value === null ? 'Закрити сезон з цим порогом' : 'Задати'}</button>${value !== null ? `<button class="btn" type="button" data-reset="${t.season}">${t.live ? 'Відкрити знову' : 'За формулою'}</button>` : ''}</form>`;
     return `<div class="thr ${op ? 'pending-op' : ''}"><b>S${t.season}</b><span>формула ${t.formula.toFixed(1)} → ${formula}</span><span>зараз ${esc(state)}</span>${edit}</div>`;
   }).join('');
 }
