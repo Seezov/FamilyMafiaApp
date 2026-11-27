@@ -23,10 +23,14 @@ void main() {
         effectiveThreshold(rule: rule, configured: configured, ratingGames: games, gameDates: dates ?? s31Dates, now: now ?? oct);
 
     test('in progress: formula, rounded up, live', () {
-      final t = eff(configured: 40);
+      final t = eff();
       expect(t.gameLimit, 16);
       expect(t.formula, closeTo(15.4, 1e-9));
       expect(t.live, isTrue);
+    });
+    test('the admin value closes the season before its quarter ends', () {
+      final t = eff(configured: 40);
+      expect((t.gameLimit, t.live), (40, false));
     });
     test('exact integer is not pushed up by float noise', () {
       expect(eff(games: [122, 91, 87]).gameLimit, 55);

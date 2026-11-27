@@ -1,3 +1,4 @@
+import 'package:family_mafia_app/enums/game_limit_rule.dart';
 import 'package:family_mafia_app/enums/role.dart';
 import 'package:family_mafia_app/models/best_moves.dart';
 import 'package:family_mafia_app/models/player.dart';
@@ -103,16 +104,22 @@ final filteredPlayersProvider = Provider<List<Player>>((ref) {
       .toList();
 });
 
-/// Seasons still being played today (see [seasonInProgress]).
+/// Seasons still being played today (see [seasonInProgress]). A top-3 season
+/// whose final threshold an admin has set (`config/club.gameLimits`, /debug/)
+/// is closed, even before its quarter ends.
 final seasonsInProgressProvider = Provider<Set<int>>((ref) {
   final dates = <int, List<DateTime>>{};
   for (final g in ref.watch(gamesRepositoryProvider)) {
     if (g.date != null) (dates[g.seasonId] ??= []).add(g.date!);
   }
+  final closed = {
+    for (final c in ref.watch(loadedSeasonConfigsProvider))
+      if (c.gameLimitRule == GameLimitRule.top3 && c.gameLimitSet) c.id,
+  };
   final now = ref.watch(clockProvider)();
   return {
     for (final e in dates.entries)
-      if (seasonInProgress(e.value, now: now)) e.key,
+      if (!closed.contains(e.key) && seasonInProgress(e.value, now: now)) e.key,
   };
 });
 

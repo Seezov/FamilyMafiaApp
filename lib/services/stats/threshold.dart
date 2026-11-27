@@ -27,7 +27,8 @@ SeasonThreshold effectiveThreshold({
   }
   final formula = formulaThreshold(ratingGames);
   final rounded = max(0, formula.ceil());
-  final live = seasonInProgress(gameDates, now: now);
+  // The admin's final value closes the season, even before its quarter ends.
+  final live = configured == null && seasonInProgress(gameDates, now: now);
   return (
     gameLimit: live ? rounded : configured ?? rounded,
     formula: formula,
