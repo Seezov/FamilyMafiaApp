@@ -22,5 +22,10 @@ describe('parseInvites', () => {
       'Рядок 4: ann@gmail.com уже є вище',
     ]);
   });
+  it('an email with dashes, and a «-» separator', () => {
+    const r = parseInvites('claude-test@my-site.com — мілок\nann.b@x-y.ua - Green\nc@d.com;Green', aliases);
+    expect(r.errors).toEqual([]);
+    expect(r.invites.map((i) => i.email)).toEqual(['claude-test@my-site.com', 'ann.b@x-y.ua', 'c@d.com']);
+  });
   it('inviteKey trims and lower-cases', () => expect(inviteKey(' A@B.com ')).toBe('a@b.com'));
 });

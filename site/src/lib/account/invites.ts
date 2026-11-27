@@ -21,7 +21,8 @@ export function parseInvites(text: string, aliases: Map<string, string>): { invi
   text.split(/\r?\n/).forEach((raw, i) => {
     const line = raw.trim();
     if (!line) return;
-    const m = /^(\S+?)[\s,;:—–-]+(.+)$/.exec(line);
+    // The email runs up to a space, comma, semicolon or dash «—/–» (a «-» may be inside the email).
+    const m = /^([^\s,;—–]+)[\s,;:—–]+(.+)$/.exec(line);
     const where = `Рядок ${i + 1}`;
     if (!m || !EMAIL.test(m[1])) { errors.push(`${where}: спершу імейл, потім нік`); return; }
     const email = inviteKey(m[1]);
