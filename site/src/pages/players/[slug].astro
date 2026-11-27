@@ -16,7 +16,10 @@ export function getStaticPaths() {
 const p = loadPlayer(Astro.params.slug!);
 const prof = profileFor(p.slug);
 const shown = prof?.nick ?? p.name;
-const a = p.accomplishments;
+// Tournament prizes are hidden for now (tournament data is not ready); the total counts what is shown.
+const HIDDEN_GROUPS = new Set(['Призові місця на турнірах']);
+const groups = p.accomplishments.groups.filter((g) => !HIDDEN_GROUPS.has(g.title));
+const a = { groups, total: groups.reduce((n, g) => n + g.cards.reduce((m, c) => m + c.count, 0), 0) };
 const roleColor = { civilian: 'var(--civilian)', sheriff: 'var(--sheriff)', mafia: 'var(--mafia)', don: 'var(--don)' } as const;
 const bm = p.bestMoves;
 const fk = p.firstKill;
