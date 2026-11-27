@@ -7,8 +7,8 @@ import { scopeStats } from '../../lib/players/scope';
 const { players, table } = loadPlayers();
 const minGames = [0, 10, 50, 100, 500];
 const scope = scopeStats(players as { slug: string; games: number; winRate: number }[], loadFederationGames().players);
-// The «+ Tournaments» toggle is hidden until federation games count correctly.
-const hasTournaments = false;
+// The «+ Tournaments» toggle is for admins only until federation games count correctly (shown by Base's admin flag).
+const hasTournaments = Object.keys(scope).length > 0;
 ---
 <Base title="Гравці" description={`Гравці Family Mafia Club (${players.length}): ігри, відсоток перемог, сезони.`} active="players">
   <div class="pagehead">
@@ -22,7 +22,7 @@ const hasTournaments = false;
       ))}
     </nav>
     {hasTournaments && (
-      <nav class="pills" id="scope" aria-label="Які ігри рахувати">
+      <nav class="pills admin-only" id="scope" aria-label="Які ігри рахувати" hidden>
         <a class="pill" href="?" data-t="0" aria-current="true">Ігри сезонів</a>
         <a class="pill" href="?t=1" data-t="1" title="Додає турнірні ігри федерацій з підтверджених профілів; ігри, які вже є в клубному рейтингу, рахуються один раз">+ Турніри</a>
       </nav>
@@ -55,7 +55,7 @@ const hasTournaments = false;
   input.value = params.get('q') ?? '';
   let min = Number(params.get('games')) || 0;
   if (!pills.some((p) => Number(p.dataset.min) === min)) min = 0;
-  let tournaments = scopePills.length > 0 && params.get('t') === '1';
+  let tournaments = scopePills.length > 0 && !document.getElementById('scope')!.hidden && params.get('t') === '1';
 
   // Swaps Games and WR between season-only and season + tournament values, then re-sorts.
   const applyScope = () => {

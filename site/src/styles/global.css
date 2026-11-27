@@ -78,6 +78,7 @@ h1.display { font-size: clamp(30px, 4.5vw, 52px); line-height: 1.05; margin: 0; 
 }
 .pill:hover { color: var(--text); }
 .pill[aria-current='true'] { color: var(--panel); border-color: var(--text); background: var(--text); }
+.admin-only[hidden] { display: none !important; }
 .pagehead { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; }
 /* Page head: a full-width white band under the header, content aligned with .wrap (like the season head). */
 main.wrap > .pagehead:first-child {
