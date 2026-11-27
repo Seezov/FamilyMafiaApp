@@ -11,7 +11,7 @@ interface Props {
 }
 const { title, description = 'Статистика Family Mafia Club: сезони, гравці, рекорди, турніри.', active } = Astro.props;
 const { latestSeasonId } = loadIndex();
-// Overview, Records, Tournaments, All Stars and Debug are hidden from the menu for now (pages still build).
+// Overview, Records, Tournaments and All Stars are hidden from the menu for now (pages still build); Debug shows for admins only.
 const nav = [
   { key: 'season', label: 'Сезон', url: href(`season/${latestSeasonId}/`) },
   { key: 'players', label: 'Гравці', url: href('players/') },
@@ -59,6 +59,7 @@ const fullTitle = title === site ? title : `${title} · ${site}`;
           {nav.map((n) => (
             <a href={n.url} aria-current={n.key === active ? 'page' : undefined}>{n.label}</a>
           ))}
+          <a href={href('debug/')} class="admin-only" hidden aria-current={active === 'debug' ? 'page' : undefined}>Debug</a>
         </nav>
         <a class="host-btn" href={href('host/')} aria-current={active === 'host' ? 'page' : undefined}>Провести гру</a>
         <a class="account" href={href('account/')} aria-label="Мій профіль" title="Мій профіль"><span>Увійти</span></a>
@@ -81,6 +82,8 @@ const fullTitle = title === site ? title : `${title} · ${site}`;
         root.dataset.theme = light ? 'dark' : 'light';
         try { localStorage.setItem('theme', root.dataset.theme); } catch {}
       });
+      // Admin-only links: the flag is set by pages that check the signed-in user (lib/admin-flag.ts).
+      try { if (localStorage.getItem('fm-admin') === '1') document.querySelectorAll('.admin-only').forEach((a) => { a.hidden = false; }); } catch {}
       try {
         const acc = JSON.parse(localStorage.getItem('fm-account') || 'null');
         const a = document.querySelector('.account');
@@ -115,6 +118,7 @@ const fullTitle = title === site ? title : `${title} · ${site}`;
   .tabs a { display: flex; align-items: center; padding: 0 16px; color: var(--header-muted);
     font-weight: 600; white-space: nowrap; }
   .tabs a:hover { color: var(--header-text); }
+  .tabs a[hidden] { display: none; }
   .tabs a[aria-current='page'] { color: var(--header-text); box-shadow: inset 0 -3px var(--city); }
   .host-btn { margin-left: auto; padding: 8px 14px; border: 1.5px solid var(--header-text); color: var(--header-text);
     font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: .06em; white-space: nowrap; }

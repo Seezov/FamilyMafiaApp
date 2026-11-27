@@ -1,6 +1,7 @@
 // Firebase client for the /host/ page. Thin on purpose: all game logic lives in
 // form.ts / validate.ts (unit-tested); access control lives in firestore.rules.
 import { onAuthStateChanged } from 'firebase/auth';
+import { rememberAdmin } from '../admin-flag';
 import {
   collection, doc, getDoc, getDocs, query, runTransaction, serverTimestamp, where, type Timestamp,
 } from 'firebase/firestore';
@@ -15,9 +16,10 @@ export class StaleGameError extends Error {}
 
 export function onUser(cb: (u: HostUser | null | 'not-host') => void) {
   onAuthStateChanged(auth, async (u) => {
-    if (!u?.email) return cb(null);
+    if (!u?.email) { rememberAdmin(false); return cb(null); }
     const host = await getDoc(doc(db, 'hosts', u.email)).catch(() => null);
-    if (!host?.exists()) return cb('not-host');
+    if (!host?.exists()) { rememberAdmin(false); return cb('not-host'); }
+    rememberAdmin(host.data().admin === true);
     cb({ uid: u.uid, email: u.email, name: String(host.data().name ?? u.email), admin: host.data().admin === true });
   });
 }

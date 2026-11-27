@@ -1,5 +1,6 @@
 // Firestore calls for /account/ and /account/admin/. Shapes must match firestore.rules.
 import { onAuthStateChanged } from 'firebase/auth';
+import { rememberAdmin } from '../admin-flag';
 import {
   collection, deleteDoc, deleteField, doc, getDoc, getDocs, serverTimestamp, setDoc, writeBatch, type Timestamp,
 } from 'firebase/firestore';
@@ -12,8 +13,9 @@ export type AccountUser = { uid: string; email: string; name: string; admin: boo
 
 export function onAccount(cb: (u: AccountUser | null) => void) {
   onAuthStateChanged(auth, async (u) => {
-    if (!u?.email) return cb(null);
+    if (!u?.email) { rememberAdmin(false); return cb(null); }
     const host = await getDoc(doc(db, 'hosts', u.email)).catch(() => null);
+    rememberAdmin(host?.exists() === true && host.data().admin === true);
     cb({ uid: u.uid, email: u.email, name: u.displayName ?? u.email, admin: host?.exists() === true && host.data().admin === true });
   });
 }

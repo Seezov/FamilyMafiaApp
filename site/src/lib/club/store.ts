@@ -1,6 +1,7 @@
 // Firebase client for /debug/'s club config. Access control lives in firestore.rules
 // (config/club: public read, admin write).
 import { onAuthStateChanged } from 'firebase/auth';
+import { rememberAdmin } from '../admin-flag';
 import { doc, getDoc, runTransaction, serverTimestamp } from 'firebase/firestore';
 import { auth, db, signIn, signOutUser } from '../firebase';
 import { applyOps, clubBody, type ClubDoc, type Op, type SeasonConfigFile } from '../config-edit';
@@ -14,9 +15,10 @@ const stamp = (u: ClubAdmin) => ({ updatedAt: serverTimestamp(), updatedBy: u.ui
 
 export function onClubUser(cb: (u: ClubAdmin | null | 'not-host') => void) {
   onAuthStateChanged(auth, async (u) => {
-    if (!u?.email) return cb(null);
+    if (!u?.email) { rememberAdmin(false); return cb(null); }
     const host = await getDoc(doc(db, 'hosts', u.email)).catch(() => null);
-    if (!host?.exists()) return cb('not-host');
+    if (!host?.exists()) { rememberAdmin(false); return cb('not-host'); }
+    rememberAdmin(host.data().admin === true);
     cb({ uid: u.uid, email: u.email, name: String(host.data().name ?? u.email), admin: host.data().admin === true });
   });
 }
