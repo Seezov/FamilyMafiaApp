@@ -9,8 +9,22 @@ List<Game> _getGamesDataSeason(
   final chunkSize = seasonId <= kLegacyMaxSeason ? kOldChunkSize : kNewChunkSize;
   return rawData
       .chunked(chunkSize)
-      .map((p) => _buildGame(seasonId, p, sheet: sheet))
+      .map((p) => _fixSheetDate(_buildGame(seasonId, p, sheet: sheet)))
       .toList();
+}
+
+/// [kSheetDateFixes]: a sheet date typo replaced by the real one.
+Game _fixSheetDate(Game g) {
+  if (g.date == null) return g;
+  for (final f in kSheetDateFixes) {
+    if (f.season == g.seasonId &&
+        f.sheetDate == g.date &&
+        (f.withPlayer == null ||
+            g.players.any((p) => p.trim().toLowerCase() == f.withPlayer!.toLowerCase()))) {
+      return g.copyWith(date: f.date);
+    }
+  }
+  return g;
 }
 
 /// A season's JSON is either sheet rows (a list) or a firestore snapshot (a map).

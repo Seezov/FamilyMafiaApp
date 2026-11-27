@@ -97,6 +97,17 @@ const kCiFactorNew = 0.5;
 /// Seasons 21+: CI multiplier for proportional compensation (ratio * 1.25).
 const kCiMultiplierNew = 1.25;
 
+/// Wrong dates in season sheets, corrected from the club's Telegram announcements
+/// (closed Tuesday minicaps). Only game dates change (game list, tournaments on
+/// /debug/); ratings never read them. A fix applies to the season's games with
+/// [sheetDate] whose players include [withPlayer] (any game when null).
+final kSheetDateFixes = <({int season, DateTime sheetDate, String? withPlayer, DateTime date})>[
+  // Season 15: the 15.11.2022 minicap (host Кори) is dated 11.03.2023.
+  (season: 15, sheetDate: DateTime.utc(2023, 3, 11), withPlayer: null, date: DateTime.utc(2022, 11, 15)),
+  // Season 16: the 21.02.2023 minicap (host Braun) sits under 19.02.2023, games 8–11 of that day.
+  (season: 16, sheetDate: DateTime.utc(2023, 2, 19), withPlayer: 'Horizon', date: DateTime.utc(2023, 2, 21)),
+];
+
 /// What /host/ saves for a seat the host left without a name (a newcomer or guest,
 /// confirmed in a prompt). Games from Firestore read it as an empty seat
 /// (`_blank_N`): the game counts for the other nine, the guest gets no rating

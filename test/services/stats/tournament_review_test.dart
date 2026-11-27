@@ -93,6 +93,16 @@ void main() {
     expect(eveningMatches(found.single, _t('17.11.2023')), isFalse);
   });
 
+  test('a closed table of three games under one host is found; two games are not', () {
+    final a = _ten();
+    final day = DateTime.utc(2023, 2, 21);
+    final three = [for (var i = 0; i < 3; i++) _game(players: a, date: day)];
+    expect(detectEvenings(three), hasLength(1));
+    expect(detectEvenings(three.take(2).toList()), isEmpty);
+    // Three games, eight of ten the same: not a closed table, needs four.
+    final b = [...a.take(8), 'X1', 'X2'];
+    expect(detectEvenings([_game(players: a, date: day), _game(players: b, date: day), _game(players: a, date: day)]), isEmpty);
+  });
   test('S21 minicaps: the computed top 3 is the recorded podium', () async {
     final c = await fixtureContainer();
     final games = c.read(gamesRepositoryProvider);

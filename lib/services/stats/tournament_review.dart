@@ -105,8 +105,10 @@ String _iso(DateTime d) => d.toIso8601String().substring(0, 10);
 
 /// Runs of at least [minGames] games where every game shares 8+ players with
 /// the first one, with at most two distinct tables and one host for all but
-/// one game. [games] must be in sheet order.
-List<DetectedEvening> detectEvenings(List<Game> games, {int minGames = 4}) {
+/// one game; or a closed table of [closedMinGames]+ games with the same ten
+/// players (a minicap whose fourth game was unrated or misfiled). [games] must
+/// be in sheet order.
+List<DetectedEvening> detectEvenings(List<Game> games, {int minGames = 4, int closedMinGames = 3}) {
   final out = <DetectedEvening>[];
   var i = 0;
   while (i < games.length) {
@@ -119,10 +121,11 @@ List<DetectedEvening> detectEvenings(List<Game> games, {int minGames = 4}) {
       j++;
     }
     final run = games.sublist(i, j);
-    if (first.seasonId >= 2 && run.length >= minGames) {
-      final tables = {
-        for (final g in run) (g.players.toList()..sort()).join('|'),
-      };
+    final tables = {
+      for (final g in run) (g.players.toList()..sort()).join('|'),
+    };
+    final closed = tables.length == 1 && !run.first.players.any((p) => p.startsWith('_blank_'));
+    if (first.seasonId >= 2 && (run.length >= minGames || (closed && run.length >= closedMinGames))) {
       final evening = DetectedEvening(first.seasonId, run);
       final topHost = evening.hosts.values.reduce((a, b) => a > b ? a : b);
       if (tables.length <= 2 && topHost >= run.length - 1) out.add(evening);
