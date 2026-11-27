@@ -81,6 +81,31 @@ void main() {
     expect([for (final x in s) x.rank], [1, 2, 2]);
   });
 
+  test('equal points: more top-3 places ranks higher; same top-3 shares the rank', () {
+    AnnualEvent ev(String id, AnnualKind kind, List<AnnualResult> r) =>
+        AnnualEvent(id: id, year: 2026, kind: kind, name: id, results: r);
+    final events = [
+      ev('s1', AnnualKind.series, [AnnualResult('A', 3), AnnualResult('B', 4), AnnualResult('C', 4)]), // 6, 4, 4
+      ev('s2', AnnualKind.series, [AnnualResult('B', 6), AnnualResult('C', 6)]), // B, C: +2 → 6
+    ];
+    final s = annualStandings(events, keyOf: (n) => n);
+    expect([for (final x in s) (x.key, x.score, x.rank)], [('A', 6.0, 1), ('B', 6.0, 2), ('C', 6.0, 2)]);
+  });
+
+  test('from 2026 only the 2 best online results count', () {
+    AnnualEvent ev(int i, String name, int place, {int year = 2026}) => AnnualEvent(
+        id: 'e$i', year: year, kind: AnnualKind.series, name: name, results: [AnnualResult('A', place)]);
+    final s = annualStandings([
+      ev(1, 'Cup Online 1', 1), ev(2, 'Cup ONLINE 2', 2), ev(3, 'Кубок онлайн', 3), ev(4, 'Offline', 4),
+    ], keyOf: (n) => n).single;
+    expect(s.score, 10 + 8 + 4); // the third online (6) is over the cap
+    expect(s.entries.where((e) => e.overOnlineCap).map((e) => e.event.name), ['Кубок онлайн']);
+    final old = annualStandings([
+      for (var i = 1; i <= 3; i++) ev(i, 'Cup Online $i', i, year: 2025),
+    ], keyOf: (n) => n).single;
+    expect(old.score, 10 + 8 + 6); // no cap before 2026
+  });
+
   test('seasonYear: winter counts in the year it ends', () {
     expect(seasonYear([DateTime.utc(2025, 12, 5), DateTime.utc(2026, 1, 10), DateTime.utc(2026, 2, 1)]), 2026);
     expect(seasonYear([DateTime.utc(2025, 12, 5), DateTime.utc(2025, 12, 20), DateTime.utc(2026, 1, 3)]), 2026);

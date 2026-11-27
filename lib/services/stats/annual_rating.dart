@@ -34,7 +34,18 @@ class AnnualEntry {
 
   /// One of the player's 12 best results, the ones the score sums.
   bool counted = false;
+
+  /// Over the yearly cap on online events ([kAnnualOnlineCounted]): never counted.
+  bool overOnlineCap = false;
 }
+
+/// An online event: its name says so (EG names them «… Online …» / «… онлайн …»).
+bool isOnlineEvent(AnnualEvent e) => RegExp(r'online|онлайн', caseSensitive: false).hasMatch(e.name);
+
+/// From this year on only a player's [kAnnualOnlineCounted] best online results
+/// count (club rules for 2026: «Онлайн рахуються тільки 2 кращих турніри»).
+const kAnnualOnlineCapFrom = 2026;
+const kAnnualOnlineCounted = 2;
 
 class AnnualStanding {
   AnnualStanding(this.key, this.name, this.entries)
@@ -55,9 +66,20 @@ class AnnualStanding {
 
   static double _score(List<AnnualEntry> entries) {
     var sum = 0.0;
-    for (final e in entries.take(kAnnualCountedEvents)) {
+    var online = 0;
+    var taken = 0;
+    for (final e in entries) {
+      if (e.event.year >= kAnnualOnlineCapFrom && isOnlineEvent(e.event)) {
+        if (online >= kAnnualOnlineCounted) {
+          e.overOnlineCap = true;
+          continue;
+        }
+        online++;
+      }
+      if (taken >= kAnnualCountedEvents) continue;
       e.counted = true;
       sum += e.points;
+      taken++;
     }
     return (sum * 100).round() / 100;
   }
@@ -83,11 +105,15 @@ List<AnnualStanding> annualStandings(Iterable<AnnualEvent> events,
     for (final MapEntry(key: k, value: (name, entries)) in byKey.entries)
       AnnualStanding(k, name, entries..sort((a, b) => b.points.compareTo(a.points)))
   ]..sort((a, b) {
+      // Equal points: more top-3 places ranks higher (club rules).
       final c = b.score.compareTo(a.score);
-      return c != 0 ? c : a.name.compareTo(b.name);
+      if (c != 0) return c;
+      final t = b.top3.compareTo(a.top3);
+      return t != 0 ? t : a.name.compareTo(b.name);
     });
   for (var i = 0; i < out.length; i++) {
-    out[i].rank = i > 0 && out[i].score == out[i - 1].score ? out[i - 1].rank : i + 1;
+    final tie = i > 0 && out[i].score == out[i - 1].score && out[i].top3 == out[i - 1].top3;
+    out[i].rank = tie ? out[i - 1].rank : i + 1;
   }
   return out;
 }

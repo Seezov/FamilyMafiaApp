@@ -119,6 +119,10 @@ default branch.
   prefetch snapshots them into `assets/prefetched/annual_events.json`. Club seasons from S28 are added by
   the export once finished (main league 1…N, small league top 5 as 101–105, year of the season's last month).
   2024–2025 came from the sheets once (`tool/import/`).
+  Rules (club post for 2026): sum of the 12 best results; equal points → more top-3 places ranks higher; from 2026
+  only the 2 best online events count (online = «online/онлайн» in the event name); only club members (EG club
+  «Family Mafia Club») are entered. Series: a stage = `series`; a semifinal = `tournament` with the semifinal's stars
+  and player count; a final = `tournament` with 5★ and 20 players.
 - **All-star tournaments («Річні турніри»):** `/allstars/` (+ `/allstars/<year>/`) from
   `site/data/allstars.json` (`lib/site_export/allstars_export.dart`). Source is the committed
   `assets/raw/allstars.json`: Royal Battle '19 and FAS 2022–2023 written once from the sheets by
