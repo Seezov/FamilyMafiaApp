@@ -20,19 +20,26 @@ const cols = [
 const shown = cols.filter((c) => g.seats.some((s) => s[c.k] !== undefined));
 const cell = (s: GameEntry['seats'][number], k: (typeof cols)[number]['k']) =>
   k === 'won' ? (s.won ? '1' : '') : k === 'fouls' ? (s.fouls ? String(s.fouls) : '') : fmtPts(s[k]);
+const tone = (s: GameEntry['seats'][number], k: (typeof cols)[number]['k']) => {
+  const v = k === 'won' || k === 'fouls' ? undefined : s[k];
+  return v === undefined || v === 0 ? undefined : v > 0 ? 'pos' : 'neg';
+};
 const seatName = (n: number) => g.seats[n - 1]?.player ?? '—';
-const guesses = (cs: ColorGuess[]) => cs.map((c) => `${c.seat}${c.black ? '●' : '○'}`).join(' ');
 const keys = g.seats.map((s) => s.key).filter(Boolean).join('|');
+const best = g.result === 'unrated' ? undefined
+  : g.seats.filter((s) => s.player && s.total !== undefined).sort((a, b) => (b.total ?? 0) - (a.total ?? 0))[0];
 ---
-<details class="game" id={g.id} data-keys={keys} data-host={g.host ?? ''}>
+<details class="game" id={g.id} data-keys={keys} data-host={g.host ?? ''} data-result={g.result}>
   <summary>
-    <span class="num">#{g.n}</span>
-    <span class="host">{g.host ?? '—'}</span>
-    <span class={`res ${g.result}`}>{result}</span>
-    {g.label && <span class="label">{g.label}</span>}
+    <span class="n display">#{g.n}</span>
+    <span class={`res r-${g.result}`}>{result}</span>
+    <span class="col host"><span class="cap">Ведучий</span><span class="strong">{g.host ?? '—'}</span></span>
+    {g.label && <span class="tag">{g.label}</span>}
     {g.seats.filter((s) => s.key).map((s) => (
-      <span class="pick" data-k={s.key} hidden>{roleLabel[s.role] ?? s.role} · {fmtPts(s.total) || '0'}</span>
+      <span class="pick" data-k={s.key} hidden><span class={`dot d-${s.role}`} />{roleLabel[s.role] ?? s.role} · {fmtPts(s.total) || '0'}</span>
     ))}
+    {best && <span class="col best"><span class="cap">Кращий гравець</span><span><span class="strong">{best.player}</span> <span class="tone-pos strong">{fmtPts(best.total)}</span></span></span>}
+    <span class="chev" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" /></svg></span>
   </summary>
   <div class="body">
     <div class="scroll">
@@ -44,25 +51,37 @@ const keys = g.seats.map((s) => s.key).filter(Boolean).join('|');
         </tr></thead>
         <tbody>
           {g.seats.map((s) => (
-            <tr>
-              <td class="num">{s.n}</td>
-              <td>{s.player ? (s.slug ? <PlayerName slug={s.slug} name={s.player} /> : s.player) : '—'}</td>
-              <td class={`role ${s.role}`}>{roleLabel[s.role] ?? s.role}</td>
-              {shown.map((c) => <td class="num">{cell(s, c.k)}</td>)}
+            <tr class:list={{ won: s.won }}>
+              <td class="num seat">{s.n}</td>
+              <td class="player">{s.player ? (s.slug ? <PlayerName slug={s.slug} name={s.player} /> : s.player) : '—'}</td>
+              <td><span class={`role r-${s.role}`}>{roleLabel[s.role] ?? s.role}</span></td>
+              {shown.map((c) => <td class:list={['num', tone(s, c.k) && `tone-${tone(s, c.k)}`]}>{cell(s, c.k)}</td>)}
               <td class="num total">{fmtPts(s.total)}</td>
             </tr>
           ))}
         </tbody>
       </table>
     </div>
-    {g.firstKilled && <p><b title="Перший убитий">ПУ:</b> {g.firstKilled} · {seatName(g.firstKilled)}</p>}
-    {g.bestMove && <p><b title="Кращий хід">{autoLabel}:</b> {g.bestMove.join(', ')}{g.bestMovePoints !== undefined && <> ({fmtPts(g.bestMovePoints)})</>}</p>}
-    {g.supportFive && <p><b>Опорна 5:</b> {guesses(g.supportFive)}</p>}
-    {g.protocol && (
-      <div><b>Протокол</b>
-        <ol>{g.protocol.map((p) => (
-          <li>{p.killed} · {seatName(p.killed)}{p.version && <> — шериф {p.version}</>}{p.colors.length > 0 && <> — {guesses(p.colors)}</>}</li>
-        ))}</ol>
+    {(g.firstKilled || g.bestMove || g.supportFive || g.protocol) && (
+      <div class="facts">
+        {g.firstKilled && (
+          <div class="fact"><div class="cap" title="Перший убитий">Перший убитий</div><div><span class="seatno">{g.firstKilled}</span> {seatName(g.firstKilled)}</div></div>
+        )}
+        {g.bestMove && (
+          <div class="fact"><div class="cap" title="Кращий хід">{autoLabel}</div><div class="chips">{g.bestMove.map((n) => <span class="seatno">{n}</span>)}{g.bestMovePoints !== undefined && <span class="strong">{fmtPts(g.bestMovePoints)}</span>}</div></div>
+        )}
+        {g.supportFive && (
+          <div class="fact"><div class="cap">Опорна 5</div><div class="chips">{g.supportFive.map((c: ColorGuess) => <span class:list={['seatno', c.black ? 'black' : 'red']} title={c.black ? 'чорний' : 'червоний'}>{c.seat}</span>)}</div></div>
+        )}
+        {g.protocol && (
+          <div class="fact wide"><div class="cap">Протокол</div>
+            <ol class="proto">{g.protocol.map((p) => (
+              <li><span class="seatno">{p.killed}</span> {seatName(p.killed)}{p.version && <span class="muted"> · шериф {p.version}</span>}
+                {p.colors.length > 0 && <span class="chips inline">{p.colors.map((c) => <span class:list={['seatno', c.black ? 'black' : 'red']} title={c.black ? 'чорний' : 'червоний'}>{c.seat}</span>)}</span>}
+              </li>
+            ))}</ol>
+          </div>
+        )}
       </div>
     )}
     {g.comments && (
@@ -75,17 +94,63 @@ const keys = g.seats.map((s) => s.key).filter(Boolean).join('|');
 </details>
 
 <style>
-  .game { border-bottom: 1px solid var(--border); }
-  .game summary { display: flex; gap: 12px; align-items: baseline; padding: 8px 0; cursor: pointer; flex-wrap: wrap; }
-  .res.city { color: var(--city); } .res.mafia { color: var(--mafia); } .res.unrated { color: var(--muted); }
-  .label, .pick { color: var(--muted); font-size: .9em; }
+  .game + .game { border-top: 1px solid var(--line); }
+  summary { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; padding: 12px 20px; cursor: pointer; list-style: none; }
+  summary::-webkit-details-marker { display: none; }
+  summary:hover { background: var(--panel-2); }
+  .n { width: 44px; font-size: 22px; color: var(--muted); }
+  .res { width: 100px; padding: 5px 0; text-align: center; font-weight: 700; font-size: 12px; text-transform: uppercase; color: #fff; }
+  .r-city { background: var(--role-civilian-bg); } .r-mafia { background: var(--role-mafia-bg); } .r-unrated { background: var(--muted); }
+  .col { display: flex; flex-direction: column; line-height: 1.35; }
+  .host { flex: 1; min-width: 120px; }
+  .best { text-align: right; }
+  .cap { font-size: 12px; color: var(--muted); }
+  .strong { font-weight: 700; }
+  .muted { color: var(--muted); }
+  .tag { font-size: 12px; font-weight: 600; padding: 3px 8px; background: var(--bg); color: var(--muted); }
+  .pick[hidden] { display: none; }
+  .pick { font-weight: 700; display: inline-flex; align-items: center; gap: 6px; padding: 3px 8px; background: var(--bg); }
+  .dot { width: 8px; height: 8px; display: inline-block; }
+  .d-civilian { background: var(--role-civilian-bg); } .d-sheriff { background: var(--role-sheriff-bg); }
+  .d-mafia { background: var(--role-mafia-bg); } .d-don { background: var(--role-don-bg); }
+  .chev svg { width: 18px; height: 18px; fill: none; stroke: var(--muted); stroke-width: 2; transition: transform .15s; display: block; }
+  details[open] .chev svg { transform: rotate(180deg); }
+  details[open] summary { background: var(--panel-2); }
+  .body { padding: 16px 20px 18px; border-top: 1px solid var(--line); }
   .scroll { overflow-x: auto; }
-  table { border-collapse: collapse; min-width: 100%; }
-  th, td { padding: 4px 8px; text-align: left; white-space: nowrap; border: 1px solid var(--border); }
-  th { color: var(--muted); font-weight: 500; }
-  th.num, td.num { text-align: center; font-variant-numeric: tabular-nums; }
-  .role.civilian { color: var(--civilian); } .role.sheriff { color: var(--sheriff); }
-  .role.mafia { color: var(--mafia); } .role.don { color: var(--don); }
+  table { border-collapse: collapse; min-width: 100%; font-variant-numeric: tabular-nums; }
+  th, td { padding: 0 10px; height: 36px; text-align: left; white-space: nowrap; border-bottom: 1px solid var(--line); }
+  th { background: var(--panel-2); color: var(--muted); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; height: 32px; }
+  th.num, td.num { text-align: center; }
+  td.seat { color: var(--muted); font-family: var(--font-display); font-weight: 700; width: 40px; }
+  td.player { font-weight: 600; }
+  tr.won td.player { font-weight: 800; }
+  td.total { font-weight: 800; background: var(--panel-2); }
+  .role { display: inline-block; min-width: 72px; padding: 2px 8px; font-size: 12px; font-weight: 700; color: #fff; text-align: center; }
+  .role.r-civilian { background: var(--role-civilian-bg); } .role.r-sheriff { background: var(--role-sheriff-bg); }
+  .role.r-mafia { background: var(--role-mafia-bg); } .role.r-don { background: var(--role-don-bg); }
+  .facts { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(200px, 100%), 1fr)); gap: 12px; margin-top: 14px; }
+  .fact { background: var(--panel-2); padding: 10px 12px; display: grid; gap: 6px; align-content: start; }
+  .fact.wide { grid-column: 1 / -1; }
+  .chips { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+  .chips.inline { display: inline-flex; margin-left: 8px; vertical-align: middle; }
+  .seatno { display: inline-grid; place-items: center; min-width: 24px; height: 24px; padding: 0 4px; font-weight: 700; font-size: 12px;
+    background: var(--bg); color: var(--text); box-shadow: inset 0 0 0 1px var(--border); }
+  .seatno.red { background: var(--role-civilian-bg); color: #fff; }
+  .seatno.black { background: var(--role-mafia-bg); color: #fff; box-shadow: inset 0 0 0 1px var(--border); }
+  .proto { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+  .comments { margin: 14px 0 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+  .comments li { padding: 8px 12px; background: var(--panel-2); }
   .comments span { white-space: pre-line; }
-  .body { padding: 0 0 12px; }
+  .copy { margin-top: 14px; font: inherit; font-size: 13px; font-weight: 600; padding: 7px 14px; cursor: pointer;
+    background: none; color: var(--text); border: 1px solid var(--border); }
+  .copy:hover { border-color: var(--text); }
+  @media (max-width: 639px) {
+    summary { padding: 12px 16px; gap: 8px 12px; }
+    .n { width: auto; font-size: 18px; }
+    .res { width: 82px; }
+    .best { flex-basis: 100%; text-align: left; flex-direction: row; gap: 6px; }
+    .chev { margin-left: auto; }
+    .body { padding: 14px 16px; }
+  }
 </style>

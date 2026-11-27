@@ -19,7 +19,12 @@ function apply(f: GameFilters) {
     for (const p of g.querySelectorAll<HTMLElement>('.pick')) p.hidden = p.dataset.k !== f.player;
   }
   for (const group of document.querySelectorAll<HTMLElement>('.table-group, .day')) {
-    const n = group.querySelectorAll('details.game:not([hidden])').length;
+    const visible = group.querySelectorAll<HTMLElement>('details.game:not([hidden])');
+    const n = visible.length;
+    const won = (r: string) => [...visible].filter((g) => g.dataset.result === r).length;
+    const nc = group.querySelector('.n-city'), nm = group.querySelector('.n-mafia');
+    if (nc) nc.textContent = String(won('city'));
+    if (nm) nm.textContent = String(won('mafia'));
     group.hidden = n === 0;
     const c = group.querySelector('.day-count');
     if (c) {

@@ -13,26 +13,47 @@ const id = Number(Astro.params.id);
 const season = loadSeason(id);
 const data = loadGames(id);
 const total = data.days.reduce((n, d) => n + d.games.length, 0);
+const tally = (games: { result: string }[]) => ({
+  city: games.filter((g) => g.result === 'city').length,
+  mafia: games.filter((g) => g.result === 'mafia').length,
+});
 ---
 <Base title={`${season.title} · Ігри`} description={`${season.title}: усі ігри (${total})`} active="season">
   <SeasonHead id={id} tab="games" />
   <div class="toolbar">
-    <input id="f-player" aria-label="Фільтр за гравцем" list="players" placeholder="Гравець" autocomplete="off" />
+    <label class="field">
+      <span class="cap">Гравець</span>
+      <input id="f-player" list="players" placeholder="Усі гравці" autocomplete="off" />
+    </label>
     <datalist id="players">{data.players.map((p) => <option value={p.name} data-key={p.key} />)}</datalist>
-    <select id="f-host" aria-label="Фільтр за ведучим"><option value="">Усі ведучі</option>{data.hosts.map((h) => <option>{h}</option>)}</select>
-    <span id="count" class="label" aria-live="polite">{ukCount(total, GAMES)}</span>
+    <label class="field">
+      <span class="cap">Ведучий</span>
+      <select id="f-host"><option value="">Усі ведучі</option>{data.hosts.map((h) => <option>{h}</option>)}</select>
+    </label>
+    <span id="count" class="count display" aria-live="polite">{ukCount(total, GAMES)}</span>
   </div>
-  {data.days.map((d) => (
-    <section class="day">
-      <h2 class="label">{dayLabel(d.date)} · <span class="day-count">{d.games.length}</span> <span class="day-unit">{ukWord(d.games.length, GAMES)}</span></h2>
-      {tableGroups(d.games).map(({ table, games }) => (
-        <div class="table-group">
-          {table !== null && <h3 class="label">Стіл {table}</h3>}
-          {games.map((g) => <GameCard game={g} autoLabel={data.autoLabel} seasonId={id} />)}
-        </div>
-      ))}
-    </section>
-  ))}
+  <div class="days">
+    {data.days.map((d) => {
+      const t = tally(d.games);
+      return (
+        <section class="day">
+          <header>
+            <h2>{dayLabel(d.date)}</h2>
+            <span class="muted"><span class="day-count">{d.games.length}</span> <span class="day-unit">{ukWord(d.games.length, GAMES)}</span></span>
+            <span class="score" title="Перемоги міста / мафії">
+              <span class="sc c">Місто <span class="n-city">{t.city}</span></span><span class="sc m">Мафія <span class="n-mafia">{t.mafia}</span></span>
+            </span>
+          </header>
+          {tableGroups(d.games).map(({ table, games }) => (
+            <div class="table-group">
+              {table !== null && <h3>Стіл {table}</h3>}
+              {games.map((g) => <GameCard game={g} autoLabel={data.autoLabel} seasonId={id} />)}
+            </div>
+          ))}
+        </section>
+      );
+    })}
+  </div>
   <script type="application/json" id="games-players" set:html={JSON.stringify(data.players).replace(/</g, '\\u003c')} />
 </Base>
 
@@ -41,6 +62,30 @@ const total = data.days.reduce((n, d) => n + d.games.length, 0);
 </script>
 
 <style>
-  .toolbar { display: flex; gap: 12px; flex-wrap: wrap; margin: 16px 0; align-items: center; }
-  .day h2 { margin: 24px 0 4px; }
+  .toolbar { display: flex; gap: 12px 16px; flex-wrap: wrap; align-items: flex-end; margin-bottom: 20px;
+    background: var(--panel); padding: 14px 20px; }
+  .field { display: grid; gap: 4px; }
+  .cap { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+  .field input, .field select { font: inherit; min-width: 200px; height: 38px; padding: 0 10px; background: var(--panel);
+    color: var(--text); border: 1px solid var(--border); border-radius: 0; }
+  .field input:focus, .field select:focus { border-color: var(--text); outline: none; }
+  .count { margin-left: auto; font-size: 22px; text-transform: uppercase; }
+  .days { display: flex; flex-direction: column; gap: 20px; }
+  .day { background: var(--panel); }
+  .day header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; padding: 14px 20px; border-bottom: 1px solid var(--border); }
+  .day h2 { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: 22px; text-transform: uppercase; }
+  .muted { color: var(--muted); }
+  .score { margin-left: auto; display: flex; gap: 4px; align-self: center; }
+  .sc { font-size: 12px; font-weight: 700; text-transform: uppercase; padding: 3px 8px; color: #fff; }
+  .sc.c { background: var(--role-civilian-bg); } .sc.m { background: var(--role-mafia-bg); }
+  .table-group h3 { margin: 0; padding: 8px 20px; background: var(--panel-2); font-size: 12px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .04em; color: var(--muted); border-bottom: 1px solid var(--line); }
+  .table-group + .table-group { border-top: 1px solid var(--border); }
+  @media (max-width: 639px) {
+    .toolbar { padding: 12px 16px; }
+    .field { flex: 1 1 100%; }
+    .field input, .field select { min-width: 0; width: 100%; }
+    .count { margin-left: 0; }
+    .day header { padding: 12px 16px; }
+  }
 </style>
