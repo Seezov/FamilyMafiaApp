@@ -8,7 +8,7 @@ import { loadRoster } from '../lib/roster/store';
 import { aliasPairs, autocompleteNames } from '../lib/roster/roster';
 import { loadClubSeasons } from '../lib/seasons/store';
 import { followDefault, hostDefaultSeason } from '../lib/seasons/seasons';
-import { ADDITIONAL_VALUES, FOUL_VALUES, PENALTY_VALUES, PROTOCOL_VALUES } from '../lib/hosting/additional';
+import { ADDITIONAL_VALUES, PENALTY_VALUES, PROTOCOL_VALUES } from '../lib/hosting/additional';
 
 const page = JSON.parse(document.getElementById('host-data')!.textContent!) as { names: string[]; defaultSeason: number | null; aliases: [string, string][] };
 const aliases = new Map(page.aliases);
@@ -97,6 +97,7 @@ function fillSeason(id: string, cur: number | null) {
 }
 function fillGameNumber(n: number | null) { $('f-number').innerHTML = options(range(20), n, n === null ? '' : undefined); }
 
+// Fouls are not tracked for now: no column (a stored value is kept as is).
 function renderSeats() {
   $('seats').querySelector('tbody')!.innerHTML = form.seats.map((s, i) => `
     <tr class="seat" data-i="${i}">
@@ -104,7 +105,6 @@ function renderSeats() {
       <td class="pl"><input data-k="player" class="${isNew(s.player) ? 'new' : ''}" list="names" autocomplete="off"
         value="${esc(s.player)}" aria-label="Гравець ${i + 1}" title="${isNew(s.player) ? 'новий гравець' : ''}" /></td>
       <td><button type="button" class="role" data-role="${esc(s.role)}" title="${esc(s.role)}" aria-label="Роль: ${esc(s.role)}">${esc(ROLE_LETTER[s.role] ?? '?')}</button></td>
-      ${sel('fouls', 'Фоли', s.fouls ? String(s.fouls) : '', FOUL_VALUES)}
       ${sel('additional', 'Доп', s.additional, ADDITIONAL_VALUES)}${sel('penalty', 'Штраф', s.penalty, PENALTY_VALUES, true)}
       ${sel('protocolAdditional', 'ПрДод', s.protocolAdditional, PROTOCOL_VALUES)}${sel('protocolPenalty', 'ПрШтраф', s.protocolPenalty, PROTOCOL_VALUES, true)}
     </tr>`).join('');
