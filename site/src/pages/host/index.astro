@@ -103,7 +103,7 @@ const data = JSON.stringify({ names, defaultSeason, aliases }).replace(/</g, '\\
   .list { display: grid; gap: 8px; }
   .game-row { text-align: left; color: var(--text); font: inherit; cursor: pointer; width: 100%; }
 
-  .host-form { display: grid; gap: 14px; font-size: 14px; --field-border: color-mix(in srgb, var(--text) 22%, transparent); }
+  .host-form { display: grid; gap: 14px; font-size: 14px; background: var(--panel); padding: 20px; --field-border: color-mix(in srgb, var(--text) 22%, transparent); }
   .host-form input:not([type=radio]), .host-form select, .toolbar input {
     background: var(--panel); border: 1px solid var(--field-border, var(--border)); border-radius: 0; color: var(--text);
     padding: 3px 6px; font: inherit; height: 30px; min-width: 0; }
@@ -169,7 +169,7 @@ const data = JSON.stringify({ names, defaultSeason, aliases }).replace(/</g, '\\
 
   /* Phones: all eight columns without sideways scrolling. */
   @media (max-width: 560px) {
-    .host-form { font-size: 13px; }
+    .host-form { font-size: 13px; padding: 14px 12px; }
     .host-form input:not([type=radio]), .host-form select { padding: 2px 4px; }
     .seats { min-width: 0; table-layout: fixed; }
     .seats th { font-size: 9px; padding: 0 0 2px; overflow: hidden; }
