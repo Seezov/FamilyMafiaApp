@@ -26,8 +26,7 @@ const { nominations } = Astro.props;
   .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
   .n-mvp { --c: var(--award-mvp); } .n-firstKilled { --c: var(--city); }
   .n-bestRed { --c: var(--award-civilian); } .n-bestMafia { --c: var(--mafia); }
-  .card { border: 1px solid color-mix(in srgb, var(--c) 35%, var(--border)); border-radius: 10px;
-    background: linear-gradient(160deg, color-mix(in srgb, var(--c) 13%, var(--panel)) 0%, var(--panel) 70%);
+  .card { border-top: 4px solid var(--c); background: var(--panel);
     padding: 12px 14px; display: grid; gap: 8px; align-content: start; min-width: 0; }
   .title { display: flex; gap: 8px; align-items: center; font-weight: 600; }
   .icon { font-size: 18px; }

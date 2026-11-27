@@ -61,12 +61,12 @@ const { review } = loadFederationGames();
   .list :global(.act) { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-left: auto; }
   .list :global(.feds) { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px; }
   .list :global(.fed) { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
-  .list :global(.cand) { border: 1px solid var(--border); border-radius: 8px; padding: 6px 8px; overflow-wrap: anywhere; }
+  .list :global(.cand) { border: 1px solid var(--border); border-radius: 0; padding: 6px 8px; overflow-wrap: anywhere; }
   .list :global(.cand.linked) { border-color: var(--text); }
   .list :global(.cand.rejected) { opacity: .55; }
   .list :global(.meta), .list :global(.none) { color: var(--muted); font-size: .9em; }
   .list :global(.warn) { color: var(--city); font-size: .9em; }
-  .list :global(.badge) { font-size: .8em; border-radius: 999px; padding: 0 6px; border: 1px solid var(--border); }
+  .list :global(.badge) { font-size: .8em; border-radius: 0; padding: 0 6px; border: 1px solid var(--border); }
   .list :global(.badge.club) { border-color: currentColor; font-weight: 600; }
   .list :global(.un) { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; padding: 8px 0; border-top: 1px solid var(--border); }
   .list :global(.seats) { border-collapse: collapse; font-size: .9em; }

@@ -37,7 +37,7 @@ const placeTip = (p: number) => (p > 100 ? `Мала ліга #${p - 100}` : und
         {y.standings.map((s) => (
           <details class="st">
             <summary class="row" role="row">
-              <span class="num">{s.rank}</span>
+              <span class:list={['num rank', s.rank <= 3 && `r${s.rank}`]}>{s.rank}</span>
               <span>{s.player.link ? <PlayerName slug={s.player.link} name={s.player.t} /> : s.player.t}</span>
               <span class="num strong">{s.score}</span><span class="num">{s.wins}</span>
               <span class="num">{s.top3}</span><span class="num">{s.top10}</span><span class="num">{s.events}</span>
@@ -86,11 +86,15 @@ const placeTip = (p: number) => (p > 100 ? `Мала ліга #${p - 100}` : und
 </Base>
 
 <style>
-  .years { display: flex; gap: 8px; flex-wrap: wrap; }
-  .years a { padding: 2px 10px; border: 1px solid var(--border); border-radius: 999px; }
-  .years a[aria-current='page'] { background: var(--text); color: var(--bg); }
-  .standings .row { display: grid; grid-template-columns: 2.5em 1fr repeat(5, 4.2em); gap: 6px; align-items: center; padding: 6px 4px; }
-  .standings .head { color: var(--muted); font-size: 0.85em; }
+  .years { display: flex; gap: 4px; flex-wrap: wrap; padding: 4px; background: var(--bg); margin-left: auto; }
+  .years a { padding: 7px 13px; font-weight: 600; color: var(--muted); }
+  .years a:hover { color: var(--text); }
+  .years a[aria-current='page'] { background: var(--text); color: var(--panel); }
+  .standings .row { display: grid; grid-template-columns: 3em 1fr repeat(5, 6.5em); gap: 6px; align-items: center; padding: 8px 4px; }
+  .rank { font-family: var(--font-display); font-weight: 700; justify-self: center; width: 28px; height: 28px; display: grid; place-items: center; }
+  .rank.r1 { background: var(--gold); color: #111318; } .rank.r2 { background: var(--silver); color: #111318; } .rank.r3 { background: var(--bronze); color: #fff; }
+  .standings .head { color: var(--muted); font-size: 11px; font-weight: 700; text-transform: uppercase; background: var(--panel-2); }
+  .standings .num.strong { font-family: var(--font-display); font-size: 18px; }
   .st summary { cursor: pointer; list-style: none; border-top: 1px solid var(--border); }
   .st summary::-webkit-details-marker { display: none; }
   .entries, .results { list-style: none; margin: 0 0 8px; padding: 0 0 0 2.5em; }
@@ -102,7 +106,7 @@ const placeTip = (p: number) => (p > 100 ? `Мала ліга #${p - 100}` : und
   .num { text-align: center; font-variant-numeric: tabular-nums; }
   .strong { font-weight: 600; }
   @media (max-width: 640px) {
-    .standings .row { grid-template-columns: 2em 1fr 4.2em 3em; }
+    .standings .row { grid-template-columns: 2.5em 1fr 4.5em 4em; }
     .standings .row > :nth-child(n + 5) { display: none; }
     .entries li { grid-template-columns: 1fr 3em 4em; }
     .entries .kind { display: none; }

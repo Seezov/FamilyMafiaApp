@@ -43,7 +43,7 @@ const icons: Record<AwardCard['icon'], string> = {
 
 <style>
   .groups { display: grid; gap: 18px; }
-  h3 { margin: 0 0 8px; }
+  h3 { margin: 0 0 8px; font-weight: 700; }
   .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px; }
 
   .tone-gold { --c: var(--gold); } .tone-silver { --c: var(--silver); } .tone-bronze { --c: var(--bronze-text); }
@@ -53,19 +53,18 @@ const icons: Record<AwardCard['icon'], string> = {
   .k-minicap { --k: var(--t-minicap); } .k-maxicap { --k: var(--t-maxicap); } .k-bigcap { --k: var(--t-bigcap); }
   .k-marathon { --k: var(--t-marathon); } .k-tournament { --k: var(--t-tournament); }
 
-  .card { border: 1px solid color-mix(in srgb, var(--c) 35%, var(--border)); border-radius: 10px;
-    background: linear-gradient(160deg, color-mix(in srgb, var(--c) 13%, var(--panel)) 0%, var(--panel) 70%);
+  .card { border-top: 4px solid var(--c); background: var(--panel-2);
     padding: 12px 14px; display: grid; gap: 6px; align-content: start; min-width: 0; }
   .head { display: flex; align-items: center; justify-content: space-between; }
-  .icon { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center;
+  .icon { width: 36px; height: 36px; display: grid; place-items: center;
     background: color-mix(in srgb, var(--c) 20%, transparent); color: var(--c); }
   .icon svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8;
     stroke-linecap: round; stroke-linejoin: round; }
-  .count { font-size: 24px; line-height: 1; color: var(--c); }
+  .count { font-size: 26px; line-height: 1; color: var(--c); }
   .title { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px; font-weight: 600; }
   .kind { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--k); }
   .where { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px;
     font-size: 12px; color: var(--muted); }
-  .where li { padding: 1px 7px; border-radius: 999px; background: var(--tint);
+  .where li { padding: 1px 7px; background: var(--panel);
     max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 </style>

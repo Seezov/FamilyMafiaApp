@@ -94,11 +94,11 @@ const places = ['1 місце', '2 місце', '3 місце'];
 
   .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 16px; }
   .type { background: var(--panel); border: 1px solid var(--border); border-top: 2px solid var(--c);
-    border-radius: var(--radius); padding: 14px 16px; min-width: 0; }
+    border-radius: 0; padding: 14px 16px; min-width: 0; }
   .type .value { font-size: 28px; line-height: 1.15; margin: 4px 0 2px; color: var(--c); }
 
   .seasons { display: grid; gap: 8px; }
-  details { border: 1px solid var(--border); border-radius: var(--radius); background: var(--panel-2); }
+  details { border: 1px solid var(--border); border-radius: 0; background: var(--panel-2); }
   summary { cursor: pointer; list-style: none; display: flex; flex-wrap: wrap; align-items: center;
     gap: 6px 14px; padding: 10px 14px; }
   summary::-webkit-details-marker { display: none; }
@@ -107,7 +107,7 @@ const places = ['1 місце', '2 місце', '3 місце'];
   details[open] summary { border-bottom: 1px solid var(--border); }
   .sn { font-size: 15px; min-width: 40px; }
   .chips { display: flex; flex-wrap: wrap; gap: 6px; }
-  .chip { font-size: 12px; padding: 2px 8px; border-radius: 999px; color: var(--c);
+  .chip { font-size: 12px; padding: 2px 8px; border-radius: 0; color: var(--c);
     background: color-mix(in srgb, var(--c) 14%, transparent); }
 
   .events { list-style: none; margin: 0; padding: 0; }
@@ -117,7 +117,7 @@ const places = ['1 місце', '2 місце', '3 місце'];
   .kind { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--c); font-weight: 600; }
   .name { font-weight: 500; }
   .auto { margin-left: 6px; font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--mid);
-    border: 1px solid color-mix(in srgb, var(--mid) 40%, transparent); border-radius: 4px; padding: 0 4px; vertical-align: 2px; }
+    border: 1px solid color-mix(in srgb, var(--mid) 40%, transparent); border-radius: 0; padding: 0 4px; vertical-align: 2px; }
   .meta { color: var(--muted); font-size: 13px; }
   .podium { display: flex; flex-wrap: wrap; gap: 4px 14px; }
   .place { display: inline-flex; align-items: baseline; gap: 6px; white-space: nowrap; }

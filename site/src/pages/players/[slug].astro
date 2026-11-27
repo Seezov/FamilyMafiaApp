@@ -23,12 +23,12 @@ const fk = p.firstKill;
 const chase = p.timeline.find((t) => t.needed);
 ---
 <Base title={shown} description={`${shown}: ${pct(p.winRate)} WR · ${ukCount(p.games, GAMES)} · сезонів: ${p.seasons}`} active="players">
-  <div class="hero">
-    {prof?.avatar ? <img class="avatar" src={href(prof.avatar)} alt="" width="64" height="64" /> : <div class="avatar display">{p.initials}</div>}
+  <div class="pagehead hero">
+    {prof?.avatar ? <img class="avatar" src={href(prof.avatar)} alt="" width="80" height="80" /> : <div class="avatar display">{p.initials}</div>}
     <div class="who">
+      <div class="eyebrow">Гравець клубу</div>
       <h1 class="display">{shown}</h1>
-      {prof?.nick && <div class="label">у таблицях: {p.name}</div>}
-      <div class="label">Зіграно {ukCount(p.games, GAMES)}</div>
+      <div class="sub">{prof?.nick && <>у таблицях: {p.name} · </>}зіграно {ukCount(p.games, GAMES)}</div>
     </div>
   </div>
 
@@ -73,14 +73,16 @@ const chase = p.timeline.find((t) => t.needed);
 </Base>
 
 <style>
-  .hero { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
-  .avatar { width: 64px; height: 64px; border-radius: 12px; display: grid; place-items: center;
-    background: var(--panel-2); border: 1px solid var(--border); color: var(--accent); font-size: 22px; flex: none; }
+  .hero { flex-wrap: nowrap; gap: 20px; }
+  .avatar { width: 80px; height: 80px; border-radius: 50%; display: grid; place-items: center;
+    background: var(--bg); color: var(--city); font-size: 30px; flex: none; }
+  .sub { color: var(--muted); margin-top: 2px; }
   img.avatar { object-fit: cover; padding: 0; }
   .who { min-width: 0; }
   .who h1 { overflow-wrap: anywhere; }
   .kpis { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 14px; }
   @media (max-width: 599px) { .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } .kpis > :last-child { grid-column: span 2; } }
   .awards { margin-bottom: 16px; }
+  .duo :global(.kpi) { background: var(--panel-2); }
   .duo { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 8px; }
 </style>

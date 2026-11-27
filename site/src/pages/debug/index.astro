@@ -59,7 +59,7 @@ const seasons = [...new Set([...d.tournaments.map((t) => t.season), ...d.candida
 
 <style is:global>
   .dbg-card { --c: var(--muted); background: var(--panel); border: 1px solid var(--border); border-left: 3px solid var(--c);
-    border-radius: var(--radius); padding: 12px 14px; display: grid; gap: 8px; }
+    border-radius: 0; padding: 12px 14px; display: grid; gap: 8px; }
   .dbg-card.st-detected { --c: var(--mid); } .dbg-card.st-confirmed { --c: var(--good); }
   .dbg-card.st-candidate { --c: var(--sheriff); } .dbg-card.st-sheet { --c: var(--border); }
   .dbg-card.pending-op { box-shadow: 0 0 0 1px var(--accent) inset; }
@@ -68,7 +68,7 @@ const seasons = [...new Set([...d.tournaments.map((t) => t.season), ...d.candida
   .dbg-head .nm { font-weight: 600; }
   .dbg-head .meta { color: var(--muted); font-size: 13px; }
   .dbg-head .acts { margin-left: auto; display: flex; gap: 6px; flex-wrap: wrap; }
-  .chip { font-size: 11px; letter-spacing: .05em; text-transform: uppercase; padding: 2px 8px; border-radius: 999px;
+  .chip { font-size: 11px; letter-spacing: .05em; text-transform: uppercase; padding: 2px 8px; border-radius: 0;
     color: var(--c, var(--muted)); background: color-mix(in srgb, var(--c, var(--muted)) 15%, transparent); }
   .chip.t-minicap { --c: var(--t-minicap); } .chip.t-maxicap { --c: var(--t-maxicap); } .chip.t-bigcap { --c: var(--t-bigcap); }
   .chip.t-marathon { --c: var(--t-marathon); } .chip.t-tournament { --c: var(--t-tournament); }
@@ -89,9 +89,9 @@ const seasons = [...new Set([...d.tournaments.map((t) => t.season), ...d.candida
   .edit label { display: grid; gap: 3px; font-size: 12px; color: var(--muted); }
   .edit .wide { grid-column: span 2; }
   .dbg-input, .edit input, .edit select, #season, #q {
-    background: var(--panel-2); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text);
+    background: var(--panel-2); border: 1px solid var(--border); border-radius: 0; color: var(--text);
     padding: 6px 9px; font: inherit; min-width: 0; }
-  .btn { background: var(--panel-2); border: 1px solid var(--border); color: var(--text); border-radius: var(--radius);
+  .btn { background: var(--panel-2); border: 1px solid var(--border); color: var(--text); border-radius: 0;
     padding: 5px 11px; font: inherit; font-size: 13px; cursor: pointer; white-space: nowrap; }
   .btn:hover { border-color: var(--muted); }
   .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--bg); }
@@ -108,7 +108,7 @@ const seasons = [...new Set([...d.tournaments.map((t) => t.season), ...d.candida
   .thr form { display: flex; gap: 6px; }
   .thr input { width: 6em; }
   .thr.pending-op { box-shadow: inset 3px 0 0 var(--accent); padding-left: 8px; }
-  .access { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius);
+  .access { background: var(--panel); border: 1px solid var(--border); border-radius: 0;
     padding: 10px 14px; margin-bottom: 14px; }
   .access .row { display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: baseline; }
   .who { font-size: 13px; color: var(--muted); }
@@ -121,7 +121,7 @@ const seasons = [...new Set([...d.tournaments.map((t) => t.season), ...d.candida
   .list { display: grid; gap: 8px; padding-bottom: 80px; }
   .pending { position: fixed; left: 50%; bottom: 16px; transform: translateX(-50%); z-index: 20;
     display: flex; align-items: center; gap: 10px; background: var(--panel-2); border: 1px solid var(--accent);
-    border-radius: 10px; padding: 10px 14px; box-shadow: 0 8px 30px var(--shadow); max-width: calc(100vw - 32px); }
+    border-radius: 0; padding: 10px 14px; box-shadow: 0 8px 30px var(--shadow); max-width: calc(100vw - 32px); }
   .pending[hidden] { display: none; }
   #pending-text { font-size: 13px; }
   @media (max-width: 599px) { #q { width: 100%; } }

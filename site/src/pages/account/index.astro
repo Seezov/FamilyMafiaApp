@@ -68,11 +68,11 @@ const data = JSON.stringify({ players, base: href('') }).replace(/</g, '\\u003c'
 
 <style is:global>
   [data-view][hidden], #admin-link[hidden], #sign-out[hidden], #rejected-note[hidden] { display: none; }
-  #pick-q, #nick { background: var(--panel-2); border: 1px solid var(--border); border-radius: 6px; color: var(--text);
+  #pick-q, #nick { background: var(--panel-2); border: 1px solid var(--border); border-radius: 0; color: var(--text);
     padding: 6px 10px; font: inherit; width: min(360px, 100%); }
   .pick { list-style: none; padding: 0; margin: 10px 0 0; display: grid; gap: 4px; }
   .pick button { all: unset; cursor: pointer; display: flex; gap: 10px; justify-content: space-between; width: 100%;
-    padding: 6px 10px; border: 1px solid var(--border); border-radius: 6px; box-sizing: border-box; }
+    padding: 6px 10px; border: 1px solid var(--border); border-radius: 0; box-sizing: border-box; }
   .pick button:hover:not(:disabled) { border-color: var(--muted); }
   .pick button:disabled { opacity: .5; cursor: not-allowed; }
   .field { display: grid; gap: 6px; margin: 14px 0; color: var(--muted); }
@@ -87,7 +87,7 @@ const data = JSON.stringify({ players, base: href('') }).replace(/</g, '\\u003c'
   #appeals .item { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; }
   #appeals .item .grow { flex: 1 1 220px; }
   .ap-form, .ap-note { flex-basis: 100%; }
-  #ap-text, #ap-req { background: var(--panel-2); border: 1px solid var(--border); border-radius: 6px; color: var(--text);
+  #ap-text, #ap-req { background: var(--panel-2); border: 1px solid var(--border); border-radius: 0; color: var(--text);
     padding: 6px 10px; font: inherit; width: min(520px, 100%); box-sizing: border-box; }
   #ap-req { width: 120px; }
   .st-pending { color: var(--mid); } .st-accepted, .st-partial { color: var(--good); } .st-rejected { color: var(--muted); }
